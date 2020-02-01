@@ -6,7 +6,7 @@ import os
 import aiohttp
 from discord.ext import commands
 
-TOKEN = ""
+TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
 _command_prefix = '$'
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
 
@@ -31,6 +31,5 @@ async def close(ctx):
 
 
 if __name__ == "__main__":
-
     # Run the bot
     client.run(TOKEN)
