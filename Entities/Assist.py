@@ -10,7 +10,6 @@ class Assist:
         self.characterid = characterid
         self.typeid = typeid
         self.limited = limited
-        self.ascended = ascended
         self.stars = stars
         self.splashuri = splashuri
         self.iconuri = iconuri
