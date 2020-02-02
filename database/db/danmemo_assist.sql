@@ -23,10 +23,12 @@ DROP TABLE IF EXISTS `assist`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `assist` (
-  `assistid` int NOT NULL,
+  `assistid` int NOT NULL AUTO_INCREMENT,
   `characterid` int NOT NULL,
   `splashuri` varchar(2048) DEFAULT NULL,
   `iconuri` varchar(2048) DEFAULT NULL,
+  `limited` tinyint NOT NULL,
+  `stars` int NOT NULL,
   PRIMARY KEY (`assistid`),
   KEY `charid_idx` (`characterid`),
   CONSTRAINT `characterid4` FOREIGN KEY (`characterid`) REFERENCES `character` (`characterid`) ON DELETE CASCADE
@@ -51,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-31 18:35:16
+-- Dump completed on 2020-02-02 14:53:38

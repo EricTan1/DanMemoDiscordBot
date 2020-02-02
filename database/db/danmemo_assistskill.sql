@@ -23,11 +23,12 @@ DROP TABLE IF EXISTS `assistskill`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `assistskill` (
-  `assistskillid` int NOT NULL,
+  `assistskillid` int NOT NULL AUTO_INCREMENT,
   `assistid` int NOT NULL,
   `skillname` varchar(200) NOT NULL,
-  KEY `assistid_idx` (`assistid`),
-  CONSTRAINT `assistid` FOREIGN KEY (`assistid`) REFERENCES `assist` (`assistid`)
+  PRIMARY KEY (`assistskillid`),
+  KEY `assistid1_idx` (`assistid`),
+  CONSTRAINT `assistid1` FOREIGN KEY (`assistid`) REFERENCES `assist` (`assistid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -49,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-31 18:35:16
+-- Dump completed on 2020-02-02 14:53:38

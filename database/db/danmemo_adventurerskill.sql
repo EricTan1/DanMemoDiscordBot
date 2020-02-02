@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `adventurerskill`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `adventurerskill` (
-  `adventurerskillid` int NOT NULL,
+  `adventurerskillid` int NOT NULL AUTO_INCREMENT,
   `adventurerid` int NOT NULL,
   `typeid` int NOT NULL,
   `eleid` int NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE `adventurerskill` (
   KEY `adventurerid_idx` (`adventurerid`),
   KEY `typeid_idx` (`typeid`),
   KEY `eleid_idx` (`eleid`),
-  CONSTRAINT `adventurerid` FOREIGN KEY (`adventurerid`) REFERENCES `adventurer` (`adventurerid`) ON DELETE CASCADE,
+  CONSTRAINT `adventurerid1` FOREIGN KEY (`adventurerid`) REFERENCES `adventurer` (`adventurerid`) ON DELETE CASCADE,
   CONSTRAINT `eleid1` FOREIGN KEY (`eleid`) REFERENCES `element` (`elementid`),
   CONSTRAINT `typeid1` FOREIGN KEY (`typeid`) REFERENCES `type` (`typeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -56,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-31 18:35:17
+-- Dump completed on 2020-02-02 14:53:39

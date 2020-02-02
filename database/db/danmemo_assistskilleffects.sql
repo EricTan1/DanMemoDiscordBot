@@ -23,16 +23,16 @@ DROP TABLE IF EXISTS `assistskilleffects`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `assistskilleffects` (
-  `assistskilleffectsid` int NOT NULL,
+  `assistskilleffectsid` int NOT NULL AUTO_INCREMENT,
   `assistid` int NOT NULL,
   `targetid` int NOT NULL,
   `attributeid` int NOT NULL,
   `modifierid` int NOT NULL,
   PRIMARY KEY (`assistskilleffectsid`),
-  KEY `assistid5_idx` (`assistid`),
   KEY `targetid5_idx` (`targetid`),
   KEY `attributeid5_idx` (`attributeid`),
   KEY `modifierid5_idx` (`modifierid`),
+  KEY `assistid5_idx` (`assistid`),
   CONSTRAINT `assistid5` FOREIGN KEY (`assistid`) REFERENCES `assist` (`assistid`) ON DELETE CASCADE,
   CONSTRAINT `attributeid5` FOREIGN KEY (`attributeid`) REFERENCES `attribute` (`attributeID`),
   CONSTRAINT `modifierid5` FOREIGN KEY (`modifierid`) REFERENCES `modifier` (`modifierid`),
@@ -58,4 +58,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-31 18:35:16
+-- Dump completed on 2020-02-02 14:53:38
