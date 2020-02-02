@@ -5,51 +5,57 @@ such as element, type etc.
 
 
 class Element:
-    def __init__(self, element):
-        ''' (Element, str) -> Element
+    def __init__(self, elementid, name):
+        ''' (Element, int, str) -> Element
         element : represents the elemental types in danmemo (ex: light,fire)
         '''
-        self.element = element
+        self.elementid = elementid
+        self.name = name
         
     def __str__(self):
-        return self.element
+        return self.name
 
 class Type:
-    def __init__(self, atktype):
-        ''' (Type, str) -> Type
+    def __init__(self, typeid,name):
+        ''' (Type, int, str) -> Type
         atktype : represents the type of attack (ex: physical, magical, mixed)
         '''
-        self.atktype = atktype
+        self.typeid = typeid
+        self.name = name
 
     def __str__(self):
-        return self.atktype
+        return self.name
 
 class Attribute:
-    def __init__(self, name):
-        ''' (Attribute, str) -> Attribute
+    def __init__(self, attributeid, name):
+        ''' (Attribute, int, str) -> Attribute
         name : attributes/stat time (ex: str/strength, agi/agility)
         '''
+        self.attributeid= attributeid
         self.name = name
 
     def __str__(self):
         return self.name
 
 class Target:
-    def __init__(self, name):
-        ''' (Target, str) -> Target
+    def __init__(self, targetid, name):
+        ''' (Target, int, str) -> Target
         name : what it targets (ex: self, enemy, allies)
         '''
         self.name = name
+        self.targetid = targetid
+        
     def __str__(self):
         return self.name
 
 class Modifier:
-    def __init__(self, value):
-        ''' (Modifier, str) -> Modifier
+    def __init__(self, modifierid,value):
+        ''' (Modifier, int, str) -> Modifier
         value : the strength of an effect/skill (ex: Hi, Lo, 10, 15)
         Note: numbers are in percentages for example: 5 = 5%
         '''
         self.value = value
+        self.modifierid = modifierid
 
     def __str__(self):
         try:

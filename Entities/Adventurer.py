@@ -17,8 +17,8 @@ class Adventurer:
         self.iconuri = iconuri
 
     def __str__(self):
-        pass
-
+        return "Adventurerid: " + str(self.adventurerid)
+    
 class AdventurerSkill:
     def __init__(self, adventurerskillid, adventurerid, typeid, eleid,
                  skillname):
