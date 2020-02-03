@@ -3,11 +3,14 @@ import inspect
 
 class DBcontroller:
 
-  def __init(self, host, user, password, port, database):
+  def __init__(self, host, user, password, port, database):
+    ''' (DBcontroller, str, str ,str, int ,str) -> DBcontroller
+    '''
+    self.database = database
     self._connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="danmemo", port="3306", database="danmemo")
+        host=host,
+        user=user,
+        password=password, port=port, database=database)
     #print(self.connection)
     self._mycursor = self._connection.cursor()
 
@@ -39,16 +42,18 @@ class DBcontroller:
     valueprep_list= str(tuple(value_list)).replace("'","")
     
     
-    sql="INSERT INTO {} {} VALUES {}".format(type(entity).__name__,
-                                             attribute_list,valueprep_list)
+    sql="INSERT INTO {}.{} {} VALUES {}".format(self.database,str(type(entity).__name__).lower(),
+                                             attribute_list.lower(),valueprep_list.lower())
     values = tuple(value_list)
+    print(sql + "\n")
+    print(values+ "\n")
     self._mycursor.execute(sql,values)
     self._connection.commit()
     print(self._mycursor.rowcount, "record inserted.")
     
     
   
-  def updateData(self, entity, columns, values):
+  def updateData(self, entity):
     ''' (DBcontroller, Entity, str, ?) -> bool
     returns whether or not it is a successful update
     '''
@@ -58,4 +63,14 @@ class DBcontroller:
     ''' (DBcontroller, Entity, str, ?) -> List of Entity
     returns the entity list based on the columns
     '''
-    pass
+    sql = 'SELECT * FROM {}.{} WHERE {}=%s'.format(self.database.lower(),
+                                                   entityname.lower(),
+                                                   column.lower())
+    print(sql)
+    
+    self._mycursor.execute(sql,(value,))
+    ret_list =[]
+    for row in self._mycursor: 
+      ret_list.append(row)
+    print(ret_list)
+    return ret_list
