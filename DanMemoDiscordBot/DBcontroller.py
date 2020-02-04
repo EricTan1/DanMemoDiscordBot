@@ -39,14 +39,14 @@ class DBcontroller:
       value_list.append(attributevalue)
     
     attribute_list= str(tuple(attribute_list)).replace("'","")
-    valueprep_list= str(tuple(value_list)).replace("'","")
+    valueprep_list= str(tuple(valueprep_list)).replace("'","")
     
     
     sql="INSERT INTO {}.{} {} VALUES {}".format(self.database,str(type(entity).__name__).lower(),
                                              attribute_list.lower(),valueprep_list.lower())
     values = tuple(value_list)
     print(sql + "\n")
-    print(values+ "\n")
+    print(str(values)+ "\n")
     self._mycursor.execute(sql,values)
     self._connection.commit()
     print(self._mycursor.rowcount, "record inserted.")
