@@ -46,7 +46,7 @@ class AdventurerSkillEffects:
              duration : some buffs/debuffs have durations
         '''
         self.adventurerskilleffectsid = adventurerskilleffectsid
-        self.adventurerskillid = adventurerskill
+        self.adventurerskillid = adventurerskillid
         self.targetid = targetid
         self.attributeid = attributeid
         self.modifierid = modifierid
@@ -72,4 +72,25 @@ class AdventurerDevelopment:
     def __str__(self):
         ''' Placeholder for now we will add modifier and attribute after?
         '''
+        return self.name
+
+class AdventurerStats:
+    ''' This class is an object that represents the
+    stats table in the DB
+    '''
+    def __init__(self, adventurerstatsid, adventurerid, attributeid, value):
+        ''' (Stats, int, int, int, str) -> Stats
+        value : python list but in str format of an attribute
+        ex:
+        attribute: Strength
+        [1,2,3,4,5,6]
+        [LB0,LB1,LB2,LB3,LB4,LB5]
+        corresponds with limit break 0-5
+        '''
+        self.adventurerstatsid = adventurerstatsid
+        self.adventurerid = adventurerid
+        self.attributeid = attributeid
+        self.value = value
+
+    def __str__(self):
         return self.name
