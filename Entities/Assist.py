@@ -1,5 +1,5 @@
 class Assist:
-    def __init__(self, assistid, characterid, typeid, limited,
+    def __init__(self, assistid, characterid, typeid, title,limited,
                  stars, splashuri, iconuri):
         ''' (Assist, int, int, int, bool, int, str or None, str or
              None) -> Assist
@@ -10,12 +10,13 @@ class Assist:
         self.characterid = characterid
         self.typeid = typeid
         self.limited = limited
+        self.title = title
         self.stars = stars
         self.splashuri = splashuri
         self.iconuri = iconuri
 
     def __str__(self):
-        pass
+        return self.title
 
 class AssistSkill:
     def __init__(self, assistskillid, assistid, skillname):

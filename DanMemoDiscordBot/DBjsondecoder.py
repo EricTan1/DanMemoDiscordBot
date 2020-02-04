@@ -71,16 +71,81 @@ for filename in os.listdir(path):
         # get id's for type and character
         characterid = db.getDataColumn("character","name",temp_ad._name)[0]
         typeid = db.getDataColumn("element","name",temp_ad._type)[0]
-        Adventurer(None, characterid[0], typeid[0], temp_ad._limited, False,
+        Adventurer(None, characterid[0], typeid[0], temp_ad._title,temp_ad._limited, False,
                  temp_ad._stars, None, None)
+        adventurerid = db.getDataColumn("adventurer","title",temp_ad._title)[0]
+        #Stats
+        if(len(db.getDataColumn("attribute","name","hp"))==0):
+            db.insertData(Attribute(None, "hp"))
+        if(len(db.getDataColumn("attribute","name","mp"))==0):
+            db.insertData(Attribute(None, "mp"))
+        if(len(db.getDataColumn("attribute","name","physical_attack"))==0):
+            db.insertData(Attribute(None, "physical_attack"))
+        if(len(db.getDataColumn("attribute","name","magic_attack"))==0):
+            db.insertData(Attribute(None, "magic_attack"))                   
+        if(len(db.getDataColumn("attribute","name","defense"))==0):
+            db.insertData(Attribute(None, "defense"))
+        if(len(db.getDataColumn("attribute","name","strength"))==0):
+            db.insertData(Attribute(None, "strength"))
+        if(len(db.getDataColumn("attribute","name","endurance"))==0):
+            db.insertData(Attribute(None, "endurance"))
+        if(len(db.getDataColumn("attribute","name","dexterity"))==0):
+            db.insertData(Attribute(None, "dexterity"))                          
+        if(len(db.getDataColumn("attribute","name","agility"))==0):
+            db.insertData(Attribute(None, "agility"))                   
+        if(len(db.getDataColumn("attribute","name","magic"))==0):
+            db.insertData(Attribute(None, "magic"))
+        Stats(None, adventurerid[0], attributeid, temp_ad.stats.get("hp"))
+        Stats(None, adventurerid[0], attributeid, temp_ad.stats.get("mp"))
+        Stats(None, adventurerid[0], attributeid, temp_ad.stats.get("physical_attack"))
+        Stats(None, adventurerid[0], attributeid, temp_ad.stats.get("magic_attack"))
+        Stats(None, adventurerid[0], attributeid, temp_ad.stats.get("defense"))
+        Stats(None, adventurerid[0], attributeid, temp_ad.stats.get("strength"))
+        Stats(None, adventurerid[0], attributeid, temp_ad.stats.get("endurance"))
+        Stats(None, adventurerid[0], attributeid, temp_ad.stats.get("dexterity"))
+        Stats(None, adventurerid[0], attributeid, temp_ad.stats.get("agility"))
+        Stats(None, adventurerid[0], attributeid, temp_ad.stats.get("magic"))
+        
+        
         
         #AdventurerSkill
-        AdventurerSkill()
-        #AdventurerSkillEffects
-        AdventurerSkillEffects()
-        #AdventurerDevelopment
-        AdventurerDevelopment()
-        #Stats
-        Stats()
+        for skills in ad_dict.get("skills"):
+            skills = ad_dict.get("skills").get(skills)
+            
+            temp_value = skills.get("effects").get("type")
+            temp_index = temp_value.find("_")
+            temp_element = temp_value[0:temp_index]
+            temp_ad_ele = temp_element
+            temp_type = temp_value[temp_index+1:]
+            print(temp_element +"-" + temp_type)
+            # Element
+            temp_eleid=db.getDataColumn("element","name",temp_element)
+            # Type for skills
+            temp_typeid=db.getDataColumn("type","name",temp_type)
+            if(skills == "special" or skills == "combat"):
+                # Adventurer skill
+                db.insertData(AdventurerSkill(None, adventurerid[0], temp_typeid, temp_eleid,
+                         skills.get("name"),skills))
+                temp_adskill=db.getDataColumn("adventurerskill","skillname",skills.get("name"))[0]
+                # AdventurerSkillEffects SET UP
+                temp_target = skills.get("effects").get("target")
+                temp_attribute = skills.get("effects").get("attribute")
+                temp_modifier = skills.get("effects").get("modifier")
+                
+                temp_target =db.getDataColumn("target","name",temp_target)[0]
+                temp_attribute=db.getDataColumn("attribute","name",temp_attribute)[0]
+                temp_modifier=db.getDataColumn("modifier","value",temp_modifier)[0]
+                #AdventurerSkillEffects
+                db.insertData(AdventurerSkillEffects(None, temp_adskill[0], temp_target[0],
+                     temp_attribute[0], temp_modifier[0], skills.get("effects").get("duration")))
+            else:
+                temp_attribute = skills.get("effects").get("attribute")
+                temp_modifier = skills.get("effects").get("modifier")                
+                #AdventurerDevelopment                
+                db.insertData(AdventurerDevelopment(None, adventurerid[0], skills.get("name"), temp_attribute,
+                 temp_modifier))
+
+
+                    
 
 print(ad_list[0]._name)

@@ -1,5 +1,5 @@
 class Adventurer:
-    def __init__(self, adventurerid, characterid, typeid, limited, ascended,
+    def __init__(self, adventurerid, characterid, typeid, title,limited, ascended,
                  stars, splashuri, iconuri):
         ''' (Adventurer, int, int, int, bool, bool, int, str or None, str or
              None) -> Adventurer
@@ -9,6 +9,7 @@ class Adventurer:
         '''
         self.adventurerid = adventurerid
         self.characterid = characterid
+        self.title = title
         self.typeid = typeid
         self.limited = limited
         self.ascended = ascended
@@ -17,11 +18,11 @@ class Adventurer:
         self.iconuri = iconuri
 
     def __str__(self):
-        return "Adventurerid: " + str(self.adventurerid)
+        return self.title
     
 class AdventurerSkill:
     def __init__(self, adventurerskillid, adventurerid, typeid, eleid,
-                 skillname):
+                 skillname,skilltype):
         ''' (AdventurerSkill, int, int, int, int, str) -> AdventurerSkill
         skillname: the name of the skill of the adventurer
         '''
@@ -30,6 +31,7 @@ class AdventurerSkill:
         self.typeid = typeid
         self.eleid = eleid
         self.skillname = skillname
+        self.skilltype = skilltype
 
     def __str__(self):
         return self.skillname
