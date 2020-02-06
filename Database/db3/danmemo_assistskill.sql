@@ -16,26 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `attribute`
+-- Table structure for table `assistskill`
 --
 
-DROP TABLE IF EXISTS `attribute`;
+DROP TABLE IF EXISTS `assistskill`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `attribute` (
-  `attributeid` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
-  PRIMARY KEY (`attributeid`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `assistskill` (
+  `assistskillid` int NOT NULL AUTO_INCREMENT,
+  `assistid` int NOT NULL,
+  `skillname` varchar(200) NOT NULL,
+  PRIMARY KEY (`assistskillid`),
+  KEY `assistid1_idx` (`assistid`),
+  CONSTRAINT `assistid1` FOREIGN KEY (`assistid`) REFERENCES `assist` (`assistid`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `attribute`
+-- Dumping data for table `assistskill`
 --
 
-LOCK TABLES `attribute` WRITE;
-/*!40000 ALTER TABLE `attribute` DISABLE KEYS */;
-/*!40000 ALTER TABLE `attribute` ENABLE KEYS */;
+LOCK TABLES `assistskill` WRITE;
+/*!40000 ALTER TABLE `assistskill` DISABLE KEYS */;
+/*!40000 ALTER TABLE `assistskill` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -47,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-05 22:38:21
+-- Dump completed on 2020-02-05 23:45:30

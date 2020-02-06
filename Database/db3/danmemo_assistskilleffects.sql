@@ -16,26 +16,37 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `target`
+-- Table structure for table `assistskilleffects`
 --
 
-DROP TABLE IF EXISTS `target`;
+DROP TABLE IF EXISTS `assistskilleffects`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `target` (
-  `targetid` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
-  PRIMARY KEY (`targetid`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `assistskilleffects` (
+  `assistskilleffectsid` int NOT NULL AUTO_INCREMENT,
+  `assistskillid` int NOT NULL,
+  `targetid` int NOT NULL,
+  `attributeid` int NOT NULL,
+  `modifierid` int NOT NULL,
+  PRIMARY KEY (`assistskilleffectsid`),
+  KEY `targetid5_idx` (`targetid`),
+  KEY `attributeid5_idx` (`attributeid`),
+  KEY `modifierid5_idx` (`modifierid`),
+  KEY `assistskillid5_idx` (`assistskillid`),
+  CONSTRAINT `assistskillid5` FOREIGN KEY (`assistskillid`) REFERENCES `assistskill` (`assistskillid`) ON DELETE CASCADE,
+  CONSTRAINT `attributeid5` FOREIGN KEY (`attributeid`) REFERENCES `attribute` (`attributeid`),
+  CONSTRAINT `modifierid5` FOREIGN KEY (`modifierid`) REFERENCES `modifier` (`modifierid`),
+  CONSTRAINT `targetid5` FOREIGN KEY (`targetid`) REFERENCES `target` (`targetid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `target`
+-- Dumping data for table `assistskilleffects`
 --
 
-LOCK TABLES `target` WRITE;
-/*!40000 ALTER TABLE `target` DISABLE KEYS */;
-/*!40000 ALTER TABLE `target` ENABLE KEYS */;
+LOCK TABLES `assistskilleffects` WRITE;
+/*!40000 ALTER TABLE `assistskilleffects` DISABLE KEYS */;
+/*!40000 ALTER TABLE `assistskilleffects` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -47,4 +58,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-05 22:38:22
+-- Dump completed on 2020-02-05 23:45:31

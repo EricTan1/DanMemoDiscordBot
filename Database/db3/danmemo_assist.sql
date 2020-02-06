@@ -16,32 +16,32 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `adventurerstats`
+-- Table structure for table `assist`
 --
 
-DROP TABLE IF EXISTS `adventurerstats`;
+DROP TABLE IF EXISTS `assist`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `adventurerstats` (
-  `adventurerstatsid` int NOT NULL AUTO_INCREMENT,
-  `adventurerid` int NOT NULL,
-  `attributeid` int NOT NULL,
-  `value` varchar(200) NOT NULL,
-  PRIMARY KEY (`adventurerstatsid`),
-  KEY `attributeid10_idx` (`attributeid`),
-  KEY `adventurerid10_idx` (`adventurerid`),
-  CONSTRAINT `adventurerid10` FOREIGN KEY (`adventurerid`) REFERENCES `adventurer` (`adventurerid`) ON DELETE CASCADE,
-  CONSTRAINT `attributeid10` FOREIGN KEY (`attributeid`) REFERENCES `attribute` (`attributeid`)
-) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `assist` (
+  `assistid` int NOT NULL AUTO_INCREMENT,
+  `characterid` int NOT NULL,
+  `splashuri` varchar(2048) DEFAULT NULL,
+  `iconuri` varchar(2048) DEFAULT NULL,
+  `limited` tinyint NOT NULL,
+  `stars` int NOT NULL,
+  PRIMARY KEY (`assistid`),
+  KEY `charid_idx` (`characterid`),
+  CONSTRAINT `characterid4` FOREIGN KEY (`characterid`) REFERENCES `character` (`characterid`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `adventurerstats`
+-- Dumping data for table `assist`
 --
 
-LOCK TABLES `adventurerstats` WRITE;
-/*!40000 ALTER TABLE `adventurerstats` DISABLE KEYS */;
-/*!40000 ALTER TABLE `adventurerstats` ENABLE KEYS */;
+LOCK TABLES `assist` WRITE;
+/*!40000 ALTER TABLE `assist` DISABLE KEYS */;
+/*!40000 ALTER TABLE `assist` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -53,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-05 22:38:22
+-- Dump completed on 2020-02-05 23:45:29
