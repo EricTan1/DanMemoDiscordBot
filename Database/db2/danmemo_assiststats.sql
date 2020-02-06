@@ -16,36 +16,32 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `adventurerskill`
+-- Table structure for table `assiststats`
 --
 
-DROP TABLE IF EXISTS `adventurerskill`;
+DROP TABLE IF EXISTS `assiststats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `adventurerskill` (
-  `adventurerskillid` int NOT NULL AUTO_INCREMENT,
-  `adventurerid` int NOT NULL,
-  `typeid` int NOT NULL,
-  `eleid` int NOT NULL,
-  `skillname` varchar(100) NOT NULL,
-  `skilltype` varchar(100) NOT NULL,
-  PRIMARY KEY (`adventurerskillid`),
-  KEY `adventurerid_idx` (`adventurerid`),
-  KEY `typeid_idx` (`typeid`),
-  KEY `eleid_idx` (`eleid`),
-  CONSTRAINT `adventurerid1` FOREIGN KEY (`adventurerid`) REFERENCES `adventurer` (`adventurerid`) ON DELETE CASCADE,
-  CONSTRAINT `eleid1` FOREIGN KEY (`eleid`) REFERENCES `element` (`elementid`),
-  CONSTRAINT `typeid1` FOREIGN KEY (`typeid`) REFERENCES `type` (`typeid`)
+CREATE TABLE `assiststats` (
+  `assiststatsid` int NOT NULL,
+  `assistid` int NOT NULL,
+  `attributeid` int NOT NULL,
+  `value` varchar(200) NOT NULL,
+  PRIMARY KEY (`assiststatsid`),
+  KEY `assistid10_idx` (`assistid`),
+  KEY `attributeid11_idx` (`attributeid`),
+  CONSTRAINT `assistid10` FOREIGN KEY (`assistid`) REFERENCES `assist` (`assistid`) ON DELETE CASCADE,
+  CONSTRAINT `attributeid11` FOREIGN KEY (`attributeid`) REFERENCES `attribute` (`attributeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `adventurerskill`
+-- Dumping data for table `assiststats`
 --
 
-LOCK TABLES `adventurerskill` WRITE;
-/*!40000 ALTER TABLE `adventurerskill` DISABLE KEYS */;
-/*!40000 ALTER TABLE `adventurerskill` ENABLE KEYS */;
+LOCK TABLES `assiststats` WRITE;
+/*!40000 ALTER TABLE `assiststats` DISABLE KEYS */;
+/*!40000 ALTER TABLE `assiststats` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -57,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-03 22:12:43
+-- Dump completed on 2020-02-05 22:38:21

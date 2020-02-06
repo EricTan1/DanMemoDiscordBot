@@ -44,7 +44,7 @@ for filename in os.listdir(path):
                 for effects in skills.get("effects"):
                     #modifier                
                     temp_value = effects.get("modifier")
-                    if(temp_value[len(temp_value)-1] == "%"):
+                    if(len(temp_value) > 0 and temp_value[len(temp_value)-1] == "%"):
                         temp_value = temp_value[:len(temp_value)-1]
                     if(len(db.getDataColumn("modifier","value",temp_value))==0):
                         db.insertData(Modifier(None, temp_value))
@@ -79,7 +79,7 @@ for filename in os.listdir(path):
                     for effects in subskills.get("effects"):
                         #modifier                
                         temp_value = effects.get("modifier")
-                        if(temp_value[len(temp_value)-1] == "%"):
+                        if(len(temp_value) > 0 and temp_value[len(temp_value)-1] == "%"):
                             temp_value = temp_value[:len(temp_value)-1]
                         if(len(db.getDataColumn("modifier","value",temp_value))==0):
                             db.insertData(Modifier(None, temp_value))
@@ -114,7 +114,8 @@ for filename in os.listdir(path):
                     for effects in subskills.get("effects"):
                         #modifier                
                         temp_value = effects.get("modifier")
-                        if(temp_value[len(temp_value)-1] == "%"):
+                        print("DEV: " +temp_value)
+                        if(len(temp_value) > 0 and temp_value[len(temp_value)-1] == "%"):
                             temp_value = temp_value[:len(temp_value)-1]
                         if(len(db.getDataColumn("modifier","value",temp_value))==0):
                             db.insertData(Modifier(None, temp_value))
@@ -244,11 +245,8 @@ for filename in os.listdir(path):
                     for effects in subskills.get("effects"):
                         temp_attribute = effects.get("attribute")
                         temp_modifier = effects.get("modifier")
-                        if(temp_modifier[len(temp_modifier)-1] == "%"):
+                        if(len(temp_modifier) > 0 and temp_modifier[len(temp_modifier)-1] == "%"):
                             temp_modifier = temp_modifier[:len(temp_modifier)-1]
-                        print("huh????")
-                        print((None, adventurerid[0], skills.get("name"), temp_attribute[0],
-                         temp_modifier[0]))
                         temp_attribute=db.getDataColumn("attribute","name",temp_attribute)[0]
                         temp_modifier=db.getDataColumn("modifier","value",temp_modifier)[0]
                         #AdventurerDevelopment                

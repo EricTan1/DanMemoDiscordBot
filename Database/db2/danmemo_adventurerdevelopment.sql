@@ -16,29 +16,35 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `assistskill`
+-- Table structure for table `adventurerdevelopment`
 --
 
-DROP TABLE IF EXISTS `assistskill`;
+DROP TABLE IF EXISTS `adventurerdevelopment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `assistskill` (
-  `assistskillid` int NOT NULL AUTO_INCREMENT,
-  `assistid` int NOT NULL,
-  `skillname` varchar(200) NOT NULL,
-  PRIMARY KEY (`assistskillid`),
-  KEY `assistid1_idx` (`assistid`),
-  CONSTRAINT `assistid1` FOREIGN KEY (`assistid`) REFERENCES `assist` (`assistid`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `adventurerdevelopment` (
+  `adventurerdevelopmentid` int NOT NULL AUTO_INCREMENT,
+  `adventurerid` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `attributeid` int NOT NULL,
+  `modifierid` int NOT NULL,
+  PRIMARY KEY (`adventurerdevelopmentid`,`modifierid`),
+  KEY `attributeid_idx` (`attributeid`),
+  KEY `modifierid_idx` (`modifierid`),
+  KEY `adventurerid3_idx` (`adventurerid`),
+  CONSTRAINT `adventurerid3` FOREIGN KEY (`adventurerid`) REFERENCES `adventurer` (`adventurerid`) ON DELETE CASCADE,
+  CONSTRAINT `attributeid3` FOREIGN KEY (`attributeid`) REFERENCES `attribute` (`attributeid`),
+  CONSTRAINT `modifierid3` FOREIGN KEY (`modifierid`) REFERENCES `modifier` (`modifierid`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `assistskill`
+-- Dumping data for table `adventurerdevelopment`
 --
 
-LOCK TABLES `assistskill` WRITE;
-/*!40000 ALTER TABLE `assistskill` DISABLE KEYS */;
-/*!40000 ALTER TABLE `assistskill` ENABLE KEYS */;
+LOCK TABLES `adventurerdevelopment` WRITE;
+/*!40000 ALTER TABLE `adventurerdevelopment` DISABLE KEYS */;
+/*!40000 ALTER TABLE `adventurerdevelopment` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -50,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-03 22:12:42
+-- Dump completed on 2020-02-05 22:38:20

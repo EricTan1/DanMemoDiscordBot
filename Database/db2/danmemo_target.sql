@@ -16,38 +16,26 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `adventurerskilleffects`
+-- Table structure for table `target`
 --
 
-DROP TABLE IF EXISTS `adventurerskilleffects`;
+DROP TABLE IF EXISTS `target`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `adventurerskilleffects` (
-  `AdventurerSkillEffectsid` int NOT NULL AUTO_INCREMENT,
-  `AdventurerSkillid` int NOT NULL,
-  `Targetid` int NOT NULL,
-  `attributeid` int NOT NULL,
-  `modifierid` int NOT NULL,
-  `duration` int DEFAULT NULL,
-  PRIMARY KEY (`AdventurerSkillEffectsid`),
-  KEY `adventureskillid_idx` (`AdventurerSkillid`),
-  KEY `targetid2_idx` (`Targetid`),
-  KEY `modifierid_idx` (`modifierid`),
-  KEY `attributeid2_idx` (`attributeid`),
-  CONSTRAINT `adventureskillid2` FOREIGN KEY (`AdventurerSkillid`) REFERENCES `adventurerskill` (`adventurerid`) ON DELETE CASCADE,
-  CONSTRAINT `attributeid2` FOREIGN KEY (`attributeid`) REFERENCES `attribute` (`attributeid`),
-  CONSTRAINT `modifierid` FOREIGN KEY (`modifierid`) REFERENCES `modifier` (`modifierid`),
-  CONSTRAINT `targetid2` FOREIGN KEY (`Targetid`) REFERENCES `target` (`targetid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `target` (
+  `targetid` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  PRIMARY KEY (`targetid`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `adventurerskilleffects`
+-- Dumping data for table `target`
 --
 
-LOCK TABLES `adventurerskilleffects` WRITE;
-/*!40000 ALTER TABLE `adventurerskilleffects` DISABLE KEYS */;
-/*!40000 ALTER TABLE `adventurerskilleffects` ENABLE KEYS */;
+LOCK TABLES `target` WRITE;
+/*!40000 ALTER TABLE `target` DISABLE KEYS */;
+/*!40000 ALTER TABLE `target` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -59,4 +47,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-03 22:12:42
+-- Dump completed on 2020-02-05 22:38:22
