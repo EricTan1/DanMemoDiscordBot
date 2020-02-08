@@ -5,6 +5,14 @@ import sys
 import os
 import aiohttp
 from discord.ext import commands
+from DBcontroller import DBcontroller
+
+import os
+import sys
+sys.path.append('../Entities/')
+
+from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
+from BaseConstants import Element, Target, Type, Attribute,Modifier
 
 TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
 _command_prefix = '$'
@@ -28,6 +36,23 @@ async def close(ctx):
     # shut down the bot
     await client.close()
 
+@client.command()
+async def characterSearch(ctx, *search):
+    print(search)
+    my_search = ""
+    for words in search:
+        my_search= my_search + words + " "
+    print(my_search)
+    db = DBcontroller("localhost","root","danmemo","3306","danmemo")
+    my_list = db.characterSearch(my_search,{})
+    
+    message = ""
+    for Adventurers in my_list:
+        message= message + str(Adventurers) + "\n"
+    
+    # get info to start game
+    await ctx.send(message)
+    db.closeconnection()
 
 
 if __name__ == "__main__":

@@ -1,11 +1,19 @@
 import mysql.connector
 import inspect
+from collections import namedtuple
+import os
+import sys
+sys.path.append('../Entities/')
+
+from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
+from BaseConstants import Element, Target, Type, Attribute,Modifier
 
 class DBcontroller:
 
   def __init__(self, host, user, password, port, database):
     ''' (DBcontroller, str, str ,str, int ,str) -> DBcontroller
     '''
+    print("created connection")
     self.database = database
     self._connection = mysql.connector.connect(
         host=host,
@@ -74,3 +82,51 @@ class DBcontroller:
       ret_list.append(row)
     print(ret_list)
     return ret_list
+  
+  def characterSearch(self,search, filter_dict):
+    print("searching")
+    ret_dict =dict()
+    
+    # Search by title first
+    words_list = search.split(" ")
+    for words in words_list:
+      characterTitleSql= "SELECT adventurerid from danmemo.adventurer as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".format(words,words)
+      self._mycursor.execute(characterTitleSql)
+      for row in self._mycursor:
+        ad_id = row[0]
+        if(ret_dict.get(ad_id) == None):
+          ret_dict[ad_id] = 0
+        ret_dict[ad_id] = ret_dict.get(ad_id)+1
+    ret_list=[]
+    highest= None
+    for keys in ret_dict:
+      if(highest==None):
+        highest = ret_dict.get(keys)
+        ret_list.append(keys)
+      elif(highest < ret_dict.get(keys)):
+        highest = ret_dict.get(keys)
+        ret_list = [keys]
+      elif(highest == ret_dict.get(keys)):
+        ret_list.append(keys)
+    return ret_list
+      
+        #ret_dict[]
+    # if we can find a title and exactly 1 result then return it
+    
+    
+    # if multiple results then have priority?
+    
+    # break down the search?
+    
+
+  def skillSearch(self,search, filter_dict):
+    character_sql= "SELECT adventurerid, title from danmemo.adventurer as a, danmemo.character as c where c.name like'%ais%' and c.characterid = a.characterid"
+    self._mycursor.execute(character_sql)
+    for row in self._mycursor:  
+      print(row)
+
+
+if __name__ == "__main__":
+  db = DBcontroller("localhost","root","danmemo","3306","danmemo")
+  print(db.characterSearch("devil ais wallenstein",{}))
+  
