@@ -21,15 +21,13 @@ class Adventurer:
         return self.title
     
 class AdventurerSkill:
-    def __init__(self, adventurerskillid, adventurerid, typeid, eleid,
+    def __init__(self, adventurerskillid, adventurerid,
                  skillname,skilltype):
         ''' (AdventurerSkill, int, int, int, int, str) -> AdventurerSkill
         skillname: the name of the skill of the adventurer
         '''
         self.adventurerskillid = adventurerskillid
         self.adventurerid = adventurerid
-        self.typeid = typeid
-        self.eleid = eleid
         self.skillname = skillname
         self.skilltype = skilltype
 
@@ -40,7 +38,7 @@ class AdventurerSkill:
 class AdventurerSkillEffects:
 
     def __init__(self, adventurerskilleffectsid, adventurerskillid, targetid,
-                 attributeid, modifierid, duration):
+                 attributeid, modifierid, duration, typeid,eleid):
         ''' (AdventurerSkillEffects, int, int, int, int, int,
              int) -> AdventurerSkillEffects
              duration : some buffs/debuffs have durations
@@ -51,6 +49,8 @@ class AdventurerSkillEffects:
         self.attributeid = attributeid
         self.modifierid = modifierid
         self.duration = duration
+        self.typeid=typeid
+        self.eleid=eleid
 
     def __str__(self):
         return str(self.adventurerskilleffectsid)

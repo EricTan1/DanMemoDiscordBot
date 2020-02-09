@@ -3,6 +3,7 @@ import inspect
 from collections import namedtuple
 import os
 import sys
+import json
 sys.path.append('../Entities/')
 
 from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
@@ -21,6 +22,10 @@ class DBcontroller:
         password=password, port=port, database=database)
     #print(self.connection)
     self._mycursor = self._connection.cursor()
+    with open('../Database/terms/human_readable.json', 'r') as f:
+      self.human_readable_dict = json.load(f)
+    with open('../Database/terms/human_input.json', 'r') as f:
+      self.human_input_dict = json.load(f)
 
   def closeconnection(self):
     ''' (DBcontroller) -> None
@@ -65,7 +70,15 @@ class DBcontroller:
     ''' (DBcontroller, Entity, str, ?) -> bool
     returns whether or not it is a successful update
     '''
-    pass  
+    pass
+  
+  def getAdventurerName(self, adventurerid):
+    sql="SELECT a.title, c.name FROM danmemo.character as c, danmemo.adventurer as a WHERE a.adventurerid={} and c.characterid = a.characterid".format(adventurerid)
+    self._mycursor.execute(sql)
+    for row in self._mycursor: 
+      ret = "{} {}".format(row[0],row[1])
+      print(row)
+    return ret
 
   def getDataColumn(self, entityname, column, value):
     ''' (DBcontroller, Entity, str, ?) -> List of Entity
@@ -109,24 +122,94 @@ class DBcontroller:
       elif(highest == ret_dict.get(keys)):
         ret_list.append(keys)
     return ret_list
-      
-        #ret_dict[]
-    # if we can find a title and exactly 1 result then return it
-    
-    
-    # if multiple results then have priority?
-    
-    # break down the search?
     
 
   def skillSearch(self,search, filter_dict):
     character_sql= "SELECT adventurerid, title from danmemo.adventurer as a, danmemo.character as c where c.name like'%ais%' and c.characterid = a.characterid"
     self._mycursor.execute(character_sql)
-    for row in self._mycursor:  
-      print(row)
 
+      
+  def assembleAdventurer(self, adventurerid):
+    ret=""
+    adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.adventurer as a, danmemo.character as c where c.characterid=a.characterid and a.adventurerid={}".format(adventurerid)
+    skill_id_sql = "SELECT adventurerskillid FROM danmemo.adventurerskill where adventurerid = {}".format(adventurerid)
+    dev_id_sql = "SELECT * FROM danmemo.adventurerdevelopment where adventurerid = {}".format(adventurerid)
+    # base adventurer assemble
+    self._mycursor.execute(adventurer_base_sql)
+    # free up the list cursor
+    for row in self._mycursor:
+      # TITLE CHARACTERNAME STARS
+      # CHECK IF TIME LIMITED
+      ret = ret + "{} {}".format(row[0],row[1])
+      if(bool(row[2])):
+        ret = ret + " [Limited-Time] "
+      for x in range(0,row[4]):
+        ret = ret + ":star:"
+      ret = ret + "\n"
+    # stats
+    
+    # adventurer skill assemble
+    skillid_list = []
+    self._mycursor.execute(skill_id_sql)
+    # free up the list cursor
+    for row in self._mycursor:  
+      skillid_list.append(row[0])
+    for skillid in skillid_list:
+      ret = ret + self.assembleAdventurerSkill(skillid)
+    # assemble adventure development
+    return ret
+
+  def assembleAssist(self, assistid):
+    # stats (based on LB? idk somehow dynamically change stats here maybe send?)
+    # adventurer skill assemble
+    # SA/Combat
+    # Skill Effects
+    # assemble adventure development
+    pass
+
+  def assembleAdventurerSkill(self, skillid):
+    ret =""
+    skill_sql="SELECT skilltype, skillname FROM danmemo.adventurerskill where adventurerskillid={}".format(skillid)
+    effects_sql="SELECT  t.name,m.value,a.name,e.duration,ty.name,ele.name FROM danmemo.adventurerskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a, danmemo.type as ty, danmemo.element as ele where adventurerskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid and e.eleid=ele.elementid and ty.typeid=e.typeid".format(skillid)
+    self._mycursor.execute(skill_sql)
+    for row in self._mycursor:
+      # skilltype : skillname
+      ret=ret + "{}: {} \n".format(row[0],row[1])
+    self._mycursor.execute(effects_sql)
+    for row in self._mycursor:
+      temp_target = row[0]
+      temp_modifier=row[1]
+      temp_attribute=row[2]
+      temp_duration = row[3]
+      temp_type = row[4]
+      temp_element = row[5]
+      if(temp_type == None):
+        temp_type = ""
+      if(temp_element == None):
+        temp_element = ""      
+      # [TARGET] Modifier Attribute /duration
+      if(self.human_readable_dict.get(temp_target)!= None):
+        temp_target=self.human_readable_dict.get(temp_target)
+      if(self.human_readable_dict.get(temp_modifier)!= None):
+        temp_modifier=self.human_readable_dict.get(temp_modifier)
+      if(self.human_readable_dict.get(temp_attribute)!= None):
+        temp_attribute=self.human_readable_dict.get(temp_attribute)
+      
+      if(self.human_readable_dict.get(temp_type)!= None):
+        temp_type=self.human_readable_dict.get(temp_type)
+      if(self.human_readable_dict.get(temp_element)!= None):
+        temp_element=self.human_readable_dict.get(temp_element)
+      print(temp_modifier)
+      if(temp_modifier[1:].isnumeric()):
+        temp_modifier= temp_modifier+"%"
+        
+      if(temp_duration != "None"):
+        ret=ret + "[{}] {} {} {} {} /{} turn(s) \n".format(temp_target,temp_modifier,temp_element,temp_type,temp_attribute,row[3])
+      else:
+        ret=ret + "[{}] {} {} {} {} \n".format(temp_target,temp_modifier,temp_element,temp_type,temp_attribute)        
+    return ret + "\n"
 
 if __name__ == "__main__":
   db = DBcontroller("localhost","root","danmemo","3306","danmemo")
-  print(db.characterSearch("devil ais wallenstein",{}))
+  print(db.assembleAdventurer(261))
   

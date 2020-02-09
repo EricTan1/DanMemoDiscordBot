@@ -168,26 +168,27 @@ for filename in os.listdir(path):
         for skillz in ad_dict.get("skills"):
             skills = ad_dict.get("skills").get(skillz)
             if (skillz =="special"):
-                #Type+Element
-                temp_value = effects.get("type")
-                if(temp_value != None):
-                    temp_index = temp_value.find("_")
-                    temp_element = temp_value[0:temp_index]
-                    temp_ad_ele = temp_element
-                    temp_type = temp_value[temp_index+1:]
-                    print(temp_element +"-" + temp_type)
-                else:
-                    temp_type = ""
-                    temp_element=""
-                # Element
-                temp_eleid=db.getDataColumn("element","name",temp_element)[0]
-                # Type for skills
-                temp_typeid=db.getDataColumn("type","name",temp_type)[0]
-                # Adventurer skill
-                db.insertData(AdventurerSkill(None, adventurerid[0], temp_typeid[0], temp_eleid[0],
+                # Adventurerskill
+                db.insertData(AdventurerSkill(None, adventurerid[0],
                          skills.get("name"),skillz))    
                 temp_adskill=db.getDataColumn("adventurerskill","skillname",skills.get("name"))[0]
                 for effects in skills.get("effects"):
+                    #Type+Element
+                    temp_value = effects.get("type")
+                    if(temp_value != None):
+                        temp_index = temp_value.find("_")
+                        temp_element = temp_value[0:temp_index]
+                        temp_ad_ele = temp_element
+                        temp_type = temp_value[temp_index+1:]
+                        print(temp_element +"-" + temp_type)
+                    else:
+                        temp_type = ""
+                        temp_element=""
+                    # Element
+                    temp_eleid=db.getDataColumn("element","name",temp_element)[0]
+                    # Type for skills
+                    temp_typeid=db.getDataColumn("type","name",temp_type)[0]
+                    
                     # AdventurerSkillEffects SET UP
                     temp_target = effects.get("target")
                     temp_attribute = effects.get("attribute")
@@ -202,30 +203,31 @@ for filename in os.listdir(path):
                     temp_modifier=db.getDataColumn("modifier","value",temp_modifier)[0]
                     #AdventurerSkillEffects
                     db.insertData(AdventurerSkillEffects(None, temp_adskill[0], temp_target[0],
-                         temp_attribute[0], temp_modifier[0], str(effects.get("duration"))))
+                         temp_attribute[0], temp_modifier[0], str(effects.get("duration")),temp_typeid[0], temp_eleid[0]))
             elif(skillz =="combat"):
                 for subskills in skills:
                     #Type+Element
-                    temp_value = effects.get("type")
-                    if(temp_value != None):
-                        temp_index = temp_value.find("_")
-                        temp_element = temp_value[0:temp_index]
-                        temp_ad_ele = temp_element
-                        temp_type = temp_value[temp_index+1:]
-                        print(temp_element +"-" + temp_type)
-                    else:
-                        temp_type = ""
-                        temp_element=""
-                        print("NULL TYPE???")
-                    # Element
-                    temp_eleid=db.getDataColumn("element","name",temp_element)[0]
-                    # Type for skills
-                    temp_typeid=db.getDataColumn("type","name",temp_type)[0]
+                    
                     # Adventurer skill
-                    db.insertData(AdventurerSkill(None, adventurerid[0], temp_typeid[0], temp_eleid[0],
+                    db.insertData(AdventurerSkill(None, adventurerid[0],
                              subskills.get("name"),skillz))    
                     temp_adskill=db.getDataColumn("adventurerskill","skillname",subskills.get("name"))[0]                             
                     for effects in subskills.get("effects"):
+                        temp_value = effects.get("type")
+                        if(temp_value != None):
+                            temp_index = temp_value.find("_")
+                            temp_element = temp_value[0:temp_index]
+                            temp_ad_ele = temp_element
+                            temp_type = temp_value[temp_index+1:]
+                            print(temp_element +"-" + temp_type)
+                        else:
+                            temp_type = ""
+                            temp_element=""
+                            print("NULL TYPE???")
+                        # Element
+                        temp_eleid=db.getDataColumn("element","name",temp_element)[0]
+                        # Type for skills
+                        temp_typeid=db.getDataColumn("type","name",temp_type)[0]                        
                         # AdventurerSkillEffects SET UP
                         temp_target = effects.get("target")
                         temp_attribute = effects.get("attribute")
@@ -237,9 +239,10 @@ for filename in os.listdir(path):
                         temp_target =db.getDataColumn("target","name",temp_target)[0]
                         temp_attribute=db.getDataColumn("attribute","name",temp_attribute)[0]
                         temp_modifier=db.getDataColumn("modifier","value",temp_modifier)[0]
+                        
                         #AdventurerSkillEffects
                         db.insertData(AdventurerSkillEffects(None, temp_adskill[0], temp_target[0],
-                             temp_attribute[0], temp_modifier[0], str(effects.get("duration"))))
+                             temp_attribute[0], temp_modifier[0], str(effects.get("duration")),temp_typeid[0], temp_eleid[0]))
             elif(skillz=="development"):
                 for subskills in skills:
                     for effects in subskills.get("effects"):

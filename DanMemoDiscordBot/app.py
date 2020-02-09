@@ -15,7 +15,7 @@ from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,Adventu
 from BaseConstants import Element, Target, Type, Attribute,Modifier
 
 TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
-_command_prefix = '$'
+_command_prefix = '!$'
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
 
 @client.event
@@ -47,10 +47,13 @@ async def characterSearch(ctx, *search):
     my_list = db.characterSearch(my_search,{})
     
     message = ""
-    for Adventurers in my_list:
-        message= message + str(Adventurers) + "\n"
-    
-    # get info to start game
+
+    # exactly 1 result then display
+    if(len(my_list) == 1):
+        message = db.assembleAdventurer(my_list[0])
+    else:
+        for Adventurersid in my_list:
+            message= message + db.getAdventurerName(Adventurersid) + "\n"
     await ctx.send(message)
     db.closeconnection()
 
