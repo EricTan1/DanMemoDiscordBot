@@ -36,7 +36,7 @@ async def close(ctx):
     # shut down the bot
     await client.close()
 
-@client.command()
+@client.command(aliases=['cs'])
 async def characterSearch(ctx, *search):
     print(search)
     my_search = ""

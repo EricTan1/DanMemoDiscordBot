@@ -84,7 +84,7 @@ class DBcontroller:
     ''' (DBcontroller, Entity, str, ?) -> List of Entity
     returns the entity list based on the columns
     '''
-    sql = 'SELECT * FROM {}.{} WHERE {}=%s'.format(self.database.lower(),
+    sql = 'SELECT adventurerskillid FROM {}.{} WHERE {}=%s'.format(self.database.lower(),
                                                    entityname.lower(),
                                                    column.lower())
     print(sql)
@@ -103,6 +103,7 @@ class DBcontroller:
     # Search by title first
     words_list = search.split(" ")
     for words in words_list:
+      # adventurerid
       characterTitleSql= "SELECT adventurerid from danmemo.adventurer as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".format(words,words)
       self._mycursor.execute(characterTitleSql)
       for row in self._mycursor:
@@ -125,8 +126,39 @@ class DBcontroller:
     
 
   def skillSearch(self,search, filter_dict):
-    character_sql= "SELECT adventurerid, title from danmemo.adventurer as a, danmemo.character as c where c.name like'%ais%' and c.characterid = a.characterid"
-    self._mycursor.execute(character_sql)
+    # separate by commas
+    searchwords_list = search.split(",")
+    ret_dict =dict()
+    # get rid of spaces
+    for index in range(0,len(searchwords_list)):
+      searchwords_list[index] = searchwords_list[index].strip()
+      # check if they are in the dict readable
+      temp = self.human_input_dict.get(searchwords_list[index])
+      if(temp != None):
+        searchwords_list[index] = temp
+      searchwords_list[index] = searchwords_list[index].replace(" ","_")
+    print(searchwords_list)
+    for words in searchwords_list:
+      # Target, Attribute(), Modifier(Super, 10%), Type (phys/mag), Element(Wind/Light)
+      skilleffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name LIKE '%{}%' or ty.name LIKE '%{}%' or a.name LIKE '%{}%'".format(words,words,words,words,words)
+      self._mycursor.execute(skilleffect_sql)
+      for row in self._mycursor:
+        skillid = row[0]
+        if(ret_dict.get(skillid) == None):
+            ret_dict[skillid] = 0
+        ret_dict[skillid] = ret_dict.get(skillid)+1
+    ret_list=[]
+    highest= None
+    for keys in ret_dict:
+      if(highest==None):
+        highest = ret_dict.get(keys)
+        ret_list.append(keys)
+      elif(highest < ret_dict.get(keys)):
+        highest = ret_dict.get(keys)
+        ret_list = [keys]
+      elif(highest == ret_dict.get(keys)):
+        ret_list.append(keys)
+    return ret_list
 
       
   def assembleAdventurer(self, adventurerid):
@@ -199,7 +231,6 @@ class DBcontroller:
         temp_type=self.human_readable_dict.get(temp_type)
       if(self.human_readable_dict.get(temp_element)!= None):
         temp_element=self.human_readable_dict.get(temp_element)
-      print(temp_modifier)
       if(temp_modifier[1:].isnumeric()):
         temp_modifier= temp_modifier+"%"
         
@@ -211,5 +242,17 @@ class DBcontroller:
 
 if __name__ == "__main__":
   db = DBcontroller("localhost","root","danmemo","3306","danmemo")
-  print(db.assembleAdventurer(261))
+  skilleffects_id_list = db.skillSearch("light, phyres, low",{})
+  for skilleffectsid in skilleffects_id_list:
+    
+    db._mycursor.execute("SELECT AdventurerSkillid FROM danmemo.adventurerskilleffects WHERE AdventurerSkillEffectsid={}".format(skilleffectsid))
+    # getting rid of duplicates for adventurerskill
+    my_set = set()
+    for row in db._mycursor:
+        my_set.add(row[0])
+    for adventurerskillid in my_set:
+      print(db.assembleAdventurerSkill(adventurerskillid))
+
+    
+
   
