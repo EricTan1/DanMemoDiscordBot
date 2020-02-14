@@ -2,6 +2,8 @@
 
 # Dependencies 
 
+Python 3.6+
+
 Discord Python API
 https://github.com/Rapptz/discord.py
 
