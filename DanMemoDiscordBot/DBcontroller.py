@@ -84,10 +84,9 @@ class DBcontroller:
     ''' (DBcontroller, Entity, str, ?) -> List of Entity
     returns the entity list based on the columns
     '''
-    sql = 'SELECT adventurerskillid FROM {}.{} WHERE {}=%s'.format(self.database.lower(),
+    sql = 'SELECT * FROM {}.{} WHERE {}=%s'.format(self.database.lower(),
                                                    entityname.lower(),
                                                    column.lower())
-    print(sql)
     
     self._mycursor.execute(sql,(value,))
     ret_list =[]
@@ -95,6 +94,7 @@ class DBcontroller:
       ret_list.append(row)
     print(ret_list)
     return ret_list
+  
   
   def characterSearch(self,search, filter_dict):
     print("searching")
@@ -239,20 +239,47 @@ class DBcontroller:
       else:
         ret=ret + "[{}] {} {} {} {} \n".format(temp_target,temp_modifier,temp_element,temp_type,temp_attribute)        
     return ret + "\n"
+  
+  def getSkillIdFromEffect(self, adventurerskilleffectsid):
+    self._mycursor.execute("SELECT AdventurerSkillid FROM danmemo.adventurerskilleffects WHERE AdventurerSkillEffectsid={}".format(adventurerskilleffectsid))
+    for row in self._mycursor:
+      return row[0]
 
+  def getAdventurerIdFromSkill(self, skillid):
+      adventurer_base_sql = "SELECT adventurerid from danmemo.adventurerskill where adventurerskillid={}".format(skillid)
+      self._mycursor.execute(adventurer_base_sql)
+      for row in self._mycursor:
+          return row[0]
+  
+  def assembleAdventurerCharacterData(self, adventurerid):
+    ret = ""
+    adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.adventurer as a, danmemo.character as c where c.characterid=a.characterid and a.adventurerid={}".format(adventurerid)
+    self._mycursor.execute(adventurer_base_sql)
+    for row in self._mycursor:
+      # TITLE CHARACTERNAME STARS
+      # CHECK IF TIME LIMITED
+      ret = ret + "{} {}".format(row[0],row[1])
+      if(bool(row[2])):
+        ret = ret + " [Limited-Time] "
+      for x in range(0,row[4]):
+        ret = ret + ":star:"
+      ret = ret + "\n"
+    return ret
+    
 if __name__ == "__main__":
   db = DBcontroller("localhost","root","danmemo","3306","danmemo")
   skilleffects_id_list = db.skillSearch("light, phyres, low",{})
+  # getting rid of duplicates for adventurerskill
+  my_set = set()
+  message =""
   for skilleffectsid in skilleffects_id_list:
-    
-    db._mycursor.execute("SELECT AdventurerSkillid FROM danmemo.adventurerskilleffects WHERE AdventurerSkillEffectsid={}".format(skilleffectsid))
-    # getting rid of duplicates for adventurerskill
-    my_set = set()
-    for row in db._mycursor:
-        my_set.add(row[0])
-    for adventurerskillid in my_set:
-      print(db.assembleAdventurerSkill(adventurerskillid))
+    skillid = db.getSkillIdFromEffect(skilleffectsid)
+    my_set.add(skillid)
+  for adventurerskillid in my_set:
+    adventurerid = db.getAdventurerIdFromSkill(adventurerskillid)
+    message =message +  db.assembleAdventurerCharacterData(adventurerid)    
+    message = message + db.assembleAdventurerSkill(adventurerskillid)
 
-    
+  print(message)
 
   

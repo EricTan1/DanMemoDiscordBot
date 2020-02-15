@@ -1,31 +1,31 @@
 class Assist:
-    def __init__(self, assistid, characterid, typeid, title,limited,
-                 stars, splashuri, iconuri):
+    def __init__(self, assistid:int, characterid:int, typeid:int, title:str,limited:bool,
+                 stars:int, splashuri:str, iconuri:str):
         ''' (Assist, int, int, int, bool, int, str or None, str or
              None) -> Assist
              stars : the base stars of a unit (1/2/3/4)
              limited : is the unit time-limited?
         '''
-        self.assistid = assistid
-        self.characterid = characterid
-        self.typeid = typeid
-        self.limited = limited
-        self.title = title
-        self.stars = stars
-        self.splashuri = splashuri
-        self.iconuri = iconuri
+        self.assistid = int(assistid)
+        self.characterid = int(characterid)
+        self.typeid = int(typeid)
+        self.limited = bool(limited)
+        self.title = str(title)
+        self.stars = int(stars)
+        self.splashuri = str(splashuri)
+        self.iconuri = str(iconuri)
 
     def __str__(self):
         return self.title
 
 class AssistSkill:
-    def __init__(self, assistskillid, assistid, skillname):
+    def __init__(self, assistskillid:int, assistid:int, skillname:str):
         ''' (AssistSkill, int, int, int, int, str) -> AssistSkill
         skillname: the name of the skill of the assist
         '''
-        self.assistskillid = assistskillid
-        self.assistid = assistid
-        self.skillname = skillname
+        self.assistskillid = int(assistskillid)
+        self.assistid = int(assistid)
+        self.skillname = str(skillname)
 
     def __str__(self):
         return self.skillname
@@ -33,17 +33,17 @@ class AssistSkill:
 
 class AssistSkillEffects:
 
-    def __init__(self, assistskilleffectsid, assistskillid, targetid,
-                 attributeid, modifierid):
+    def __init__(self, assistskilleffectsid:int, assistskillid:int, targetid:int,
+                 attributeid:int, modifierid:int):
         ''' (AssistSkillEffects, int, int, int, int, int,
              int) -> AssistSkillEffects
              duration : some buffs/debuffs have durations
         '''
-        self.assistskilleffectsid = assistskilleffectsid
-        self.assistskillid = assistskillid
-        self.targetid = targetid
-        self.attributeid = attributeid
-        self.modifierid = modifierid
+        self.assistskilleffectsid = int(assistskilleffectsid)
+        self.assistskillid = int(assistskillid)
+        self.targetid = int(targetid)
+        self.attributeid = int(attributeid)
+        self.modifierid = int(modifierid)
 
     def __str__(self):
         return str(self.assistskilleffectsid)
@@ -52,7 +52,7 @@ class AssistStats:
     ''' This class is an object that represents the
     stats table in the DB
     '''
-    def __init__(self, assiststatsid, assistid, attributeid, value):
+    def __init__(self, assiststatsid:int, assistid:int, attributeid:int, value):
         ''' (Stats, int, int, int, str) -> Stats
         value : python list but in str format of an attribute
         ex:
@@ -61,9 +61,9 @@ class AssistStats:
         [LB0,LB1,LB2,LB3,LB4,LB5]
         corresponds with limit break 0-5
         '''
-        self.assiststatsid = assiststatsid
-        self.assistid = assistid
-        self.attributeid = attributeid
+        self.assiststatsid = int(assiststatsid)
+        self.assistid = int(assistid)
+        self.attributeid = int(attributeid)
         self.value = value
 
     def __str__(self):

@@ -5,57 +5,57 @@ such as element, type etc.
 
 
 class Element:
-    def __init__(self, elementid, name):
+    def __init__(self, elementid:int, name:str):
         ''' (Element, int, str) -> Element
         element : represents the elemental types in danmemo (ex: light,fire)
         '''
-        self.elementid = elementid
-        self.name = name
+        self.elementid = int(elementid)
+        self.name = str(name)
         
     def __str__(self):
         return self.name
 
 class Type:
-    def __init__(self, typeid,name):
+    def __init__(self, typeid:int,name:str):
         ''' (Type, int, str) -> Type
         atktype : represents the type of attack (ex: physical, magical, mixed)
         '''
-        self.typeid = typeid
-        self.name = name
+        self.typeid = int(typeid)
+        self.name = str(name)
 
     def __str__(self):
         return self.name
 
 class Attribute:
-    def __init__(self, attributeid, name):
+    def __init__(self, attributeid:int, name:str):
         ''' (Attribute, int, str) -> Attribute
         name : attributes/stat time (ex: str/strength, agi/agility)
         '''
-        self.attributeid= attributeid
-        self.name = name
+        self.attributeid= int(attributeid)
+        self.name = str(name)
 
     def __str__(self):
         return self.name
 
 class Target:
-    def __init__(self, targetid, name):
+    def __init__(self, targetid:int, name:str):
         ''' (Target, int, str) -> Target
         name : what it targets (ex: self, enemy, allies)
         '''
-        self.name = name
-        self.targetid = targetid
+        self.name = str(name)
+        self.targetid = int(targetid)
         
     def __str__(self):
         return self.name
 
 class Modifier:
-    def __init__(self, modifierid,value):
+    def __init__(self, modifierid:int,value):
         ''' (Modifier, int, str) -> Modifier
         value : the strength of an effect/skill (ex: Hi, Lo, 10, 15)
         Note: numbers are in percentages for example: 5 = 5%
         '''
         self.value = value
-        self.modifierid = modifierid
+        self.modifierid = int(modifierid)
 
     def __str__(self):
         try:

@@ -54,7 +54,38 @@ async def characterSearch(ctx, *search):
     else:
         for Adventurersid in my_list:
             message= message + db.getAdventurerName(Adventurersid) + "\n"
-    await ctx.send(message)
+    try:
+        await ctx.send(message)
+    except:
+        await ctx.send("too many results please try to narrow it down further")
+    db.closeconnection()
+
+
+@client.command(aliases=['ss'])
+async def skillSearch(ctx, *search):
+    print(search)
+    my_search = ""
+    for words in search:
+        my_search= my_search + words + " "
+    db = DBcontroller("localhost","root","danmemo","3306","danmemo")
+    
+    skilleffects_id_list = db.skillSearch(my_search,{})
+    print(skilleffects_id_list)
+    my_set = set()
+    message =""
+    for skilleffectsid in skilleffects_id_list:
+        print(skilleffectsid)
+        skillid = db.getSkillIdFromEffect(skilleffectsid)
+        my_set.add(skillid)
+        
+    for adventurerskillid in my_set:
+        adventurerid = db.getAdventurerIdFromSkill(adventurerskillid)
+        message =message +  db.assembleAdventurerCharacterData(adventurerid)
+        message = message + db.assembleAdventurerSkill(adventurerskillid)
+    try:
+        await ctx.send(message)
+    except:
+        await ctx.send("too many results please try to narrow it down further")
     db.closeconnection()
 
 
