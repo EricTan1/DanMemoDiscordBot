@@ -4,6 +4,12 @@ such as element, type etc.
 '''
 from abc import ABC
 
+class Base(ABC):
+    @classmethod
+    def from_json(cls, data):
+        return cls(**data)
+
+
 class Element(Base):
     def __init__(self, elementid:int, name:str):
         ''' (Element, int, str) -> Element
@@ -66,12 +72,3 @@ class Modifier(Base):
             # its just a string b/c its uncastable
             return self.value
 
-
-class Base(ABC):
-    @classmethod
-    def from_json(cls, data):
-        return cls(**data)
-    
-    @abstractmethod
-    def __str__(self):
-        pass
