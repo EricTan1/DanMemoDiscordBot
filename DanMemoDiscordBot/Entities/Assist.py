@@ -1,4 +1,6 @@
-class Assist:
+from BaseConstants import Base
+
+class Assist(Base):
     def __init__(self, assistid:int, characterid:int, typeid:int, title:str,limited:bool,
                  stars:int, splashuri:str, iconuri:str):
         ''' (Assist, int, int, int, bool, int, str or None, str or
@@ -18,7 +20,7 @@ class Assist:
     def __str__(self):
         return self.title
 
-class AssistSkill:
+class AssistSkill(Base):
     def __init__(self, assistskillid:int, assistid:int, skillname:str):
         ''' (AssistSkill, int, int, int, int, str) -> AssistSkill
         skillname: the name of the skill of the assist
@@ -31,7 +33,7 @@ class AssistSkill:
         return self.skillname
 
 
-class AssistSkillEffects:
+class AssistSkillEffects(Base):
 
     def __init__(self, assistskilleffectsid:int, assistskillid:int, targetid:int,
                  attributeid:int, modifierid:int):
@@ -48,7 +50,7 @@ class AssistSkillEffects:
     def __str__(self):
         return str(self.assistskilleffectsid)
 
-class AssistStats:
+class AssistStats(Base):
     ''' This class is an object that represents the
     stats table in the DB
     '''

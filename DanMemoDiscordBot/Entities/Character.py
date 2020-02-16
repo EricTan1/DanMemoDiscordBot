@@ -1,6 +1,6 @@
-import inspect
+from BaseConstants import Base
 
-class Character:
+class Character(Base):
     ''' This class is an object that represents the
     Character table in the DB
     '''

@@ -1,4 +1,6 @@
-class Adventurer:
+from BaseConstants import Base
+
+class Adventurer(Base):
     def __init__(self, adventurerid:int, characterid:int, typeid:int, title:str,limited:bool, ascended:bool,
                  stars:int, splashuri:str, iconuri:str):
         ''' (Adventurer, int, int, int, bool, bool, int, str or None, str or
@@ -20,7 +22,7 @@ class Adventurer:
     def __str__(self):
         return self.title
     
-class AdventurerSkill:
+class AdventurerSkill(Base):
     def __init__(self, adventurerskillid:int, adventurerid:int,
                  skillname:str,skilltype:str):
         ''' (AdventurerSkill, int, int,str, str) -> AdventurerSkill
@@ -35,7 +37,7 @@ class AdventurerSkill:
         return self.skillname
 
 
-class AdventurerSkillEffects:
+class AdventurerSkillEffects(Base):
 
     def __init__(self, adventurerskilleffectsid:int, adventurerskillid:int, targetid:int,
                  attributeid:int, modifierid:int, duration, typeid:int,eleid:int):
@@ -56,7 +58,7 @@ class AdventurerSkillEffects:
         return str(self.adventurerskilleffectsid)
 
 
-class AdventurerDevelopment:
+class AdventurerDevelopment(Base):
     def __init__(self, adventurerdevelopmentid:int, adventurerid:int, name:str, attributeid:int,
                  modifierid:int):
         ''' (AdventurerDevelopment, int, int, str, int,
@@ -74,7 +76,7 @@ class AdventurerDevelopment:
         '''
         return self.name
 
-class AdventurerStats:
+class AdventurerStats(Base):
     ''' This class is an object that represents the
     stats table in the DB
     '''

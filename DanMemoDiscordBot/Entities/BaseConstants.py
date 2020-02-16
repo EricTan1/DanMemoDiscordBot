@@ -2,9 +2,9 @@
 This stores all of the sharable game data between all the adventurers/assists
 such as element, type etc.
 '''
+from abc import ABC
 
-
-class Element:
+class Element(Base):
     def __init__(self, elementid:int, name:str):
         ''' (Element, int, str) -> Element
         element : represents the elemental types in danmemo (ex: light,fire)
@@ -15,7 +15,7 @@ class Element:
     def __str__(self):
         return self.name
 
-class Type:
+class Type(Base):
     def __init__(self, typeid:int,name:str):
         ''' (Type, int, str) -> Type
         atktype : represents the type of attack (ex: physical, magical, mixed)
@@ -26,7 +26,7 @@ class Type:
     def __str__(self):
         return self.name
 
-class Attribute:
+class Attribute(Base):
     def __init__(self, attributeid:int, name:str):
         ''' (Attribute, int, str) -> Attribute
         name : attributes/stat time (ex: str/strength, agi/agility)
@@ -37,7 +37,7 @@ class Attribute:
     def __str__(self):
         return self.name
 
-class Target:
+class Target(Base):
     def __init__(self, targetid:int, name:str):
         ''' (Target, int, str) -> Target
         name : what it targets (ex: self, enemy, allies)
@@ -48,7 +48,7 @@ class Target:
     def __str__(self):
         return self.name
 
-class Modifier:
+class Modifier(Base):
     def __init__(self, modifierid:int,value):
         ''' (Modifier, int, str) -> Modifier
         value : the strength of an effect/skill (ex: Hi, Lo, 10, 15)
@@ -65,3 +65,13 @@ class Modifier:
         except:
             # its just a string b/c its uncastable
             return self.value
+
+
+class Base(ABC):
+    @classmethod
+    def from_json(cls, data):
+        return cls(**data)
+    
+    @abstractmethod
+    def __str__(self):
+        pass

@@ -4,7 +4,7 @@ from collections import namedtuple
 import os
 import sys
 import json
-sys.path.append('../Entities/')
+sys.path.append('Entities/')
 
 from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
 from BaseConstants import Element, Target, Type, Attribute,Modifier
@@ -22,9 +22,9 @@ class DBcontroller:
         password=password, port=port, database=database)
     #print(self.connection)
     self._mycursor = self._connection.cursor()
-    with open('../Database/terms/human_readable.json', 'r') as f:
+    with open('Database/terms/human_readable.json', 'r') as f:
       self.human_readable_dict = json.load(f)
-    with open('../Database/terms/human_input.json', 'r') as f:
+    with open('Database/terms/human_input.json', 'r') as f:
       self.human_input_dict = json.load(f)
 
   def closeconnection(self):

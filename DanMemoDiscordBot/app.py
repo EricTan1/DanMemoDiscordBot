@@ -9,7 +9,7 @@ from DBcontroller import DBcontroller
 
 import os
 import sys
-sys.path.append('../Entities/')
+sys.path.append('Entities/')
 
 from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
 from BaseConstants import Element, Target, Type, Attribute,Modifier
