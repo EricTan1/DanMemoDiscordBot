@@ -27,7 +27,7 @@ CREATE TABLE `character` (
   `name` varchar(200) NOT NULL,
   `iscollab` tinyint NOT NULL,
   PRIMARY KEY (`characterid`)
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=157 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,7 +36,7 @@ CREATE TABLE `character` (
 
 LOCK TABLES `character` WRITE;
 /*!40000 ALTER TABLE `character` DISABLE KEYS */;
-INSERT INTO `character` VALUES (18,'Ais Wallenstein',0),(19,'Amid Teasanara',0),(20,'Amid Teasanare',0),(21,'Anakitty Autumn',0),(22,'Anya Fromel',0),(23,'Artemis',0),(24,'Asfi Al Andromeda',0),(25,'Bell Cranel',0),(26,'Bete Loga',0),(27,'Chloe Lolo',0),(28,'Eren Yaeger',0),(29,'Fels',0),(30,'Filvis Challia',0),(31,'Finn Deimne',0),(32,'Gareth Landrock ',0),(33,'Hermes&Hermes',0),(34,'Hitachi Chigusa',0),(35,'Kashima Ouka',0),(36,'Kino&Hermes',0),(37,'Kino',0),(38,'Kurumi Tokisaki',0),(39,'Lefiya Virdis',0),(40,'Lefiya Viridis',0),(41,'Levi',0),(42,'Liliruca Arde',0),(43,'Line Arshe',0),(44,'Lunor Faust',0),(45,'Mikasa Ackermann',0),(46,'Mord Latro',0),(47,'Naza Ersuisu',0),(48,'Origami Tobiichi',0),(49,'Ottarl',0),(50,'Photo&Sou',0),(51,'Raul Nord',0),(52,'Riveria Ljos Alf',0),(53,'Ryu Lion',0),(54,'Ryu Lion (OG)',0),(55,'Shakti Varma',0),(56,'Shizu&Riku',0),(57,'Tiona Hiryute',0),(58,'Tione Hiryute',0),(59,'Touka Yatogami',0),(60,'Tsubaki Collbrande',0),(61,'Welf Crozzo',0),(62,'Yamato Mikoto',0),(63,'Name',0);
+INSERT INTO `character` VALUES (111,'Ais Wallenstein',0),(112,'Amid Teasanara',0),(113,'Amid Teasanare',0),(114,'Anakitty Autumn',0),(115,'Anya Fromel',0),(116,'Artemis',0),(117,'Asfi Al Andromeda',0),(118,'Bell Cranel',0),(119,'Bete Loga',0),(120,'Chloe Lolo',0),(121,'Eren Yaeger',0),(122,'Fels',0),(123,'Filvis Challia',0),(124,'Finn Deimne',0),(125,'Gareth Landrock ',0),(126,'Hermes&Hermes',0),(127,'Hitachi Chigusa',0),(128,'Kashima Ouka',0),(129,'Kino&Hermes',0),(130,'Kino',0),(131,'Kurumi Tokisaki',0),(132,'Lefiya Virdis',0),(133,'Lefiya Viridis',0),(134,'Levi',0),(135,'Liliruca Arde',0),(136,'Line Arshe',0),(137,'Lunor Faust',0),(138,'Mikasa Ackermann',0),(139,'Mord Latro',0),(140,'Naza Ersuisu',0),(141,'Origami Tobiichi',0),(142,'Ottarl',0),(143,'Photo&Sou',0),(144,'Raul Nord',0),(145,'Riveria Ljos Alf',0),(146,'Ryu Lion',0),(147,'Ryu Lion (OG)',0),(148,'Shakti Varma',0),(149,'Shizu&Riku',0),(150,'Tiona Hiryute',0),(151,'Tione Hiryute',0),(152,'Touka Yatogami',0),(153,'Tsubaki Collbrande',0),(154,'Welf Crozzo',0),(155,'Yamato Mikoto',0),(156,'Name',0);
 /*!40000 ALTER TABLE `character` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-05 23:45:32
+-- Dump completed on 2020-02-16 19:45:28

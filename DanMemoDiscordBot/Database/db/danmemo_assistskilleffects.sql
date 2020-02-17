@@ -28,6 +28,7 @@ CREATE TABLE `assistskilleffects` (
   `targetid` int NOT NULL,
   `attributeid` int NOT NULL,
   `modifierid` int NOT NULL,
+  `duration` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`assistskilleffectsid`),
   KEY `targetid5_idx` (`targetid`),
   KEY `attributeid5_idx` (`attributeid`),
@@ -58,4 +59,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-05 23:45:31
+-- Dump completed on 2020-02-16 19:45:29

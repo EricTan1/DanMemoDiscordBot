@@ -26,7 +26,7 @@ CREATE TABLE `element` (
   `elementid` int NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   PRIMARY KEY (`elementid`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +35,7 @@ CREATE TABLE `element` (
 
 LOCK TABLES `element` WRITE;
 /*!40000 ALTER TABLE `element` DISABLE KEYS */;
-INSERT INTO `element` VALUES (33,'light'),(34,''),(35,'wind'),(36,'physical'),(37,'fire'),(38,'dark'),(39,'ice'),(40,'water'),(41,'earth'),(42,'thunder');
+INSERT INTO `element` VALUES (53,'light'),(54,''),(55,'wind'),(56,'physical'),(57,'fire'),(58,'dark'),(59,'ice'),(60,'water'),(61,'earth'),(62,'thunder');
 /*!40000 ALTER TABLE `element` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-05 23:45:30
+-- Dump completed on 2020-02-16 19:45:29

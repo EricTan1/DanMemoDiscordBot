@@ -16,27 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `type`
+-- Table structure for table `target`
 --
 
-DROP TABLE IF EXISTS `type`;
+DROP TABLE IF EXISTS `target`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `type` (
-  `typeid` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `target` (
+  `targetid` int NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
-  PRIMARY KEY (`typeid`)
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`targetid`)
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `type`
+-- Dumping data for table `target`
 --
 
-LOCK TABLES `type` WRITE;
-/*!40000 ALTER TABLE `type` DISABLE KEYS */;
-INSERT INTO `type` VALUES (37,'physical_type'),(38,'physical_attack'),(39,''),(40,'balance_type'),(41,'magic_attack'),(42,'attack'),(43,'magic_type'),(44,'type'),(45,'healer_type'),(46,'defense_type'),(47,'magical_attack');
-/*!40000 ALTER TABLE `type` ENABLE KEYS */;
+LOCK TABLES `target` WRITE;
+/*!40000 ALTER TABLE `target` DISABLE KEYS */;
+INSERT INTO `target` VALUES (33,'self'),(34,'foe'),(35,'foes'),(36,'allies'),(37,'skill'),(38,'ally');
+/*!40000 ALTER TABLE `target` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-05 23:45:32
+-- Dump completed on 2020-02-16 19:45:29

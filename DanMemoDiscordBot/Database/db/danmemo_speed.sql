@@ -16,32 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `assist`
+-- Table structure for table `speed`
 --
 
-DROP TABLE IF EXISTS `assist`;
+DROP TABLE IF EXISTS `speed`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `assist` (
-  `assistid` int NOT NULL AUTO_INCREMENT,
-  `characterid` int NOT NULL,
-  `splashuri` varchar(2048) DEFAULT NULL,
-  `iconuri` varchar(2048) DEFAULT NULL,
-  `limited` tinyint NOT NULL,
-  `stars` int NOT NULL,
-  PRIMARY KEY (`assistid`),
-  KEY `charid_idx` (`characterid`),
-  CONSTRAINT `characterid4` FOREIGN KEY (`characterid`) REFERENCES `character` (`characterid`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `speed` (
+  `speedid` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`speedid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `assist`
+-- Dumping data for table `speed`
 --
 
-LOCK TABLES `assist` WRITE;
-/*!40000 ALTER TABLE `assist` DISABLE KEYS */;
-/*!40000 ALTER TABLE `assist` ENABLE KEYS */;
+LOCK TABLES `speed` WRITE;
+/*!40000 ALTER TABLE `speed` DISABLE KEYS */;
+INSERT INTO `speed` VALUES (1,'fast');
+/*!40000 ALTER TABLE `speed` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -53,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-05 23:45:29
+-- Dump completed on 2020-02-16 19:45:28

@@ -26,7 +26,7 @@ CREATE TABLE `modifier` (
   `modifierid` int NOT NULL AUTO_INCREMENT,
   `value` varchar(200) NOT NULL,
   PRIMARY KEY (`modifierid`)
-) ENGINE=InnoDB AUTO_INCREMENT=258 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=420 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +35,7 @@ CREATE TABLE `modifier` (
 
 LOCK TABLES `modifier` WRITE;
 /*!40000 ALTER TABLE `modifier` DISABLE KEYS */;
-INSERT INTO `modifier` VALUES (177,'ultra'),(178,'+70'),(179,'+10'),(180,'high'),(181,'medium'),(182,'+5'),(183,'+1'),(184,'-40'),(185,'-25'),(186,'40'),(187,'+40'),(188,'+20'),(189,'+15'),(190,'+0'),(191,'boost'),(192,'15'),(193,'+60'),(194,'+50'),(195,'low'),(196,'+4'),(197,'+3'),(198,'+2'),(199,'Dmg+30% per target\'s M.Resist Reduction Skill'),(200,'fast'),(201,'Dmg+50% per target\'s M.Resist Reduction Skill'),(202,'+35'),(203,'-2 turns'),(204,'+25'),(205,'25'),(206,'-30'),(207,'strength'),(208,'+75'),(209,'-20'),(210,'+100'),(211,'-50'),(212,'-15'),(213,'x2'),(214,'+11'),(215,'30'),(216,''),(217,'20'),(218,'+30'),(219,'+85'),(220,'75'),(221,'-1 turn'),(222,'+7.5'),(223,'50'),(224,'slight'),(225,'+8'),(226,'-35'),(227,'-10'),(228,'x1'),(229,'10'),(230,'x1 with 35% Chance'),(231,'+6'),(232,'+1 turn'),(233,'+65'),(234,'+45'),(235,'-75'),(236,'Hi to Ally w/ least HP'),(237,'-45'),(238,'hp'),(239,'1'),(240,'35'),(241,'+7'),(242,'+9'),(243,'magic'),(244,'-7.5'),(245,'(make targets)'),(246,'5'),(247,'-5'),(248,'+5.5'),(249,'+33'),(250,'7.5'),(251,'super'),(252,'+20%'),(253,'endurance'),(254,'(put targets to)'),(255,'slow'),(256,'Dmg+50% per each [Self] Str. Buff Skill'),(257,'+4.5');
+INSERT INTO `modifier` VALUES (339,'ultra'),(340,'+70'),(341,'+10'),(342,'high'),(343,'medium'),(344,'+5'),(345,'+1'),(346,'-40'),(347,'-25'),(348,'40'),(349,'+40'),(350,'+20'),(351,'+15'),(352,'+0'),(353,'boost'),(354,'15'),(355,'+60'),(356,'+50'),(357,'low'),(358,'+4'),(359,'+3'),(360,'+2'),(361,'Dmg+30% per target\'s M.Resist Reduction Skill'),(362,'fast'),(363,'Dmg+50% per target\'s M.Resist Reduction Skill'),(364,'+35'),(365,'-2 turns'),(366,'+25'),(367,'25'),(368,'-30'),(369,'strength'),(370,'+75'),(371,'-20'),(372,'+100'),(373,'-50'),(374,'-15'),(375,'x2'),(376,'+11'),(377,'30'),(378,''),(379,'20'),(380,'+30'),(381,'+85'),(382,'75'),(383,'-1 turn'),(384,'+7.5'),(385,'50'),(386,'slight'),(387,'+8'),(388,'-35'),(389,'-10'),(390,'x1'),(391,'10'),(392,'x1 with 35% Chance'),(393,'+6'),(394,'+1 turn'),(395,'+65'),(396,'+45'),(397,'-75'),(398,'Hi to Ally w/ least HP'),(399,'-45'),(400,'hp'),(401,'1'),(402,'35'),(403,'+7'),(404,'+9'),(405,'magic'),(406,'-7.5'),(407,'(make targets)'),(408,'5'),(409,'-5'),(410,'+5.5'),(411,'+33'),(412,'7.5'),(413,'super'),(414,'+20%'),(415,'endurance'),(416,'(put targets to)'),(417,'slow'),(418,'Dmg+50% per each [Self] Str. Buff Skill'),(419,'+4.5');
 /*!40000 ALTER TABLE `modifier` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-05 23:45:31
+-- Dump completed on 2020-02-16 19:45:29

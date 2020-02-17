@@ -36,7 +36,7 @@ class AssistSkill(Base):
 class AssistSkillEffects(Base):
 
     def __init__(self, assistskilleffectsid:int, assistskillid:int, targetid:int,
-                 attributeid:int, modifierid:int):
+                 attributeid:int, modifierid:int, duration):
         ''' (AssistSkillEffects, int, int, int, int, int,
              int) -> AssistSkillEffects
              duration : some buffs/debuffs have durations
@@ -46,6 +46,7 @@ class AssistSkillEffects(Base):
         self.targetid = int(targetid)
         self.attributeid = int(attributeid)
         self.modifierid = int(modifierid)
+        self.duration = duration
 
     def __str__(self):
         return str(self.assistskilleffectsid)
