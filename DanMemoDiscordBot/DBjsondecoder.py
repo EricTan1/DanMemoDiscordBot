@@ -2,11 +2,11 @@ import json
 import os
 path = '../../database/adventurers/'
 import sys
-sys.path.append('../Entities/')
+sys.path.append('Entities/')
 
 from DBcontroller import DBcontroller
 from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
-from BaseConstants import Element, Target, Type, Attribute,Modifier
+from BaseConstants import Element, Target, Type, Attribute,Modifier, Speed
 from Character import Character
 
 class Adventure:
@@ -192,18 +192,26 @@ for filename in os.listdir(path):
                     # AdventurerSkillEffects SET UP
                     temp_target = effects.get("target")
                     temp_attribute = effects.get("attribute")
-                    
+                    temp_speed = effects.get("speed")
                     temp_modifier = effects.get("modifier")
 
                     if(len(temp_modifier) > 0 and temp_modifier[len(temp_modifier)-1] == "%"):
-                        temp_modifier = temp_modifier[:len(temp_modifier)-1]                
-                    
+                        temp_modifier = temp_modifier[:len(temp_modifier)-1]
+
+                    if(temp_speed!=None):
+                        print(temp_speed)                        
+                        temp_speed_check =db.getDataColumn("speed","name",temp_speed)
+                        if(len(temp_speed_check) == 0):
+                            db.insertData(Speed(None,temp_speed))
+                        temp_speed = (db.getDataColumn("speed","name",temp_speed)[0])[0]
+
                     temp_target =db.getDataColumn("target","name",temp_target)[0]
                     temp_attribute=db.getDataColumn("attribute","name",temp_attribute)[0]
                     temp_modifier=db.getDataColumn("modifier","value",temp_modifier)[0]
+                    
                     #AdventurerSkillEffects
                     db.insertData(AdventurerSkillEffects(None, temp_adskill[0], temp_target[0],
-                         temp_attribute[0], temp_modifier[0], str(effects.get("duration")),temp_typeid[0], temp_eleid[0]))
+                         temp_attribute[0], temp_modifier[0], str(effects.get("duration")),temp_typeid[0], temp_eleid[0],temp_speed))
             elif(skillz =="combat"):
                 for subskills in skills:
                     #Type+Element
@@ -231,6 +239,7 @@ for filename in os.listdir(path):
                         # AdventurerSkillEffects SET UP
                         temp_target = effects.get("target")
                         temp_attribute = effects.get("attribute")
+                        temp_speed = effects.get("speed")          
                         
                         temp_modifier = effects.get("modifier")
                         if(len(temp_modifier) > 0 and temp_modifier[len(temp_modifier)-1] == "%"):
@@ -239,10 +248,15 @@ for filename in os.listdir(path):
                         temp_target =db.getDataColumn("target","name",temp_target)[0]
                         temp_attribute=db.getDataColumn("attribute","name",temp_attribute)[0]
                         temp_modifier=db.getDataColumn("modifier","value",temp_modifier)[0]
-                        
+                        if(temp_speed!=None):
+                            print(temp_speed)
+                            temp_speed_check =db.getDataColumn("speed","name",temp_speed)
+                            if(len(temp_speed_check) == 0):
+                                db.insertData(Speed(None,temp_speed))
+                            temp_speed = (db.getDataColumn("speed","name",temp_speed)[0])[0]                        
                         #AdventurerSkillEffects
                         db.insertData(AdventurerSkillEffects(None, temp_adskill[0], temp_target[0],
-                             temp_attribute[0], temp_modifier[0], str(effects.get("duration")),temp_typeid[0], temp_eleid[0]))
+                             temp_attribute[0], temp_modifier[0], str(effects.get("duration")),temp_typeid[0], temp_eleid[0],temp_speed))
             elif(skillz=="development"):
                 for subskills in skills:
                     for effects in subskills.get("effects"):

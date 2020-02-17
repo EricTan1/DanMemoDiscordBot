@@ -1,7 +1,7 @@
 from BaseConstants import Base
 
 class Adventurer(Base):
-    def __init__(self, adventurerid:int, characterid:int, typeid:int, title:str,limited:bool, ascended:bool,
+    def __init__(self, adventurerid, characterid:int, typeid:int, title:str,limited:bool, ascended:bool,
                  stars:int, splashuri:str, iconuri:str):
         ''' (Adventurer, int, int, int, bool, bool, int, str or None, str or
              None) -> Adventurer
@@ -9,7 +9,7 @@ class Adventurer(Base):
              limited : is the unit time-limited?
              ascended : does the unit have hero ascension?
         '''
-        self.adventurerid = int(adventurerid)
+        self.adventurerid = adventurerid
         self.characterid = int(characterid)
         self.title = str(title)
         self.typeid = int(typeid)
@@ -23,12 +23,12 @@ class Adventurer(Base):
         return self.title
     
 class AdventurerSkill(Base):
-    def __init__(self, adventurerskillid:int, adventurerid:int,
+    def __init__(self, adventurerskillid, adventurerid:int,
                  skillname:str,skilltype:str):
         ''' (AdventurerSkill, int, int,str, str) -> AdventurerSkill
         skillname: the name of the skill of the adventurer
         '''
-        self.adventurerskillid = int(adventurerskillid)
+        self.adventurerskillid = adventurerskillid
         self.adventurerid = int(adventurerid)
         self.skillname = str(skillname)
         self.skilltype = str(skilltype)
@@ -39,13 +39,13 @@ class AdventurerSkill(Base):
 
 class AdventurerSkillEffects(Base):
 
-    def __init__(self, adventurerskilleffectsid:int, adventurerskillid:int, targetid:int,
-                 attributeid:int, modifierid:int, duration, typeid:int,eleid:int):
+    def __init__(self, adventurerskilleffectsid, adventurerskillid:int, targetid:int,
+                 attributeid:int, modifierid:int, duration, typeid:int,eleid:int, speedid):
         ''' (AdventurerSkillEffects, int, int, int, int, int,
              int) -> AdventurerSkillEffects
              duration : some buffs/debuffs have durations
         '''
-        self.adventurerskilleffectsid = int(adventurerskilleffectsid)
+        self.adventurerskilleffectsid = adventurerskilleffectsid
         self.adventurerskillid = int(adventurerskillid)
         self.targetid = int(targetid)
         self.attributeid = int(attributeid)
@@ -53,19 +53,20 @@ class AdventurerSkillEffects(Base):
         self.duration = duration
         self.typeid=int(typeid)
         self.eleid=int(eleid)
+        self.speedid=speedid
 
     def __str__(self):
         return str(self.adventurerskilleffectsid)
 
 
 class AdventurerDevelopment(Base):
-    def __init__(self, adventurerdevelopmentid:int, adventurerid:int, name:str, attributeid:int,
+    def __init__(self, adventurerdevelopmentid, adventurerid:int, name:str, attributeid:int,
                  modifierid:int):
         ''' (AdventurerDevelopment, int, int, str, int,
              int) -> AdventurerDevelopment
              name : name of the development skill
         '''
-        self.adventurerdevelopmentid = int(adventurerdevelopmentid)
+        self.adventurerdevelopmentid = adventurerdevelopmentid
         self.adventurerid = int(adventurerid)
         self.name = str(name)
         self.attributeid = int(attributeid)
@@ -80,7 +81,7 @@ class AdventurerStats(Base):
     ''' This class is an object that represents the
     stats table in the DB
     '''
-    def __init__(self, adventurerstatsid:int, adventurerid:int, attributeid:int, value:str):
+    def __init__(self, adventurerstatsid, adventurerid:int, attributeid:int, value:str):
         ''' (Stats, int, int, int, str) -> Stats
         value : python list but in str format of an attribute
         ex:
@@ -89,7 +90,7 @@ class AdventurerStats(Base):
         [LB0,LB1,LB2,LB3,LB4,LB5]
         corresponds with limit break 0-5
         '''
-        self.adventurerstatsid = int(adventurerstatsid)
+        self.adventurerstatsid = adventurerstatsid
         self.adventurerid = int(adventurerid)
         self.attributeid = int(attributeid)
         self.value = str(value)

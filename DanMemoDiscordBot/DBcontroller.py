@@ -140,7 +140,7 @@ class DBcontroller:
     print(searchwords_list)
     for words in searchwords_list:
       # Target, Attribute(), Modifier(Super, 10%), Type (phys/mag), Element(Wind/Light)
-      skilleffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name LIKE '%{}%' or ty.name LIKE '%{}%' or a.name LIKE '%{}%'".format(words,words,words,words,words)
+      skilleffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name LIKE '%{}%' or ty.name LIKE '%{}%' or a.name LIKE '%{}%' or s.name LIKE '%{}%'".format(words,words,words,words,words,words)
       self._mycursor.execute(skilleffect_sql)
       for row in self._mycursor:
         skillid = row[0]
@@ -202,7 +202,7 @@ class DBcontroller:
   def assembleAdventurerSkill(self, skillid):
     ret =""
     skill_sql="SELECT skilltype, skillname FROM danmemo.adventurerskill where adventurerskillid={}".format(skillid)
-    effects_sql="SELECT  t.name,m.value,a.name,e.duration,ty.name,ele.name FROM danmemo.adventurerskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a, danmemo.type as ty, danmemo.element as ele where adventurerskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid and e.eleid=ele.elementid and ty.typeid=e.typeid".format(skillid)
+    effects_sql="SELECT  t.name,m.value,a.name,e.duration,ty.name,ele.name,s.name FROM danmemo.adventurerskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a, danmemo.type as ty, danmemo.element as ele, danmemo.speed as s where adventurerskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid and e.eleid=ele.elementid and ty.typeid=e.typeid and s.speedid = e.speedid".format(skillid)
     self._mycursor.execute(skill_sql)
     for row in self._mycursor:
       # skilltype : skillname
@@ -215,10 +215,13 @@ class DBcontroller:
       temp_duration = row[3]
       temp_type = row[4]
       temp_element = row[5]
+      temp_speed = row[6]
       if(temp_type == None):
         temp_type = ""
       if(temp_element == None):
         temp_element = ""      
+      if(temp_speed== None):
+        temp_speed = ""
       # [TARGET] Modifier Attribute /duration
       if(self.human_readable_dict.get(temp_target)!= None):
         temp_target=self.human_readable_dict.get(temp_target)
@@ -231,13 +234,15 @@ class DBcontroller:
         temp_type=self.human_readable_dict.get(temp_type)
       if(self.human_readable_dict.get(temp_element)!= None):
         temp_element=self.human_readable_dict.get(temp_element)
+      if(self.human_readable_dict.get(temp_speed)!= None):
+        temp_speed=self.human_readable_dict.get(temp_speed)      
       if(temp_modifier[1:].isnumeric()):
         temp_modifier= temp_modifier+"%"
-        
+
       if(temp_duration != "None"):
-        ret=ret + "[{}] {} {} {} {} /{} turn(s) \n".format(temp_target,temp_modifier,temp_element,temp_type,temp_attribute,row[3])
+        ret=ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute,row[3])
       else:
-        ret=ret + "[{}] {} {} {} {} \n".format(temp_target,temp_modifier,temp_element,temp_type,temp_attribute)        
+        ret=ret + "[{}] {} {} {} {} {} \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute)        
     return ret + "\n"
   
   def getSkillIdFromEffect(self, adventurerskilleffectsid):
