@@ -22,6 +22,10 @@ class Adventure:
         self.skills = c_skills
         self.development = development
 
+class Assist:
+    def __init__(self, title, name, types, stars, limited, ascended, stats, sa, c_skills, development):
+        pass
+
 
 db = DBcontroller("localhost","root","danmemo","3306","danmemo")
 #ad_list = []

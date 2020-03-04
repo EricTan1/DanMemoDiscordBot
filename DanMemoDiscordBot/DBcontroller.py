@@ -63,6 +63,7 @@ class DBcontroller:
     self._mycursor.execute(sql,values)
     self._connection.commit()
     print(self._mycursor.rowcount, "record inserted.")
+    return self._mycursor.lastrowid
     
     
   
