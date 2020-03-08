@@ -1,7 +1,7 @@
 from BaseConstants import Base
 
 class Assist(Base):
-    def __init__(self, assistid:int, characterid:int, typeid:int, title:str,limited:bool,
+    def __init__(self, assistid:int, characterid:int, title:str,limited:bool,
                  stars:int, splashuri:str, iconuri:str):
         ''' (Assist, int, int, int, bool, int, str or None, str or
              None) -> Assist
@@ -10,7 +10,6 @@ class Assist(Base):
         '''
         self.assistid = int(assistid)
         self.characterid = int(characterid)
-        self.typeid = int(typeid)
         self.limited = bool(limited)
         self.title = str(title)
         self.stars = int(stars)
