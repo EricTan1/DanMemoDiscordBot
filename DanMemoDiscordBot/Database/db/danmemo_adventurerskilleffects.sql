@@ -47,7 +47,7 @@ CREATE TABLE `adventurerskilleffects` (
   CONSTRAINT `sppedads` FOREIGN KEY (`speedid`) REFERENCES `speed` (`speedid`),
   CONSTRAINT `targetid2` FOREIGN KEY (`Targetid`) REFERENCES `target` (`targetid`),
   CONSTRAINT `typeid111` FOREIGN KEY (`typeid`) REFERENCES `type` (`typeid`)
-) ENGINE=InnoDB AUTO_INCREMENT=4406 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

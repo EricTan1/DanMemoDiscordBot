@@ -1,9 +1,9 @@
-import psycopg2
+import mysql.connector
 
 from urllib.parse import urlparse
 
 
-result = urlparse("postgres://kbkuvsqpfvseag:7518c50d4ccd8f087674ccc1f62be0b43118950f54f5cdbe5af1ebc31cf364b0@ec2-54-75-235-28.eu-west-1.compute.amazonaws.com:5432/d16efjkhav7kre")
+result = urlparse("mysql://bdcaa58f136231:c268bc42@us-cdbr-iron-east-04.cleardb.net/heroku_0fe8a18d3b21642?reconnect=true")
 username = result.username
 password = result.password
 database = result.path[1:]
@@ -14,21 +14,24 @@ print(password)
 print(database)
 print(hostname)
 
-connection = psycopg2.connect(
+connection = mysql.connector.connect(
     database = database,
     user = username,
     password = password,
     host = hostname
 )
 cursor = connection.cursor()
+
+
+
 f = open("./danmemo_type.sql", "r")
-print(my_sql)
+mysql = f.read()
+#cursor.execute("show tables;")
+cursor.execute(mysql)
+#connection.commit()
+for row in cursor: 
+    print(row)
 
-cursor.execute(my_sql)
-#cursor.commit()
-rows = cursor.fetchall()
-for row in rows:
-    print("   ", row)
-
+f.close()
 cursor.close()
 connection.close()

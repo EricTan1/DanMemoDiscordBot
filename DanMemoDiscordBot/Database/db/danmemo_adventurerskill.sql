@@ -30,7 +30,7 @@ CREATE TABLE `adventurerskill` (
   PRIMARY KEY (`adventurerskillid`),
   KEY `adventurerid_idx` (`adventurerid`),
   CONSTRAINT `adventurerid1` FOREIGN KEY (`adventurerid`) REFERENCES `adventurer` (`adventurerid`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2523 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

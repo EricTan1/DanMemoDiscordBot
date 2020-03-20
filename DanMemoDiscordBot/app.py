@@ -15,6 +15,13 @@ from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,Adventu
 from BaseConstants import Element, Target, Type, Attribute,Modifier
 
 TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
+
+result = urlparse(os.environ.get("CLEARDB_DATABASE_URL"))
+USERNAME = result.username
+PASSWORD = result.password
+DATABASE = result.path[1:]
+HOSTNAME = result.hostname
+
 _command_prefix = '!$'
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
 
@@ -43,7 +50,7 @@ async def characterSearch(ctx, *search):
     for words in search:
         my_search= my_search + words + " "
     print(my_search)
-    db = DBcontroller("localhost","root","danmemo","3306","danmemo")
+    db = DBcontroller(HOSTNAME,USERNAME,PASSWORD,"3306",DATABASE)
     my_list = db.characterSearch(my_search,{})
     
     message = ""
@@ -67,7 +74,7 @@ async def skillSearch(ctx, *search):
     my_search = ""
     for words in search:
         my_search= my_search + words + " "
-    db = DBcontroller("localhost","root","danmemo","3306","danmemo")
+    db = DBcontroller(HOSTNAME,USERNAME,PASSWORD,"3306",DATABASE)
     
     skilleffects_id_list = db.skillSearch(my_search,{})
     print(skilleffects_id_list)

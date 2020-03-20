@@ -74,7 +74,7 @@ class DBcontroller:
     pass
   
   def getAdventurerName(self, adventurerid):
-    sql="SELECT a.title, c.name FROM danmemo.character as c, danmemo.adventurer as a WHERE a.adventurerid={} and c.characterid = a.characterid".format(adventurerid)
+    sql="SELECT a.title, c.name FROM danmemo.character as c, danmemo.adventurer as a WHERE a.adventurerid={} and c.characterid = a.characterid".format(adventurerid).replace("danmemo",self.database)
     self._mycursor.execute(sql)
     for row in self._mycursor: 
       ret = "{} {}".format(row[0],row[1])
@@ -105,7 +105,7 @@ class DBcontroller:
     words_list = search.split(" ")
     for words in words_list:
       # adventurerid
-      characterTitleSql= "SELECT adventurerid from danmemo.adventurer as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".format(words,words)
+      characterTitleSql= "SELECT adventurerid from danmemo.adventurer as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".format(words,words).replace("danmemo",self.database)
       self._mycursor.execute(characterTitleSql)
       for row in self._mycursor:
         ad_id = row[0]
@@ -141,7 +141,7 @@ class DBcontroller:
     print(searchwords_list)
     for words in searchwords_list:
       # Target, Attribute(), Modifier(Super, 10%), Type (phys/mag), Element(Wind/Light)
-      skilleffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name LIKE '%{}%' or ty.name LIKE '%{}%' or a.name LIKE '%{}%' or s.name LIKE '%{}%'".format(words,words,words,words,words,words)
+      skilleffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name LIKE '%{}%' or ty.name LIKE '%{}%' or a.name LIKE '%{}%' or s.name LIKE '%{}%'".format(words,words,words,words,words,words).replace('danmemo',self.database)
       self._mycursor.execute(skilleffect_sql)
       for row in self._mycursor:
         skillid = row[0]
@@ -164,9 +164,9 @@ class DBcontroller:
       
   def assembleAdventurer(self, adventurerid):
     ret=""
-    adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.adventurer as a, danmemo.character as c where c.characterid=a.characterid and a.adventurerid={}".format(adventurerid)
-    skill_id_sql = "SELECT adventurerskillid FROM danmemo.adventurerskill where adventurerid = {}".format(adventurerid)
-    dev_id_sql = "SELECT * FROM danmemo.adventurerdevelopment where adventurerid = {}".format(adventurerid)
+    adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.adventurer as a, danmemo.character as c where c.characterid=a.characterid and a.adventurerid={}".format(adventurerid).replace("danmemo",self.database)
+    skill_id_sql = "SELECT adventurerskillid FROM danmemo.adventurerskill where adventurerid = {}".format(adventurerid).replace("danmemo",self.database)
+    dev_id_sql = "SELECT * FROM danmemo.adventurerdevelopment where adventurerid = {}".format(adventurerid).replace("danmemo",self.database)
     # base adventurer assemble
     self._mycursor.execute(adventurer_base_sql)
     # free up the list cursor
@@ -202,8 +202,8 @@ class DBcontroller:
 
   def assembleAdventurerSkill(self, skillid):
     ret =""
-    skill_sql="SELECT skilltype, skillname FROM danmemo.adventurerskill where adventurerskillid={}".format(skillid)
-    effects_sql="SELECT  t.name,m.value,a.name,e.duration,ty.name,ele.name,s.name FROM danmemo.adventurerskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a, danmemo.type as ty, danmemo.element as ele, danmemo.speed as s where adventurerskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid and e.eleid=ele.elementid and ty.typeid=e.typeid and s.speedid = e.speedid".format(skillid)
+    skill_sql="SELECT skilltype, skillname FROM danmemo.adventurerskill where adventurerskillid={}".format(skillid).replace("danmemo",self.database)
+    effects_sql="SELECT  t.name,m.value,a.name,e.duration,ty.name,ele.name,s.name FROM danmemo.adventurerskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a, danmemo.type as ty, danmemo.element as ele, danmemo.speed as s where adventurerskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid and e.eleid=ele.elementid and ty.typeid=e.typeid and s.speedid = e.speedid".format(skillid).replace("danmemo",self.database)
     self._mycursor.execute(skill_sql)
     for row in self._mycursor:
       # skilltype : skillname
@@ -252,14 +252,14 @@ class DBcontroller:
       return row[0]
 
   def getAdventurerIdFromSkill(self, skillid):
-      adventurer_base_sql = "SELECT adventurerid from danmemo.adventurerskill where adventurerskillid={}".format(skillid)
+      adventurer_base_sql = "SELECT adventurerid from danmemo.adventurerskill where adventurerskillid={}".format(skillid).replace("danmemo",self.database)
       self._mycursor.execute(adventurer_base_sql)
       for row in self._mycursor:
           return row[0]
   
   def assembleAdventurerCharacterData(self, adventurerid):
     ret = ""
-    adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.adventurer as a, danmemo.character as c where c.characterid=a.characterid and a.adventurerid={}".format(adventurerid)
+    adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.adventurer as a, danmemo.character as c where c.characterid=a.characterid and a.adventurerid={}".format(adventurerid).replace("danmemo",self.database)
     self._mycursor.execute(adventurer_base_sql)
     for row in self._mycursor:
       # TITLE CHARACTERNAME STARS
