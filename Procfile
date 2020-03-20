@@ -1,1 +1,1 @@
-web: python ./DanMemoDiscordBot/app.py
+web: sh run.sh
