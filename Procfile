@@ -1,1 +1,1 @@
-worker: python ./DanMemoDiscordBot/app.py
+web: python ./DanMemoDiscordBot/app.py
