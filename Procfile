@@ -1,1 +1,1 @@
-web: sh run.sh
+worker: sh run.sh
