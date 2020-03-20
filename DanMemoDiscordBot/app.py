@@ -9,12 +9,14 @@ from DBcontroller import DBcontroller
 
 import os
 import sys
+from urllib.parse import urlparse
 sys.path.append('Entities/')
 
 from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
 from BaseConstants import Element, Target, Type, Attribute,Modifier
 
 TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
+
 
 result = urlparse(os.environ.get("CLEARDB_DATABASE_URL"))
 USERNAME = result.username
