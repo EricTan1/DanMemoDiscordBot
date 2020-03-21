@@ -174,7 +174,7 @@ class DBcontroller:
     for row in self._mycursor:
       # TITLE CHARACTERNAME STARS
       # CHECK IF TIME LIMITED
-      ret = ret + "{} {}".format(row[0],row[1])
+      ret = ret + "[{}] {}\n".format(row[0],row[1])
       if(bool(row[2])):
         ret = ret + " [Limited-Time] "
       for x in range(0,row[4]):
@@ -194,9 +194,34 @@ class DBcontroller:
     return ret
 
   def assembleAssist(self, assistid):
+    ret = ""
+    assist_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.assist as a, danmemo.character as c where c.characterid=a.characterid and a.assistid={}".replace("danmemo",self.database).format(assistid)
+    skill_id_sql = "SELECT assistskillid FROM danmemo.assistskill where assistid = {}".replace("danmemo",self.database).format(assistid)
+    # base assist assemble
+    self._mycursor.execute(assist_base_sql)
+    # free up the list cursor
+    for row in self._mycursor:
+      # TITLE CHARACTERNAME STARS
+      # CHECK IF TIME LIMITED
+      ret = ret + "[{}] {}\n".format(row[0],row[1])
+      if(bool(row[2])):
+        ret = ret + " [Limited-Time] "
+      for x in range(0,row[4]):
+        ret = ret + ":star:"
+      ret = ret + "\n"
     # stats (based on LB? idk somehow dynamically change stats here maybe send?)
-    # assist skill assemble
+    # assist skill assemble (MLB skill VS non MLB (dyamically later?))
     # Skill Effects
+    skillid_list = []
+    self._mycursor.execute(skill_id_sql)
+    # free up the list cursor
+    for row in self._mycursor:  
+      skillid_list.append(row[0])
+    for skillid in skillid_list:
+      ret = ret + self.assembleAssistSkill(skillid)
+    return ret
+
+  def assembleAssistSkill(self, skillid):
     pass
 
   def assembleAdventurerSkill(self, skillid):
