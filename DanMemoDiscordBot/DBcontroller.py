@@ -195,10 +195,8 @@ class DBcontroller:
 
   def assembleAssist(self, assistid):
     # stats (based on LB? idk somehow dynamically change stats here maybe send?)
-    # adventurer skill assemble
-    # SA/Combat
+    # assist skill assemble
     # Skill Effects
-    # assemble adventure development
     pass
 
   def assembleAdventurerSkill(self, skillid):

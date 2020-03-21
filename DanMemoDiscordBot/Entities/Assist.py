@@ -1,14 +1,14 @@
 from BaseConstants import Base
 
 class Assist(Base):
-    def __init__(self, assistid:int, characterid:int, title:str,limited:bool,
+    def __init__(self, assistid, characterid:int, title:str,limited:bool,
                  stars:int, splashuri:str, iconuri:str):
         ''' (Assist, int, int, int, bool, int, str or None, str or
              None) -> Assist
              stars : the base stars of a unit (1/2/3/4)
              limited : is the unit time-limited?
         '''
-        self.assistid = int(assistid)
+        self.assistid = assistid
         self.characterid = int(characterid)
         self.limited = bool(limited)
         self.title = str(title)
@@ -20,11 +20,11 @@ class Assist(Base):
         return self.title
 
 class AssistSkill(Base):
-    def __init__(self, assistskillid:int, assistid:int, skillname:str):
+    def __init__(self, assistskillid, assistid:int, skillname:str):
         ''' (AssistSkill, int, int, int, int, str) -> AssistSkill
         skillname: the name of the skill of the assist
         '''
-        self.assistskillid = int(assistskillid)
+        self.assistskillid = assistskillid
         self.assistid = int(assistid)
         self.skillname = str(skillname)
 
@@ -34,13 +34,13 @@ class AssistSkill(Base):
 
 class AssistSkillEffects(Base):
 
-    def __init__(self, assistskilleffectsid:int, assistskillid:int, targetid:int,
+    def __init__(self, assistskilleffectsid, assistskillid:int, targetid:int,
                  attributeid:int, modifierid:int, duration):
         ''' (AssistSkillEffects, int, int, int, int, int,
              int) -> AssistSkillEffects
              duration : some buffs/debuffs have durations
         '''
-        self.assistskilleffectsid = int(assistskilleffectsid)
+        self.assistskilleffectsid = assistskilleffectsid
         self.assistskillid = int(assistskillid)
         self.targetid = int(targetid)
         self.attributeid = int(attributeid)
@@ -54,7 +54,7 @@ class AssistStats(Base):
     ''' This class is an object that represents the
     stats table in the DB
     '''
-    def __init__(self, assiststatsid:int, assistid:int, attributeid:int, value):
+    def __init__(self, assiststatsid, assistid:int, attributeid:int, value):
         ''' (Stats, int, int, int, str) -> Stats
         value : python list but in str format of an attribute
         ex:
@@ -63,7 +63,7 @@ class AssistStats(Base):
         [LB0,LB1,LB2,LB3,LB4,LB5]
         corresponds with limit break 0-5
         '''
-        self.assiststatsid = int(assiststatsid)
+        self.assiststatsid = assiststatsid
         self.assistid = int(assistid)
         self.attributeid = int(attributeid)
         self.value = value

@@ -144,7 +144,7 @@ class InsertCharacter:
         
     
     def insertAssist(self, assistComplete:AssistC):
-        characterid = self.getInsertCharacterID(adventureComplete._name,
+        characterid = self.getInsertCharacterID(assistComplete._name,
                                            False)
         assistid = self.getInsertAssistID(characterid,
                                      int(assistComplete._limited),
@@ -154,7 +154,7 @@ class InsertCharacter:
                                      assistComplete._title)
         # stats
         for attributeKeys in assistComplete.stats:
-            attributeid = self.getBaseConstants(Attribute(None, attributeKeys))
+            attributeid = self.getBaseConstants(Attribute(None, attributeKeys),False)
             db.insertData(AssistStats(None, assistid, attributeid, str(assistComplete.stats.get(attributeKeys))))
         # skills
         for skills in assistComplete.skills:
@@ -176,8 +176,8 @@ class InsertCharacter:
             attributeid = self.getBaseConstants(Attribute(None, temp_attribute), False)
             modifierid = self.getBaseConstants(Modifier(None, temp_modifier), True)
             # inserting effects
-            db.insertData(None, assistskillid, targetid,
-                 attributeid, modifierid, effects.get("duration"))    
+            db.insertData(AssistSkillEffects(None, assistskillid, targetid,
+                 attributeid, modifierid, effects.get("duration")))    
     
     
     def getBaseConstants(self, baseConstant, isMod):
@@ -239,3 +239,11 @@ class InsertCharacter:
 if __name__ =="__main__":
     db = DBcontroller("localhost","root","danmemo","3306","danmemo")
     ic = InsertCharacter(db)
+    path = '../../database/assist/'    
+    for filename in os.listdir(path):
+        with open(path + '/' + filename, 'r') as f:
+            as_dict = json.load(f)
+            if(as_dict.get("limited")== None):
+                as_dict["limited"]=False
+            temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
+            ic.insertAssist(temp_as)
