@@ -75,6 +75,7 @@ class DBcontroller:
     pass
   
   def getAdventurerName(self, adventurerid):
+    print(adventurerid)    
     sql="SELECT a.title, c.name FROM danmemo.character as c, danmemo.adventurer as a WHERE a.adventurerid={} and c.characterid = a.characterid".replace("danmemo",self.database).format(adventurerid)
     self._mycursor.execute(sql)
     for row in self._mycursor: 
@@ -82,7 +83,7 @@ class DBcontroller:
       print(row)
     return ret
   def getAssistName(self, assistid):
-    sql="SELECT a.title, c.name FROM danmemo.character as c, danmemo.assist as a WHERE a.adventurerid={} and c.characterid = a.characterid".replace("danmemo",self.database).format(assistid)
+    sql="SELECT a.title, c.name FROM danmemo.character as c, danmemo.assist as a WHERE a.assistid={} and c.characterid = a.characterid".replace("danmemo",self.database).format(assistid)
     self._mycursor.execute(sql)
     for row in self._mycursor: 
       ret = "{} {}".format(row[0],row[1])
@@ -116,7 +117,7 @@ class DBcontroller:
       characterAdTitleSql= "SELECT adventurerid from danmemo.adventurer as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".replace("danmemo",self.database).format(words,words)
       self._mycursor.execute(characterAdTitleSql)
       for row in self._mycursor:
-        ad_id = "Ad"+row[0]
+        ad_id = "Ad"+str(row[0])
         if(ret_dict.get(ad_id) == None):
           ret_dict[ad_id] = 0
         ret_dict[ad_id] = ret_dict.get(ad_id)+1
@@ -124,7 +125,7 @@ class DBcontroller:
       characterAsTitleSql= "SELECT assistid from danmemo.assist as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".replace("danmemo",self.database).format(words,words)
       self._mycursor.execute(characterAsTitleSql)
       for row in self._mycursor:
-        as_id = "As"+row[0]
+        as_id = "As"+str(row[0])
         if(ret_dict.get(as_id) == None):
           ret_dict[as_id] = 0
         ret_dict[as_id] = ret_dict.get(as_id)+1
@@ -211,7 +212,7 @@ class DBcontroller:
 
   def assembleAssist(self, assistid):
     ret = ""
-    assist_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.assist as a, danmemo.character as c where c.characterid=a.characterid and a.assistid={}".replace("danmemo",self.database).format(assistid)
+    assist_base_sql = "SELECT title, c.name, limited,stars FROM danmemo.assist as a, danmemo.character as c where c.characterid=a.characterid and a.assistid={}".replace("danmemo",self.database).format(assistid)
     skill_id_sql = "SELECT assistskillid FROM danmemo.assistskill where assistid = {}".replace("danmemo",self.database).format(assistid)
     # base assist assemble
     self._mycursor.execute(assist_base_sql)
@@ -222,7 +223,7 @@ class DBcontroller:
       ret = ret + "[{}] {}\n".format(row[0],row[1])
       if(bool(row[2])):
         ret = ret + " [Limited-Time] "
-      for x in range(0,row[4]):
+      for x in range(0,row[3]):
         ret = ret + ":star:"
       ret = ret + "\n"
     # stats (based on LB? idk somehow dynamically change stats here maybe send?)
@@ -239,8 +240,8 @@ class DBcontroller:
 
   def assembleAssistSkill(self, skillid):
     ret =""
-    skill_sql="SELECT skillname FROM danmemo.adventurerskill where adventurerskillid={}".replace("danmemo",self.database).format(skillid)
-    effects_sql="SELECT  t.name,m.value,a.name,e.duration,ty.name FROM danmemo.adventurerskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a, danmemo.type as ty where assistskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid and ty.typeid=e.typeid".replace("danmemo",self.database).format(skillid)
+    skill_sql="SELECT skillname FROM danmemo.assistskill where assistskillid={}".replace("danmemo",self.database).format(skillid)
+    effects_sql="SELECT  t.name,m.value,a.name,e.duration FROM danmemo.assistskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a where assistskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid".replace("danmemo",self.database).format(skillid)
     self._mycursor.execute(skill_sql)
     for row in self._mycursor:
       # skilltype : skillname
@@ -251,9 +252,7 @@ class DBcontroller:
       temp_modifier=row[1]
       temp_attribute=row[2]
       temp_duration = row[3]
-      temp_type = row[4]
-      if(temp_type == None):
-        temp_type = ""    
+  
       # [TARGET] Modifier Attribute /duration
       if(self.human_readable_dict.get(temp_target)!= None):
         temp_target=self.human_readable_dict.get(temp_target)
@@ -261,15 +260,13 @@ class DBcontroller:
         temp_modifier=self.human_readable_dict.get(temp_modifier)
       if(self.human_readable_dict.get(temp_attribute)!= None):
         temp_attribute=self.human_readable_dict.get(temp_attribute)
-      if(self.human_readable_dict.get(temp_type)!= None):
-        temp_type=self.human_readable_dict.get(temp_type)  
       if(temp_modifier[1:].isnumeric()):
         temp_modifier= temp_modifier+"%"
 
       if(temp_duration != "None"):
-        ret=ret + "[{}] {} {} {} /{} turn(s) \n".format(temp_target,temp_modifier,temp_type,temp_attribute,temp_duration)
+        ret=ret + "[{}] {} {} /{} turn(s) \n".format(temp_target,temp_modifier,temp_attribute,temp_duration)
       else:
-        ret=ret + "[{}] {} {} {} \n".format(temp_target,temp_modifier,temp_type,temp_attribute)        
+        ret=ret + "[{}] {} {} \n".format(temp_target,temp_modifier,temp_attribute)        
     return ret + "\n"
 
   def assembleAdventurerSkill(self, skillid):

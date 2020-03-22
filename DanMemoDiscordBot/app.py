@@ -67,7 +67,7 @@ async def characterSearch(ctx, *search):
             message = db.assembleAssist((my_list[0])[2:])
     else:
         for Adventurersid in my_list:
-            if("Ad" in my_list[0]):
+            if("Ad" in Adventurersid):
                 message= message + db.getAdventurerName(Adventurersid[2:]) + "\n"
             else:
                 message= message + db.getAssistName(Adventurersid[2:]) + "\n"
