@@ -239,11 +239,12 @@ class InsertCharacter:
 if __name__ =="__main__":
     db = DBcontroller("localhost","root","danmemo","3306","danmemo")
     ic = InsertCharacter(db)
-    path = '../../database/assist/'    
+    path = '../../database/assists/'    
     for filename in os.listdir(path):
         with open(path + '/' + filename, 'r') as f:
             as_dict = json.load(f)
             if(as_dict.get("limited")== None):
                 as_dict["limited"]=False
             temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
+            print(as_dict.get("title") +" "+ as_dict.get("name") + "\n")
             ic.insertAssist(temp_as)
