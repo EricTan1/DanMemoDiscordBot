@@ -58,11 +58,19 @@ async def characterSearch(ctx, *search):
     message = ""
 
     # exactly 1 result then display
-    if(len(my_list) == 1):
-        message = db.assembleAdventurer(my_list[0])
+    if(len(my_list)==0):
+        message = "Sorry there are no results"
+    elif(len(my_list) == 1):
+        if("Ad" in my_list[0]):
+            message = db.assembleAdventurer((my_list[0])[2:])
+        else:
+            message = db.assembleAssist((my_list[0])[2:])
     else:
         for Adventurersid in my_list:
-            message= message + db.getAdventurerName(Adventurersid) + "\n"
+            if("Ad" in my_list[0]):
+                message= message + db.getAdventurerName(Adventurersid[2:]) + "\n"
+            else:
+                message= message + db.getAssistName(Adventurersid[2:]) + "\n"
     try:
         await ctx.send(message)
     except:

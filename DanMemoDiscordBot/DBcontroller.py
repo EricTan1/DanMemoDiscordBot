@@ -81,6 +81,13 @@ class DBcontroller:
       ret = "{} {}".format(row[0],row[1])
       print(row)
     return ret
+  def getAssistName(self, assistid):
+    sql="SELECT a.title, c.name FROM danmemo.character as c, danmemo.assist as a WHERE a.adventurerid={} and c.characterid = a.characterid".replace("danmemo",self.database).format(assistid)
+    self._mycursor.execute(sql)
+    for row in self._mycursor: 
+      ret = "{} {}".format(row[0],row[1])
+      print(row)
+    return ret
 
   def getDataColumn(self, entityname, column, value):
     ''' (DBcontroller, Entity, str, ?) -> List of Entity
@@ -106,13 +113,22 @@ class DBcontroller:
     words_list = search.split(" ")
     for words in words_list:
       # adventurerid
-      characterTitleSql= "SELECT adventurerid from danmemo.adventurer as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".replace("danmemo",self.database).format(words,words)
-      self._mycursor.execute(characterTitleSql)
+      characterAdTitleSql= "SELECT adventurerid from danmemo.adventurer as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".replace("danmemo",self.database).format(words,words)
+      self._mycursor.execute(characterAdTitleSql)
       for row in self._mycursor:
-        ad_id = row[0]
+        ad_id = "Ad"+row[0]
         if(ret_dict.get(ad_id) == None):
           ret_dict[ad_id] = 0
         ret_dict[ad_id] = ret_dict.get(ad_id)+1
+      # ASSIST
+      characterAsTitleSql= "SELECT assistid from danmemo.assist as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".replace("danmemo",self.database).format(words,words)
+      self._mycursor.execute(characterAsTitleSql)
+      for row in self._mycursor:
+        as_id = "As"+row[0]
+        if(ret_dict.get(as_id) == None):
+          ret_dict[as_id] = 0
+        ret_dict[as_id] = ret_dict.get(as_id)+1
+
     ret_list=[]
     highest= None
     for keys in ret_dict:
@@ -125,7 +141,7 @@ class DBcontroller:
       elif(highest == ret_dict.get(keys)):
         ret_list.append(keys)
     return ret_list
-    
+  
 
   def skillSearch(self,search, filter_dict):
     # separate by commas
@@ -222,7 +238,39 @@ class DBcontroller:
     return ret
 
   def assembleAssistSkill(self, skillid):
-    pass
+    ret =""
+    skill_sql="SELECT skillname FROM danmemo.adventurerskill where adventurerskillid={}".replace("danmemo",self.database).format(skillid)
+    effects_sql="SELECT  t.name,m.value,a.name,e.duration,ty.name FROM danmemo.adventurerskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a, danmemo.type as ty where assistskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid and ty.typeid=e.typeid".replace("danmemo",self.database).format(skillid)
+    self._mycursor.execute(skill_sql)
+    for row in self._mycursor:
+      # skilltype : skillname
+      ret=ret + "[{}]:\n".format(row[0])
+    self._mycursor.execute(effects_sql)
+    for row in self._mycursor:
+      temp_target = row[0]
+      temp_modifier=row[1]
+      temp_attribute=row[2]
+      temp_duration = row[3]
+      temp_type = row[4]
+      if(temp_type == None):
+        temp_type = ""    
+      # [TARGET] Modifier Attribute /duration
+      if(self.human_readable_dict.get(temp_target)!= None):
+        temp_target=self.human_readable_dict.get(temp_target)
+      if(self.human_readable_dict.get(temp_modifier)!= None):
+        temp_modifier=self.human_readable_dict.get(temp_modifier)
+      if(self.human_readable_dict.get(temp_attribute)!= None):
+        temp_attribute=self.human_readable_dict.get(temp_attribute)
+      if(self.human_readable_dict.get(temp_type)!= None):
+        temp_type=self.human_readable_dict.get(temp_type)  
+      if(temp_modifier[1:].isnumeric()):
+        temp_modifier= temp_modifier+"%"
+
+      if(temp_duration != "None"):
+        ret=ret + "[{}] {} {} {} /{} turn(s) \n".format(temp_target,temp_modifier,temp_type,temp_attribute,temp_duration)
+      else:
+        ret=ret + "[{}] {} {} {} \n".format(temp_target,temp_modifier,temp_type,temp_attribute)        
+    return ret + "\n"
 
   def assembleAdventurerSkill(self, skillid):
     ret =""
