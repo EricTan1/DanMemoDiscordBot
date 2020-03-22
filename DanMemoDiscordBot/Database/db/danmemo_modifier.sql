@@ -26,7 +26,7 @@ CREATE TABLE `modifier` (
   `modifierid` int NOT NULL AUTO_INCREMENT,
   `value` varchar(200) NOT NULL,
   PRIMARY KEY (`modifierid`)
-) ENGINE=InnoDB AUTO_INCREMENT=439 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=439 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

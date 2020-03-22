@@ -35,7 +35,7 @@ CREATE TABLE `adventurerdevelopment` (
   CONSTRAINT `adventurerid3` FOREIGN KEY (`adventurerid`) REFERENCES `adventurer` (`adventurerid`) ON DELETE CASCADE,
   CONSTRAINT `attributeid3` FOREIGN KEY (`attributeid`) REFERENCES `attribute` (`attributeid`),
   CONSTRAINT `modifierid3` FOREIGN KEY (`modifierid`) REFERENCES `modifier` (`modifierid`)
-) ENGINE=InnoDB AUTO_INCREMENT=3108 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3108 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
