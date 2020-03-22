@@ -52,7 +52,7 @@ class InsertCharacter:
                                              adventureComplete._title)
         # stats
         for attributeKeys in adventureComplete.stats:
-            attributeid = self.getBaseConstants(Attribute(None, attributeKeys))
+            attributeid = self.getBaseConstants(Attribute(None, attributeKeys),False)
             db.insertData(AdventurerStats(None, adventurerid, attributeid, str(adventureComplete.stats.get(attributeKeys))))
         # skills
         for skillsKeys in adventureComplete.skills:
@@ -109,39 +109,6 @@ class InsertCharacter:
             # inserting effects
             db.insertData(AdventurerSkillEffects(None, adventurerskillid, targetid,
                  attributeid, modifierid, effects.get("duration"), typeid,eleid, speedid))
-            
-    def insertAdventurerSkillEffects(self, adventurerskillid, skilleffectList):
-        # AdventurerSkillEffects SET UP        
-        for effects in skilleffectList:
-            #Type+Element
-            temp_value = effects.get("type")
-            if(temp_value != None):
-                temp_index = temp_value.find("_")
-                temp_element = temp_value[0:temp_index]
-                temp_ad_ele = temp_element
-                temp_type = temp_value[temp_index+1:]
-            else:
-                temp_type = ""
-                temp_element=""
-            # Element
-            eleid = self.getBaseConstants(Element(None, temp_element), False)
-            # Type for skills
-            typeid=self.getBaseConstants(Type(None, temp_type), False)
-            temp_target = effects.get("target")
-            temp_attribute = effects.get("attribute")
-            temp_speed = effects.get("speed")
-            temp_modifier = effects.get("modifier")
-
-            if(len(temp_modifier) > 0 and temp_modifier[len(temp_modifier)-1] == "%"):
-                temp_modifier = temp_modifier[:len(temp_modifier)-1]
-            targetid = self.getBaseConstants(Target(None, temp_target), False)
-            attributeid = self.getBaseConstants(Attribute(None, temp_attribute), False)
-            speedid = self.getBaseConstants(Speed(None, temp_speed), False)
-            modifierid = self.getBaseConstants(Modifier(None, temp_modifier), True)
-            # inserting effects
-            db.insertData(AdventurerSkillEffects(None, adventurerskillid, targetid,
-                 attributeid, modifierid, effects.get("duration"), typeid,eleid, speedid))
-        
     
     def insertAssist(self, assistComplete:AssistC):
         characterid = self.getInsertCharacterID(assistComplete._name,
@@ -237,7 +204,7 @@ class InsertCharacter:
         return ret
 
 if __name__ =="__main__":
-    db = DBcontroller("localhost","root","danmemo","3306","danmemo")
+    db = DBcontroller("us-cdbr-iron-east-04.cleardb.net","bdcaa58f136231","c268bc42","3306","heroku_0fe8a18d3b21642")
     ic = InsertCharacter(db)
     path = '../../database/assist/'    
     for filename in os.listdir(path):
