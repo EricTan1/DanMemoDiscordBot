@@ -159,10 +159,17 @@ class DBcontroller:
     print(searchwords_list)
     for words in searchwords_list:
       # Target, Attribute(), Modifier(Super, 10%), Type (phys/mag), Element(Wind/Light)
-      skilleffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name LIKE '%{}%' or ty.name LIKE '%{}%' or a.name LIKE '%{}%' or s.name LIKE '%{}%'".replace('danmemo',self.database).format(words,words,words,words,words,words)
-      self._mycursor.execute(skilleffect_sql)
+      skillAdeffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name LIKE '%{}%' or ty.name LIKE '%{}%' or a.name LIKE '%{}%' or s.name LIKE '%{}%'".replace('danmemo',self.database).format(words,words,words,words,words,words)
+      self._mycursor.execute(skillAdeffect_sql)
       for row in self._mycursor:
-        skillid = row[0]
+        skillid = "Ad" + str(row[0])
+        if(ret_dict.get(skillid) == None):
+            ret_dict[skillid] = 0
+        ret_dict[skillid] = ret_dict.get(skillid)+1
+      skillAseffect_sql= "SELECT ase.AssistSkillEffectsid FROM danmemo.assistskilleffects as ase INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid WHERE m.value LIKE '%{}%' or ta.name LIKE '%{}%' or a.name LIKE '%{}%'".replace('danmemo',self.database).format(words,words,words)
+      self._mycursor.execute(skillAseffect_sql)      
+      for row in self._mycursor:
+        skillid = "As" + str(row[0])
         if(ret_dict.get(skillid) == None):
             ret_dict[skillid] = 0
         ret_dict[skillid] = ret_dict.get(skillid)+1
@@ -316,16 +323,25 @@ class DBcontroller:
         ret=ret + "[{}] {} {} {} {} {} \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute)        
     return ret + "\n"
   
-  def getSkillIdFromEffect(self, adventurerskilleffectsid):
+  def getAdSkillIdFromEffect(self, adventurerskilleffectsid):
     self._mycursor.execute("SELECT AdventurerSkillid FROM danmemo.adventurerskilleffects WHERE AdventurerSkillEffectsid={}".replace("danmemo",self.database).format(adventurerskilleffectsid))
     for row in self._mycursor:
       return row[0]
+  def getAsSkillIdFromEffect(self, assistskilleffectsid):
+    self._mycursor.execute("SELECT assistSkillid FROM danmemo.assistskilleffects WHERE assistSkillEffectsid={}".replace("danmemo",self.database).format(assistskilleffectsid))
+    for row in self._mycursor:
+      return row[0]  
 
   def getAdventurerIdFromSkill(self, skillid):
       adventurer_base_sql = "SELECT adventurerid from danmemo.adventurerskill where adventurerskillid={}".replace("danmemo",self.database).format(skillid)
       self._mycursor.execute(adventurer_base_sql)
       for row in self._mycursor:
           return row[0]
+  def getAssistIdFromSkill(self, skillid):
+      assist_base_sql = "SELECT assistid from danmemo.assistskill where assistskillid={}".replace("danmemo",self.database).format(skillid)
+      self._mycursor.execute(assist_base_sql)
+      for row in self._mycursor:
+          return row[0]  
   
   def assembleAdventurerCharacterData(self, adventurerid):
     ret = ""
@@ -341,6 +357,23 @@ class DBcontroller:
         ret = ret + ":star:"
       ret = ret + "\n"
     return ret
+  def assembleAssistCharacterData(self, assistid):
+    ret = ""
+    assist_base_sql = "SELECT title, c.name, limited,stars FROM danmemo.assist as a, danmemo.character as c where c.characterid=a.characterid and a.assistid={}".replace("danmemo",self.database).format(assistid)
+    skill_id_sql = "SELECT assistskillid FROM danmemo.assistskill where assistid = {}".replace("danmemo",self.database).format(assistid)
+    # base assist assemble
+    self._mycursor.execute(assist_base_sql)
+    # free up the list cursor
+    for row in self._mycursor:
+      # TITLE CHARACTERNAME STARS
+      # CHECK IF TIME LIMITED
+      ret = ret + "[{}] {}\n".format(row[0],row[1])
+      if(bool(row[2])):
+        ret = ret + " [Limited-Time] "
+      for x in range(0,row[3]):
+        ret = ret + ":star:"
+      ret = ret + "\n"
+    return ret  
     
 if __name__ == "__main__":
   result = urlparse(os.environ.get("CLEARDB_DATABASE_URL"))

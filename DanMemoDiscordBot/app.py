@@ -92,13 +92,24 @@ async def skillSearch(ctx, *search):
     message =""
     for skilleffectsid in skilleffects_id_list:
         print(skilleffectsid)
-        skillid = db.getSkillIdFromEffect(skilleffectsid)
-        my_set.add(skillid)
+        if("Ad" in skilleffectsid):
+            skillid = db.getAdSkillIdFromEffect(skilleffectsid[2:])
+            my_set.add("Ad"+str(skillid))            
+        else:
+            skillid = db.getAsSkillIdFromEffect(skilleffectsid[2:])
+            my_set.add("As"+str(skillid))
         
-    for adventurerskillid in my_set:
-        adventurerid = db.getAdventurerIdFromSkill(adventurerskillid)
-        message =message +  db.assembleAdventurerCharacterData(adventurerid)
-        message = message + db.assembleAdventurerSkill(adventurerskillid)
+    for skillid in my_set:
+        if("Ad" in skillid):
+            adventurerid = db.getAdventurerIdFromSkill(skillid[2:])
+            message =message +  db.assembleAdventurerCharacterData(adventurerid)
+            message = message + db.assembleAdventurerSkill(skillid[2:])
+        else:
+            assistid = db.getAssistIdFromSkill(skillid[2:])
+            message =message +  db.assembleAssistCharacterData(assistid)
+            message = message + db.assembleAssistSkill(skillid[2:])
+        
+
     try:
         await ctx.send(message)
     except:
