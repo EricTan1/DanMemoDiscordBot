@@ -133,11 +133,13 @@ async def skillSearch(ctx, *search):
         if("Ad" in skillid):
             adventurerid = db.getAdventurerIdFromSkill(skillid[2:])
             message =message +  db.assembleAdventurerCharacterData(adventurerid)
-            message = message + db.assembleAdventurerSkill(skillid[2:])
+            skillinfo = db.assembleAdventurerSkill(skillid[2:])
+            message = message + skillinfo[0] + "\n"+skillinfo[1]
         else:
             assistid = db.getAssistIdFromSkill(skillid[2:])
             message =message +  db.assembleAssistCharacterData(assistid)
-            message = message + db.assembleAssistSkill(skillid[2:])
+            skillinfo=db.assembleAssistSkill(skillid[2:])
+            message = message + skillinfo[0] + "\n"+skillinfo[1]
         
 
     try:
