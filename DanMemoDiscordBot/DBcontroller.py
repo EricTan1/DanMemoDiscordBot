@@ -188,7 +188,9 @@ class DBcontroller:
 
       
   def assembleAdventurer(self, adventurerid):
-    ret=""
+    title=""
+    title_name = ""
+    skill=[]
     adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.adventurer as a, danmemo.character as c where c.characterid=a.characterid and a.adventurerid={}".replace("danmemo",self.database).format(adventurerid)
     skill_id_sql = "SELECT adventurerskillid FROM danmemo.adventurerskill where adventurerid = {}".replace("danmemo",self.database).format(adventurerid)
     dev_id_sql = "SELECT * FROM danmemo.adventurerdevelopment where adventurerid = {}".replace("danmemo",self.database).format(adventurerid)
@@ -198,12 +200,12 @@ class DBcontroller:
     for row in self._mycursor:
       # TITLE CHARACTERNAME STARS
       # CHECK IF TIME LIMITED
-      ret = ret + "[{}] {}\n".format(row[0],row[1])
+      title = title + "[{}] {}\n".format(row[0],row[1])
+      title_name = title_name + "{} {}".format(row[0],row[1])
       if(bool(row[2])):
-        ret = ret + " [Limited-Time] "
+        title = title + "[Limited-Time] "
       for x in range(0,row[4]):
-        ret = ret + ":star:"
-      ret = ret + "\n"
+        title = title + ":star:"
     # stats
     
     # adventurer skill assemble
@@ -213,12 +215,14 @@ class DBcontroller:
     for row in self._mycursor:  
       skillid_list.append(row[0])
     for skillid in skillid_list:
-      ret = ret + self.assembleAdventurerSkill(skillid)
+      skill.append(self.assembleAdventurerSkill(skillid))
     # assemble adventure development
-    return ret
+    return (title_name, title, skill)
 
   def assembleAssist(self, assistid):
-    ret = ""
+    title = ""
+    title_name = ""    
+    skill=[]    
     assist_base_sql = "SELECT title, c.name, limited,stars FROM danmemo.assist as a, danmemo.character as c where c.characterid=a.characterid and a.assistid={}".replace("danmemo",self.database).format(assistid)
     skill_id_sql = "SELECT assistskillid FROM danmemo.assistskill where assistid = {}".replace("danmemo",self.database).format(assistid)
     # base assist assemble
@@ -227,12 +231,12 @@ class DBcontroller:
     for row in self._mycursor:
       # TITLE CHARACTERNAME STARS
       # CHECK IF TIME LIMITED
-      ret = ret + "[{}] {}\n".format(row[0],row[1])
+      title = title + "[{}] {}\n".format(row[0],row[1])
+      title_name = title_name + "{} {}".format(row[0],row[1])      
       if(bool(row[2])):
-        ret = ret + " [Limited-Time] "
+        title = title + "[Limited-Time] "
       for x in range(0,row[3]):
-        ret = ret + ":star:"
-      ret = ret + "\n"
+        title = title + ":star:"
     # stats (based on LB? idk somehow dynamically change stats here maybe send?)
     # assist skill assemble (MLB skill VS non MLB (dyamically later?))
     # Skill Effects
@@ -242,17 +246,18 @@ class DBcontroller:
     for row in self._mycursor:  
       skillid_list.append(row[0])
     for skillid in skillid_list:
-      ret = ret + self.assembleAssistSkill(skillid)
-    return ret
+      skill.append(self.assembleAssistSkill(skillid))
+    return (title_name, title, skill)
 
   def assembleAssistSkill(self, skillid):
     ret =""
+    skillname = ""
     skill_sql="SELECT skillname FROM danmemo.assistskill where assistskillid={}".replace("danmemo",self.database).format(skillid)
     effects_sql="SELECT  t.name,m.value,a.name,e.duration FROM danmemo.assistskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a where assistskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid".replace("danmemo",self.database).format(skillid)
     self._mycursor.execute(skill_sql)
     for row in self._mycursor:
       # skilltype : skillname
-      ret=ret + "[{}]:\n".format(row[0])
+      skillname=skillname + "[{}]:\n".format(row[0])
     self._mycursor.execute(effects_sql)
     for row in self._mycursor:
       temp_target = row[0]
@@ -270,21 +275,22 @@ class DBcontroller:
       if(temp_modifier[1:].isnumeric()):
         temp_modifier= temp_modifier+"%"
 
-      if(temp_duration != "None"):
+      if(temp_duration != None):
         ret=ret + "[{}] {} {} /{} turn(s) \n".format(temp_target,temp_modifier,temp_attribute,temp_duration)
       else:
         ret=ret + "[{}] {} {} \n".format(temp_target,temp_modifier,temp_attribute)        
-    return ret + "\n"
+    return (skillname,ret)
 
   def assembleAdventurerSkill(self, skillid):
     ret =""
+    skillname = ""    
     skill_sql="SELECT skilltype, skillname FROM danmemo.adventurerskill where adventurerskillid={}".replace("danmemo",self.database).format(skillid)
     effects_sql="SELECT  t.name,m.value,a.name,e.duration,ty.name,ele.name,s.name FROM (danmemo.adventurerskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a, danmemo.type as ty, danmemo.element as ele) LEFT JOIN danmemo.speed as s ON s.speedid = e.speedid where adventurerskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid and e.eleid=ele.elementid and ty.typeid=e.typeid".replace("danmemo",self.database).format(skillid)
     print(effects_sql)
     self._mycursor.execute(skill_sql)
     for row in self._mycursor:
       # skilltype : skillname
-      ret=ret + "{}: {} \n".format(row[0],row[1])
+      skillname=skillname + "{}: {} \n".format(row[0],row[1])
     self._mycursor.execute(effects_sql)
     for row in self._mycursor:
       temp_target = row[0]
@@ -321,7 +327,7 @@ class DBcontroller:
         ret=ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute,row[3])
       else:
         ret=ret + "[{}] {} {} {} {} {} \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute)        
-    return ret + "\n"
+    return (skillname,ret)
   
   def getAdSkillIdFromEffect(self, adventurerskilleffectsid):
     self._mycursor.execute("SELECT AdventurerSkillid FROM danmemo.adventurerskilleffects WHERE AdventurerSkillEffectsid={}".replace("danmemo",self.database).format(adventurerskilleffectsid))
