@@ -1,0 +1,407 @@
+1011001001;[Adventurer] Bell Cranel;Adventurer;Bell Cranel
+1011001002;[Liaris Freese] Bell Cranel;Liaris Freese;Bell Cranel
+1011001003;[Ox Slayer] Bell Cranel;Ox Slayer;Bell Cranel
+1011001004;[Record Holder] Bell Cranel;Record Holder;Bell Cranel
+1011001005;[Argonaut] Bell Cranel;Argonaut;Bell Cranel
+1011001006;[Breezy Freese] Bell Cranel;Breezy Freese;Bell Cranel
+1011001008;[The White Rabbit] Bell Cranel;The White Rabbit;Bell Cranel
+1011001009;[A Fresh Start] Bell Cranel;A Fresh Start;Bell Cranel
+1011001010;[Dungeon Addict] Bell Cranel;Dungeon Addict;Bell Cranel
+1011001011;[Honor Succession] Bell Cranel;Honor Succession;Bell Cranel
+1011001012;[ODM Fighter] Bell Cranel;ODM Fighter;Bell Cranel
+1011001013;[Aspiring Elegance] Bell Cranel;Aspiring Elegance;Bell Cranel
+1011001014;[Moonlight Oath] Bell Cranel;Moonlight Oath;Bell Cranel
+1011001015;[The Edgiest Teen] Bell Cranel;The Edgiest Teen;Bell Cranel
+1011001016;[Outlaw Rabbit] Bell Cranel;Outlaw Rabbit;Bell Cranel
+1011001017;[The Enlightened] Bell Cranel;The Enlightened;Bell Cranel
+1011001018;[Regalia Freese] Bell Cranel;Regalia Freese;Bell Cranel
+1011001019;[Sword Unleashed] Bell Cranel;Sword Unleashed;Bell Cranel
+1011002001;[Battle Princess] Ais Wallenstein;Battle Princess;Ais Wallenstein
+1011002002;[Girl of the Wind] Ais Wallenstein;Girl of the Wind;Ais Wallenstein
+1011002003;[Sword Princess] Ais Wallenstein;Sword Princess;Ais Wallenstein
+1011002004;[Heroic Liaris] Ais Wallenstein;Heroic Liaris;Ais Wallenstein
+1011002006;[Gorgeous Princess] Ais Wallenstein;Gorgeous Princess;Ais Wallenstein
+1011002007;[Splash Princess] Ais Wallenstein;Splash Princess;Ais Wallenstein
+1011002009;[Santa Princess] Ais Wallenstein;Santa Princess;Ais Wallenstein
+1011002010;[Bathroom Princess] Ais Wallenstein;Bathroom Princess;Ais Wallenstein
+1011002011;[Sparkle Princess] Ais Wallenstein;Sparkle Princess;Ais Wallenstein
+1011002012;[Cold Princess] Ais Wallenstein;Cold Princess;Ais Wallenstein
+1011002013;[Honor Princess] Ais Wallenstein;Honor Princess;Ais Wallenstein
+1011002014;[Summer Princess] Ais Wallenstein;Summer Princess;Ais Wallenstein
+1011002015;[Bunny Princess] Ais Wallenstein;Bunny Princess;Ais Wallenstein
+1011002016;[Glitter Princess] Ais Wallenstein;Glitter Princess;Ais Wallenstein
+1011002017;[Starving Mind] Ais Wallenstein;Starving Mind;Ais Wallenstein
+1011002018;[Regiment Princess] Ais Wallenstein;Regiment Princess;Ais Wallenstein
+1011002019;[Crimson Tempest] Ais Wallenstein;Crimson Tempest;Ais Wallenstein
+1011002020;[Sweet Princess] Ais Wallenstein;Sweet Princess;Ais Wallenstein
+1011002021;[Devil Princess] Ais Wallenstein;Devil Princess;Ais Wallenstein
+1011002022;[Angelic Leader] Ais Wallenstein;Angelic Leader;Ais Wallenstein
+1011002023;[Beauty] Ais Wallenstein;Beauty;Ais Wallenstein
+1011002024;[Jade Princess] Ais Wallenstein;Jade Princess;Ais Wallenstein
+1011002025;[Dancing Princess] Ais Wallenstein;Dancing Princess;Ais Wallenstein
+1011003001;[Supporter] Liliruca Arde;Supporter;Liliruca Arde
+1011003002;[Artel Assist] Liliruca Arde;Artel Assist;Liliruca Arde
+1011003003;[Valor Support] Liliruca Arde;Valor Support;Liliruca Arde
+1011003004;[Disguised Pallum] Liliruca Arde;Disguised Pallum;Liliruca Arde
+1011003005;[Temptations] Liliruca Arde;Temptations;Liliruca Arde
+1011003006;[Sweet Devil] Liliruca Arde;Sweet Devil;Liliruca Arde
+1011003007;[Artel Tart] Liliruca Arde;Artel Tart;Liliruca Arde
+1011003008;[Pallum Passion] Liliruca Arde;Pallum Passion;Liliruca Arde
+1011003009;[Enjoy Onsen] Liliruca Arde;Enjoy Onsen;Liliruca Arde
+1011003010;[Honestly Wicked] Liliruca Arde;Honestly Wicked;Liliruca Arde
+1011003011;[Lovely Travel] Liliruca Arde;Lovely Travel;Liliruca Arde
+1011003012;[Summer Fun] Liliruca Arde;Summer Fun;Liliruca Arde
+1011003013;[Winter Cream] Liliruca Arde;Winter Cream;Liliruca Arde
+1011003014;[Echoing Arrow] Liliruca Arde;Echoing Arrow;Liliruca Arde
+1011003015;[Metal Robot] Liliruca Arde;Metal Robot;Liliruca Arde
+1011003016;[Longing Bride] Liliruca Arde;Longing Bride;Liliruca Arde
+1011003017;[Aschenputtel] Liliruca Arde;Aschenputtel;Liliruca Arde
+1011003018;[Unbreakable Heart] Liliruca Arde;Unbreakable Heart;Liliruca Arde
+1011004001;[Samurai Girl] Yamato Mikoto;Samurai Girl;Yamato Mikoto
+1011004002;[Zetsu Ei] Yamato Mikoto;Zetsu Ei;Yamato Mikoto
+1011004003;[Master Conquerer] Yamato Mikoto;Master Conquerer;Yamato Mikoto
+1011004004;[Samurai Kunoichi] Yamato Mikoto;Samurai Kunoichi;Yamato Mikoto
+1011004005;[Azure Blade] Yamato Mikoto;Azure Blade;Yamato Mikoto
+1011004006;[Yukata Beauty] Yamato Mikoto;Yukata Beauty;Yamato Mikoto
+1011004007;[The Traditional] Yamato Mikoto;The Traditional;Yamato Mikoto
+1011004008;[Snow White] Yamato Mikoto;Snow White;Yamato Mikoto
+1011004009;[Love Lesson] Yamato Mikoto;Love Lesson;Yamato Mikoto
+1011004010;[Kunoichi] Yamato Mikoto;Kunoichi;Yamato Mikoto
+1011004011;[Power of Change] Yamato Mikoto;Power of Change;Yamato Mikoto
+1011005001;[Captain] Finn Deimne;Captain;Finn Deimne
+1011005002;[Braver] Finn Deimne;Braver;Finn Deimne
+1011005003;[Fearless] Finn Deimne;Fearless;Finn Deimne
+1011005004;[Masked Braver] Finn Deimne;Masked Braver;Finn Deimne
+1011005005;[Classy Gentleman] Finn Deimne;Classy Gentleman;Finn Deimne
+1011005006;[Swift Spear] Finn Deimne;Swift Spear;Finn Deimne
+1011005007;[Brave Swordsman] Finn Deimne;Brave Swordsman;Finn Deimne
+1011005008;[Oriental Attire] Finn Deimne;Oriental Attire;Finn Deimne
+1011006001;[Great Mage] Riveria Ljos Alf;Great Mage;Riveria Ljos Alf
+1011006002;[Nine Hell] Riveria Ljos Alf;Nine Hell;Riveria Ljos Alf
+1011006003;[Fairy Anthem] Riveria Ljos Alf;Fairy Anthem;Riveria Ljos Alf
+1011006004;[Royal Elf] Riveria Ljos Alf;Royal Elf;Riveria Ljos Alf
+1011006005;[Holy White Royal] Riveria Ljos Alf;Holy White Royal;Riveria Ljos Alf
+1011006007;[Crimson Dazzle] Riveria Ljos Alf;Crimson Dazzle;Riveria Ljos Alf
+1011006008;[Dressed Royal] Riveria Ljos Alf;Dressed Royal;Riveria Ljos Alf
+1011006009;[Regina] Riveria Ljos Alf;Regina;Riveria Ljos Alf
+1011006010;[Festive Royale] Riveria Ljos Alf;Festive Royale;Riveria Ljos Alf
+1011007001;[King] Ottarl;King;Ottarl
+1011007002;[Superior Reign] Ottarl;Superior Reign;Ottarl
+1011007003;[Mighty King] Ottarl;Mighty King;Ottarl
+1011008001;[Alchemist] Asfi Al Andromeda;Alchemist;Asfi Al Andromeda
+1011008002;[Combat Commander] Asfi Al Andromeda;Combat Commander;Asfi Al Andromeda
+1011008003;[Perseus] Asfi Al Andromeda;Perseus;Asfi Al Andromeda
+1011008004;[Sailor Princess] Asfi Al Andromeda;Sailor Princess;Asfi Al Andromeda
+1011008006;[Onsen Princess] Asfi Al Andromeda;Onsen Princess;Asfi Al Andromeda
+1011008007;[Almighty Fighter] Asfi Al Andromeda;Almighty Fighter;Asfi Al Andromeda
+1011008009;[Thunderous Perseus] Asfi Al Andromeda;Thunderous Perseus;Asfi Al Andromeda
+1011009001;[Berserker] Tione Hiryute;Berserker;Tione Hiryute
+1011009002;[Backdraft] Tione Hiryute;Backdraft;Tione Hiryute
+1011009003;[Pine Heart] Tione Hiryute;Pine Heart;Tione Hiryute
+1011009004;[Suntan Girl] Tione Hiryute;Suntan Girl;Tione Hiryute
+1011009005;[Twinkle Stream] Tione Hiryute;Twinkle Stream;Tione Hiryute
+1011009006;[Love Recipe] Tione Hiryute;Love Recipe;Tione Hiryute
+1011009007;[Crimson Dahlia] Tione Hiryute;Crimson Dahlia;Tione Hiryute
+1011009008;[Blushing Peony] Tione Hiryute;Blushing Peony;Tione Hiryute
+1011009009;[Passionately Postal] Tione Hiryute;Passionately Postal;Tione Hiryute
+1011009010;[School Professor] Tione Hiryute;School Professor;Tione Hiryute
+1011010001;[Full Throttle] Tiona Hiryute;Full Throttle;Tiona Hiryute
+1011010002;[Berserker] Tiona Hiryute;Berserker;Tiona Hiryute
+1011010003;[Amazon] Tiona Hiryute;Amazon;Tiona Hiryute
+1011010004;[Summer Swim] Tiona Hiryute;Summer Swim;Tiona Hiryute
+1011010005;[Dancing Blessing] Tiona Hiryute;Dancing Blessing;Tiona Hiryute
+1011010006;[Sweet Heart] Tiona Hiryute;Sweet Heart;Tiona Hiryute
+1011010007;[Amber Sunflower] Tiona Hiryute;Amber Sunflower;Tiona Hiryute
+1011010008;[Blustering Beauty] Tiona Hiryute;Blustering Beauty;Tiona Hiryute
+1011011001;[Blacksmith] Welf Crozzo;Blacksmith;Welf Crozzo
+1011011002;[Magic Sword Blood] Welf Crozzo;Magic Sword Blood;Welf Crozzo
+1011011003;[Ignis] Welf Crozzo;Ignis;Welf Crozzo
+1011011004;[Howling Blade] Welf Crozzo;Howling Blade;Welf Crozzo
+1011011006;[Smithy Expert] Welf Crozzo;Smithy Expert;Welf Crozzo
+1011012001;[Werewolf] Bete Loga;Werewolf;Bete Loga
+1011012002;[Ulfheoinn] Bete Loga;Ulfheoinn;Bete Loga
+1011012003;[Ulfheoinn] Bete Loga;Ulfheoinn;Bete Loga
+1011012004;[Silver Moonshadow] Bete Loga;Silver Moonshadow;Bete Loga
+1011012006;[Moonlit Wolf] Bete Loga;Moonlit Wolf;Bete Loga
+1011012007;[Lone Werewolf] Bete Loga;Lone Werewolf;Bete Loga
+1011013001;[Elgarm] Gareth Landrock;Elgarm;Gareth Landrock
+1011013002;[Torrential] Gareth Landrock;Torrential;Gareth Landrock
+1011013003;[The Great Wall] Gareth Landrock;The Great Wall;Gareth Landrock
+1011013004;[Sunrise Axe] Gareth Landrock;Sunrise Axe;Gareth Landrock
+1011014001;[Thousand Blades] Hitachi Chigusa;Thousand Blades;Hitachi Chigusa
+1011014002;[Evanescent] Hitachi Chigusa;Evanescent;Hitachi Chigusa
+1011014003;[Sparkling Crystal] Hitachi Chigusa;Sparkling Crystal;Hitachi Chigusa
+1011014004;[Secret Onsen] Hitachi Chigusa;Secret Onsen;Hitachi Chigusa
+1011014005;[Fushi-Kaden] Hitachi Chigusa;Fushi-Kaden;Hitachi Chigusa
+1011014006;[Frosty Blooms] Hitachi Chigusa;Frosty Blooms;Hitachi Chigusa
+1011015001;[War God's Child] Kashima Ouka;War God's Child;Kashima Ouka
+1011015002;[Solid Resolutions] Kashima Ouka;Solid Resolutions;Kashima Ouka
+1011015004;[Will of Iron] Kashima Ouka;Will of Iron;Kashima Ouka
+1011015005;[Demonslayer Samurai] Kashima Ouka;Demonslayer Samurai;Kashima Ouka
+1011016001;[High Novice] Raul Nord;High Novice;Raul Nord
+1011016002;[Night Buster] Raul Nord;Night Buster;Raul Nord
+1011018001;[Thousand Elf] Lefiya Viridis;Thousand Elf;Lefiya Viridis
+1011018002;[Incantation] Lefiya Viridis;Incantation;Lefiya Viridis
+1011018003;[Bashful Elf] Lefiya Viridis;Bashful Elf;Lefiya Viridis
+1011018004;[Lots of Love] Lefiya Viridis;Lots of Love;Lefiya Viridis
+1011018005;[Winter Elf] Lefiya Viridis;Winter Elf;Lefiya Viridis
+1011018006;[Elven Awakening] Lefiya Viridis;Elven Awakening;Lefiya Viridis
+1011018007;[Dark Class Act] Lefiya Viridis;Dark Class Act;Lefiya Viridis
+1011018008;[Elf's Honor] Lefiya Viridis;Elf's Honor;Lefiya Viridis
+1011018009;[Offshore Elf] Lefiya Viridis;Offshore Elf;Lefiya Viridis
+1011018010;[Wicked Elf] Lefiya Viridis;Wicked Elf;Lefiya Viridis
+1011018011;[Geisha Elf] Lefiya Viridis;Geisha Elf;Lefiya Viridis
+1011018012;[Elegant Elf] Lefiya Viridis;Elegant Elf;Lefiya Viridis
+1011018013;[Love Magic] Lefiya Viridis;Love Magic;Lefiya Viridis
+1011018014;[Model Student] Lefiya Viridis;Model Student;Lefiya Viridis
+1011018015;[Melodious Elf] Lefiya Viridis;Melodious Elf;Lefiya Viridis
+1011019001;[Maenads] Filvis Challia;Maenads;Filvis Challia
+1011019002;[Maenad's Maiden] Filvis Challia;Maenad's Maiden;Filvis Challia
+1011019003;[Cute Elf] Filvis Challia;Cute Elf;Filvis Challia
+1011019004;[Blessed Elf] Filvis Challia;Blessed Elf;Filvis Challia
+1011019005;[Darkness Overload] Filvis Challia;Darkness Overload;Filvis Challia
+1011019006;[Dazzling Elf] Filvis Challia;Dazzling Elf;Filvis Challia
+1011020001;[Gale] Ryu Lion;Gale;Ryu Lion
+1011020002;[Vampiric Fairy] Ryu Lion;Vampiric Fairy;Ryu Lion
+1011020003;[Holy Gale] Ryu Lion;Holy Gale;Ryu Lion
+1011020004;[Beach Winds] Ryu Lion;Beach Winds;Ryu Lion
+1011020005;[Gale in Yukata] Ryu Lion;Gale in Yukata;Ryu Lion
+1011020006;[Gale Disguised] Ryu Lion;Gale Disguised;Ryu Lion
+1011020007;[Glistening Elf] Ryu Lion;Glistening Elf;Ryu Lion
+1011020008;[Pretty Lady] Ryu Lion;Pretty Lady;Ryu Lion
+1011020009;[Roaring Gale] Ryu Lion;Roaring Gale;Ryu Lion
+1011020010;[Knight Elf] Ryu Lion;Knight Elf;Ryu Lion
+1011020011;[Lightning Flame] Ryu Lion;Lightning Flame;Ryu Lion
+1011020012;[Scarlet Elf] Ryu Lion;Scarlet Elf;Ryu Lion
+1011021001;[Foxy Princess] Sanjouno Haruhime;Foxy Princess;Sanjouno Haruhime
+1011021002;[Silver Fox] Sanjouno Haruhime;Silver Fox;Sanjouno Haruhime
+1011022001;[Magnificent Ruler] Aisha Belka;Magnificent Ruler;Aisha Belka
+1011022002;[Brave Antianeira] Aisha Belka;Brave Antianeira;Aisha Belka
+1011024001;[Medicinal Archer] Naza Ersuisu;Medicinal Archer;Naza Ersuisu
+1011025001;[The Shadow] Fels;The Shadow;Fels
+1011026001;[Cyclop's New Year] Tsubaki Collbrande;Cyclop's New Year;Tsubaki Collbrande
+1011026002;[Iron Warrior] Tsubaki Collbrande;Iron Warrior;Tsubaki Collbrande
+1011026003;[Invincible Master] Tsubaki Collbrande;Invincible Master;Tsubaki Collbrande
+1011036001;[Feline Lancer] Anya Fromel;Feline Lancer;Anya Fromel
+1011036002;[Brave Fighter] Anya Fromel;Brave Fighter;Anya Fromel
+1011036003;[Holiday Cat] Anya Fromel;Holiday Cat;Anya Fromel
+1011036004;[Sneaky Cat] Anya Fromel;Sneaky Cat;Anya Fromel
+1011038002;[Two-Wheel Racer] Hermes&Hermes;Two-Wheel Racer;Hermes&Hermes
+1011041001;[Black Cat] Chloe Lolo;Black Cat;Chloe Lolo
+1011041002;[Holly Wreath] Chloe Lolo;Holly Wreath;Chloe Lolo
+1011041003;[Gallant Fighter] Chloe Lolo;Gallant Fighter;Chloe Lolo
+1011041004;[Catty] Chloe Lolo;Catty;Chloe Lolo
+1011042001;[Black Fist] Lunor Faust;Black Fist;Lunor Faust
+1011043002;[Dea Saint] Amid Teasanare;Dea Saint;Amid Teasanare
+1011043003;[Beach Saint] Amid Teasanare;Beach Saint;Amid Teasanare
+1011043004;[Temporary Healer] Amid Teasanare;Temporary Healer;Amid Teasanare
+1011047001;[Faithful Mage] Line Arshe;Faithful Mage;Line Arshe
+1011047002;[Twilight Supporter] Line Arshe;Twilight Supporter;Line Arshe
+1011048001;[Dogfight] Mord Latro;Dogfight;Mord Latro
+1011048002;[Outlaw Style] Mord Latro;Outlaw Style;Mord Latro
+1011049001;[White Flash] Anakitty Autumn;White Flash;Anakitty Autumn
+1011049002;[Twilight Cat] Anakitty Autumn;Twilight Cat;Anakitty Autumn
+1011050001;[Little Princess] Ais (Girl);Little Princess;Ais (Girl)
+1011052001;[Little Wolf] Bete (Boy);Little Wolf;Bete (Boy)
+1011054001;[Little Freese] Bell (Boy);Little Freese;Bell (Boy)
+1011057001;[Hyper Energetic] Anya (Girl);Hyper Energetic;Anya (Girl)
+1011058001;[Absolute Discover] Chloe (Girl);Absolute Discover;Chloe (Girl)
+1011059001;[Little Girl] Liliruca (Girl);Little Girl;Liliruca (Girl)
+1011060001;[Zeal Blast] Welf (Boy);Zeal Blast;Welf (Boy)
+1011063001;[Little Detective] Lunor (Girl);Little Detective;Lunor (Girl)
+1011073001;[Fist Fighter] Shakti Varma;Fist Fighter;Shakti Varma
+1011073002;[Casino Lady] Shakti Varma;Casino Lady;Shakti Varma
+1011073003;[Blue Lotus] Shakti Varma;Blue Lotus;Shakti Varma
+1011078001;[Virgin Goddess] Artemis;Virgin Goddess;Artemis
+1011079001;[Clown] Argonaut;Clown;Argonaut
+1011079002;[The Dawn] Argonaut;The Dawn;Argonaut
+1011081001;[Deathly Dance] Elmina;Deathly Dance;Elmina
+1011083001;[The Ancestry] Crozzo;The Ancestry;Crozzo
+1011084001;[Wolven Pride] Yuri;Wolven Pride;Yuri
+1011085001;[Vigorous Hammerer] Galmus;Vigorous Hammerer;Galmus
+1011086001;[Elven Mage] Fina;Elven Mage;Fina
+1011090001;[High and Proud] Hyakinthos Clio;High and Proud;Hyakinthos Clio
+1011091001;[Serene Swordsman] Daphne Lauros;Serene Swordsman;Daphne Lauros
+1011091002;[Laurel Mistral] Daphne Lauros;Laurel Mistral;Daphne Lauros
+1011092001;[Cynic] Cassandra Ilion;Cynic;Cassandra Ilion
+1011092002;[First Dream] Cassandra Ilion;First Dream;Cassandra Ilion
+1011094001;[Wild Fantasy] Lena Tally;Wild Fantasy;Lena Tally
+1011095001;[Crushing Fighter] Samira;Crushing Fighter;Samira
+1011500001;[Foreign Traveler] Kino & Hermes;Foreign Traveler;Kino & Hermes
+1011500002;[Traveler] Kino;Traveler;Kino
+1011502001;[Wondering Man] Shizu & Riku;Wondering Man;Shizu & Riku
+1011505001;[Photographer] Photo & Sou;Photographer;Photo & Sou
+1011507001;[First in Class] Mikasa Ackermann;First in Class;Mikasa Ackermann
+1011508001;[Strongest Soldier] Levi;Strongest Soldier;Levi
+1011511001;[Wings of Freedom] Eren Jaeger;Wings of Freedom;Eren Jaeger
+1011515001;[Spirit Conquest] Shido Itsuka;Spirit Conquest;Shido Itsuka
+1011516001;[Princess] Touka Yatogami;Princess;Touka Yatogami
+1011517001;[Angel] Origami Tobiichi;Angel;Origami Tobiichi
+1011518001;[Nightmare] Kurumi Tokisaki;Nightmare;Kurumi Tokisaki
+1011520001;[Blast Fire] Kotori Itsuka;Blast Fire;Kotori Itsuka
+1011521001;[Silver Adventurer] Goblin Slayer;Silver Adventurer;Goblin Slayer
+1011522001;[Affectionate Maiden] Priestess;Affectionate Maiden;Priestess
+1011523001;[Stellar Wind] High Elf Archer;Stellar Wind;High Elf Archer
+1011526001;[Lightning Flash] Noble Fencer;Lightning Flash;Noble Fencer
+1012001001;[Living Dead Child] Bell Cranel;Living Dead Child;Bell Cranel
+1012002001;[Outside Orario] Ais Wallenstein;Outside Orario;Ais Wallenstein
+1012002002;[Backstage Princess] Ais Wallenstein;Backstage Princess;Ais Wallenstein
+1012004001;[Onsen Samurai] Yamato Mikoto;Onsen Samurai;Yamato Mikoto
+1012006001;[Dark Divine] Riveria Ljos Alf;Dark Divine;Riveria Ljos Alf
+1012008001;[Lawful Judge] Asfi Al Andromeda;Lawful Judge;Asfi Al Andromeda
+1012011001;[Festive Blade] Welf Crozzo;Festive Blade;Welf Crozzo
+1012014001;[Cowgirl Dress] Hitachi Chigusa;Cowgirl Dress;Hitachi Chigusa
+1012020002;[Expert Advisor] Ryu Lion;Expert Advisor;Ryu Lion
+1012020003;[Elegant Vanguard] Ryu Lion;Elegant Vanguard;Ryu Lion
+1012020004;[Elven Employee] Ryu Lion;Elven Employee;Ryu Lion
+1012024001;[Silver Pharmacist] Naza Ersuisu;Silver Pharmacist;Naza Ersuisu
+1012024002;[Cyan] Naza Ersuisu;Cyan;Naza Ersuisu
+1012025001;[Ghost] Fels;Ghost;Fels
+1012026001;[Camellia Kimono] Tsubaki Collbrande;Camellia Kimono;Tsubaki Collbrande
+1012027001;[Childish Goddess] Hestia;Childish Goddess;Hestia
+1012027002;[Goddess of Hearth] Hestia;Goddess of Hearth;Hestia
+1012027003;[Goddess of Purity] Hestia;Goddess of Purity;Hestia
+1012027004;[Lovebird] Hestia;Lovebird;Hestia
+1012027005;[Part-time Goddess] Hestia;Part-time Goddess;Hestia
+1012027006;[Seaside Goddess] Hestia;Seaside Goddess;Hestia
+1012027008;[Goddess' Devotion] Hestia;Goddess' Devotion;Hestia
+1012027009;[Mummy Goddess] Hestia;Mummy Goddess;Hestia
+1012027010;[Jingle Bell] Hestia;Jingle Bell;Hestia
+1012027011;[Dreaming Goddess] Hestia;Dreaming Goddess;Hestia
+1012027012;[Truly Sweet] Hestia;Truly Sweet;Hestia
+1012027013;[Paradise Mood] Hestia;Paradise Mood;Hestia
+1012027014;[Cunning Goddess] Hestia;Cunning Goddess;Hestia
+1012027016;[Filmic Goddess] Hestia;Filmic Goddess;Hestia
+1012027017;[All Abroad] Hestia;All Abroad;Hestia
+1012027018;[Ceremonial Flame] Hestia;Ceremonial Flame;Hestia
+1012027019;[Summer Goddess] Hestia;Summer Goddess;Hestia
+1012027020;[Bunny Goddess] Hestia;Bunny Goddess;Hestia
+1012027021;[Glitter Goddess] Hestia;Glitter Goddess;Hestia
+1012027022;[Reindeer Goddess] Hestia;Reindeer Goddess;Hestia
+1012027023;[Kunoichi Goddess] Hestia;Kunoichi Goddess;Hestia
+1012027024;[Sacred Fire] Hestia;Sacred Fire;Hestia
+1012027025;[Beloved Goddess] Hestia;Beloved Goddess;Hestia
+1012027026;[Moonlight Reunion] Hestia;Moonlight Reunion;Hestia
+1012027027;[Chief Goddess] Hestia;Chief Goddess;Hestia
+1012027028;[Director Goddess] Hestia;Director Goddess;Hestia
+1012027029;[Pajama Goddess] Hestia;Pajama Goddess;Hestia
+1012027030;[Wedding Wish] Hestia;Wedding Wish;Hestia
+1012027031;[Day for Exploring] Hestia;Day for Exploring;Hestia
+1012027032;[Azure Goddess] Hestia;Azure Goddess;Hestia
+1012027033;[Gift Goddess] Hestia;Gift Goddess;Hestia
+1012027034;[Yellow Bird] Hestia;Yellow Bird;Hestia
+1012027035;[Swimsuit Contest] Hestia;Swimsuit Contest;Hestia
+1012028001;[Crafty Goddess] Loki;Crafty Goddess;Loki
+1012028002;[Cheers!] Loki;Cheers!;Loki
+1012028003;[Trickster] Loki;Trickster;Loki
+1012028004;[Red Quipster] Loki;Red Quipster;Loki
+1012028005;[Banquet Dress] Loki;Banquet Dress;Loki
+1012028006;[Oni Demon] Loki;Oni Demon;Loki
+1012028007;[Trickster's Truth] Loki;Trickster's Truth;Loki
+1012028008;[Whoever] Loki;Whoever;Loki
+1012029001;[Fertility Staff] Syr Flover;Fertility Staff;Syr Flover
+1012029002;[A Loving Lunch] Syr Flover;A Loving Lunch;Syr Flover
+1012029003;[Brightened Pub] Syr Flover;Brightened Pub;Syr Flover
+1012029004;[Pure-White Dress] Syr Flover;Pure-White Dress;Syr Flover
+1012029005;[Summer Mischief] Syr Flover;Summer Mischief;Syr Flover
+1012029006;[Tricky Angel] Syr Flover;Tricky Angel;Syr Flover
+1012029007;[Pure White] Syr Flover;Pure White;Syr Flover
+1012029008;[Candy Shop] Syr Flover;Candy Shop;Syr Flover
+1012029009;[Countess] Syr Flover;Countess;Syr Flover
+1012029010;[Holiday Spirit] Syr Flover;Holiday Spirit;Syr Flover
+1012029011;[Pure Bride] Syr Flover;Pure Bride;Syr Flover
+1012029012;[New Year Kimono] Syr Flover;New Year Kimono;Syr Flover
+1012030001;[Receptionist] Eina Tulle;Receptionist;Eina Tulle
+1012030002;[Advisor] Eina Tulle;Advisor;Eina Tulle
+1012030003;[Scholar] Eina Tulle;Scholar;Eina Tulle
+1012030004;[Elf's Gift] Eina Tulle;Elf's Gift;Eina Tulle
+1012030005;[Brains and Beauty] Eina Tulle;Brains and Beauty;Eina Tulle
+1012030006;[Guild Inspector] Eina Tulle;Guild Inspector;Eina Tulle
+1012030007;[Holy Choir] Eina Tulle;Holy Choir;Eina Tulle
+1012030008;[Minstrel Elf] Eina Tulle;Minstrel Elf;Eina Tulle
+1012030009;[Midsummer Maiden] Eina Tulle;Midsummer Maiden;Eina Tulle
+1012030010;[Handmade Elf] Eina Tulle;Handmade Elf;Eina Tulle
+1012030011;[Valorous Elf] Eina Tulle;Valorous Elf;Eina Tulle
+1012030012;[Wannabe Nerd] Eina Tulle;Wannabe Nerd;Eina Tulle
+1012031001;[The One-Eyed] Hephaistios;The One-Eyed;Hephaistios
+1012031002;[Burning Forge] Hephaistios;Burning Forge;Hephaistios
+1012031003;[Legendary Artisan] Hephaistios;Legendary Artisan;Hephaistios
+1012031004;[Artless] Hephaistios;Artless;Hephaistios
+1012031005;[Flaming Anvil] Hephaistios;Flaming Anvil;Hephaistios
+1012031006;[Black Rose] Hephaistios;Black Rose;Hephaistios
+1012032001;[Intrigued Goddess] Freya;Intrigued Goddess;Freya
+1012032002;[Devious Emotion] Freya;Devious Emotion;Freya
+1012032003;[Prowling for Lust] Freya;Prowling for Lust;Freya
+1012032004;[Banquet Queen] Freya;Banquet Queen;Freya
+1012032005;[Elegant Queen] Freya;Elegant Queen;Freya
+1012032007;[Beautiful Admirer] Freya;Beautiful Admirer;Freya
+1012032008;[Utmost Beauty] Freya;Utmost Beauty;Freya
+1012032009;[Queen of Beauty] Freya;Queen of Beauty;Freya
+1012032010;[Dreamy Swimmer] Freya;Dreamy Swimmer;Freya
+1012033001;[God of the Masses] Ganesha;God of the Masses;Ganesha
+1012033002;[Mighty Elephant] Ganesha;Mighty Elephant;Ganesha
+1012033003;[Masked Lord] Ganesha;Masked Lord;Ganesha
+1012033004;[Masked God] Ganesha;Masked God;Ganesha
+1012033006;[Maharaja Elephant] Ganesha;Maharaja Elephant;Ganesha
+1012034001;[Mother Seedling] Demeter;Mother Seedling;Demeter
+1012034002;[Ripe Fruit] Demeter;Ripe Fruit;Demeter
+1012034003;[Harvest Goddess] Demeter;Harvest Goddess;Demeter
+1012034004;[Golden Wheat] Demeter;Golden Wheat;Demeter
+1012034005;[Colonel] Demeter;Colonel;Demeter
+1012035001;[Overwhelm] Mia Grand;Overwhelm;Mia Grand
+1012035002;[Fertility's Mom] Mia Grand;Fertility's Mom;Mia Grand
+1012036001;[Lighthearted] Anya Fromel;Lighthearted;Anya Fromel
+1012036002;[Cat-Ears] Anya Fromel;Cat-Ears;Anya Fromel
+1012036003;[Clumsy Detective] Anya Fromel;Clumsy Detective;Anya Fromel
+1012037001;[God of Medicine] Miach;God of Medicine;Miach
+1012037002;[Pharmacist] Miach;Pharmacist;Miach
+1012037003;[God Neighbor] Miach;God Neighbor;Miach
+1012037004;[New Year Medic] Miach;New Year Medic;Miach
+1012038001;[Fearless Smile] Hermes;Fearless Smile;Hermes
+1012038002;[God of Traveler] Hermes;God of Traveler;Hermes
+1012038003;[Banquet Attire] Hermes;Banquet Attire;Hermes
+1012038004;[Producer] Hermes;Producer;Hermes
+1012039001;[Workplace Gossip] Misha Flot;Workplace Gossip;Misha Flot
+1012039002;[Guild Worker] Misha Flot;Guild Worker;Misha Flot
+1012039004;[Summer Break] Misha Flot;Summer Break;Misha Flot
+1012040001;[Far East God] Takemikazuchi;Far East God;Takemikazuchi
+1012040002;[War Incarnation] Takemikazuchi;War Incarnation;Takemikazuchi
+1012040003;[Battle God] Takemikazuchi;Battle God;Takemikazuchi
+1012040004;[Winter War God] Takemikazuchi;Winter War God;Takemikazuchi
+1012041001;[Sinister Cat] Chloe Lolo;Sinister Cat;Chloe Lolo
+1012041002;[The Sly Cat] Chloe Lolo;The Sly Cat;Chloe Lolo
+1012042001;[Fertility Helper] Lunor Faust;Fertility Helper;Lunor Faust
+1012042003;[Prideful Waitress] Lunor Faust;Prideful Waitress;Lunor Faust
+1012042004;[Dungeon Waitress] Lunor Faust;Dungeon Waitress;Lunor Faust
+1012043001;[White Healer] Amid Teasanare;White Healer;Amid Teasanare
+1012043002;[Modern Medicine] Amid Teasanare;Modern Medicine;Amid Teasanare
+1012044002;[Tipsy Gaze] Dionysus;Tipsy Gaze;Dionysus
+1012044003;[Classy God] Dionysus;Classy God;Dionysus
+1012044004;[Splendid Nobleman] Dionysus;Splendid Nobleman;Dionysus
+1012044005;[God of Wine] Dionysus;God of Wine;Dionysus
+1012045001;[Elder Smith] Goibniu;Elder Smith;Goibniu
+1012045002;[Godly Swordsmith] Goibniu;Godly Swordsmith;Goibniu
+1012046001;[God of Origins] Goibniu;God of Origins;Goibniu
+1012046002;[Godly Swordsmith] Goibniu;Godly Swordsmith;Goibniu
+1012051001;[Little Dame] Riveria (Girl);Little Dame;Riveria (Girl)
+1012053001;[Elven Childhood] Lefiya (Girl);Elven Childhood;Lefiya (Girl)
+1012061001;[Young Blacksmith] Hephaistios (Girl);Young Blacksmith;Hephaistios (Girl)
+1012062001;[Little Goddess] Hestia (Girl);Little Goddess;Hestia (Girl)
+1012072001;[Vigorous Medi-God] Diancecht;Vigorous Medi-God;Diancecht
+1012078001;[Innocent Goddess] Artemis;Innocent Goddess;Artemis
+1012078002;[Sleeping Innocence] Artemis;Sleeping Innocence;Artemis
+1012080001;[Chained Reign] Ariadne;Chained Reign;Ariadne
+1012080002;[Final Reminiscence] Ariadne;Final Reminiscence;Ariadne
+1012082001;[In The End] Orna;In The End;Orna
+1012087001;[Nomadic Bard] Ryulu;Nomadic Bard;Ryulu
+1012088001;[God of Light] Apollo;God of Light;Apollo
+1012089001;[Sacred Cup] Soma;Sacred Cup;Soma
+1012093001;[The Night Queen] Ishtar;The Night Queen;Ishtar
+1012096001;[God of War] Ares;God of War;Ares
+1012504001;[Explosive Girl] Ti;Explosive Girl;Ti
+1012509001;[Sharp Thinker] Armin Arlert;Sharp Thinker;Armin Arlert
+1012511001;[Uncontrollable] Titan Eren;Uncontrollable;Titan Eren
+1012512001;[Princess] Crunchyroll-Hime;Princess;Crunchyroll-Hime
+1012519001;[Berserk] Kaguya & Liliruca;Berserk;Kaguya & Liliruca
+1012520001;[Efreet] Kotori Itsuka;Efreet;Kotori Itsuka
+1012524001;[At Home] Cow Girl;At Home;Cow Girl
