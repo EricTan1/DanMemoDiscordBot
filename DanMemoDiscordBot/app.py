@@ -149,6 +149,7 @@ async def skillSearch(ctx, *search):
         if(count ==4):
             temp_list = []
             rotating_list.append(temp_list)
+            count=0
     # remove last empty list
     if(len(rotating_list[len(rotating_list)-1]) == 0):
         rotating_list.remove(len(rotating_list)-1)
