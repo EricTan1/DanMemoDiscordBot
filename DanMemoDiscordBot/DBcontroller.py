@@ -358,7 +358,7 @@ class DBcontroller:
       # CHECK IF TIME LIMITED
       ret = ret + "{} {}".format(row[0],row[1])
       if(bool(row[2])):
-        ret = ret + " [Limited-Time] "
+        ret = ret + "\n[Limited-Time] "
       for x in range(0,row[4]):
         ret = ret + ":star:"
       ret = ret + "\n"
