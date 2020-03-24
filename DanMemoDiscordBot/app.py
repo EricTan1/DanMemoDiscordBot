@@ -62,7 +62,7 @@ async def characterSearch(ctx, *search):
         message = "Sorry there are no results"
     elif(len(my_list) == 1):
         temp_embed = discord.Embed()
-        temp_embed.color = 4975455
+        temp_embed.color = 3066993
         if("Ad" in my_list[0]):
             info = db.assembleAdventurer((my_list[0])[2:])
         else:
@@ -120,40 +120,47 @@ async def skillSearch(ctx, *search):
     print(skilleffects_id_list)
     my_set = set()
     message =""
-    for skilleffectsid in skilleffects_id_list:
-        print(skilleffectsid)
-        if("Ad" in skilleffectsid):
-            skillid = db.getAdSkillIdFromEffect(skilleffectsid[2:])
-            my_set.add("Ad"+str(skillid))            
-        else:
-            skillid = db.getAsSkillIdFromEffect(skilleffectsid[2:])
-            my_set.add("As"+str(skillid))
-    rotating_list = []
-    count = 0
-    temp_list = []
-    rotating_list.append(temp_list)
-    for skillid in my_set:
-        if("Ad" in skillid):
-            adventurerid = db.getAdventurerIdFromSkill(skillid[2:])
-            #db.assembleAdventurerCharacterData(adventurerid)
-            skillinfo = db.assembleAdventurerSkill(skillid[2:])
-            #skillinfo[0]+skillinfo[1]+"\n"
-            temp_list.append((db.assembleAdventurerCharacterData(adventurerid),skillinfo[0]+skillinfo[1]+"\n"))
-        else:
-            assistid = db.getAssistIdFromSkill(skillid[2:])
-            #db.assembleAssistCharacterData(assistid)
-            skillinfo=db.assembleAssistSkill(skillid[2:])
-            #skillinfo[0] + skillinfo[1]+"\n"
-            temp_list.append((db.assembleAssistCharacterData(assistid),skillinfo[0] + skillinfo[1]+"\n"))
-        count = count +1
-        if(count ==4):
-            temp_list = []
-            rotating_list.append(temp_list)
-            count=0
-    # remove last empty list
-    if(len(rotating_list[len(rotating_list)-1]) == 0):
-        rotating_list.remove(len(rotating_list)-1)
-    await skillSearchRotatingPage(ctx, search,rotating_list,my_set)
+    if(len(skilleffects_id_list) <=60):
+        for skilleffectsid in skilleffects_id_list:
+            print(skilleffectsid)
+            if("Ad" in skilleffectsid):
+                skillid = db.getAdSkillIdFromEffect(skilleffectsid[2:])
+                my_set.add("Ad"+str(skillid))            
+            else:
+                skillid = db.getAsSkillIdFromEffect(skilleffectsid[2:])
+                my_set.add("As"+str(skillid))
+        rotating_list = []
+        count = 0
+        temp_list = []
+        rotating_list.append(temp_list)
+        for skillid in my_set:
+            if("Ad" in skillid):
+                adventurerid = db.getAdventurerIdFromSkill(skillid[2:])
+                #db.assembleAdventurerCharacterData(adventurerid)
+                skillinfo = db.assembleAdventurerSkill(skillid[2:])
+                #skillinfo[0]+skillinfo[1]+"\n"
+                temp_list.append((db.assembleAdventurerCharacterData(adventurerid),skillinfo[0]+skillinfo[1]+"\n"))
+            else:
+                assistid = db.getAssistIdFromSkill(skillid[2:])
+                #db.assembleAssistCharacterData(assistid)
+                skillinfo=db.assembleAssistSkill(skillid[2:])
+                #skillinfo[0] + skillinfo[1]+"\n"
+                temp_list.append((db.assembleAssistCharacterData(assistid),skillinfo[0] + skillinfo[1]+"\n"))
+            count = count +1
+            if(count ==4):
+                temp_list = []
+                rotating_list.append(temp_list)
+                count=0
+        # remove last empty list
+        if(len(rotating_list[len(rotating_list)-1]) == 0):
+            rotating_list.remove(len(rotating_list)-1)
+        await skillSearchRotatingPage(ctx, search,rotating_list,my_set)
+    else:
+        temp_embed = discord.Embed()
+        temp_embed.color = 16203840
+        temp_embed.title = "ERROR"
+        temp_embed.description = "Too many results please try to narrow it down further"
+        await ctx.send(embed=temp_embed)        
     db.closeconnection()
 
 async def skillSearchRotatingPage(ctx, search, page_list, my_set):
@@ -186,10 +193,19 @@ async def skillSearchRotatingPage(ctx, search, page_list, my_set):
             await msg.edit(embed=temp_embed)
             break
         else:
-            if str(reaction.emoji) == emoji1 and current_page > 0:
-                current_page = current_page -1
-            if str(reaction.emoji) == emoji2 and current_page < len(page_list):
-                current_page = current_page +1
+            # left
+            if str(reaction.emoji) == emoji1:
+                if(current_page > 0):
+                    current_page = current_page -1
+                else:
+                    current_page = len(page_list)-1
+            # right
+            if str(reaction.emoji) == emoji2:
+                if( current_page+1 < len(page_list)):
+                    current_page = current_page +1
+                else:
+                    current_page = 0
+            temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))            
             temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
             await msg.edit(embed=temp_embed)
 
