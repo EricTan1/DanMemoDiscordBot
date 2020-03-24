@@ -128,25 +128,69 @@ async def skillSearch(ctx, *search):
         else:
             skillid = db.getAsSkillIdFromEffect(skilleffectsid[2:])
             my_set.add("As"+str(skillid))
-        
+    rotating_list = []
+    count = 0
+    temp_list = []
+    rotating_list.append(temp_list)
     for skillid in my_set:
         if("Ad" in skillid):
             adventurerid = db.getAdventurerIdFromSkill(skillid[2:])
-            message =message +  db.assembleAdventurerCharacterData(adventurerid)
+            #db.assembleAdventurerCharacterData(adventurerid)
             skillinfo = db.assembleAdventurerSkill(skillid[2:])
-            message = message + skillinfo[0] + "\n"+skillinfo[1]
+            #skillinfo[0]+skillinfo[1]+"\n"
+            temp_list.append((db.assembleAdventurerCharacterData(adventurerid),skillinfo[0]+skillinfo[1]+"\n"))
         else:
             assistid = db.getAssistIdFromSkill(skillid[2:])
-            message =message +  db.assembleAssistCharacterData(assistid)
+            #db.assembleAssistCharacterData(assistid)
             skillinfo=db.assembleAssistSkill(skillid[2:])
-            message = message + skillinfo[0] + "\n"+skillinfo[1]
-        
-
-    try:
-        await ctx.send(message)
-    except:
-        await ctx.send("too many results please try to narrow it down further")
+            #skillinfo[0] + skillinfo[1]+"\n"
+            temp_list.append((db.assembleAssistCharacterData(assistid),skillinfo[0] + skillinfo[1]+"\n"))
+        count = count +1
+        if(count ==4):
+            temp_list = []
+            rotating_list.append(temp_list)
+    # remove last empty list
+    if(len(rotating_list[len(rotating_list)-1]) == 0):
+        rotating_list.remove(len(rotating_list)-1)
+    await skillSearchRotatingPage(ctx, search,rotating_list,my_set)
     db.closeconnection()
+
+async def skillSearchRotatingPage(ctx, search, page_list, my_set):
+    print(page_list)
+    # set up
+    current_page = 0
+    temp_embed = discord.Embed()
+    temp_embed.color = 3066993
+    temp_embed.title = "{} results for {}".format(str(len(my_set)),search)
+    temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+    def clearSetField(temp_embed:discord.Embed, field_list):
+        temp_embed.clear_fields()
+        for skills in field_list:
+            temp_embed.add_field(value=skills[1], name=skills[0],inline=False)
+        return temp_embed
+    temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
+    msg = await ctx.send(embed=temp_embed)
+    emoji1 = '\u2b05'
+    emoji2 = '\u27a1'
+    await msg.add_reaction(emoji1)
+    await msg.add_reaction(emoji2)
+    emojis = [emoji1, emoji2]
+    def check(reaction, user):
+        return (str(reaction.emoji) == emoji2 or str(reaction.emoji) == emoji1) and user !=client.user
+    while True:
+        try:
+            reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+        except asyncio.TimeoutError:
+            temp_embed.color=16203840
+            await msg.edit(embed=temp_embed)
+            break
+        else:
+            if str(reaction.emoji) == emoji1 and current_page > 0:
+                current_page = current_page -1
+            if str(reaction.emoji) == emoji2 and current_page < len(page_list):
+                current_page = current_page +1
+            temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
+            await msg.edit(embed=temp_embed)
 
 
 if __name__ == "__main__":
