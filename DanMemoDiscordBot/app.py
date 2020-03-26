@@ -187,6 +187,8 @@ async def help(ctx):
                 break;
         temp_embed.set_thumbnail(url="https://static.myfigurecollection.net/pics/figure/large/571996.jpg")
     await ctx.author.send(embed=temp_embed)
+    await ctx.send("Sent info to your DM!")
+    
 
 
 async def skillSearchRotatingPage(ctx, search, page_list, my_set):
