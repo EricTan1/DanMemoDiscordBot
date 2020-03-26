@@ -8,12 +8,12 @@ F
 EXAMPLE:
 !$cs princess
 
-**EXAMPLE BOT OUTPUT**
+EXAMPLE BOT OUTPUT:
 Bathroom Princess Ais Wallenstein
 Battle Princess Ais Wallenstein
 Bunny Princess Ais Wallenstein
 F
-Skill Search
+**Skill Search**
 Alias: ss, ssearch
 Usage: !$ss <attribute1>,<attribute2>,<attribute3>
 Attributes can be:
@@ -26,7 +26,7 @@ F
 EXAMPLE:
 !$ss allies, phys resist
 
-**EXAMPLE BOT OUTPUT**
+EXAMPLE BOT OUTPUT:
 Bathroom Princess Ais Wallenstein
 combat: Veter Schrimm
 [Allies] +40% P.Resist /3 turn(s)
