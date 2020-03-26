@@ -1,0 +1,38 @@
+F
+**Character Search**
+Alias: cs, csearch
+Usage: !$cs <insert search here>
+If the bot can narrow down the search to one character then it
+will display that character information.
+F
+EXAMPLE:
+!$cs princess
+
+**EXAMPLE BOT OUTPUT**
+Bathroom Princess Ais Wallenstein
+Battle Princess Ais Wallenstein
+Bunny Princess Ais Wallenstein
+F
+Skill Search
+Alias: ss, ssearch
+Usage: !$ss <attribute1>,<attribute2>,<attribute3>
+Attributes can be:
+Target : foes, allies, foe, ally, self, skill
+Attribute : hp regen, sleep, phys resist, crit damage, seal ....
+Modifier : super, hi, lo, 10%, 30% , ...
+Element: Fire, Water, Earth, ....
+Type: physical, magical, balance, ....
+F
+EXAMPLE:
+!$ss allies, phys resist
+
+**EXAMPLE BOT OUTPUT**
+Bathroom Princess Ais Wallenstein
+combat: Veter Schrimm
+[Allies] +40% P.Resist /3 turn(s)
+
+Casino Lady Shakti Varma
+combat: Suzila
+[Allies] +35% Guard Rate /3 turn(s)
+[Allies] +35% P.Resist /3 turn(s)
+E
