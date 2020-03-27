@@ -173,6 +173,13 @@ class DBcontroller:
         if(ret_dict.get(skillid) == None):
             ret_dict[skillid] = 0
         ret_dict[skillid] = ret_dict.get(skillid)+1
+      skillAveffect_sql="SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN heroku_0fe8a18d3b21642.attribute as a on ad.attributeid = a.attributeid WHERE a.name like '%{}%'".replace("danmemo",self.database).format(words)
+      self._mycursor.execute(skillAveffect_sql)      
+      for row in self._mycursor:
+        skillid = "Av" + str(row[0])
+        if(ret_dict.get(skillid) == None):
+            ret_dict[skillid] = 0
+        ret_dict[skillid] = ret_dict.get(skillid)+1      
     ret_list=[]
     highest= None
     for keys in ret_dict:
@@ -184,6 +191,7 @@ class DBcontroller:
         ret_list = [keys]
       elif(highest == ret_dict.get(keys)):
         ret_list.append(keys)
+    print(ret_list)
     return ret_list
 
       
@@ -328,6 +336,22 @@ class DBcontroller:
       else:
         ret=ret + "[{}] {} {} {} {} {} \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute)        
     return (skillname,ret)
+  
+  def assembleAdventurerDevelopment(self, adventurerDevelopmentid):
+    self._mycursor.execute("SELECT ad.name,a.name,m.value,adv.title,c.name FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.adventurer as adv on adv.adventurerid = ad.adventurerid LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid LEFT JOIN danmemo.modifier as m on ad.modifierid = m.modifierid LEFT JOIN danmemo.character as c on adv.characterid= c.characterid WHERE ad.adventurerdevelopmentid = {}".replace("danmemo", self.database).format(adventurerDevelopmentid))
+    for row in self._mycursor:
+      skillname = row[0]
+      temp_attribute = row[1]
+      temp_modifier = row[2]      
+      if(self.human_readable_dict.get(temp_modifier)!= None):
+        temp_modifier=self.human_readable_dict.get(temp_modifier)
+      if(self.human_readable_dict.get(temp_attribute)!= None):
+        temp_attribute=self.human_readable_dict.get(temp_attribute)
+      if(temp_modifier[1:].isnumeric()):
+        temp_modifier= temp_modifier+"%"
+      skilleffect = "{} {}".format(temp_attribute,temp_modifier)
+      adventurername = row[3] + " " + row[4]
+      return (skillname,skilleffect,adventurername)
   
   def getAdSkillIdFromEffect(self, adventurerskilleffectsid):
     self._mycursor.execute("SELECT AdventurerSkillid FROM danmemo.adventurerskilleffects WHERE AdventurerSkillEffectsid={}".replace("danmemo",self.database).format(adventurerskilleffectsid))

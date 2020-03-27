@@ -102,5 +102,18 @@
 	"life_steal": "Heal $1 of Dmg.",
 	"sa_gauge_charge": "SA Gauge Charge gain",
 	"status_buff": "Status Buff",
-	"status_debuff": "Status Debuff"
+	"status_debuff": "Status Debuff",
+	"ox_slayer": "Ox Slayer",
+	"beast_killer": "Beast Killer",
+	"giant_killer": "Giant Killer",
+	"fantasma_killer": "Fantasma Killer",
+	"worm_killer": "Worm Killer",
+	"insect_killer": "Insect Killer",
+	"spirit_killer": "Spirit Killer",
+	"material_killer": "Material Killer",
+	"aqua_killer": "Aqua Killer",
+	"plant_killer": "Plant Killer",
+	"dragon_killer": "Dragon Killer",
+	"ogre_killer": "Ogre Killer"
+
 }
