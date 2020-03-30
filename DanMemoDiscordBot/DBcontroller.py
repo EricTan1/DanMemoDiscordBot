@@ -102,9 +102,20 @@ class DBcontroller:
     ret_list =[]
     for row in self._mycursor: 
       ret_list.append(row)
-    print(ret_list)
     return ret_list
   
+  def getDataColumnList(self, entityname, column):
+    ''' (DBcontroller, Entity, str, ?) -> List of Entity
+    returns the entity list based on the columns
+    '''
+    sql = 'SELECT {} FROM {}.{} '.format(column,self.database.lower(),
+                                                   entityname.lower())
+    
+    self._mycursor.execute(sql)
+    ret_list =[]
+    for row in self._mycursor: 
+      ret_list.append(row[0])
+    return ret_list  
   
   def characterSearch(self,search, filter_dict):
     print("searching")

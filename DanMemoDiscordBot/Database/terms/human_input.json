@@ -90,10 +90,10 @@
 	"earthattack": "earth_magic_attack",
 	"earthatk": "earth_magic_attack",
 	"earth.atk": "earth_magic_attack",
-	"thunder attack": "thunder_magic_attack",
-	"thunderattack": "thunder_magic_attack",
-	"thunderatk": "thunder_magic_attack",
-	"thunder.atk": "thunder_magic_attack",
+	"thunder attack": "thunder_attack",
+	"thunderattack": "thunder_attack",
+	"thunderatk": "thunder_attack",
+	"thunder.atk": "thunder_attack",
 	"light damage": "light_magic_attack",
 	"lightdamage": "light_magic_attack",
 	"light dmg": "light_magic_attack",
@@ -292,5 +292,10 @@
 	"nullphysicalatk": "null_physical_attack_no_special",
 	"null physical atk.": "null_physical_attack_no_special",
 	"nullphysical atk.": "null_physical_attack_no_special",
-	"nullphysicalatk.": "null_physical_attack_no_special"
+	"nullphysicalatk.": "null_physical_attack_no_special",
+	"removes all magic buffs exc assist skills":"magic_buff_removal_no_assist",
+	"removes all strength buffs exc assist skills":"str_buff_removal_no_assist",
+	"hi": "high",
+	"mid": "medium",
+	"lo": "low"
 }
