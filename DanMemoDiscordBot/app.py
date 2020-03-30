@@ -204,12 +204,17 @@ async def skillSearchRotatingPage(ctx, search, page_list, my_set):
     temp_embed = discord.Embed()
     temp_embed.color = 3066993
     temp_embed.title = "{} results for {}".format(str(len(my_set)),search)
+    if(len(page_list) == 0):
+        page_list.append([["No relevant skills to display","End of List"]])    
     temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
     def clearSetField(temp_embed:discord.Embed, field_list):
         temp_embed.clear_fields()
+        print(field_list)
         for skills in field_list:
+            print(skills)
             temp_embed.add_field(value=skills[1], name=skills[0],inline=False)
         return temp_embed
+    
     temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
     msg = await ctx.send(embed=temp_embed)
     emoji1 = '\u2b05'
