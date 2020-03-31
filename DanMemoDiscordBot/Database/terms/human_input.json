@@ -297,5 +297,6 @@
 	"removes all strength buffs exc assist skills":"str_buff_removal_no_assist",
 	"hi": "high",
 	"mid": "medium",
-	"lo": "low"
+	"lo": "low",
+	"water resist":" water_resist"
 }
