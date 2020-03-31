@@ -249,6 +249,16 @@ async def skillSearchRotatingPage(ctx, search, page_list, my_set):
             await msg.edit(embed=temp_embed)
 
 
+@client.command(aliases=['sim food'])
+async def food(ctx):
+    temp_embed = discord.Embed()
+    temp_embed.color = 3066993
+    temp_embed.title = "Here is your bento box for today!"
+    temp_embed.set_image(url="attachment://texture.png")
+    await ctx.send(embed=temp_embed, file=discord.File("./lottery/A Loving Lunch Syr Flover" + "/texture.png"))
+    
+
 if __name__ == "__main__":
+    
     # Run the bot
     client.run(TOKEN)
