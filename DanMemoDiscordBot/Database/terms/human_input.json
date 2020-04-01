@@ -1,5 +1,5 @@
 {
-
+	"removes all all-target attack dmg resist debuff exc assist skills":"all_damage_resist_removal_no_assist",
 	"null p.attack": "null_physical_attack_no_special",
 	"nullpattack": "null_physical_attack_no_special",
 	"nullp.attack": "null_physical_attack_no_special",
@@ -94,6 +94,10 @@
 	"fireattack": "fire_attack",
 	"fireatk": "fire_attack",
 	"fire.atk": "fire_attack",
+	"water attack":"water_attack",
+	"waterattack": "water_attack",
+	"wateratk": "water_attack",
+	"water.atk": "water_attack",
 	"dark attack": "dark_attack",
 	"darkattack": "dark_attack",
 	"darkatk": "dark_attack",
@@ -297,11 +301,13 @@
 	"hi": "high",
 	"mid": "medium",
 	"lo": "low",
+	"ailment cure": "ailment_cure",
 	"water resist":" water_resist",
 	"uncounter rate":"uncounter_rate",
 	"unguard rate":"unguard_rate",
 	"removes all magic buffs exc assist skills":"magic_buff_removal_no_assist",
 	"removes all strength buffs exc assist skills":"str_buff_removal_no_assist",
 	"removes all physical_resist buffs exc assist skills":"physical_resist_buff_removal_no_assist",
+	"removes all physical_resist debuffs exc assist skills":"physical_resist_debuff_removal_no_assist",
 	"per each target's physical_resist reduction skill":"per_each_targets_physical_resist_reduction_skill"
 }
