@@ -342,7 +342,7 @@ class DBcontroller:
       if(temp_modifier[1:].isnumeric()):
         temp_modifier= temp_modifier+"%"
 
-      if(temp_duration != "None" or temp_duration != None):
+      if(temp_duration != "None" and temp_duration != None):
         ret=ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute,row[3])
       else:
         ret=ret + "[{}] {} {} {} {} {} \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute)        
