@@ -291,7 +291,7 @@ class DBcontroller:
         temp_modifier=self.human_readable_dict.get(temp_modifier)
       if(self.human_readable_dict.get(temp_attribute)!= None):
         temp_attribute=self.human_readable_dict.get(temp_attribute)
-      if(temp_modifier[1:].isnumeric()):
+      if(temp_modifier[1:].isnumeric() and temp_modifier[0]!='x'):
         temp_modifier= temp_modifier+"%"
 
       if(temp_duration != None and temp_duration.strip() != "None"):
@@ -341,7 +341,7 @@ class DBcontroller:
         temp_element=self.human_readable_dict.get(temp_element)
       if(self.human_readable_dict.get(temp_speed)!= None):
         temp_speed=self.human_readable_dict.get(temp_speed)      
-      if(temp_modifier[1:].isnumeric()):
+      if(temp_modifier[1:].isnumeric() and temp_modifier[0]!='x'):
         temp_modifier= temp_modifier+"%"
 
       if(temp_duration != None and temp_duration.strip() != "None"):
@@ -361,7 +361,7 @@ class DBcontroller:
         temp_modifier=self.human_readable_dict.get(temp_modifier)
       if(self.human_readable_dict.get(temp_attribute)!= None):
         temp_attribute=self.human_readable_dict.get(temp_attribute)
-      if(temp_modifier[1:].isnumeric()):
+      if(temp_modifier[1:].isnumeric() and temp_modifier[0]!='x'):
         temp_modifier= temp_modifier+"%"
       skilleffect = "{} {}".format(temp_attribute,temp_modifier)
       adventurername = row[3] + " " + row[4]
