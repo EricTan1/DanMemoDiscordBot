@@ -1,4 +1,5 @@
 {
+
 	"null p.attack": "null_physical_attack_no_special",
 	"nullpattack": "null_physical_attack_no_special",
 	"nullp.attack": "null_physical_attack_no_special",
@@ -18,8 +19,6 @@
 	"null physical atk.": "null_physical_attack_no_special",
 	"nullphysical atk.": "null_physical_attack_no_special",
 	"nullphysicalatk.": "null_physical_attack_no_special",
-	"removes all magic buffs exc assist skills":"magic_buff_removal_no_assist",
-	"removes all strength buffs exc assist skills":"str_buff_removal_no_assist",
 	"health": "hp",
 	"mana": "mp",
 	"physical attack": "physical_attack",
@@ -300,5 +299,7 @@
 	"lo": "low",
 	"water resist":" water_resist",
 	"uncounter rate":"uncounter_rate",
-	"unguard rate":"unguard_rate"
+	"unguard rate":"unguard_rate",
+	"removes all magic buffs exc assist skills":"magic_buff_removal_no_assist",
+	"removes all strength buffs exc assist skills":"str_buff_removal_no_assist"
 }
