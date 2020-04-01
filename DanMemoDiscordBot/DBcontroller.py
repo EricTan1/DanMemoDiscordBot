@@ -294,7 +294,7 @@ class DBcontroller:
       if(temp_modifier[1:].isnumeric()):
         temp_modifier= temp_modifier+"%"
 
-      if(temp_duration != None or temp_duration.strip() != "None"):
+      if(temp_duration != None and temp_duration.strip() != "None"):
         ret=ret + "[{}] {} {} /{} turn(s) \n".format(temp_target,temp_modifier,temp_attribute,temp_duration)
       else:
         ret=ret + "[{}] {} {} \n".format(temp_target,temp_modifier,temp_attribute)        
@@ -325,6 +325,8 @@ class DBcontroller:
         temp_element = ""      
       if(temp_speed== None or temp_speed.strip() == "None"):
         temp_speed = ""
+      if(temp_attribute == None or temp_attribute.strip() == "None"):
+        temp_attribute = ""
       # [TARGET] Modifier Attribute /duration
       if(self.human_readable_dict.get(temp_target)!= None):
         temp_target=self.human_readable_dict.get(temp_target)
@@ -342,7 +344,7 @@ class DBcontroller:
       if(temp_modifier[1:].isnumeric()):
         temp_modifier= temp_modifier+"%"
 
-      if(temp_duration.strip() != "None" and temp_duration != None):
+      if(temp_duration != None and temp_duration.strip() != "None"):
         ret=ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute,row[3])
       else:
         print(temp_type)
@@ -352,7 +354,7 @@ class DBcontroller:
   def assembleAdventurerDevelopment(self, adventurerDevelopmentid):
     self._mycursor.execute("SELECT ad.name,a.name,m.value,adv.title,c.name FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.adventurer as adv on adv.adventurerid = ad.adventurerid LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid LEFT JOIN danmemo.modifier as m on ad.modifierid = m.modifierid LEFT JOIN danmemo.character as c on adv.characterid= c.characterid WHERE ad.adventurerdevelopmentid = {}".replace("danmemo", self.database).format(adventurerDevelopmentid))
     for row in self._mycursor:
-      skillname = row[0]
+      skillname = row[0].strip()
       temp_attribute = row[1]
       temp_modifier = row[2]      
       if(self.human_readable_dict.get(temp_modifier)!= None):
