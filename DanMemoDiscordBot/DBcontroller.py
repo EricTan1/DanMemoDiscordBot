@@ -294,7 +294,7 @@ class DBcontroller:
       if(temp_modifier[1:].isnumeric()):
         temp_modifier= temp_modifier+"%"
 
-      if(temp_duration != None):
+      if(temp_duration != None or temp_duration != "None"):
         ret=ret + "[{}] {} {} /{} turn(s) \n".format(temp_target,temp_modifier,temp_attribute,temp_duration)
       else:
         ret=ret + "[{}] {} {} \n".format(temp_target,temp_modifier,temp_attribute)        
@@ -319,11 +319,11 @@ class DBcontroller:
       temp_type = row[4]
       temp_element = row[5]
       temp_speed = row[6]
-      if(temp_type == None):
+      if(temp_type == None or temp_type != "None"):
         temp_type = ""
-      if(temp_element == None):
+      if(temp_element == None or temp_element != "None"):
         temp_element = ""      
-      if(temp_speed== None):
+      if(temp_speed== None or temp_speed != "None"):
         temp_speed = ""
       # [TARGET] Modifier Attribute /duration
       if(self.human_readable_dict.get(temp_target)!= None):
@@ -342,7 +342,7 @@ class DBcontroller:
       if(temp_modifier[1:].isnumeric()):
         temp_modifier= temp_modifier+"%"
 
-      if(temp_duration != "None"):
+      if(temp_duration != "None" or temp_duration != None):
         ret=ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute,row[3])
       else:
         ret=ret + "[{}] {} {} {} {} {} \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute)        
