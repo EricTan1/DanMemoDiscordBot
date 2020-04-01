@@ -319,11 +319,11 @@ class DBcontroller:
       temp_type = row[4]
       temp_element = row[5]
       temp_speed = row[6]
-      if(temp_type == None or temp_type != "None"):
+      if(temp_type == None or temp_type == "None"):
         temp_type = ""
-      if(temp_element == None or temp_element != "None"):
+      if(temp_element == None or temp_element == "None"):
         temp_element = ""      
-      if(temp_speed== None or temp_speed != "None"):
+      if(temp_speed== None or temp_speed == "None"):
         temp_speed = ""
       # [TARGET] Modifier Attribute /duration
       if(self.human_readable_dict.get(temp_target)!= None):
