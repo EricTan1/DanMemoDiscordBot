@@ -301,5 +301,7 @@
 	"uncounter rate":"uncounter_rate",
 	"unguard rate":"unguard_rate",
 	"removes all magic buffs exc assist skills":"magic_buff_removal_no_assist",
-	"removes all strength buffs exc assist skills":"str_buff_removal_no_assist"
+	"removes all strength buffs exc assist skills":"str_buff_removal_no_assist",
+	"removes all physical_resist buffs exc assist skills":"physical_resist_buff_removal_no_assist",
+	"per each target's physical_resist reduction skill":"per_each_targets_physical_resist_reduction_skill"
 }

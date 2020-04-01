@@ -114,6 +114,6 @@
 	"aqua_killer": "Aqua Killer",
 	"plant_killer": "Plant Killer",
 	"dragon_killer": "Dragon Killer",
-	"ogre_killer": "Ogre Killer"
-
+	"ogre_killer": "Ogre Killer",
+	"per_each_targets_physical_resist_reduction_skill":"per each target's physical_resist reduction skill"
 }
