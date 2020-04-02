@@ -9,6 +9,7 @@ with open('message.txt') as fp:
     line = fp.readline()
     while line:
         temp = line.split(";")
+        print(temp)
         print(temp[2].strip() +" "+ temp[3].strip())
         print(temp[0])
         try:

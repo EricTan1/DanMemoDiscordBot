@@ -184,7 +184,7 @@ class DBcontroller:
         if(ret_dict.get(skillid) == None):
             ret_dict[skillid] = 0
         ret_dict[skillid] = ret_dict.get(skillid)+1
-      skillAveffect_sql="SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN heroku_0fe8a18d3b21642.attribute as a on ad.attributeid = a.attributeid WHERE a.name like '%{}%'".replace("danmemo",self.database).format(words)
+      skillAveffect_sql="SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN heroku_0fe8a18d3b21642.attribute as a on ad.attributeid = a.attributeid WHERE a.name like '%{}%'".replace("danmemo",self.database).replace("heroku_0fe8a18d3b21642",self.database).format(words)
       self._mycursor.execute(skillAveffect_sql)      
       for row in self._mycursor:
         skillid = "Av" + str(row[0])
@@ -276,7 +276,7 @@ class DBcontroller:
     self._mycursor.execute(skill_sql)
     for row in self._mycursor:
       # skilltype : skillname
-      skillname=skillname + "[{}]:\n".format(row[0])
+      skillname=skillname + "[{}]:\n".format(row[0].strip())
     self._mycursor.execute(effects_sql)
     for row in self._mycursor:
       temp_target = row[0]

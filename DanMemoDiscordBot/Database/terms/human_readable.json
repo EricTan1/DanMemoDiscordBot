@@ -117,7 +117,8 @@
 	"ogre_killer": "Ogre Killer",
 	"per_each_targets_physical_resist_reduction_skill":"per each target's P.Resist reduction skill",
 	"all_damage_resist_removal_no_assist":"removes all All-target Attack DMG Resist debuff exc Assist Skills",
-	"physical_resist_debuff_removal_no_assist":"removes all P.Resist Debuffs exc Assist Skills"
-
+	"physical_resist_debuff_removal_no_assist":"removes all P.Resist Debuffs exc Assist Skills",
+	"per_each_self_str_buff_skill":	"per each [Self] Str. Buff Skill",
+	"per_each_self_str_buff":"per each [Self] Str. Buff"
 
 }
