@@ -6,9 +6,8 @@ import os
 import aiohttp
 from discord.ext import commands
 from DBcontroller import DBcontroller
-
-import os
-import sys
+from PIL import Image
+import io
 from urllib.parse import urlparse
 sys.path.append('Entities/')
 
@@ -24,7 +23,7 @@ PASSWORD = result.password
 DATABASE = result.path[1:]
 HOSTNAME = result.hostname
 
-_command_prefix = '!$'
+_command_prefix = '$$'
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
 
 @client.event
@@ -120,7 +119,7 @@ async def skillSearch(ctx, *search):
     print(skilleffects_id_list)
     my_set = set()
     message =""
-    if(len(skilleffects_id_list) <=60):
+    if(len(skilleffects_id_list) <=40):
         for skilleffectsid in skilleffects_id_list:
             print(skilleffectsid)
             if("Ad" in skilleffectsid):
@@ -134,33 +133,71 @@ async def skillSearch(ctx, *search):
         rotating_list = []
         count = 0
         temp_list = []
+        file_list = []
+        discord_file_list = []
+        assist_dup = set()
         rotating_list.append(temp_list)
+        total_results = len(my_set)
         for skillid in my_set:
             if("Ad" in skillid):
                 adventurerid = db.getAdventurerIdFromSkill(skillid[2:])
                 #db.assembleAdventurerCharacterData(adventurerid)
                 skillinfo = db.assembleAdventurerSkill(skillid[2:])
                 #skillinfo[0]+skillinfo[1]+"\n"
-                temp_list.append((db.assembleAdventurerCharacterData(adventurerid),skillinfo[0]+skillinfo[1]+"\n"))
+                names = db.assembleAdventurerCharacterName(adventurerid)
+                temp_list.append(("[{}] {}".format(names[0],names[1]),skillinfo[0]+skillinfo[1]+"\n"))
+                try:
+                    file_name = "./lottery/"+"{} {}".format(names[0],names[1]).strip()+"/hex.png"
+                    f = open(file_name,"r")
+                    f.close()
+                    file_list.append(file_name)                    
+                except:
+                    file_list.append("./lottery/gac_dummy/hex.png")
             elif("As" in skillid):
                 assistid = db.getAssistIdFromSkill(skillid[2:])
-                #db.assembleAssistCharacterData(assistid)
-                skillinfo=db.assembleAssistSkill(skillid[2:])
-                #skillinfo[0] + skillinfo[1]+"\n"
-                temp_list.append((db.assembleAssistCharacterData(assistid),skillinfo[0] + skillinfo[1]+"\n"))
+                if (not(assistid in assist_dup)):
+                    assist_dup.add(assistid)
+                    #db.assembleAssistCharacterData(assistid)
+                    skillinfo=db.assembleAssistSkill(skillid[2:])
+                    #skillinfo[0] + skillinfo[1]+"\n"
+                    names = db.assembleAssistCharacterName(assistid)
+                    temp_list.append(("[{}] {}".format(names[0],names[1]),skillinfo[0] + skillinfo[1]+"\n"))
+                    try:
+                        file_name = "./lottery/"+"{} {}".format(names[0],names[1]).strip()+"/hex.png"
+                        f = open(file_name,"r")
+                        f.close()
+                        file_list.append(file_name)
+                    except:
+                        file_list.append("./lottery/gac_dummy/hex.png")
+                else:
+                    count = count -1
+                    total_results = total_results -1
             else:
                 skillinfo=db.assembleAdventurerDevelopment(skillid[2:])
                 #skillinfo[0] + skillinfo[1]+"\n"
                 temp_list.append((skillinfo[2],skillinfo[0] + "\n"+ skillinfo[1]+"\n"))
+                try:
+                    file_name = "./lottery/"+skillinfo[2].strip()+"/hex.png"
+                    f = open(file_name,"r")
+                    f.close()
+                    file_list.append(file_name)
+                except:
+                    file_list.append("./lottery/gac_dummy/hex.png")                    
             count = count +1
             if(count ==4):
+                await imageHorizontalConcat(file_list,discord_file_list)
                 temp_list = []
+                file_list= []                
                 rotating_list.append(temp_list)
                 count=0
+                
         # remove last empty list
         if(len(rotating_list[len(rotating_list)-1]) == 0):
             rotating_list.pop(len(rotating_list)-1)
-        await skillSearchRotatingPage(ctx, search,rotating_list,my_set)
+        elif(len(rotating_list[len(rotating_list)-1]) < 4):
+            await imageHorizontalConcat(file_list,discord_file_list)
+        icons = await imageVerticalConcat(discord_file_list)
+        await skillSearchRotatingPage(ctx, search,rotating_list,total_results,icons)
     else:
         temp_embed = discord.Embed()
         temp_embed.color = 16203840
@@ -168,6 +205,44 @@ async def skillSearch(ctx, *search):
         temp_embed.description = "Too many results please try to narrow it down further"
         await ctx.send(embed=temp_embed)        
     db.closeconnection()
+
+async def imageHorizontalConcat(file_list,discord_file_list):
+    images = [Image.open(x) for x in file_list]
+    widths, heights = zip(*(i.size for i in images))
+    
+    total_width = sum(widths)
+    max_height = max(heights)
+    
+    new_im = Image.new('RGBA', (total_width, max_height))
+    
+    x_offset = 0
+    for im in images:
+        new_im.paste(im, (x_offset,0))
+        x_offset += im.size[0]
+    # convert to bytes
+    imgByteArr = io.BytesIO()
+    new_im.save(imgByteArr, format='PNG')
+    imgByteArr.seek(0)
+    discord_file_list.append(imgByteArr)
+
+async def imageVerticalConcat(file_list):
+    images = [Image.open(x) for x in file_list]
+    widths, heights = zip(*(i.size for i in images))
+    
+    total_width = max(widths)
+    max_height = sum(heights)
+    
+    new_im = Image.new('RGBA', (total_width, max_height))
+    
+    y_offset = 0
+    for im in images:
+        new_im.paste(im, (0,y_offset))
+        y_offset += im.size[1]
+    # convert to bytes
+    imgByteArr = io.BytesIO()
+    new_im.save(imgByteArr, format='PNG')
+    imgByteArr.seek(0)
+    return imgByteArr
 
 @client.command(aliases=['h','command','commands'])
 async def help(ctx):
@@ -197,13 +272,15 @@ async def help(ctx):
     
 
 
-async def skillSearchRotatingPage(ctx, search, page_list, my_set):
-    print(page_list)
+async def skillSearchRotatingPage(ctx, search, page_list, total_results,icons):
+    temp_image_url = "attachment://"
     # set up
     current_page = 0
     temp_embed = discord.Embed()
+    temp_embed.set_image(url=temp_image_url+"temp.png")        
+    
     temp_embed.color = 3066993
-    temp_embed.title = "{} results for {}".format(str(len(my_set)),search)
+    temp_embed.title = "{} results for {}".format(str(total_results),search)
     if(len(page_list) == 0):
         page_list.append([["No relevant skills to display","End of List"]])    
     temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
@@ -216,7 +293,7 @@ async def skillSearchRotatingPage(ctx, search, page_list, my_set):
         return temp_embed
     
     temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
-    msg = await ctx.send(embed=temp_embed)
+    msg = await ctx.send(embed=temp_embed, file=discord.File(icons, filename="temp.png"))
     emoji1 = '\u2b05'
     emoji2 = '\u27a1'
     await msg.add_reaction(emoji1)
@@ -256,7 +333,32 @@ async def food(ctx):
     temp_embed.title = "Here is your bento box for today!"
     temp_embed.set_image(url="attachment://texture.png")
     await ctx.send(embed=temp_embed, file=discord.File("./lottery/A Loving Lunch Syr Flover" + "/texture.png"))
+
+
+@client.command()
+async def test(ctx):
+    images = [Image.open(x) for x in ['./lottery/A Fresh Start Bell Cranel/hex.png', './lottery/A Fresh Start Bell Cranel/hex.png', './lottery/A Fresh Start Bell Cranel/hex.png','./lottery/A Fresh Start Bell Cranel/hex.png']]
+    widths, heights = zip(*(i.size for i in images))
     
+    total_width = sum(widths)
+    max_height = max(heights)
+    
+    new_im = Image.new('RGBA', (total_width, max_height))
+    
+    x_offset = 0
+    for im in images:
+        new_im.paste(im, (x_offset,0))
+        x_offset += im.size[0]
+    # convert to bytes
+    imgByteArr = io.BytesIO()
+    new_im.save(imgByteArr, format='PNG')
+    imgByteArr.seek(0)
+    #
+    temp_embed = discord.Embed()
+    temp_embed.color = 3066993
+    temp_embed.title = "Test"
+    temp_embed.set_image(url="attachment://new_im.png")
+    await ctx.send(embed=temp_embed, file=discord.File(imgByteArr, filename="new_im.png"))
 
 if __name__ == "__main__":
     

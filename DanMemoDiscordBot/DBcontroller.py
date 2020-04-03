@@ -401,6 +401,30 @@ class DBcontroller:
         ret = ret + ":star:"
       ret = ret + "\n"
     return ret
+  
+  def assembleAdventurerCharacterName(self, adventurerid):
+    adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.adventurer as a, danmemo.character as c where c.characterid=a.characterid and a.adventurerid={}".replace("danmemo",self.database).format(adventurerid)
+    self._mycursor.execute(adventurer_base_sql)
+    for row in self._mycursor:
+      # TITLE CHARACTERNAME STARS
+      # CHECK IF TIME LIMITED
+      return (row[0],row[1])
+    
+  def assembleAssistCharacterName(self, assistid):
+    ret = ""
+    assist_base_sql = "SELECT title, c.name, limited,stars FROM danmemo.assist as a, danmemo.character as c where c.characterid=a.characterid and a.assistid={}".replace("danmemo",self.database).format(assistid)
+    skill_id_sql = "SELECT assistskillid FROM danmemo.assistskill where assistid = {}".replace("danmemo",self.database).format(assistid)
+    # base assist assemble
+    self._mycursor.execute(assist_base_sql)
+    # free up the list cursor
+    for row in self._mycursor:
+      # TITLE CHARACTERNAME STARS
+      # CHECK IF TIME LIMITED
+      # title name
+      return (row[0],row[1])
+
+  
+  
   def assembleAssistCharacterData(self, assistid):
     ret = ""
     assist_base_sql = "SELECT title, c.name, limited,stars FROM danmemo.assist as a, danmemo.character as c where c.characterid=a.characterid and a.assistid={}".replace("danmemo",self.database).format(assistid)
