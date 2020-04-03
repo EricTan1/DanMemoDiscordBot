@@ -170,7 +170,7 @@ class DBcontroller:
     print(searchwords_list)
     for words in searchwords_list:
       # Target, Attribute(), Modifier(Super, 10%), Type (phys/mag), Element(Wind/Light)
-      skillAdeffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name LIKE '%{}%' or ty.name LIKE '%{}%' or a.name LIKE '%{}%' or s.name LIKE '%{}%'".replace('danmemo',self.database).format(words,words,words,words,words,words)
+      skillAdeffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name='{}' or ty.name LIKE '%{}%' or a.name LIKE '%{}%' or s.name LIKE '%{}%'".replace('danmemo',self.database).format(words,words,words,words,words,words)
       self._mycursor.execute(skillAdeffect_sql)
       for row in self._mycursor:
         skillid = "Ad" + str(row[0])
