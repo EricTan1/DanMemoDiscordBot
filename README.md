@@ -10,3 +10,5 @@ https://github.com/Rapptz/discord.py
 mysql connector python V8.0.19
 https://dev.mysql.com/doc/connector-python/en/connector-python-installation-binary.html
 
+Pillow python 7.1.1
+https://pillow.readthedocs.io/en/stable/
