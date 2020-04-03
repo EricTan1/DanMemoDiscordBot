@@ -312,6 +312,7 @@
 	"per each target's physical_resist reduction skill":"per_each_targets_physical_resist_reduction_skill",
 	"per each [self] strength buff skill":"per_each_self_str_buff_skill",
 	"per each [self] strength buff":"per_each_self_str_buff",
-	"sa gauge charge gain":"sa_gauge_charge"
-
+	"sa gauge charge gain":"sa_gauge_charge",
+	"removes":"removal",
+	"remove":"removal"
 }
