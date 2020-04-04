@@ -33,7 +33,6 @@ async def on_ready():
     '''
     print("Bot is ready!")
 
-@client.command()
 async def close(ctx):
     # embeded message to show that the bot is shut down
     temp_embed = discord.Embed()
@@ -333,6 +332,23 @@ async def food(ctx):
     temp_embed.title = "Here is your bento box for today!"
     temp_embed.set_image(url="attachment://texture.png")
     await ctx.send(embed=temp_embed, file=discord.File("./lottery/A Loving Lunch Syr Flover" + "/texture.png"))
+    
+@client.command(aliases=['recordbuster','record buster', 'rbguide'])
+async def rb(ctx, character):
+    rb_list = ["ottar","revis","riveria"]
+    if(character.lower() in rb_list):
+        temp_embed = discord.Embed()
+        temp_embed.color = 3066993
+        temp_embed.set_author(name="Akuno#8965",url="https://discordapp.com",icon_url="https://cdn.discordapp.com/avatars/141222596610883584/0e51b4be33b83b17a4c98ceb381bda85.png?size=128")
+        temp_embed.set_image(url="attachment://rb.png")
+        await ctx.send(embed=temp_embed, file=discord.File("./rbguides/" + character+ ".png",filename="rb.png"))
+    else:
+        temp_embed = discord.Embed()
+        temp_embed.color = 3066993
+        temp_embed.title = "No character found"
+        temp_embed.description= "There doesn't exist an RB for this character. Please search either: Ottar, Revis or Riveria"
+        await ctx.send(embed=temp_embed)
+        
 
 
 @client.command()

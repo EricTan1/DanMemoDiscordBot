@@ -35,4 +35,12 @@ Casino Lady Shakti Varma
 combat: Suzila
 [Allies] +35% Guard Rate /3 turn(s)
 [Allies] +35% P.Resist /3 turn(s)
+F
+**Record Buster Guide**
+Alias: recordbuster, rb, record buster,rbguide
+Usage: !$rb <character>
+Characters : Ottar, Riveria, Revis
+F
+EXAMPLE:
+!$rb ottar
 E
