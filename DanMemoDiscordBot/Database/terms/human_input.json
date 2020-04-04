@@ -155,12 +155,6 @@
 	"thunder.dmg": "thunder_magic_attack",
 	"def": "defense",
 	"def.": "defense",
-	"str": "strength",
-	"str.": "strength",
-	"end": "endurance",
-	"end.": "endurance",
-	"dex": "dexterity",
-	"dex.": "dexterity",
 	"agi": "agility",
 	"agi.": "agility",
 	"mag": "magic",
@@ -314,5 +308,10 @@
 	"per each [self] strength buff":"per_each_self_str_buff",
 	"sa gauge charge gain":"sa_gauge_charge",
 	"removes":"removal",
-	"remove":"removal"
+	"remove":"removal",
+	"st": "single_damage_resist",
+	"single target":"single_damage_resist",
+	"all target":"all_damage_resist",
+	"all-target":"all_damage_resist",
+	"aoe":"all_damage_resist"
 }
