@@ -313,5 +313,8 @@
 	"single target":"single_damage_resist",
 	"all target":"all_damage_resist",
 	"all-target":"all_damage_resist",
-	"aoe":"all_damage_resist"
+	"aoe":"all_damage_resist",
+	"str.":"str",
+	"dex.":"dex",
+	"end.":"end"
 }
