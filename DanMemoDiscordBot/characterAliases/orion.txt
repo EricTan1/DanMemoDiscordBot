@@ -1,0 +1,10 @@
+title = 'moonlight oath'or
+title = 'virgin goddess' or
+title = 'roaring gale' or
+title = 'smithy expert' or
+title = 'mighty king' or
+title = 'echoing arrow' or
+title = 'innocent goddess' or
+title = 'sleeping innocence' or
+title = 'moonlight reunion' or
+title = 'pajama goddess';

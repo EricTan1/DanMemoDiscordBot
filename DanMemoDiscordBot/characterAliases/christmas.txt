@@ -1,0 +1,23 @@
+SELECT * FROM danmemo.adventurer
+WHERE 
+title = 'silver fox'or
+title = 'winter war god' or
+title = 'gift goddess' or
+title = 'elegant vanguard' or
+title = 'sword unleashed' or
+title = 'jingle bell' or
+title = 'reindeer goddess' or
+title = 'holiday spirit' or
+title = 'holy gale' or
+title = 'glistening elf' or
+title = 'apsiring elegance' or
+title = 'holiday cat'or
+title='winter cream' or
+title='scarlet elf' or
+title='brave antianeira' or
+title='pure white' or
+title='holy choir' or
+title='artel tart' or
+title='santa princess' or
+title='winter elf' or
+title='invincible master';
