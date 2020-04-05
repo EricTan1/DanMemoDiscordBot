@@ -23,7 +23,7 @@ PASSWORD = result.password
 DATABASE = result.path[1:]
 HOSTNAME = result.hostname
 
-_command_prefix = '$$'
+_command_prefix = '!$'
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
 
 @client.event
