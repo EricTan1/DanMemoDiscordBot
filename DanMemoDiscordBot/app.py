@@ -23,7 +23,7 @@ PASSWORD = result.password
 DATABASE = result.path[1:]
 HOSTNAME = result.hostname
 
-_command_prefix = '!$'
+_command_prefix = '$$'
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
 
 @client.event
@@ -102,7 +102,7 @@ async def characterSearch(ctx, *search):
         else:         
             await ctx.send(message)
     except:
-        await ctx.send("too many results please try to narrow it down further")
+        await ctx.send("Sorry unable to find results")
     db.closeconnection()
 
 
@@ -118,7 +118,7 @@ async def skillSearch(ctx, *search):
     print(skilleffects_id_list)
     my_set = set()
     message =""
-    if(len(skilleffects_id_list) <=40):
+    if(len(skilleffects_id_list) <=100):
         for skilleffectsid in skilleffects_id_list:
             print(skilleffectsid)
             if("Ad" in skilleffectsid):
