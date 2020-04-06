@@ -2,7 +2,7 @@ from BaseConstants import Base
 
 class Assist(Base):
     def __init__(self, assistid, characterid:int, title:str,limited:bool,
-                 stars:int, splashuri:str, iconuri:str):
+                 stars:int, alias:str):
         ''' (Assist, int, int, int, bool, int, str or None, str or
              None) -> Assist
              stars : the base stars of a unit (1/2/3/4)
@@ -13,8 +13,7 @@ class Assist(Base):
         self.limited = bool(limited)
         self.title = str(title)
         self.stars = int(stars)
-        self.splashuri = str(splashuri)
-        self.iconuri = str(iconuri)
+        self.alias = str(alias)
 
     def __str__(self):
         return self.title

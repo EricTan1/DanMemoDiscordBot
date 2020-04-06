@@ -2,7 +2,7 @@ from BaseConstants import Base
 
 class Adventurer(Base):
     def __init__(self, adventurerid, characterid:int, typeid:int, title:str,limited:bool, ascended:bool,
-                 stars:int, splashuri:str, iconuri:str):
+                 stars:int, alias:str):
         ''' (Adventurer, int, int, int, bool, bool, int, str or None, str or
              None) -> Adventurer
              stars : the base stars of a unit (1/2/3/4)
@@ -16,8 +16,7 @@ class Adventurer(Base):
         self.limited = bool(limited)
         self.ascended = bool(ascended)
         self.stars = int(stars)
-        self.splashuri = str(splashuri)
-        self.iconuri = str(iconuri)
+        self.alias = str(alias)
 
     def __str__(self):
         return self.title

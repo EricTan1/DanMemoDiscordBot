@@ -47,7 +47,7 @@ async def close(ctx):
 async def characterSearch(ctx, *search):
     is_embed = False
     is_files = False
-    my_search = ""
+    my_search = " "
     for words in search:
         my_search= my_search + words + " "
     db = DBcontroller(HOSTNAME,USERNAME,PASSWORD,"3306",DATABASE)

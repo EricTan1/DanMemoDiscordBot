@@ -27,6 +27,8 @@ class DBcontroller:
       self.human_readable_dict = json.load(f)
     with open('Database/terms/human_input.json', 'r') as f:
       self.human_input_dict = json.load(f)
+    with open('Database/terms/human_input_character.json', 'r') as f:
+      self.human_input_character_dict = json.load(f)
 
   def closeconnection(self):
     ''' (DBcontroller) -> None
@@ -120,12 +122,15 @@ class DBcontroller:
   def characterSearch(self,search, filter_dict):
     print("searching")
     ret_dict =dict()
-    
+    for words in self.human_input_character_dict:
+      if(" "+ words+ " " in search):
+        search = search.replace(" "+ words+ " "," "+self.human_input_character_dict.get(words)+" ")
+    search = search.strip()
     # Search by title first
     words_list = search.split(" ")
     for words in words_list:
       # adventurerid
-      characterAdTitleSql= "SELECT adventurerid from danmemo.adventurer as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".replace("danmemo",self.database).format(words,words)
+      characterAdTitleSql= 'SELECT adventurerid from danmemo.adventurer as a, danmemo.character as c where (c.name like"%{}%" or a.title like "%{}%" or a.alias like "%{}%") and c.characterid = a.characterid'.replace("danmemo",self.database).format(words,words,words)
       self._mycursor.execute(characterAdTitleSql)
       for row in self._mycursor:
         ad_id = "Ad"+str(row[0])
@@ -133,7 +138,7 @@ class DBcontroller:
           ret_dict[ad_id] = 0
         ret_dict[ad_id] = ret_dict.get(ad_id)+1
       # ASSIST
-      characterAsTitleSql= "SELECT assistid from danmemo.assist as a, danmemo.character as c where (c.name like'%{}%' or a.title like '%{}%') and c.characterid = a.characterid".replace("danmemo",self.database).format(words,words)
+      characterAsTitleSql= 'SELECT assistid from danmemo.assist as a, danmemo.character as c where (c.name like"%{}%" or a.title like "%{}%" or a.alias like "%{}%") and c.characterid = a.characterid'.replace("danmemo",self.database).format(words,words,words)
       self._mycursor.execute(characterAsTitleSql)
       for row in self._mycursor:
         as_id = "As"+str(row[0])
