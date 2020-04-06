@@ -81,14 +81,14 @@ class DBcontroller:
     sql="SELECT a.title, c.name FROM danmemo.character as c, danmemo.adventurer as a WHERE a.adventurerid={} and c.characterid = a.characterid".replace("danmemo",self.database).format(adventurerid)
     self._mycursor.execute(sql)
     for row in self._mycursor: 
-      ret = "{} {}".format(row[0],row[1])
+      ret = "[{}] {}".format(row[0],row[1])
       print(row)
     return ret
   def getAssistName(self, assistid):
     sql="SELECT a.title, c.name FROM danmemo.character as c, danmemo.assist as a WHERE a.assistid={} and c.characterid = a.characterid".replace("danmemo",self.database).format(assistid)
     self._mycursor.execute(sql)
     for row in self._mycursor: 
-      ret = "{} {}".format(row[0],row[1])
+      ret = "[{}] {}".format(row[0],row[1])
       print(row)
     return ret
 
