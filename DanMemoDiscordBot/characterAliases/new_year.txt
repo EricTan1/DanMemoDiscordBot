@@ -1,20 +1,19 @@
-WHERE 
-title = 'first dream'or
-title = 'blushing peony' or
-title = 'blustering beauty' or
-title = 'lone werewolf' or
-title = 'laurel mistral' or
-title = 'festive royale' or
-title = 'sneaky cat' or
-title = 'new year kimono' or
-title = 'new year medic' or
-title = 'crimson tempest' or
-title = 'festive blade' or
-title = 'camellia kimono'or
-title='gelsha elf' or
-title='a fresh start' or
-title='sunrise axe' or
-title='elegant queen' or
-title='dreaming goddess' or
-title='the traditional' or
-title='sparkling crystal'; 
+first dream
+blushing peony 
+blustering beauty 
+lone werewolf 
+laurel mistral 
+festive royale 
+sneaky cat 
+new year kimono 
+new year medic 
+crimson tempest 
+festive blade 
+camellia kimono
+gelsha elf
+a fresh start
+sunrise axe
+elegant queen
+dreaming goddess
+the traditional
+sparkling crystal
