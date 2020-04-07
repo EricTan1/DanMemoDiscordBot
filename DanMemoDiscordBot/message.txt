@@ -1,3 +1,4 @@
+ID;FULL;Label;Character
 1011001001;[Adventurer] Bell Cranel;Adventurer;Bell Cranel
 1011001002;[Liaris Freese] Bell Cranel;Liaris Freese;Bell Cranel
 1011001003;[Ox Slayer] Bell Cranel;Ox Slayer;Bell Cranel
@@ -16,6 +17,8 @@
 1011001017;[The Enlightened] Bell Cranel;The Enlightened;Bell Cranel
 1011001018;[Regalia Freese] Bell Cranel;Regalia Freese;Bell Cranel
 1011001019;[Sword Unleashed] Bell Cranel;Sword Unleashed;Bell Cranel
+1011001020;[Ready for Act] Bell Cranel;Ready for Act;Bell Cranel
+1011001021;[Pyonkichi MK-II] Bell Cranel;Pyonkichi MK-II;Bell Cranel
 1011002001;[Battle Princess] Ais Wallenstein;Battle Princess;Ais Wallenstein
 1011002002;[Girl of the Wind] Ais Wallenstein;Girl of the Wind;Ais Wallenstein
 1011002003;[Sword Princess] Ais Wallenstein;Sword Princess;Ais Wallenstein
@@ -39,6 +42,9 @@
 1011002023;[Beauty] Ais Wallenstein;Beauty;Ais Wallenstein
 1011002024;[Jade Princess] Ais Wallenstein;Jade Princess;Ais Wallenstein
 1011002025;[Dancing Princess] Ais Wallenstein;Dancing Princess;Ais Wallenstein
+1011002026;[New Armed] Ais Wallenstein;New Armed;Ais Wallenstein
+1011002027;[Pacific Rhapsody] Ais Wallenstein;Pacific Rhapsody;Ais Wallenstein
+1011002028;[Mobile Suit Princess] Ais Wallenstein;Mobile Suit Princess;Ais Wallenstein
 1011003001;[Supporter] Liliruca Arde;Supporter;Liliruca Arde
 1011003002;[Artel Assist] Liliruca Arde;Artel Assist;Liliruca Arde
 1011003003;[Valor Support] Liliruca Arde;Valor Support;Liliruca Arde
@@ -155,6 +161,7 @@
 1011018013;[Love Magic] Lefiya Viridis;Love Magic;Lefiya Viridis
 1011018014;[Model Student] Lefiya Viridis;Model Student;Lefiya Viridis
 1011018015;[Melodious Elf] Lefiya Viridis;Melodious Elf;Lefiya Viridis
+1011018016;[Arcanic Cascade] Lefiya Viridis;Arcanic Cascade;Lefiya Viridis
 1011019001;[Maenads] Filvis Challia;Maenads;Filvis Challia
 1011019002;[Maenad's Maiden] Filvis Challia;Maenad's Maiden;Filvis Challia
 1011019003;[Cute Elf] Filvis Challia;Cute Elf;Filvis Challia
@@ -173,8 +180,10 @@
 1011020010;[Knight Elf] Ryu Lion;Knight Elf;Ryu Lion
 1011020011;[Lightning Flame] Ryu Lion;Lightning Flame;Ryu Lion
 1011020012;[Scarlet Elf] Ryu Lion;Scarlet Elf;Ryu Lion
+1011020013;[Elven Gale] Ryu Lion;Elven Gale;Ryu Lion
 1011021001;[Foxy Princess] Sanjouno Haruhime;Foxy Princess;Sanjouno Haruhime
 1011021002;[Silver Fox] Sanjouno Haruhime;Silver Fox;Sanjouno Haruhime
+1011021003;[An Ocean of Virtue] Sanjouno Haruhime;An Ocean of Virtue;Sanjouno Haruhime
 1011022001;[Magnificent Ruler] Aisha Belka;Magnificent Ruler;Aisha Belka
 1011022002;[Brave Antianeira] Aisha Belka;Brave Antianeira;Aisha Belka
 1011024001;[Medicinal Archer] Naza Ersuisu;Medicinal Archer;Naza Ersuisu
@@ -195,6 +204,7 @@
 1011043002;[Dea Saint] Amid Teasanare;Dea Saint;Amid Teasanare
 1011043003;[Beach Saint] Amid Teasanare;Beach Saint;Amid Teasanare
 1011043004;[Temporary Healer] Amid Teasanare;Temporary Healer;Amid Teasanare
+1011043005;[Priestess Image] Amid Teasanare;Priestess Image;Amid Teasanare
 1011047001;[Faithful Mage] Line Arshe;Faithful Mage;Line Arshe
 1011047002;[Twilight Supporter] Line Arshe;Twilight Supporter;Line Arshe
 1011048001;[Dogfight] Mord Latro;Dogfight;Mord Latro
@@ -209,6 +219,8 @@
 1011059001;[Little Girl] Liliruca (Girl);Little Girl;Liliruca (Girl)
 1011060001;[Zeal Blast] Welf (Boy);Zeal Blast;Welf (Boy)
 1011063001;[Little Detective] Lunor (Girl);Little Detective;Lunor (Girl)
+1011066001;[Lightspeed] Allen Fromel;Lightspeed;Allen Fromel
+1011067001;[Black Raid] Alfrigg Gulliver;Black Raid;Alfrigg Gulliver
 1011073001;[Fist Fighter] Shakti Varma;Fist Fighter;Shakti Varma
 1011073002;[Casino Lady] Shakti Varma;Casino Lady;Shakti Varma
 1011073003;[Blue Lotus] Shakti Varma;Blue Lotus;Shakti Varma
@@ -223,10 +235,14 @@
 1011090001;[High and Proud] Hyakinthos Clio;High and Proud;Hyakinthos Clio
 1011091001;[Serene Swordsman] Daphne Lauros;Serene Swordsman;Daphne Lauros
 1011091002;[Laurel Mistral] Daphne Lauros;Laurel Mistral;Daphne Lauros
+1011091003;[Swimsuit Swordsman] Daphne Lauros;Swimsuit Swordsman;Daphne Lauros
 1011092001;[Cynic] Cassandra Ilion;Cynic;Cassandra Ilion
 1011092002;[First Dream] Cassandra Ilion;First Dream;Cassandra Ilion
+1011092003;[Dreamy Beach] Cassandra Ilion;Dreamy Beach;Cassandra Ilion
 1011094001;[Wild Fantasy] Lena Tally;Wild Fantasy;Lena Tally
 1011095001;[Crushing Fighter] Samira;Crushing Fighter;Samira
+1011098001;[Dueling Caster] Alicia Forestlight;Dueling Caster;Alicia Forestlight
+1011099001;[Delightful Mage] Elfy Colette;Delightful Mage;Elfy Colette
 1011500001;[Foreign Traveler] Kino & Hermes;Foreign Traveler;Kino & Hermes
 1011500002;[Traveler] Kino;Traveler;Kino
 1011502001;[Wondering Man] Shizu & Riku;Wondering Man;Shizu & Riku
@@ -243,10 +259,13 @@
 1011522001;[Affectionate Maiden] Priestess;Affectionate Maiden;Priestess
 1011523001;[Stellar Wind] High Elf Archer;Stellar Wind;High Elf Archer
 1011526001;[Lightning Flash] Noble Fencer;Lightning Flash;Noble Fencer
+1011527001;[Food Fighter] Kino;Food Fighter;Kino
 1012001001;[Living Dead Child] Bell Cranel;Living Dead Child;Bell Cranel
 1012002001;[Outside Orario] Ais Wallenstein;Outside Orario;Ais Wallenstein
 1012002002;[Backstage Princess] Ais Wallenstein;Backstage Princess;Ais Wallenstein
+1012003001;[Your Favorite] Liliruca Arde;Your Favorite;Liliruca Arde
 1012004001;[Onsen Samurai] Yamato Mikoto;Onsen Samurai;Yamato Mikoto
+1012004002;[Bathing Beauty] Yamato Mikoto;Bathing Beauty;Yamato Mikoto
 1012006001;[Dark Divine] Riveria Ljos Alf;Dark Divine;Riveria Ljos Alf
 1012008001;[Lawful Judge] Asfi Al Andromeda;Lawful Judge;Asfi Al Andromeda
 1012011001;[Festive Blade] Welf Crozzo;Festive Blade;Welf Crozzo
@@ -291,6 +310,8 @@
 1012027033;[Gift Goddess] Hestia;Gift Goddess;Hestia
 1012027034;[Yellow Bird] Hestia;Yellow Bird;Hestia
 1012027035;[Swimsuit Contest] Hestia;Swimsuit Contest;Hestia
+1012027036;[Adventurer's Set] Hestia;Adventurer's Set;Hestia
+1012027037;[Space Ribbon] Hestia;Space Ribbon;Hestia
 1012028001;[Crafty Goddess] Loki;Crafty Goddess;Loki
 1012028002;[Cheers!] Loki;Cheers!;Loki
 1012028003;[Trickster] Loki;Trickster;Loki
@@ -329,6 +350,7 @@
 1012031004;[Artless] Hephaistios;Artless;Hephaistios
 1012031005;[Flaming Anvil] Hephaistios;Flaming Anvil;Hephaistios
 1012031006;[Black Rose] Hephaistios;Black Rose;Hephaistios
+1012031007;[Gallant Formal] Hephaistios;Gallant Formal;Hephaistios
 1012032001;[Intrigued Goddess] Freya;Intrigued Goddess;Freya
 1012032002;[Devious Emotion] Freya;Devious Emotion;Freya
 1012032003;[Prowling for Lust] Freya;Prowling for Lust;Freya
@@ -405,3 +427,4 @@
 1012519001;[Berserk] Kaguya & Liliruca;Berserk;Kaguya & Liliruca
 1012520001;[Efreet] Kotori Itsuka;Efreet;Kotori Itsuka
 1012524001;[At Home] Cow Girl;At Home;Cow Girl
+1012525001;[Hero of Six] Sword Maiden;Hero of Six;Sword Maiden

@@ -4,6 +4,7 @@ Alias: cs, csearch
 Usage: !$cs <insert search here>
 If the bot can narrow down the search to one character then it
 will display that character information.
+Note bot supports stuff like "ny" for new year etc
 F
 EXAMPLE:
 !$cs princess

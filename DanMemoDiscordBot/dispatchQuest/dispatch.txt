@@ -1,0 +1,47 @@
+R_1 (1/7) - Collect Information: Anya, Mama Mia, Syr, Lunor
+R_1 (2/7) - Interfere: Bete, Bell, Chloe, Ryu
+R_1 (3/7) - Trailing a Man: Asfi, Chloe, Chigusa, Mikoto
+R_1 (4/7) - Base Investigation: Naza, Amid, Miach, Dian
+R_1 (5/7) - Partying Undercover: Loki, Demeter, Hermes, Dionysis
+R_1 (6/7) - Unmasked: Tione, Tiona, Filvis, Bete
+R_1 (7/7) - Operation Desctruction: Aiz, Finn, Shakti, Ottarl
+R_2 (1/4) - Sword Princess's Test: Bell, Finn, Mikoto, Takemikazuchi
+R_2 (2/4) - Blacksmith's Backup: Amid, Misha, Loki, Eina
+R_2 (3/4) - Find Quality Materials: Finn, Riveria, Gareth, Shakti
+R_2 (4/4) - Sword to Keep Fighting: Aiz, Tsubaki, Hephaistios, Goibniu
+R_3 (1/4) - Mad Wolf's Test: Bell, Aiz, Ryu, Tiona
+R_3 (2/4) - Seeking Hard Ore: Raul, Lili, Lefiya, Chigusa
+R_3 (3/4) - Special Magic Ore: Riveria, Lefiya, Filvis, Ryu
+R_3 (4/4) - A Starving Wolf: Bete, Aiz, Chloe, Ryu
+R_4 (1/4) - Thousand Elf's Request: Bell, Gareth, Ouka, Mord
+R_4 (2/4) - Materials for a Wand: Lili, Tiona, Amid, Anakitty
+R_4 (3/4) - To the Sacred Forest: Ryu, Asfi, Filvis, Chloe
+R_4 (4/4) - I Want to Catch Up: Tiona, Aiz, Riveria, Lefiya
+R_5 (1/4) - Helping a Supporter: Raul, Lili, Chigusa, Lefiya
+R_5 (2/4) - Shopping War: Chigusa, Mama Mia, Demeter, Syr
+R_5 (3/4) - Seoro Exploration: Mord, Mikoto, Ouka, Naza
+R_5 (4/4) - Find Rare Materials: Bell, Asfi, Ryu, Chloe
+R_6 (1/4) - Masked Adventurer: Bell, Mikoto, Asfi, Mord
+R_6 (2/4) - Poetic Justice: Mikoto, Shakti, Asfi, Bete
+R_6 (3/4) - Attack: Middle Floors: Chloe, Lunor, Anya, Mama Mia
+R_6 (4/4) - The Holy Tree: Riveria, Eina, Filvis, Lefiya
+R_7 (1/4) - Cat’s Spear: Ryu, Asfi, Lefiya, Raul
+R_7 (2/4) - Let's go to Melen!: Tione, Tiona, Mikoto, Chloe
+R_7 (3/4) - Search for Gold Mine: Bell, Syr, Hephaistios, Goibniu
+R_7 (4/4) - Lost Cat's Rampage: Finn, Anya, Shakti, Ouka
+R_8 (1/4) - Overworking Blacksmith: Ottar, Tione, Tiona, Ouka
+R_8 (2/4) - Loki's Impossible Wish: Ais, Finn, Riveria, Bete
+R_8 (3/4) - Craft! Grand Axe!: Welf, Hephaistios, Tsubaki, Goibniu
+R_8 (4/4) - Prepare for Expedition: Lili, Lefiya, Chigusa, Raul
+CP_1 - Sneaking Mission, Meow: Welf, Mikoto, Tione, Chigusa
+CP_2 - How Do I Teach?: Riveria, Filvis, Shakti, Takemikazuchi
+CP_3 - Carrier Wanted: Raul, Lili, AnaKitty, Fels
+CP_4 - A Demon Arrives: Shakti, Finn, Tsubaki, Ottarl
+CP_5 - Expose Casino's Crime!: Bell, Ryu, Syr, Mord
+CP_6 - A gift to Freya: Ottarl, Mama Mia, Hermes, Anya
+CP_7 - Combat Training: Tiona, Bete, Lunor, Takemikazuchi
+CP_8 - Mysterious Conditions?: Ais, Asfi, Chloe, Amid
+E_1 - Anonymous Millionaire: Riveria, Dionysis, Raul, Amid
+E_2 - Anonymous Millionaire: Mord, Tsubaki, Ottarl, Raul
+E_3 - Anonymous Millionaire: Hestia, Gareth, Syr, Ryu
+E_4 - Anonymous Millionaire: Mikoto, Tione, Anya, Mama Mia
