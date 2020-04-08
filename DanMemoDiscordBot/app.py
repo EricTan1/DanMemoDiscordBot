@@ -9,14 +9,11 @@ from DBcontroller import DBcontroller
 from PIL import Image
 import io
 from urllib.parse import urlparse
-import threading
 
 sys.path.append('Entities/')
-sys.path.append('webapp/')
 
 from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
 from BaseConstants import Element, Target, Type, Attribute,Modifier
-from views import webapp
 
 TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
 
@@ -402,17 +399,5 @@ async def dispatch(ctx, *search):
         temp_embed.description= "Please narrow it down further"
         await ctx.send(embed=temp_embed)        
     
-def run_webapp():
-    webapp.run(debug=False)
-
-def run_discord_bot():
-    client.run(TOKEN)
-
-
 if __name__ == "__main__":
-    # Run the Discord bot
-    discord_bot_thread = threading.Thread(target = run_discord_bot, daemon=True)
-    discord_bot_thread.start()
-
-    # Run the web application
-    run_webapp()
+    client.run(TOKEN)

@@ -1,2 +1,2 @@
 worker: bash ./run.sh
-web: gunicorn webapp:webapp
+web: gunicorn webapp:app
