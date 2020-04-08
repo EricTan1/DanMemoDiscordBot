@@ -1,7 +1,8 @@
-import mysql.connector
+from DBcontroller import DBcontroller
+import os
 class Dispatch():
-    def __init__(self, dispatchid, typename:str, stage, name:str,char1id:int, char2id:int,
-                 char3id:int, char4id:int):
+    def __init__(self, dispatchid, typename:str, stage, name:str,char1id:str, char2id:str,
+                 char3id:str, char4id:str):
         ''' (Adventurer, int, int, int, bool, bool, int, str or None, str or
              None) -> Adventurer
              stars : the base stars of a unit (1/2/3/4)
@@ -12,15 +13,16 @@ class Dispatch():
         self.typename = str(typename)
         self.stage = stage
         self.name = str(name)
-        self.char1id = int(char1id)
-        self.char2id = int(char2id)
-        self.char3id = int(char3id)
-        self.char4id = int(char4id)
-connection = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="danmemo", port=3306, database="danmemo")
-mycursor = connection.cursor()
+        self.char1id = str(char1id)
+        self.char2id = str(char2id)
+        self.char3id = str(char3id)
+        self.char4id = str(char4id)
+#connection = mysql.connector.connect(
+    #host="localhost",
+    #user="root",
+    #password="danmemo", port=3306, database="danmemo")
+db = DBcontroller("localhost", "root", "danmemo", "3306", "danmemo")
+dispatch_dict = dict()
 
 with open('dispatchQuest/dispatch.txt', 'r') as f:
     line = f.readline()
@@ -34,16 +36,23 @@ with open('dispatchQuest/dispatch.txt', 'r') as f:
         temp = split_list[0]
         if("(" in temp):
             typename = temp[:temp.find('(')]
-            stage = temp[temp.find('(')+1:]
+            stage = temp[temp.find('('):]
         else:
             typename = temp
         char_list = split_list2[1].split(",")
+        path ="lottery"
         for x in range(0,len(char_list)):
             char_list[x] = char_list[x].strip()
-        print(char_list)
-        print(typename)
-        print(stage)
-        print(split_list[0])
-        print(split_list2[0])
-        #Dispatch(None,split_list[0],stage,split_list2[0],char_list[0],char_list[1],char_list[2],char_list[3])
+            for filename in os.listdir(path):
+                if(char_list[x] in filename):
+                    dispatch_dict[char_list[x]]=filename
+                    break
+        #print(char_list)
+        #print(typename)
+        #print(stage)
+        #print(split_list2[0]
+        
+            
+        #db.insertData(Dispatch(None,typename,stage,split_list2[0],char_list[0],char_list[1],char_list[2],char_list[3]))
         line = f.readline()
+print(dispatch_dict)

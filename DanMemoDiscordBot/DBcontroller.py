@@ -427,8 +427,34 @@ class DBcontroller:
       # CHECK IF TIME LIMITED
       # title name
       return (row[0],row[1])
-
-  
+    
+  def dispatchSearch(self, search):
+    search = search.split(" ")
+    ret_dict = dict()
+    for words in search:
+      sql='SELECT dispatchid,typename,stage,name,char1id,char2id,char3id,char4id FROM danmemo.dispatch where typename like "%{}%" or stage like "%{}%" or name like "%{}%";'.replace("danmemo",self.database).format(words,words,words)
+      self._mycursor.execute(sql)
+      for row in self._mycursor: 
+        d_id = row[0]
+        #print("{} {} {} {} {} {} {}".format(row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
+        if(ret_dict.get(d_id) == None):
+          ret_dict[d_id] = [0,row[1],row[2],row[3],row[4],row[5],row[6],row[7]]
+        ret_dict[d_id] = [ret_dict.get(d_id)[0]+1,row[1],row[2],row[3],row[4],row[5],row[6],row[7]]
+    ret_list=[]
+    highest= None
+    for keys in ret_dict:
+      if(highest==None):
+        highest = (ret_dict.get(keys))[0]
+        ret_list.append(ret_dict.get(keys))
+      elif(highest < (ret_dict.get(keys))[0]):
+        highest = (ret_dict.get(keys))[0]
+        ret_list = [ret_dict.get(keys)]
+      elif(highest == (ret_dict.get(keys))[0]):
+        ret_list.append(ret_dict.get(keys))
+    print(ret_list)
+    return ret_list
+        
+          
   
   def assembleAssistCharacterData(self, assistid):
     ret = ""
@@ -454,20 +480,10 @@ if __name__ == "__main__":
   PASSWORD = result.password
   DATABASE = result.path[1:]
   HOSTNAME = result.hostname
-  
+  USERNAME = "root"
+  PASSWORD = "danmemo"
+  DATABASE = "danmemo"
+  HOSTNAME = "localhost"    
   db = DBcontroller(HOSTNAME,USERNAME,PASSWORD,"3306",DATABASE)
-  skilleffects_id_list = db.skillSearch("light, phyres, low",{})
-  # getting rid of duplicates for adventurerskill
-  my_set = set()
-  message =""
-  for skilleffectsid in skilleffects_id_list:
-    skillid = db.getSkillIdFromEffect(skilleffectsid)
-    my_set.add(skillid)
-  for adventurerskillid in my_set:
-    adventurerid = db.getAdventurerIdFromSkill(adventurerskillid)
-    message =message +  db.assembleAdventurerCharacterData(adventurerid)    
-    message = message + db.assembleAdventurerSkill(adventurerskillid)
-
-  print(message)
-
+  skilleffects_id_list = db.dispatchSearch("millionaire anonymous 1")  
   

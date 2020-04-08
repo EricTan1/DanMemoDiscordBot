@@ -22,6 +22,11 @@ USERNAME = result.username
 PASSWORD = result.password
 DATABASE = result.path[1:]
 HOSTNAME = result.hostname
+# "localhost","root","danmemo","3306","danmemo"
+#USERNAME = "root"
+#PASSWORD = "danmemo"
+#DATABASE = "danmemo"
+#HOSTNAME = "localhost"
 
 _command_prefix = '!$'
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
@@ -344,37 +349,56 @@ async def rb(ctx, character):
         await ctx.send(embed=temp_embed, file=discord.File("./rbguides/" + character+ ".png",filename="rb.png"))
     else:
         temp_embed = discord.Embed()
-        temp_embed.color = 3066993
+        temp_embed.color = 16203840
         temp_embed.title = "No character found"
         temp_embed.description= "There doesn't exist an RB for this character. Please search either: Ottar, Revis or Riveria"
         await ctx.send(embed=temp_embed)
         
 
 
-@client.command()
-async def test(ctx):
-    images = [Image.open(x) for x in ['./lottery/A Fresh Start Bell Cranel/hex.png', './lottery/A Fresh Start Bell Cranel/hex.png', './lottery/A Fresh Start Bell Cranel/hex.png','./lottery/A Fresh Start Bell Cranel/hex.png']]
-    widths, heights = zip(*(i.size for i in images))
-    
-    total_width = sum(widths)
-    max_height = max(heights)
-    
-    new_im = Image.new('RGBA', (total_width, max_height))
-    
-    x_offset = 0
-    for im in images:
-        new_im.paste(im, (x_offset,0))
-        x_offset += im.size[0]
-    # convert to bytes
-    imgByteArr = io.BytesIO()
-    new_im.save(imgByteArr, format='PNG')
-    imgByteArr.seek(0)
-    #
-    temp_embed = discord.Embed()
+@client.command(aliases=['dp','dispatchquest','dq'])
+async def dispatch(ctx, *search):
+    with open('./dispatchQuest/dispatch.json', 'r') as f:
+        dispatch_dict = json.load(f)
+    db = DBcontroller(HOSTNAME,USERNAME,PASSWORD,"3306",DATABASE)
+    message = ""
+    my_search = ""
+    for words in search:
+        my_search= my_search + words + " "
+    ret_list = db.dispatchSearch(my_search)
+    discord_file_list = []
+    temp_embed = discord.Embed()    
+    for ret in ret_list:
+        char_list = [ret[4],ret[5],ret[6],ret[7]]
+        file_list = []
+        for char in char_list:
+            print(dispatch_dict)
+            print(char)
+            try:
+                file_list.append("./lottery/"+dispatch_dict.get(char)+"/hex.png")
+            except:
+                file_list.append("./lottery/gac_dummy/hex.png")
+        if(ret[2]== None):
+            temp_embed.add_field(name="{} - {}:".format(ret[1],ret[3]), value="{}, {}, {}, {}".format(ret[4],ret[5],ret[6],ret[7]), inline=False)
+        else:
+            #message = message + "{} - {} {}: {}, {}, {}, {}\n".format(ret[1],ret[2],ret[3],ret[4],ret[5],ret[6],ret[7])
+            temp_embed.add_field(name="{} - {} {}:".format(ret[1],ret[2],ret[3]), value="{}, {}, {}, {}".format(ret[4],ret[5],ret[6],ret[7]), inline=False)
+        await imageHorizontalConcat(file_list,discord_file_list)
+    icons = await imageVerticalConcat(discord_file_list)
     temp_embed.color = 3066993
-    temp_embed.title = "Test"
-    temp_embed.set_image(url="attachment://new_im.png")
-    await ctx.send(embed=temp_embed, file=discord.File(imgByteArr, filename="new_im.png"))
+    temp_embed.title = "{} results for {}".format(len(ret_list),search)
+    #temp_embed.description = message
+    temp_embed.set_image(url="attachment://temp.png")
+    try:
+        msg = await ctx.send(embed=temp_embed, file=discord.File(icons, filename="temp.png"))
+    except:
+        temp_embed = discord.Embed()
+        temp_embed.color = 16203840
+        temp_embed.title = "Unable to find dispatch quest or too many dispatch quests"
+        temp_embed.description= "Please narrow it down further"
+        await ctx.send(embed=temp_embed)        
+    
+    
 
 if __name__ == "__main__":
     

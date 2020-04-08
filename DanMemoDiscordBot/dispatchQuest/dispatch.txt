@@ -23,9 +23,9 @@ R_5 (3/4) - Seoro Exploration: Mord, Mikoto, Ouka, Naza
 R_5 (4/4) - Find Rare Materials: Bell, Asfi, Ryu, Chloe
 R_6 (1/4) - Masked Adventurer: Bell, Mikoto, Asfi, Mord
 R_6 (2/4) - Poetic Justice: Mikoto, Shakti, Asfi, Bete
-R_6 (3/4) - Attack: Middle Floors: Chloe, Lunor, Anya, Mama Mia
+R_6 (3/4) - Attack Middle Floors: Chloe, Lunor, Anya, Mama Mia
 R_6 (4/4) - The Holy Tree: Riveria, Eina, Filvis, Lefiya
-R_7 (1/4) - Cat’s Spear: Ryu, Asfi, Lefiya, Raul
+R_7 (1/4) - Cat's Spear: Ryu, Asfi, Lefiya, Raul
 R_7 (2/4) - Let's go to Melen!: Tione, Tiona, Mikoto, Chloe
 R_7 (3/4) - Search for Gold Mine: Bell, Syr, Hephaistios, Goibniu
 R_7 (4/4) - Lost Cat's Rampage: Finn, Anya, Shakti, Ouka

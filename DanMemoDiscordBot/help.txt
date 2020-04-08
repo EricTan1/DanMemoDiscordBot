@@ -37,11 +37,23 @@ combat: Suzila
 [Allies] +35% Guard Rate /3 turn(s)
 [Allies] +35% P.Resist /3 turn(s)
 F
-**Record Buster Guide**
-Alias: recordbuster, rb, record buster,rbguide
+**Record Buster**
+Alias: recordbuster, rb, rbguide
 Usage: !$rb <character>
 Characters : Ottar, Riveria, Revis
 F
 EXAMPLE:
 !$rb ottar
+F
+**DispatchQuest**
+Alias: dp, dispatch, dq
+Usage: !$dp <quest>
+Gets all the special board dispatch quests relating to the search
+F
+EXAMPLE:
+!$dp millionaire 1
+
+EXAMPLE BOT OUTPUT:
+E_1 - Anonymous Millionaire:
+Riveria, Dionysis, Raul, Amid
 E

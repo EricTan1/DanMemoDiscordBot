@@ -212,14 +212,15 @@ class InsertCharacter:
 
 if __name__ == "__main__":
     path = "../../database/update"
+    db = DBcontroller("localhost","root","danmemo","3306","danmemo")
     ic = InsertCharacter(db)
     for filename in os.listdir(path):
         with open(path + '/' + filename, 'r', encoding="utf8") as f:
             as_dict = json.load(f)
             if(as_dict.get("limited")== None):
                 as_dict["limited"]=False
-            #temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
-            #ic.insertAssist(temp_as)
+            temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
+            ic.insertAssist(temp_as)
             #(self, title, name, types, stars, limited, ascended, stats, skills)
-            temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
-            ic.insertAdventurer(temp_ad)
+            #temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
+            #ic.insertAdventurer(temp_ad)
