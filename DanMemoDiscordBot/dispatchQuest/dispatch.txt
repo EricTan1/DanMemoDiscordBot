@@ -4,19 +4,19 @@ R_1 (3/7) - Trailing a Man: Asfi, Chloe, Chigusa, Mikoto
 R_1 (4/7) - Base Investigation: Naza, Amid, Miach, Dian
 R_1 (5/7) - Partying Undercover: Loki, Demeter, Hermes, Dionysus
 R_1 (6/7) - Unmasked: Tione, Tiona, Filvis, Bete
-R_1 (7/7) - Operation Desctruction: Aiz, Finn, Shakti, Ottarl
+R_1 (7/7) - Operation Desctruction: Ais, Finn, Shakti, Ottarl
 R_2 (1/4) - Sword Princess's Test: Bell, Finn, Mikoto, Takemikazuchi
 R_2 (2/4) - Blacksmith's Backup: Amid, Misha, Loki, Eina
 R_2 (3/4) - Find Quality Materials: Finn, Riveria, Gareth, Shakti
-R_2 (4/4) - Sword to Keep Fighting: Aiz, Tsubaki, Hephaistios, Goibniu
-R_3 (1/4) - Mad Wolf's Test: Bell, Aiz, Ryu, Tiona
+R_2 (4/4) - Sword to Keep Fighting: Ais, Tsubaki, Hephaistios, Goibniu
+R_3 (1/4) - Mad Wolf's Test: Bell, Ais, Ryu, Tiona
 R_3 (2/4) - Seeking Hard Ore: Raul, Lili, Lefiya, Chigusa
 R_3 (3/4) - Special Magic Ore: Riveria, Lefiya, Filvis, Ryu
-R_3 (4/4) - A Starving Wolf: Bete, Aiz, Chloe, Ryu
+R_3 (4/4) - A Starving Wolf: Bete, Ais, Chloe, Ryu
 R_4 (1/4) - Thousand Elf's Request: Bell, Gareth, Ouka, Mord
 R_4 (2/4) - Materials for a Wand: Lili, Tiona, Amid, Anakitty
 R_4 (3/4) - To the Sacred Forest: Ryu, Asfi, Filvis, Chloe
-R_4 (4/4) - I Want to Catch Up: Tiona, Aiz, Riveria, Lefiya
+R_4 (4/4) - I Want to Catch Up: Tiona, Ais, Riveria, Lefiya
 R_5 (1/4) - Helping a Supporter: Raul, Lili, Chigusa, Lefiya
 R_5 (2/4) - Shopping War: Chigusa, Mama Mia, Demeter, Syr
 R_5 (3/4) - Seoro Exploration: Mord, Mikoto, Ouka, Naza
