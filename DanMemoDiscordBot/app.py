@@ -66,10 +66,10 @@ async def characterSearch(ctx, *search):
     elif(len(my_list) == 1):
         temp_embed = discord.Embed()
         temp_embed.color = 3066993
-        if("Ad" in my_list[0]):
-            info = db.assembleAdventurer((my_list[0])[2:])
+        if("Ad" in (my_list[0])[3]):
+            info = db.assembleAdventurer(((my_list[0])[3])[2:])
         else:
-            info = db.assembleAssist((my_list[0])[2:])
+            info = db.assembleAssist(((my_list[0])[3])[2:])
         temp_embed.title = info[1]
         for skills in info[2]:
             if(skills[1] == ""):
@@ -94,9 +94,9 @@ async def characterSearch(ctx, *search):
     else:
         for Adventurersid in my_list:
             if("Ad" in Adventurersid):
-                message= message + db.getAdventurerName(Adventurersid[2:]) + "\n"
+                message= message + "[{}] {}\n".format(Adventurersid[1],Adventurersid[2])
             else:
-                message= message + db.getAssistName(Adventurersid[2:]) + "\n"
+                message= message + "[{}] {}\n".format(Adventurersid[1],Adventurersid[2])
     try:
         if(is_embed and is_files):
             await ctx.send(files=file_list,embed=temp_embed)

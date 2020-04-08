@@ -130,33 +130,33 @@ class DBcontroller:
     words_list = search.split(" ")
     for words in words_list:
       # adventurerid
-      characterAdTitleSql= 'SELECT adventurerid from danmemo.adventurer as a, danmemo.character as c where (c.name like"%{}%" or a.title like "%{}%" or a.alias like "%{}%") and c.characterid = a.characterid'.replace("danmemo",self.database).format(words,words,words)
+      characterAdTitleSql= 'SELECT adventurerid, a.title, c.name from danmemo.adventurer as a, danmemo.character as c where (c.name like"%{}%" or a.title like "%{}%" or a.alias like "%{}%") and c.characterid = a.characterid'.replace("danmemo",self.database).format(words,words,words)
       self._mycursor.execute(characterAdTitleSql)
       for row in self._mycursor:
         ad_id = "Ad"+str(row[0])
         if(ret_dict.get(ad_id) == None):
-          ret_dict[ad_id] = 0
-        ret_dict[ad_id] = ret_dict.get(ad_id)+1
+          ret_dict[ad_id] = [0,row[1],row[2]]
+        ret_dict[ad_id] = [ret_dict.get(ad_id)[0]+1,row[1],row[2]]
       # ASSIST
-      characterAsTitleSql= 'SELECT assistid from danmemo.assist as a, danmemo.character as c where (c.name like"%{}%" or a.title like "%{}%" or a.alias like "%{}%") and c.characterid = a.characterid'.replace("danmemo",self.database).format(words,words,words)
+      characterAsTitleSql= 'SELECT assistid, a.title, c.name from danmemo.assist as a, danmemo.character as c where (c.name like"%{}%" or a.title like "%{}%" or a.alias like "%{}%") and c.characterid = a.characterid'.replace("danmemo",self.database).format(words,words,words)
       self._mycursor.execute(characterAsTitleSql)
       for row in self._mycursor:
         as_id = "As"+str(row[0])
         if(ret_dict.get(as_id) == None):
-          ret_dict[as_id] = 0
-        ret_dict[as_id] = ret_dict.get(as_id)+1
+          ret_dict[as_id] = [0,row[1],row[2]]
+        ret_dict[as_id] = [ret_dict.get(as_id)[0]+1,row[1],row[2]]
 
     ret_list=[]
     highest= None
     for keys in ret_dict:
       if(highest==None):
-        highest = ret_dict.get(keys)
-        ret_list.append(keys)
-      elif(highest < ret_dict.get(keys)):
-        highest = ret_dict.get(keys)
-        ret_list = [keys]
-      elif(highest == ret_dict.get(keys)):
-        ret_list.append(keys)
+        highest = ret_dict.get(keys)[0]
+        ret_list.append(ret_dict.get(keys)+[keys])
+      elif(highest < ret_dict.get(keys)[0]):
+        highest = ret_dict.get(keys)[0]
+        ret_list = [ret_dict.get(keys)+[keys]]
+      elif(highest == ret_dict.get(keys)[0]):
+        ret_list.append(ret_dict.get(keys)+[keys])
     return ret_list
   
 
