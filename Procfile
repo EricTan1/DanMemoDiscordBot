@@ -1,2 +1,2 @@
 worker: bash ./run.sh
-web: gunicorn webapp:app
+web: gunicorn DanMemoDiscordBot.webapp:app
