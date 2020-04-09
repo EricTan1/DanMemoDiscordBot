@@ -122,9 +122,18 @@ async def skillSearch(ctx, *search):
     
     skilleffects_id_list = db.skillSearch(my_search,{})
     print(skilleffects_id_list)
+    
+    
     my_set = set()
     message =""
-    if(len(skilleffects_id_list) <=100):
+    # image concat breaks if 0 results
+    if(len(skilleffects_id_list) == 0):
+        temp_embed = discord.Embed()
+        temp_embed.color = 16203840
+        temp_embed.title = "ERROR"
+        temp_embed.description = "No results!"
+        await ctx.send(embed=temp_embed)
+    elif(len(skilleffects_id_list) <=100):
         for skilleffectsid in skilleffects_id_list:
             print(skilleffectsid)
             if("Ad" in skilleffectsid):

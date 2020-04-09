@@ -23,6 +23,8 @@ class DBcontroller:
         password=password, port=port, database=database)
     #print(self.connection)
     self._mycursor = self._connection.cursor()
+    self._mycursorprepared = self._connection.cursor(prepared=True)    
+    
     with open('Database/terms/human_readable.json', 'r') as f:
       self.human_readable_dict = json.load(f)
     with open('Database/terms/human_input.json', 'r') as f:
@@ -130,17 +132,20 @@ class DBcontroller:
     words_list = search.split(" ")
     for words in words_list:
       # adventurerid
-      characterAdTitleSql= 'SELECT adventurerid, a.title, c.name from danmemo.adventurer as a, danmemo.character as c where (c.name like"%{}%" or a.title like "%{}%" or a.alias like "%{}%") and c.characterid = a.characterid'.replace("danmemo",self.database).format(words,words,words)
-      self._mycursor.execute(characterAdTitleSql)
-      for row in self._mycursor:
+      words = "%{}%".format(words)
+      characterAdTitleSql= 'SELECT adventurerid, a.title, c.name from danmemo.adventurer as a, danmemo.character as c where (c.name like %s or a.title like %s or a.alias like %s) and c.characterid = a.characterid'.replace("danmemo",self.database)
+      # .format(words,words,words)
+      self._mycursorprepared.execute(characterAdTitleSql,(words,words,words))
+      for row in self._mycursorprepared:
         ad_id = "Ad"+str(row[0])
         if(ret_dict.get(ad_id) == None):
           ret_dict[ad_id] = [0,row[1],row[2]]
         ret_dict[ad_id] = [ret_dict.get(ad_id)[0]+1,row[1],row[2]]
       # ASSIST
-      characterAsTitleSql= 'SELECT assistid, a.title, c.name from danmemo.assist as a, danmemo.character as c where (c.name like"%{}%" or a.title like "%{}%" or a.alias like "%{}%") and c.characterid = a.characterid'.replace("danmemo",self.database).format(words,words,words)
-      self._mycursor.execute(characterAsTitleSql)
-      for row in self._mycursor:
+      characterAsTitleSql= 'SELECT assistid, a.title, c.name from danmemo.assist as a, danmemo.character as c where (c.name like %s or a.title like %s or a.alias like %s) and c.characterid = a.characterid'.replace("danmemo",self.database)
+      #.format(words,words,words)
+      self._mycursorprepared.execute(characterAsTitleSql,(words,words,words))
+      for row in self._mycursorprepared:
         as_id = "As"+str(row[0])
         if(ret_dict.get(as_id) == None):
           ret_dict[as_id] = [0,row[1],row[2]]
@@ -174,24 +179,27 @@ class DBcontroller:
       searchwords_list[index] = searchwords_list[index].replace(" ","_")
     print(searchwords_list)
     for words in searchwords_list:
+      new_words = "%{}%".format(words)
       # Target, Attribute(), Modifier(Super, 10%), Type (phys/mag), Element(Wind/Light)
-      skillAdeffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name='{}' or ty.name LIKE '%{}%' or a.name LIKE '%{}%' or s.name LIKE '%{}%'".replace('danmemo',self.database).format(words,words,words,words,words,words)
-      self._mycursor.execute(skillAdeffect_sql)
-      for row in self._mycursor:
+      skillAdeffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE %s or e.name LIKE %s or ta.name=%s or ty.name LIKE %s or a.name LIKE %s or s.name LIKE %s".replace('danmemo',self.database)
+      #.format
+      print(words)
+      self._mycursorprepared.execute(skillAdeffect_sql, (new_words,new_words,words,new_words,new_words,new_words))
+      for row in self._mycursorprepared:
         skillid = "Ad" + str(row[0])
         if(ret_dict.get(skillid) == None):
             ret_dict[skillid] = 0
         ret_dict[skillid] = ret_dict.get(skillid)+1
-      skillAseffect_sql= "SELECT ase.AssistSkillEffectsid FROM danmemo.assistskilleffects as ase INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid WHERE m.value LIKE '%{}%' or ta.name LIKE '%{}%' or a.name LIKE '%{}%'".replace('danmemo',self.database).format(words,words,words)
-      self._mycursor.execute(skillAseffect_sql)      
-      for row in self._mycursor:
+      skillAseffect_sql= "SELECT ase.AssistSkillEffectsid FROM danmemo.assistskilleffects as ase INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid WHERE m.value LIKE %s or ta.name LIKE %s or a.name LIKE %s".replace('danmemo',self.database)
+      self._mycursorprepared.execute(skillAseffect_sql,(new_words,new_words,new_words))      
+      for row in self._mycursorprepared:
         skillid = "As" + str(row[0])
         if(ret_dict.get(skillid) == None):
             ret_dict[skillid] = 0
         ret_dict[skillid] = ret_dict.get(skillid)+1
-      skillAveffect_sql="SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN heroku_0fe8a18d3b21642.attribute as a on ad.attributeid = a.attributeid WHERE a.name like '%{}%'".replace("danmemo",self.database).replace("heroku_0fe8a18d3b21642",self.database).format(words)
-      self._mycursor.execute(skillAveffect_sql)      
-      for row in self._mycursor:
+      skillAveffect_sql='SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid WHERE a.name like %s or ad.name like %s'.replace("danmemo",self.database)
+      self._mycursorprepared.execute(skillAveffect_sql,(new_words,new_words))
+      for row in self._mycursorprepared:
         skillid = "Av" + str(row[0])
         if(ret_dict.get(skillid) == None):
             ret_dict[skillid] = 0
@@ -432,9 +440,10 @@ class DBcontroller:
     search = search.split(" ")
     ret_dict = dict()
     for words in search:
-      sql='SELECT dispatchid,typename,stage,name,char1id,char2id,char3id,char4id FROM danmemo.dispatch where typename like "%{}%" or stage like "%{}%" or name like "%{}%";'.replace("danmemo",self.database).format(words,words,words)
-      self._mycursor.execute(sql)
-      for row in self._mycursor: 
+      words = "%{}%".format(words)
+      sql='SELECT dispatchid,typename,stage,name,char1id,char2id,char3id,char4id FROM danmemo.dispatch where typename like %s or stage like %s or name like %s;'.replace("danmemo",self.database)
+      self._mycursorprepared.execute(sql,(words,words,words))
+      for row in self._mycursorprepared: 
         d_id = row[0]
         #print("{} {} {} {} {} {} {}".format(row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
         if(ret_dict.get(d_id) == None):
