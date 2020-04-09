@@ -176,6 +176,7 @@ class DBcontroller:
     for words in searchwords_list:
       # Target, Attribute(), Modifier(Super, 10%), Type (phys/mag), Element(Wind/Light)
       skillAdeffect_sql= "SELECT ase.AdventurerSkillEffectsid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE '%{}%' or e.name LIKE '%{}%' or ta.name='{}' or ty.name LIKE '%{}%' or a.name LIKE '%{}%' or s.name LIKE '%{}%'".replace('danmemo',self.database).format(words,words,words,words,words,words)
+      print(words)
       self._mycursor.execute(skillAdeffect_sql)
       for row in self._mycursor:
         skillid = "Ad" + str(row[0])
@@ -189,7 +190,7 @@ class DBcontroller:
         if(ret_dict.get(skillid) == None):
             ret_dict[skillid] = 0
         ret_dict[skillid] = ret_dict.get(skillid)+1
-      skillAveffect_sql="SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN heroku_0fe8a18d3b21642.attribute as a on ad.attributeid = a.attributeid WHERE a.name like '%{}%'".replace("danmemo",self.database).replace("heroku_0fe8a18d3b21642",self.database).format(words)
+      skillAveffect_sql='SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN heroku_0fe8a18d3b21642.attribute as a on ad.attributeid = a.attributeid WHERE a.name like "%{}%" or ad.name like "%{}%"'.replace("danmemo",self.database).replace("heroku_0fe8a18d3b21642",self.database).format(words,words)
       self._mycursor.execute(skillAveffect_sql)      
       for row in self._mycursor:
         skillid = "Av" + str(row[0])
