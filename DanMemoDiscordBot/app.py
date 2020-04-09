@@ -9,6 +9,7 @@ from DBcontroller import DBcontroller
 from PIL import Image
 import io
 from urllib.parse import urlparse
+
 sys.path.append('Entities/')
 
 from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
@@ -407,9 +408,5 @@ async def dispatch(ctx, *search):
         temp_embed.description= "Please narrow it down further"
         await ctx.send(embed=temp_embed)        
     
-    
-
 if __name__ == "__main__":
-    
-    # Run the bot
     client.run(TOKEN)
