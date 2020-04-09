@@ -2,7 +2,7 @@ import json
 import os
 
 import sys
-sys.path.append('Entities/')
+sys.path.append('entities/')
 
 from DBcontroller import DBcontroller
 from Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
