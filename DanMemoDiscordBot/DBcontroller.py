@@ -5,7 +5,7 @@ import os
 import sys
 import json
 from urllib.parse import urlparse
-sys.path.append('Entities/')
+sys.path.append('entities/')
 
 from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
 from BaseConstants import Element, Target, Type, Attribute,Modifier
@@ -25,11 +25,11 @@ class DBcontroller:
     self._mycursor = self._connection.cursor()
     self._mycursorprepared = self._connection.cursor(prepared=True)    
     
-    with open('Database/terms/human_readable.json', 'r') as f:
+    with open('database/terms/human_readable.json', 'r') as f:
       self.human_readable_dict = json.load(f)
-    with open('Database/terms/human_input.json', 'r') as f:
+    with open('database/terms/human_input.json', 'r') as f:
       self.human_input_dict = json.load(f)
-    with open('Database/terms/human_input_character.json', 'r') as f:
+    with open('database/terms/human_input_character.json', 'r') as f:
       self.human_input_character_dict = json.load(f)
 
   def closeconnection(self):

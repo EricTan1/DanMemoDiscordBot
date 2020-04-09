@@ -10,7 +10,7 @@ from PIL import Image
 import io
 from urllib.parse import urlparse
 
-sys.path.append('Entities/')
+sys.path.append('entities/')
 
 from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
 from BaseConstants import Element, Target, Type, Attribute,Modifier
@@ -29,7 +29,7 @@ HOSTNAME = result.hostname
 #DATABASE = "danmemo"
 #HOSTNAME = "localhost"
 
-_command_prefix = '!$'
+_command_prefix = '$$'
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
 
 @client.event
