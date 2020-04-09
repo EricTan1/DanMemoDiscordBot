@@ -94,6 +94,7 @@ ID;FULL;Label;Character
 1011007001;[King] Ottarl;King;Ottarl
 1011007002;[Superior Reign] Ottarl;Superior Reign;Ottarl
 1011007003;[Mighty King] Ottarl;Mighty King;Ottarl
+1011007004;[Fierce Rage] Ottarl;Fierce Rage;Ottarl
 1011008001;[Alchemist] Asfi Al Andromeda;Alchemist;Asfi Al Andromeda
 1011008002;[Combat Commander] Asfi Al Andromeda;Combat Commander;Asfi Al Andromeda
 1011008003;[Perseus] Asfi Al Andromeda;Perseus;Asfi Al Andromeda
@@ -360,6 +361,7 @@ ID;FULL;Label;Character
 1012032008;[Utmost Beauty] Freya;Utmost Beauty;Freya
 1012032009;[Queen of Beauty] Freya;Queen of Beauty;Freya
 1012032010;[Dreamy Swimmer] Freya;Dreamy Swimmer;Freya
+1012032011;[Captivating Beauty] Freya;Captivating Beauty;Freya
 1012033001;[God of the Masses] Ganesha;God of the Masses;Ganesha
 1012033002;[Mighty Elephant] Ganesha;Mighty Elephant;Ganesha
 1012033003;[Masked Lord] Ganesha;Masked Lord;Ganesha
