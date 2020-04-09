@@ -29,7 +29,7 @@ HOSTNAME = result.hostname
 #DATABASE = "danmemo"
 #HOSTNAME = "localhost"
 
-_command_prefix = '$$'
+_command_prefix = '!$'
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
 
 @client.event
