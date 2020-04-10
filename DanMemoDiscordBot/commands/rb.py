@@ -3,7 +3,7 @@ import asyncio
 import aiohttp
 
 async def run(ctx, character):
-    rb_list = ["ottar","revis","riveria"]
+    rb_list = ["ottarl","revis","riveria"]
     if character.lower() in rb_list:
         temp_embed = discord.Embed()
         temp_embed.color = 3066993
