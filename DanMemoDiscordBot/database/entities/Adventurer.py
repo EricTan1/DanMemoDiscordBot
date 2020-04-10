@@ -1,4 +1,4 @@
-from BaseConstants import Base
+from database.entities.BaseConstants import Base
 
 class Adventurer(Base):
     def __init__(self, adventurerid, characterid:int, typeid:int, title:str,limited:bool, ascended:bool,

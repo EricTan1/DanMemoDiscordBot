@@ -5,22 +5,45 @@ import os
 import sys
 import json
 from urllib.parse import urlparse
-sys.path.append('entities/')
+from enum import Enum
 
-from Adventurer import Adventurer,AdventurerSkill,AdventurerSkillEffects,AdventurerDevelopment, AdventurerStats
-from BaseConstants import Element, Target, Type, Attribute,Modifier
+from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
+from database.entities.BaseConstants import Element, Target, Type, Attribute,Modifier
+
+class DatabaseEnvironment():
+  LOCAL = 0
+  HEROKU = 1
+
+class DBConfig():
+  def __init__(self, environment):
+    if environment == DatabaseEnvironment.LOCAL:
+      self.hostname = "localhost"
+      self.username = "root"
+      self.password = "danmemo"
+      self.port = "3306"
+      self.database = "danmemo"
+    elif environment == DatabaseEnvironment.HEROKU:
+      result = urlparse(os.environ.get("CLEARDB_DATABASE_URL"))
+      self.hostname = result.hostname
+      self.username = result.username
+      self.password = result.password
+      self.port = "3306"
+      self.database = result.path[1:]
+    else:
+      raise Exception("Unknown database environment:",environment)
 
 class DBcontroller:
-
-  def __init__(self, host, user, password, port, database):
-    ''' (DBcontroller, str, str ,str, int ,str) -> DBcontroller
+  def __init__(self, config):
+    ''' (DBcontroller, DBConfig) -> DBcontroller
     '''
-    print("created connection")
-    self.database = database
+    print("Created connection")
+    self.database = config.database
     self._connection = mysql.connector.connect(
-        host=host,
-        user=user,
-        password=password, port=port, database=database)
+      host = config.hostname,
+      user = config.username,
+      password = config.password,
+      port = config.port,
+      database = config.database)
     #print(self.connection)
     self._mycursor = self._connection.cursor()
     self._mycursorprepared = self._connection.cursor(prepared=True)    
@@ -69,7 +92,6 @@ class DBcontroller:
     self._connection.commit()
     print(self._mycursor.rowcount, "record inserted.")
     return self._mycursor.lastrowid
-    
     
   
   def updateData(self, entity):
@@ -484,15 +506,6 @@ class DBcontroller:
     return ret  
     
 if __name__ == "__main__":
-  result = urlparse(os.environ.get("CLEARDB_DATABASE_URL"))
-  USERNAME = result.username
-  PASSWORD = result.password
-  DATABASE = result.path[1:]
-  HOSTNAME = result.hostname
-  USERNAME = "root"
-  PASSWORD = "danmemo"
-  DATABASE = "danmemo"
-  HOSTNAME = "localhost"    
-  db = DBcontroller(HOSTNAME,USERNAME,PASSWORD,"3306",DATABASE)
-  skilleffects_id_list = db.dispatchSearch("millionaire anonymous 1")  
-  
+  dbConfig = DBConfig(DatabaseEnvironment.LOCAL)
+  db = DBcontroller(dbConfig)
+  skilleffects_id_list = db.dispatchSearch("millionaire anonymous 1")

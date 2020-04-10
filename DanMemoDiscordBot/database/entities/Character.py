@@ -1,4 +1,4 @@
-from BaseConstants import Base
+from database.entities.BaseConstants import Base
 
 class Character(Base):
     ''' This class is an object that represents the

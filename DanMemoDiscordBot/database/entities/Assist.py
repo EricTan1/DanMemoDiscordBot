@@ -1,4 +1,4 @@
-from BaseConstants import Base
+from database.entities.BaseConstants import Base
 
 class Assist(Base):
     def __init__(self, assistid, characterid:int, title:str,limited:bool,
