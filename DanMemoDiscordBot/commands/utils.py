@@ -2,6 +2,11 @@ import discord
 from PIL import Image
 import io
 import asyncio
+from enum import Enum
+
+class Status(Enum):
+    OK = 3066993
+    KO = 16203840
 
 async def imageHorizontalConcat(client, file_list, discord_file_list):
     images = [Image.open(x) for x in file_list]

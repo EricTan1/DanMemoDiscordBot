@@ -46,9 +46,9 @@ async def skillSearch(ctx, *search):
 async def help(ctx):
     await command_help.run(ctx)
 
-@client.command(aliases=['sim food'])
+@client.command(aliases=['daily','bento'])
 async def food(ctx):
-    await command_food.run(ctx)
+    await command_food.run(dbConfig,client,ctx)
     
 @client.command(aliases=['recordbuster','record buster', 'rbguide'])
 async def rb(ctx, character):

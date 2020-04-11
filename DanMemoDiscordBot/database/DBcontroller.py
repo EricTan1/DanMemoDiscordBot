@@ -9,6 +9,7 @@ from enum import Enum
 
 from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
 from database.entities.BaseConstants import Element, Target, Type, Attribute,Modifier
+import database.entities.User
 
 class DatabaseEnvironment():
   LOCAL = 0
@@ -93,7 +94,6 @@ class DBcontroller:
     print(self._mycursor.rowcount, "record inserted.")
     return self._mycursor.lastrowid
     
-  
   def updateData(self, entity):
     ''' (DBcontroller, Entity, str, ?) -> bool
     returns whether or not it is a successful update
@@ -186,7 +186,6 @@ class DBcontroller:
         ret_list.append(ret_dict.get(keys)+[keys])
     return ret_list
   
-
   def skillSearch(self,search, filter_dict):
     # separate by commas
     searchwords_list = search.split(",")
@@ -240,7 +239,6 @@ class DBcontroller:
     print(ret_list)
     return ret_list
 
-      
   def assembleAdventurer(self, adventurerid):
     title=""
     title_name = ""
@@ -485,8 +483,6 @@ class DBcontroller:
     print(ret_list)
     return ret_list
         
-          
-  
   def assembleAssistCharacterData(self, assistid):
     ret = ""
     assist_base_sql = "SELECT title, c.name, limited,stars FROM danmemo.assist as a, danmemo.character as c where c.characterid=a.characterid and a.assistid={}".replace("danmemo",self.database).format(assistid)
@@ -505,6 +501,34 @@ class DBcontroller:
       ret = ret + "\n"
     return ret  
     
+  def getUser(self, discord_id):
+      sql = "SELECT userid, discordid, data FROM {}.user user WHERE user.discordid = {}".format(self.database,discord_id)
+      print(sql)
+
+      self._mycursor.execute(sql)
+      for row in self._mycursor:
+          user_id = row[0]
+          discordid = row[1]
+          data = database.entities.User.User.undumpData(row[2])
+          user = database.entities.User.User(user_id,discordid,data)
+          return user
+
+  def updateUser(self, user):
+      if user.user_id is None:
+          sql = "INSERT INTO {}.user (discordid, data) VALUES ({},{})".format(self.database,
+                                                                                user.discord_id,
+                                                                                user.dumpData())
+      else:
+          sql = "UPDATE {}.user SET discordid = {}, data = {} WHERE userid = {}".format(self.database,
+                                                    "'"+user.discord_id+"'",
+                                                    user.dumpData(),
+                                                    user.user_id)
+      print(sql)
+      self._mycursor.execute(sql)
+      self._connection.commit()
+      print(self._mycursor.rowcount, "record inserted.")
+      return self._mycursor.lastrowid
+
 if __name__ == "__main__":
   dbConfig = DBConfig(DatabaseEnvironment.LOCAL)
   db = DBcontroller(dbConfig)
