@@ -50,6 +50,10 @@ async def help(ctx):
 async def food(ctx):
     await command_food.run(dbConfig,client,ctx)
     
+@client.command(aliases=['pull'])
+async def gacha(ctx,*args):
+    await command_gacha.run(dbConfig,client,ctx,*args)
+
 @client.command(aliases=['recordbuster','record buster', 'rbguide'])
 async def rb(ctx, character):
     await command_rb.run(ctx,character)

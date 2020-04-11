@@ -8,6 +8,44 @@ class Status(Enum):
     OK = 3066993
     KO = 16203840
 
+class GachaRates(Enum):
+    ADVENTURER_3_STARS = 0.64
+    ASSIST_3_STARS = 0.33
+    ADVENTURER_4_STARS = 0.02
+    ASSIST_4_STARS = 0.01
+
+class GachaRatesOnlyFourStars(Enum):
+    ADVENTURER_4_STARS = 0.67
+    ASSIST_4_STARS = 0.33
+
+class CustomEmoji:
+    def __init__(self, id_inner, name, plural, id_discord):
+        self.id_inner = id_inner
+        self.name = name
+        self.plural = plural
+        self.id_discord = id_discord
+    def toString(self,ctx):
+        return str(ctx.bot.get_emoji(self.id_discord))
+
+emojis = {  CustomEmoji("potato1","small potato","small potatoes",698248273387061439),
+            CustomEmoji("potato2","medium potato","medium potatoes",698248273500307503),
+            CustomEmoji("potato3","big potato","big potatoes",698248273613291590),
+            CustomEmoji("crepe","crepe","crepes",698247637899411521),
+            CustomEmoji("hexdummy","hexdummy","hexdummy",698471235927146526),
+            CustomEmoji("hex","hex","hex",698357886492999753)}
+
+def get_emoji(id_inner):
+    for emoji in emojis:
+        if emoji.id_inner == id_inner:
+            return emoji
+    raise Exception("Unknown emoji id:",id_inner)
+
+def mention_author(ctx):
+    return ctx.message.author.mention
+
+def get_author(ctx):
+    return str(ctx.message.author)
+
 async def imageHorizontalConcat(client, file_list, discord_file_list):
     images = [Image.open(x) for x in file_list]
     widths, heights = zip(*(i.size for i in images))

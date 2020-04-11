@@ -10,6 +10,7 @@ from enum import Enum
 from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
 from database.entities.BaseConstants import Element, Target, Type, Attribute,Modifier
 import database.entities.User
+from commands.utils import GachaRates
 
 class DatabaseEnvironment():
   LOCAL = 0
@@ -501,6 +502,41 @@ class DBcontroller:
       ret = ret + "\n"
     return ret  
     
+  def getRandomUnit(self, gacha_category):
+    if gacha_category == GachaRates.ADVENTURER_3_STARS.name:
+        stars = 3
+        unit_id = "adventurerid"
+        table = "adventurer"
+    elif gacha_category == GachaRates.ADVENTURER_4_STARS.name:
+        stars = 4
+        unit_id = "adventurerid"
+        table = "adventurer"
+    elif gacha_category == GachaRates.ASSIST_3_STARS.name:
+        stars = 3
+        unit_id = "assistid"
+        table = "assist"
+    elif gacha_category == GachaRates.ASSIST_4_STARS.name:
+        stars = 4
+        unit_id = "assistid"
+        table = "assist"
+    else:
+        raise Exception("Unknown gacha category:",gacha_category)
+
+    sql = "SELECT {} FROM {}.{} WHERE stars = {} ORDER BY RAND() LIMIT 1".format(unit_id,
+                                                                                self.database,
+                                                                                table,
+                                                                                stars)
+    sql = "SELECT {}, stars, title, name FROM {}.{} as a \
+            INNER JOIN {}.character as c ON c.characterid = a.characterid \
+            WHERE {} IN (SELECT {} FROM ({}) t);".format(unit_id, self.database, table,
+                                                        self.database,
+                                                        unit_id, unit_id, sql)
+    self._mycursor.execute(sql)
+    for row in self._mycursor:
+        unit_type, stars, unit_id, title, name = table, row[1], row[0], row[2], row[3]
+        print(unit_type, stars, unit_id, title, name)
+        return unit_type, stars, unit_id, title, name
+
   def getUser(self, discord_id):
       sql = "SELECT userid, discordid, data FROM {}.user user WHERE user.discordid = {}".format(self.database,discord_id)
       print(sql)
