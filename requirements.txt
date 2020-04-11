@@ -3,3 +3,4 @@ mysql-connector-python==8.0.19
 pillow==7.1.1
 Flask==1.1.1
 gunicorn==20.0.4
+numpy==1.18.1
