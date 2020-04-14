@@ -36,7 +36,7 @@ async def close(ctx):
 
 @client.command(aliases=['cs'])
 async def characterSearch(ctx, *search):
-    await command_characterSearch.run(dbConfig,ctx,*search)
+    await command_characterSearch.run(dbConfig,client,ctx,*search)
 
 @client.command(aliases=['ss'])
 async def skillSearch(ctx, *search):

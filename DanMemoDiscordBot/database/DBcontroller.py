@@ -270,7 +270,8 @@ class DBcontroller:
     for skillid in skillid_list:
       skill.append(self.assembleAdventurerSkill(skillid))
     # assemble adventure development
-    return (title_name, title, skill)
+    dev_ret = self.assembleAdventurerDevelopmentFromAdId(adventurerid)
+    return (title_name, title, skill, dev_ret)
 
   def assembleAssist(self, assistid):
     title = ""
@@ -400,7 +401,25 @@ class DBcontroller:
       skilleffect = "{} {}".format(temp_attribute,temp_modifier)
       adventurername = row[3] + " " + row[4]
       return (skillname,skilleffect,adventurername)
-  
+    
+  def assembleAdventurerDevelopmentFromAdId(self, adventurerid):
+    self._mycursor.execute("SELECT ad.name,a.name,m.value FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.adventurer as adv on adv.adventurerid = ad.adventurerid LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid LEFT JOIN danmemo.modifier as m on ad.modifierid = m.modifierid LEFT JOIN danmemo.character as c on adv.characterid= c.characterid WHERE adv.adventurerid = {}".replace("danmemo", self.database).format(adventurerid))
+    ret_list = []
+    for row in self._mycursor:
+      skillname = row[0].strip()
+      temp_attribute = row[1]
+      temp_modifier = row[2]      
+      if(self.human_readable_dict.get(temp_modifier)!= None):
+        temp_modifier=self.human_readable_dict.get(temp_modifier)
+      if(self.human_readable_dict.get(temp_attribute)!= None):
+        temp_attribute=self.human_readable_dict.get(temp_attribute)
+      if(temp_modifier[1:].isnumeric() and temp_modifier[0]!='x'):
+        temp_modifier= temp_modifier+"%"
+      skilleffect = "{} {}".format(temp_attribute,temp_modifier)
+      ret_list.append([skillname,skilleffect])
+      
+    return ret_list
+    
   def getAdSkillIdFromEffect(self, adventurerskilleffectsid):
     self._mycursor.execute("SELECT AdventurerSkillid FROM danmemo.adventurerskilleffects WHERE AdventurerSkillEffectsid={}".replace("danmemo",self.database).format(adventurerskilleffectsid))
     for row in self._mycursor:
