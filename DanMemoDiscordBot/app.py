@@ -22,6 +22,8 @@ async def on_ready():
     ''' () -> None
     This function initializes the bot.
     '''
+    #temp = [(e.id, e.name) for e in client.emojis]
+    #print(temp)
     print("Bot is ready!")
 
 async def close(ctx):

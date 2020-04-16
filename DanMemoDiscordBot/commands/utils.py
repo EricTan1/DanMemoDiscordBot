@@ -18,6 +18,45 @@ class GachaRatesOnlyFourStars(Enum):
     ADVENTURER_4_STARS = 0.67
     ASSIST_4_STARS = 0.33
 
+class HeroAscensionStatsP(Enum):
+    # PHYSICAL
+    STR=[0,36,72,108,173,238,350]
+    END=[0,21,42,63,94,125,180]
+    DEX=[0,8,16,32,38,52,75]
+    AGI=[0,9,18,27,42,57,83]
+    MAG=[0,5,10,15,24,33,50]
+    HP=[0,125,250,375,600,825,1175]
+    MP=[0,7,14,21,34,47,70]
+    PAT=[0,36,72,108,173,238,350]
+    MAT=[0,5,10,15,24,33,50]
+    DEF=[0,21,42,63,94,125,180]
+
+class HeroAscensionStatsM(Enum):
+    # MAGICAL
+    STR = [0,6,12,18,28,38,51]
+    END = [0,19,38,57,86,115,161]
+    DEX = [0,9,18,27,42,57,79]
+    AGI = [0,9,18,27,42,57,79]
+    MAG = [0,33,66,99,161,223,335]
+    HP = [0,121,242,363,584,805,1125]
+    MP = [0,8,16,24,38,52,80]
+    PAT = [0,6,12,18,28,38,51]
+    MAT = [0,33,66,99,161,223,335]
+    DEF = [0,19,38,57,86,115,161]
+
+class HeroAscensionStatsB(Enum):
+    # BALANCE
+    STR = [0,15,30,45,70,95,137]
+    END = [0,19,38,57,86,115,168]
+    DEX = [0,11,22,33,50,67,95]
+    AGI = [0,3,6,9,14,19,25]
+    MAG = [0,28,56,84,141,198,310]
+    HP = [0,123,246,369,592,815,1150]
+    MP = [0,10,20,30,46,62,100]
+    PAT = [0,15,30,45,70,95,137]
+    MAT = [0,28,56,84,141,198,310]
+    DEF = [0,19,38,57,86,115,168]
+
 class CustomEmoji:
     def __init__(self, id_inner, name, plural, id_discord):
         self.id_inner = id_inner
@@ -32,7 +71,24 @@ emojis = {  CustomEmoji("potato1","small potato","small potatoes",69824827338706
             CustomEmoji("potato3","big potato","big potatoes",698248273613291590),
             CustomEmoji("crepe","crepe","crepes",698247637899411521),
             CustomEmoji("hexdummy","hexdummy","hexdummy",698471235927146526),
-            CustomEmoji("hex","hex","hex",698357886492999753)}
+            CustomEmoji("hex","hex","hex",698357886492999753),
+            CustomEmoji("limitbreak_0","limitbreak_0","limitbreak_0",700362619038597140),
+            CustomEmoji("limitbreak_1","limitbreak_1","limitbreak_1",700362619038597140),
+            CustomEmoji("limitbreak_2","limitbreak_2","limitbreak_2",700362619055505458),
+            CustomEmoji("limitbreak_3","limitbreak_3","limitbreak_3",700362619340587048),
+            CustomEmoji("limitbreak_4","limitbreak_4","limitbreak_4",700362619202043994),
+            CustomEmoji("limitbreak_5","limitbreak_5","limitbreak_5",700362619223015585),
+            CustomEmoji("rank_6","rank_6","rank_6",700362778774339625),
+            CustomEmoji("rank_7","rank_7","rank_7",700362690077655232),
+            CustomEmoji("rank_8","rank_8","rank_8",700362677880356894),
+            CustomEmoji("rank_9","rank_9","rank_9",700362704732291234),
+            CustomEmoji("rank_10","rank_10","rank_10",700362719051907103),
+            CustomEmoji("rank_11","rank_11","rank_11",700362727897432076),
+            CustomEmoji("rank_12","rank_12","rank_12",700362736378577030),
+            CustomEmoji("star_on","star_on","star_on",700406541232242729),
+            CustomEmoji("star_off","star_off","star_off",700406550044606470),
+            CustomEmoji("square_off","square_off","square_off",700406581908602970),
+            CustomEmoji("square_on","square_on","square_on",700406590817435759)}
 
 def get_emoji(id_inner):
     for emoji in emojis:
@@ -112,7 +168,7 @@ async def skillSearchRotatingPage(client, ctx, search, page_list, total_results,
     await msg.add_reaction(emoji2)
     emojis = [emoji1, emoji2]
     def check(reaction, user):
-        return (str(reaction.emoji) == emoji2 or str(reaction.emoji) == emoji1) and user !=client.user
+        return (str(reaction.emoji) == emoji2 or str(reaction.emoji) == emoji1) and user !=client.user and reaction.message.id == msg.id
     while True:
         try:
             reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)

@@ -244,7 +244,7 @@ class DBcontroller:
     title=""
     title_name = ""
     skill=[]
-    adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.adventurer as a, danmemo.character as c where c.characterid=a.characterid and a.adventurerid={}".replace("danmemo",self.database).format(adventurerid)
+    adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars,t.name FROM danmemo.adventurer as a, danmemo.character as c, danmemo.type as t where c.characterid=a.characterid and t.typeid = a.typeid and a.adventurerid={}".replace("danmemo",self.database).format(adventurerid)
     skill_id_sql = "SELECT adventurerskillid FROM danmemo.adventurerskill where adventurerid = {}".replace("danmemo",self.database).format(adventurerid)
     dev_id_sql = "SELECT * FROM danmemo.adventurerdevelopment where adventurerid = {}".replace("danmemo",self.database).format(adventurerid)
     # base adventurer assemble
@@ -259,7 +259,10 @@ class DBcontroller:
         title = title + "[Limited-Time] "
       for x in range(0,row[4]):
         title = title + ":star:"
+      ascended = row[3]
+      unit_type = row[5]
     # stats
+    stats_dict = self.assembleAdventurerStats(adventurerid)
     
     # adventurer skill assemble
     skillid_list = []
@@ -271,7 +274,7 @@ class DBcontroller:
       skill.append(self.assembleAdventurerSkill(skillid))
     # assemble adventure development
     dev_ret = self.assembleAdventurerDevelopmentFromAdId(adventurerid)
-    return (title_name, title, skill, dev_ret)
+    return (title_name, title, skill, stats_dict,dev_ret, ascended, unit_type)
 
   def assembleAssist(self, assistid):
     title = ""
@@ -292,6 +295,7 @@ class DBcontroller:
       for x in range(0,row[3]):
         title = title + ":star:"
     # stats (based on LB? idk somehow dynamically change stats here maybe send?)
+    stats_dict = self.assembleAssistStats(assistid)
     # assist skill assemble (MLB skill VS non MLB (dyamically later?))
     # Skill Effects
     skillid_list = []
@@ -301,7 +305,7 @@ class DBcontroller:
       skillid_list.append(row[0])
     for skillid in skillid_list:
       skill.append(self.assembleAssistSkill(skillid))
-    return (title_name, title, skill)
+    return (title_name, title, skill ,stats_dict)
 
   def assembleAssistSkill(self, skillid):
     ret =""
@@ -344,7 +348,7 @@ class DBcontroller:
     self._mycursor.execute(skill_sql)
     for row in self._mycursor:
       # skilltype : skillname
-      skillname=skillname + "{}: {} \n".format(row[0],row[1])
+      skillname=skillname + "{}: {} \n".format(row[0].capitalize(),row[1])
     self._mycursor.execute(effects_sql)
     for row in self._mycursor:
       temp_target = row[0]
@@ -419,7 +423,14 @@ class DBcontroller:
       ret_list.append([skillname,skilleffect])
       
     return ret_list
-    
+  
+  def assembleAdventurerStats(self, adventurerid):
+    ret_dict = dict()
+    self._mycursor.execute("SELECT a.name,stats.value FROM danmemo.adventurerstats as stats LEFT JOIN danmemo.attribute as a ON stats.attributeid = a.attributeid where stats.adventurerid = {};".replace("danmemo", self.database).format(adventurerid))
+    for row in self._mycursor:
+      ret_dict[row[0]]=row[1].strip('][').split(', ') 
+    return ret_dict
+
   def getAdSkillIdFromEffect(self, adventurerskilleffectsid):
     self._mycursor.execute("SELECT AdventurerSkillid FROM danmemo.adventurerskilleffects WHERE AdventurerSkillEffectsid={}".replace("danmemo",self.database).format(adventurerskilleffectsid))
     for row in self._mycursor:
@@ -439,6 +450,12 @@ class DBcontroller:
       self._mycursor.execute(assist_base_sql)
       for row in self._mycursor:
           return row[0]  
+  def assembleAssistStats(self, assistid):
+    ret_dict = dict()
+    self._mycursor.execute("SELECT a.name,stats.value FROM danmemo.assiststats as stats LEFT JOIN danmemo.attribute as a ON stats.attributeid = a.attributeid where stats.assistid = {};".replace("danmemo", self.database).format(assistid))
+    for row in self._mycursor:
+      ret_dict[row[0]]=row[1].strip('][').split(', ') 
+    return ret_dict
   
   def assembleAdventurerCharacterData(self, adventurerid):
     ret = ""
