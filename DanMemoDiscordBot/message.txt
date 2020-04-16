@@ -63,6 +63,7 @@ ID;FULL;Label;Character
 1011003016;[Longing Bride] Liliruca Arde;Longing Bride;Liliruca Arde
 1011003017;[Aschenputtel] Liliruca Arde;Aschenputtel;Liliruca Arde
 1011003018;[Unbreakable Heart] Liliruca Arde;Unbreakable Heart;Liliruca Arde
+1011003019;[Faithful] Liliruca Arde;Faithful;Liliruca Arde
 1011004001;[Samurai Girl] Yamato Mikoto;Samurai Girl;Yamato Mikoto
 1011004002;[Zetsu Ei] Yamato Mikoto;Zetsu Ei;Yamato Mikoto
 1011004003;[Master Conquerer] Yamato Mikoto;Master Conquerer;Yamato Mikoto
@@ -74,6 +75,7 @@ ID;FULL;Label;Character
 1011004009;[Love Lesson] Yamato Mikoto;Love Lesson;Yamato Mikoto
 1011004010;[Kunoichi] Yamato Mikoto;Kunoichi;Yamato Mikoto
 1011004011;[Power of Change] Yamato Mikoto;Power of Change;Yamato Mikoto
+1011004012;[Patissiere] Yamato Mikoto;Patissiere;Yamato Mikoto
 1011005001;[Captain] Finn Deimne;Captain;Finn Deimne
 1011005002;[Braver] Finn Deimne;Braver;Finn Deimne
 1011005003;[Fearless] Finn Deimne;Fearless;Finn Deimne
@@ -125,6 +127,7 @@ ID;FULL;Label;Character
 1011011003;[Ignis] Welf Crozzo;Ignis;Welf Crozzo
 1011011004;[Howling Blade] Welf Crozzo;Howling Blade;Welf Crozzo
 1011011006;[Smithy Expert] Welf Crozzo;Smithy Expert;Welf Crozzo
+1011011007;[Determination] Welf Crozzo;Determination;Welf Crozzo
 1011012001;[Werewolf] Bete Loga;Werewolf;Bete Loga
 1011012002;[Ulfheoinn] Bete Loga;Ulfheoinn;Bete Loga
 1011012003;[Ulfheoinn] Bete Loga;Ulfheoinn;Bete Loga
@@ -274,6 +277,7 @@ ID;FULL;Label;Character
 1012020002;[Expert Advisor] Ryu Lion;Expert Advisor;Ryu Lion
 1012020003;[Elegant Vanguard] Ryu Lion;Elegant Vanguard;Ryu Lion
 1012020004;[Elven Employee] Ryu Lion;Elven Employee;Ryu Lion
+1012021001;[Devotion] Sanjouno Haruhime;Devotion;Sanjouno Haruhime
 1012024001;[Silver Pharmacist] Naza Ersuisu;Silver Pharmacist;Naza Ersuisu
 1012024002;[Cyan] Naza Ersuisu;Cyan;Naza Ersuisu
 1012025001;[Ghost] Fels;Ghost;Fels
