@@ -118,10 +118,11 @@ async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_em
     msg = await ctx.send(files=file_list,embed=page_list[current_page])
     await msg.add_reaction(emoji1)
     await msg.add_reaction(emoji2)
-    await msg.add_reaction(hero_ascend_sub)
-    await msg.add_reaction(hero_ascend_add)
     await msg.add_reaction(limit_break_sub)
     await msg.add_reaction(limit_break_add)
+    await msg.add_reaction(hero_ascend_sub)
+    await msg.add_reaction(hero_ascend_add)
+
     # set_field_at(index, *, name, value, inline=True)
     def check(reaction, user):
         return (str(reaction.emoji) == emoji2 
