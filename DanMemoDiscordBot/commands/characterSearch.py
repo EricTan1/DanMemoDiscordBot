@@ -8,7 +8,9 @@ from discord.ext import commands
 from PIL import Image
 import io
 from urllib.parse import urlparse
-from commands.utils import get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM
+import itertools
+
+from commands.utils import get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status
 from database.DBcontroller import DBcontroller
 from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
 from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier
@@ -33,8 +35,8 @@ async def run(dbConfig, client, ctx, *search):
     elif len(my_list) == 1:
         temp_embed = discord.Embed()
         dev_embed = discord.Embed()
-        temp_embed.color = 3066993
-        dev_embed.color = 3066993
+        temp_embed.color = Status.OK.value
+        dev_embed.color = Status.OK.value
         if "Ad" in (my_list[0])[3]:
             info = db.assembleAdventurer(((my_list[0])[3])[2:])
             #print(info)
@@ -131,53 +133,69 @@ async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_em
                 or str(reaction.emoji) == hero_ascend_sub
                 or str(reaction.emoji) == limit_break_add
                 or str(reaction.emoji) == limit_break_sub) and user !=client.user and reaction.message.id == msg.id
-   
+    
+    def wait_for_reaction(event_name):
+        return client.wait_for(event_name,check=check)
+
+
     while True:
-        try:
-            reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
-        except asyncio.TimeoutError:
-            page_list[current_page].color=16203840
+        pending_tasks = [wait_for_reaction("reaction_add"), wait_for_reaction("reaction_remove")]
+        done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
+
+        timeout = len(done_tasks) == 0
+
+        if not timeout:
+            task = done_tasks.pop()
+
+            reaction, user = await task
+
+        for remaining in itertools.chain(done_tasks, pending_tasks):
+            remaining.cancel()
+
+        if timeout:
+            page_list[current_page].color = Status.KO.value
             await msg.edit(embed=page_list[current_page])
             break
-        else:
-            # left
-            if str(reaction.emoji) == emoji1:
-                if(current_page > 0):
-                    current_page = current_page -1
-                else:
-                    current_page = len(page_list)-1
-            # right
-            if str(reaction.emoji) == emoji2:
-                if( current_page+1 < len(page_list)):
-                    current_page = current_page +1
-                else:
-                    current_page = 0
-            if str(reaction.emoji) == limit_break_sub:
-                if(current_limitbreak > 0):
-                    current_limitbreak = current_limitbreak -1
-                else:
-                    current_limitbreak = MAXLB
-                await updateStats()
-            if str(reaction.emoji) == limit_break_add:
-                if(current_limitbreak < MAXLB):
-                    current_limitbreak = current_limitbreak +1
-                else:
-                    current_limitbreak = 0
-                await updateStats()
-            if str(reaction.emoji) == hero_ascend_sub:
-                if(current_ha > 0):
-                    current_ha = current_ha -1
-                else:
-                    current_ha = MAXHA
-                await updateStats()
-            if str(reaction.emoji) == hero_ascend_add:
-                if(current_ha < MAXHA):
-                    current_ha = current_ha +1
-                else:
-                    current_ha = 0
-                await updateStats()
-            page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))            
-            await msg.edit(embed=page_list[current_page])    
+
+        # left
+        if str(reaction.emoji) == emoji1:
+            if(current_page > 0):
+                current_page = current_page -1
+            else:
+                current_page = len(page_list)-1
+        # right
+        if str(reaction.emoji) == emoji2:
+            if( current_page+1 < len(page_list)):
+                current_page = current_page +1
+            else:
+                current_page = 0
+        if str(reaction.emoji) == limit_break_sub:
+            if(current_limitbreak > 0):
+                current_limitbreak = current_limitbreak -1
+            else:
+                current_limitbreak = MAXLB
+            await updateStats()
+        if str(reaction.emoji) == limit_break_add:
+            if(current_limitbreak < MAXLB):
+                current_limitbreak = current_limitbreak +1
+            else:
+                current_limitbreak = 0
+            await updateStats()
+        if str(reaction.emoji) == hero_ascend_sub:
+            if(current_ha > 0):
+                current_ha = current_ha -1
+            else:
+                current_ha = MAXHA
+            await updateStats()
+        if str(reaction.emoji) == hero_ascend_add:
+            if(current_ha < MAXHA):
+                current_ha = current_ha +1
+            else:
+                current_ha = 0
+            await updateStats()
+        page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))            
+        await msg.edit(embed=page_list[current_page])    
+
 
 async def pageASHandler(client, ctx, temp_embed:discord.Embed, file_list, stats_dict):
     MAXLB = 5
@@ -208,7 +226,7 @@ async def pageASHandler(client, ctx, temp_embed:discord.Embed, file_list, stats_
         try:
             reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
         except asyncio.TimeoutError:
-            page_list[current_page].color=16203840
+            page_list[current_page].color = Status.KO.value
             await msg.edit(embed=page_list[current_page])
             break
         else:
