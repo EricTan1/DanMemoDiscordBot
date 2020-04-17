@@ -13,7 +13,12 @@ import commands.help as command_help
 import commands.rb as command_rb
 import commands.skillSearch as command_skillSearch
 
-_command_prefix = '!$'
+
+if "IS_HEROKU" in os.environ:
+    _command_prefix = "!$"
+else:
+    _command_prefix = "$$"
+
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
 dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
 
