@@ -3,7 +3,8 @@ import discord
 from discord.ext import commands
 import os
 
-from database.DBcontroller import DatabaseEnvironment,DBConfig
+from database.DBcontroller import DatabaseEnvironment, DBConfig
+from commands.cache import Cache
 
 import commands.characterSearch as command_characterSearch
 import commands.dispatch as command_dispatch
@@ -13,7 +14,6 @@ import commands.help as command_help
 import commands.rb as command_rb
 import commands.skillSearch as command_skillSearch
 
-
 if "IS_HEROKU" in os.environ:
     _command_prefix = "!$"
 else:
@@ -21,6 +21,7 @@ else:
 
 client = commands.Bot(command_prefix=_command_prefix, help_command=None)
 dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
+cache = Cache(dbConfig)
 
 @client.event
 async def on_ready():
@@ -71,5 +72,4 @@ async def dispatch(ctx, *search):
     
 if __name__ == "__main__":
     TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
-
     client.run(TOKEN)

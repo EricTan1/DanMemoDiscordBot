@@ -7,7 +7,8 @@ from numpy.random import choice
 from os.path import isfile
 
 from database.entities.User import User
-from commands.utils import Status, get_emoji, mention_author, GachaRates, GachaRatesOnlyFourStars #, imageHorizontalConcat, imageVerticalConcat, skillSearchRotatingPage
+from commands.utils import Status, get_emoji, mention_author, GachaRates, GachaRatesOnlyFourStars
+from commands.cache import Cache
 from database.DBcontroller import DBcontroller
 
 async def run(dbConfig, client, ctx, *args):
@@ -24,8 +25,8 @@ async def run(dbConfig, client, ctx, *args):
     currency_number -= 1
     user.set_crepes_number(currency_number)
 
-    pulls = get_pulls(dbConfig, 10, GachaRates)
-    pulls.extend(get_pulls(dbConfig, 1, GachaRatesOnlyFourStars))
+    pulls = get_pulls(10, GachaRates)
+    pulls.extend(get_pulls(1, GachaRatesOnlyFourStars))
     #pulls = [("adventurer", 4, 1, "Regiment Princess", "Ais Wallenstein")]*11
     '''pulls = []
     pulls.append(("adventurer",3,603,"Cyclop's New Year","Tsubaki Collbrande"))
@@ -73,16 +74,38 @@ def random_pulls(number,gacha_rates):
         pulls.append(choice(possibilities,p=probabilities))
     return pulls
 
-def get_pulls(dbConfig, number, gacha_rates):
-    db = DBcontroller(dbConfig)
+def get_random_unit(gacha_category):
+    cache = Cache()
+    if gacha_category == GachaRates.ADVENTURER_2_STARS.name:
+        stars = 2
+        units = cache.get_all_adventurers()
+    elif gacha_category == GachaRates.ADVENTURER_3_STARS.name:
+        stars = 3
+        units = cache.get_all_adventurers()
+    elif gacha_category == GachaRates.ADVENTURER_4_STARS.name:
+        stars = 4
+        units = cache.get_all_adventurers()
+    elif gacha_category == GachaRates.ASSIST_2_STARS.name:
+        stars = 2
+        units = cache.get_all_assists()
+    elif gacha_category == GachaRates.ASSIST_3_STARS.name:
+        stars = 3
+        units = cache.get_all_assists()
+    elif gacha_category == GachaRates.ASSIST_4_STARS.name:
+        stars = 4
+        units = cache.get_all_assists()
+    else:
+        raise Exception("Unknown gacha category:",gacha_category)
 
+    units = [unit for unit in units if unit.stars == stars]
+    unit = choice(units)
+    return unit
+
+def get_pulls(number, gacha_rates):
     pulls_category = random_pulls(number,gacha_rates)
     pulls = []
     for category in pulls_category:
-        unit_type, stars, unit_id, title, name = db.getRandomUnit(category)
-        pulls.append((unit_type, stars, unit_id, title, name))
-
-    db.closeconnection()
+        pulls.append(get_random_unit(category))
     return pulls
 
 async def ten_pull_message(ctx, currency_number, pulls):
@@ -98,28 +121,10 @@ async def ten_pull_message(ctx, currency_number, pulls):
     else:
         footer = "There is " + str(currency_number) + " " + emoji.name + " left in your bento box!"
 
-    hidden = "./lottery/gac_dummy/hex.png"
-    pulls_images = []
-
-    for pull in pulls:
-        path = "./lottery/"+pull[3]+" "+pull[4]+"/hex.png"
-        if not isfile(path):
-            path = hidden
-        pulls_images.append(path)
-
     per_line = 5
-    gif_images = []
-
-    for i in range(len(pulls_images)+1):
-        images_current_iteration = pulls_images[:i] + [hidden] * (len(pulls_images)-i)
-
-        full_imageBytes = concatenate_images(images_current_iteration, per_line)
-        full_image = Image.open(full_imageBytes)
-
-        gif_images.append(full_image)
-
     gif_path = "gacha.gif"
-    save_gif(gif_images, gif_path, 1000)
+    ms_per_frame = 1000
+    create_gif(gif_path,pulls,per_line,ms_per_frame)
 
     embed = discord.Embed()
     embed.color = Status.OK.value
@@ -127,7 +132,6 @@ async def ten_pull_message(ctx, currency_number, pulls):
     embed.description = description
     embed.set_footer(text=footer)
     embed.set_image(url="attachment://"+gif_path)
-    #await ctx.send(embed=embed)
 
     await ctx.send(embed=embed, file=discord.File(gif_path))
 
@@ -136,14 +140,20 @@ async def last_pull_message(ctx, pulls):
 
     title = "Nom nom... Fuwa fuwa! ♡"
     last_pull_message = "The crepe was really good, " + mention_author(ctx) + "! Let me add this:"
-    last_pull_file = "./lottery/"+last_pull[3]+" "+last_pull[4]+"/hex.png"
+    last_pull_file = "./lottery/"+last_pull.unit_label+" "+last_pull.character_name+"/hex.png"
+
+    last_pull_image = rarify("./lottery/"+last_pull.unit_label+" "+last_pull.character_name+"/",4)
+
     print(last_pull_file)
 
     image_path = "pull11.png"
+    imgByteArr = io.BytesIO()
+    last_pull_image.save(imgByteArr, format='PNG')
+    imgByteArr.seek(0)
 
     footer = ""
     for pull in pulls:
-        footer += "[" + pull[3] + "] " + pull[4] + " " + "🌟"*pull[1] + "\n"
+        footer += "[" + pull.unit_label + "] " + pull.character_name + " " + "🌟"*pull.stars + "\n"
 
     embed = discord.Embed()
     embed.color = Status.OK.value
@@ -155,7 +165,36 @@ async def last_pull_message(ctx, pulls):
     #await ctx.send(embed=embed, file=discord.File(last_pull_file))
     embed.set_image(url="attachment://"+image_path)
     
-    await ctx.send(embed=embed, file=discord.File(last_pull_file, filename=image_path))
+    await ctx.send(embed=embed, file=discord.File(imgByteArr, filename=image_path))
+
+def create_gif(gif_path, pulls, per_line, ms_per_frame):
+    suffix = "hex.png"
+
+    hidden = "./lottery/gac_dummy/"
+    hidden_image = Image.open(hidden+suffix)
+
+    pulls_images = []
+
+    for pull in pulls:
+        path = "./lottery/"+pull.unit_label+" "+pull.character_name+"/"#+suffix
+        if isfile(path+suffix):
+            image = rarify(path,pull.stars)
+        else:
+            image = hidden_image
+
+        pulls_images.append(image)
+
+    gif_images = []
+
+    for i in range(len(pulls_images)+1):
+        images_current_iteration = pulls_images[:i] + [hidden_image] * (len(pulls_images)-i)
+
+        full_imageBytes = concatenate_images(images_current_iteration, per_line)
+        full_image = Image.open(full_imageBytes)
+
+        gif_images.append(full_image)
+
+    save_gif(gif_images, gif_path, ms_per_frame)
 
 def save_gif(images, path, ms_per_frame):
     images[0].save(path, save_all=True, append_images=images[1:], optimize=False, duration=ms_per_frame)#, transparency=0) #loop=1
@@ -171,8 +210,7 @@ def concatenate_images(images, per_line=5):
     full_image = concatenate_images_vertically(images_lines)
     return full_image
 
-def concatenate_images_horizontally(image_paths):
-    images = [Image.open(x) for x in image_paths]
+def concatenate_images_horizontally(images):
     widths, heights = zip(*(i.size for i in images))
     
     total_width = sum(widths)
@@ -215,3 +253,43 @@ def concatenate_images_vertically(image_paths):
     imgByteArr.seek(0)
 
     return imgByteArr
+
+def create_rarity_hex(path, rarity):
+    background_path = "./images/hex/"+str(rarity)+".png"
+    foreground_path = path + "hex.png"
+    border_path = "./images/hex/border.png"
+
+    updated_path = path + "pull.png"
+
+    background = Image.open(background_path).convert("RGBA")
+    foreground = Image.open(foreground_path).convert("RGBA")
+    border = Image.open(border_path).convert("RGBA")
+
+    updated = Image.new("RGB", background.size, (255, 255, 255))
+    updated.paste(background, (0,0), background)
+    updated.paste(foreground, (0,0), foreground)
+    updated.paste(border, (0,0), border)
+    '''
+    updated.paste(border,(0,0), mask = border.split()[3])
+    updated.paste(background,(0,0), mask = background.split()[3])
+    updated.paste(foreground,(0,0), mask = foreground.split()[3])
+    '''
+    updated.save(updated_path)
+
+def rarify(path, rarity):
+    background_path = "./images/hex/"+str(rarity)+".png"
+    foreground_path = path + "hex.png"
+    border_path = "./images/hex/border.png"
+
+    updated_path = path + "pull.png"
+
+    background = Image.open(background_path).convert("RGBA")
+    foreground = Image.open(foreground_path).convert("RGBA")
+    border = Image.open(border_path).convert("RGBA")
+
+    updated = Image.new("RGB", background.size, (255, 255, 255))
+    updated.paste(background,(0,0), background)
+    updated.paste(foreground,(0,0), foreground)
+    updated.paste(border, (0,0), border)
+    
+    return updated

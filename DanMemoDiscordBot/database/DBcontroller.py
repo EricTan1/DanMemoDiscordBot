@@ -8,9 +8,9 @@ from urllib.parse import urlparse
 from enum import Enum
 
 from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
-from database.entities.BaseConstants import Element, Target, Type, Attribute,Modifier
+from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier
 import database.entities.User
-from commands.utils import GachaRates
+from commands.utils import GachaRates, format_row_as_sns
 
 class DatabaseEnvironment():
   LOCAL = 0
@@ -539,24 +539,28 @@ class DBcontroller:
     return ret  
     
   def getRandomUnit(self, gacha_category):
-    if gacha_category == GachaRates.ADVENTURER_3_STARS.name:
+    if gacha_category == GachaRates.ADVENTURER_2_STARS.name:
+        stars = 2
+        table = "adventurer"
+    elif gacha_category == GachaRates.ADVENTURER_3_STARS.name:
         stars = 3
-        unit_id = "adventurerid"
         table = "adventurer"
     elif gacha_category == GachaRates.ADVENTURER_4_STARS.name:
         stars = 4
-        unit_id = "adventurerid"
         table = "adventurer"
+    elif gacha_category == GachaRates.ASSIST_2_STARS.name:
+        stars = 2
+        table = "assist"
     elif gacha_category == GachaRates.ASSIST_3_STARS.name:
         stars = 3
-        unit_id = "assistid"
         table = "assist"
     elif gacha_category == GachaRates.ASSIST_4_STARS.name:
         stars = 4
-        unit_id = "assistid"
         table = "assist"
     else:
         raise Exception("Unknown gacha category:",gacha_category)
+
+    unit_id = table + "id"
 
     sql = "SELECT {} FROM {}.{} WHERE stars = {} ORDER BY RAND() LIMIT 1".format(unit_id,
                                                                                 self.database,
@@ -600,6 +604,40 @@ class DBcontroller:
       self._connection.commit()
       print(self._mycursor.rowcount, "record inserted.")
       return self._mycursor.lastrowid
+
+  def get_all_adventurers(self):
+    sql = "SELECT a.adventurerid, a.characterid, a.typeid, a.alias, a.title, a.stars, a.limited, a.ascended, \
+          c.name, c.iscollab,\
+          t.name\
+          FROM {}.adventurer AS a,\
+          {}.character AS c,\
+          {}.type AS t\
+          WHERE c.characterid = a.characterid AND t.typeid = a.typeid".format(self.database.lower(),self.database.lower(),self.database.lower())
+    
+    self._mycursor.execute(sql)
+
+    res = []
+    unit_type = "adventurer"
+    for row in self._mycursor:
+      unit_id, character_id, type_id, alias, unit_label, stars, is_limited, is_ascended, character_name, is_collab, type_name = row
+      row_as_dict = format_row_as_sns(unit_type=unit_type, unit_id=unit_id, character_id=character_id, type_id=type_id, alias=alias, unit_label=unit_label, stars=stars, is_limited=is_limited, is_ascended=is_ascended, character_name=character_name, is_collab=is_collab, type_name=type_name)
+      res.append(row_as_dict)
+    return res
+
+  def get_all_assists(self):
+    sql = "SELECT a.assistid, a.characterid, a.alias, a.title, a.stars, a.limited, c.name, c.iscollab\
+          FROM {}.assist AS a, {}.character AS c\
+          WHERE c.characterid = a.characterid".format(self.database.lower(),self.database.lower())
+    
+    self._mycursor.execute(sql)
+
+    res = []
+    unit_type = "assist"
+    for row in self._mycursor:
+      unit_id, character_id, alias, unit_label, stars, is_limited, character_name, is_collab = row
+      row_as_dict = format_row_as_sns(unit_type=unit_type, unit_id=unit_id, character_id=character_id, alias=alias, unit_label=unit_label, stars=stars, is_limited=is_limited, character_name=character_name, is_collab=is_collab)
+      res.append(row_as_dict)
+    return res
 
 if __name__ == "__main__":
   dbConfig = DBConfig(DatabaseEnvironment.LOCAL)

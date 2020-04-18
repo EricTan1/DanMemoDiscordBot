@@ -3,15 +3,18 @@ from PIL import Image
 import io
 import asyncio
 from enum import Enum
+from types import SimpleNamespace
 
 class Status(Enum):
     OK = 3066993
     KO = 16203840
 
 class GachaRates(Enum):
-    ADVENTURER_3_STARS = 0.64
-    ASSIST_3_STARS = 0.33
+    ADVENTURER_2_STARS = 0.54
+    ADVENTURER_3_STARS = 0.10
     ADVENTURER_4_STARS = 0.02
+    ASSIST_2_STARS = 0.28
+    ASSIST_3_STARS = 0.05
     ASSIST_4_STARS = 0.01
 
 class GachaRatesOnlyFourStars(Enum):
@@ -56,6 +59,16 @@ class HeroAscensionStatsB(Enum):
     PAT = [0,15,30,45,70,95,137]
     MAT = [0,28,56,84,141,198,310]
     DEF = [0,19,38,57,86,115,168]
+
+def format_row_as_dict(**kwargs):
+    for key in kwargs.keys():
+        globals()[key]=kwargs[key]
+    return kwargs
+
+def format_row_as_sns(**kwargs):
+    d = format_row_as_dict(**kwargs)
+    ns = SimpleNamespace(**d)
+    return ns
 
 class CustomEmoji:
     def __init__(self, id_inner, name, plural, id_discord):
