@@ -4,6 +4,7 @@ import io
 import asyncio
 import time
 from numpy.random import choice
+from os.path import isfile
 
 from database.entities.User import User
 from commands.utils import Status, get_emoji, mention_author, GachaRates, GachaRatesOnlyFourStars #, imageHorizontalConcat, imageVerticalConcat, skillSearchRotatingPage
@@ -25,24 +26,25 @@ async def run(dbConfig, client, ctx, *args):
 
     pulls = get_pulls(dbConfig, 10, GachaRates)
     pulls.extend(get_pulls(dbConfig, 1, GachaRatesOnlyFourStars))
-
+    #pulls = [("adventurer", 4, 1, "Regiment Princess", "Ais Wallenstein")]*11
+    '''pulls = []
+    pulls.append(("adventurer",3,603,"Cyclop's New Year","Tsubaki Collbrande"))
+    pulls.append(("adventurer",3,556,"Little Detective","Lunor Faust"))
+    pulls.append(("adventurer",3,583,"Fist Fighter","Shakti Varma"))
+    pulls.append(("assist",3,325,"Goddess of Purity","Hestia"))
+    pulls.append(("adventurer",3,576,"Gale in Yukata","Ryu Lion"))
+    pulls.append(("adventurer",3,513,"Evanescent","Hitachi Chigusa"))
+    pulls.append(("assist",3,277,"Advisor","Eina Tulle"))
+    pulls.append(("adventurer",3,539,"Artel Tart","Liliruca Arde"))
+    pulls.append(("adventurer",3,607,"Ignis","Welf Crozzo"))
+    pulls.append(("adventurer",3,501,"Maenads","Filvis Challia"))
+    pulls.append(("assist",4,387,"In The End","Orna"))'''
+    
     user.updateUser(dbConfig)
 
-    await first_message(ctx, currency_number)
-    await second_message(ctx, pulls[:-1])
-    await third_message(ctx, pulls)
+    await ten_pull_message(ctx, currency_number, pulls[:-1])
+    await last_pull_message(ctx, pulls)
 
-    '''pull = get_emoji("hex").toString(ctx)
-    description += "\n" + pull * 5
-    description += "\n" + pull * 5'''
-
-
-    # embed = discord.Embed()
-    # embed.color = Status.OK.value
-    # embed.title = title
-    # embed.description = description
-    # embed.set_footer(text=footer)
-    # await ctx.send(embed=embed)#, file=discord.File(icons, filename="temp.png"))
 
 async def no_gacha(user, currency_number, ctx):
     emoji = get_emoji("crepe")
@@ -83,7 +85,7 @@ def get_pulls(dbConfig, number, gacha_rates):
     db.closeconnection()
     return pulls
 
-async def first_message(ctx, currency_number):
+async def ten_pull_message(ctx, currency_number, pulls):
     emoji = get_emoji("crepe")
     emojiStr = emoji.toString(ctx)
 
@@ -96,52 +98,48 @@ async def first_message(ctx, currency_number):
     else:
         footer = "There is " + str(currency_number) + " " + emoji.name + " left in your bento box!"
 
+    hidden = "./lottery/gac_dummy/hex.png"
+    pulls_images = []
+
+    for pull in pulls:
+        path = "./lottery/"+pull[3]+" "+pull[4]+"/hex.png"
+        if not isfile(path):
+            path = hidden
+        pulls_images.append(path)
+
+    per_line = 5
+    gif_images = []
+
+    for i in range(len(pulls_images)+1):
+        images_current_iteration = pulls_images[:i] + [hidden] * (len(pulls_images)-i)
+
+        full_imageBytes = concatenate_images(images_current_iteration, per_line)
+        full_image = Image.open(full_imageBytes)
+
+        gif_images.append(full_image)
+
+    gif_path = "gacha.gif"
+    save_gif(gif_images, gif_path, 1000)
+
     embed = discord.Embed()
     embed.color = Status.OK.value
     embed.title = title
     embed.description = description
     embed.set_footer(text=footer)
-    await ctx.send(embed=embed)
+    embed.set_image(url="attachment://"+gif_path)
+    #await ctx.send(embed=embed)
 
-async def second_message(ctx, pulls):
-    hidden = get_emoji("hexdummy").toString(ctx)
-    emoji_list = [get_emoji("hex").toString(ctx)]*10
+    await ctx.send(embed=embed, file=discord.File(gif_path))
 
-    perLine = 5
-
-    interval = 0.5
-    for i in range(len(emoji_list)+1):
-        temp_list = emoji_list[:i] + [hidden] * (len(emoji_list)-i)
-
-        content = ""
-        for j in range(len(temp_list)):
-            if j != 0 and j % perLine == 0:
-                content += "\n"
-            content += temp_list[j]
-
-        if i == 0:
-            msg = await ctx.send(content=content)
-            previous_time = getTime()
-        else:
-            wait(previous_time,interval)
-            await msg.edit(content=content)
-            previous_time = getTime()
-    #wait(previous_time,interval)
-
-async def third_message(ctx, pulls):
-    print(pulls)
+async def last_pull_message(ctx, pulls):
     last_pull = pulls[-1]
-    print(last_pull)
 
     title = "Nom nom... Fuwa fuwa! ♡"
     last_pull_message = "The crepe was really good, " + mention_author(ctx) + "! Let me add this:"
     last_pull_file = "./lottery/"+last_pull[3]+" "+last_pull[4]+"/hex.png"
     print(last_pull_file)
-    #await ctx.send(content=last_pull_message,file=discord.File(last_pull_file))
 
-    discord_file_list = []
-    await imageHorizontalConcat([last_pull_file],discord_file_list)
-    icons = await imageVerticalConcat(discord_file_list)
+    image_path = "pull11.png"
 
     footer = ""
     for pull in pulls:
@@ -154,143 +152,66 @@ async def third_message(ctx, pulls):
     #embed.add_field(name="x", value=last_pull_message, inline=False)
     embed.set_footer(text=footer)
     
-    #msg = await ctx.send(embed=embed, file=discord.File(last_pull_file))
-    embed.set_image(url="attachment://temp.png")        
+    #await ctx.send(embed=embed, file=discord.File(last_pull_file))
+    embed.set_image(url="attachment://"+image_path)
     
-    msg = await ctx.send(embed=embed, file=discord.File(icons, filename="temp.png"))
+    await ctx.send(embed=embed, file=discord.File(last_pull_file, filename=image_path))
 
+def save_gif(images, path, ms_per_frame):
+    images[0].save(path, save_all=True, append_images=images[1:], optimize=False, duration=ms_per_frame)#, transparency=0) #loop=1
 
+def concatenate_images(images, per_line=5):
+    chunks = [images[x:x+per_line] for x in range(0, len(images), per_line)]
 
-async def get_pulls_image(dbConfig, client, ctx):
-    hidden = get_emoji("hexdummy").toString(ctx)
-    emoji_list = [get_emoji("hex").toString(ctx)]*10
+    images_lines = []
+    for chunk in chunks:
+        images_line = concatenate_images_horizontally(chunk)
+        images_lines.append(images_line)
 
-    perLine = 5
+    full_image = concatenate_images_vertically(images_lines)
+    return full_image
 
-    interval = 0.5
-    for i in range(len(emoji_list)+1):
-        temp_list = emoji_list[:i] + [hidden] * (len(emoji_list)-i)
-
-        content = ""
-        for j in range(len(temp_list)):
-            if j != 0 and j % perLine == 0:
-                content += "\n"
-            content += temp_list[j]
-
-        if i == 0:
-            msg = await ctx.send(content=content)
-            previous_time = getTime()
-        else:
-            wait(previous_time,interval)
-            await msg.edit(content=content)
-            previous_time = getTime()
-
-    wait(previous_time,interval)
-    title = "Nom nom... Fuwa fuwa! ♡"
-    last_pull_message = "The crepe was really good, " + mention_author(ctx) + "! Let me add this:"
-    last_pull_file = "./lottery/Regiment Princess Ais Wallenstein/hex.png"
-    #await ctx.send(content=last_pull_message,file=discord.File(last_pull_file))
-
-    discord_file_list = []
-    await imageHorizontalConcat(client,[last_pull_file],discord_file_list)
-    icons = await imageVerticalConcat(client,discord_file_list)
-
-    footer = "[Regiment Princess] Ais Wallenstein\n"*11
-
-    embed = discord.Embed()
-    embed.color = 3066993
-    embed.title = title
-    embed.description = last_pull_message
-    #embed.add_field(name="x", value=last_pull_message, inline=False)
-    embed.set_footer(text=footer)
-    
-    #msg = await ctx.send(embed=embed, file=discord.File(last_pull_file))
-    embed.set_image(url="attachment://temp.png")        
-    
-    msg = await ctx.send(embed=embed, file=discord.File(icons, filename="temp.png"))
-
-
-
-def getTime():
-    return int(time.time())
-
-#wait interval seconds
-def wait(previous_time,interval):
-    time_left = previous_time + interval - getTime()
-    if time_left > 0:
-        time.sleep(time_left)
-    return 
-
-
-
-'''
-async def get_pulls_image(dbConfig, client, ctx, title, description, footer):
-    hidden = "./lottery/gac_dummy/hex.png"
-    file_list = ["./lottery/Regiment Princess Ais Wallenstein/hex.png"]*11
-
-    perLine = 4
-
-    msg = None
-    for i in range(len(file_list)+1):
-        temp_file_list = file_list[:i] + [hidden] * (len(file_list)-i)
-        discord_file_list = []
-        chunks = [temp_file_list[x:x+perLine] for x in range(0, len(temp_file_list), perLine)]
-        for chunk in chunks:
-            await imageHorizontalConcat(client,chunk,discord_file_list)
-        icons = await imageVerticalConcat(client,discord_file_list)
-        if msg is None:
-            msg,embed = await skillSearchRotatingPage(client,ctx,title,description,footer,icons)
-        else:
-            await msg.edit(file=discord.File(icons, filename="temp.png"))
-'''
-async def imageHorizontalConcat(file_list, discord_file_list):
-    images = [Image.open(x) for x in file_list]
+def concatenate_images_horizontally(image_paths):
+    images = [Image.open(x) for x in image_paths]
     widths, heights = zip(*(i.size for i in images))
     
     total_width = sum(widths)
     max_height = max(heights)
     
-    new_im = Image.new('RGBA', (total_width, max_height))
-    
+    new_im = Image.new("RGBA", (total_width, max_height))
     x_offset = 0
     for im in images:
         new_im.paste(im, (x_offset,0))
         x_offset += im.size[0]
+
+    new_im.load() # required for png.split()
+    white_bg = Image.new("RGB", new_im.size, (255, 255, 255))
+    white_bg.paste(new_im, mask=new_im.split()[3]) # 3 is the alpha channel
+
     # convert to bytes
     imgByteArr = io.BytesIO()
-    new_im.save(imgByteArr, format='PNG')
+    white_bg.save(imgByteArr, format='PNG')
     imgByteArr.seek(0)
-    discord_file_list.append(imgByteArr)
 
-async def imageVerticalConcat(file_list):
-    images = [Image.open(x) for x in file_list]
+    return imgByteArr
+
+def concatenate_images_vertically(image_paths):
+    images = [Image.open(x) for x in image_paths]
     widths, heights = zip(*(i.size for i in images))
     
     total_width = max(widths)
     max_height = sum(heights)
     
-    new_im = Image.new('RGBA', (total_width, max_height))
+    new_im = Image.new('RGBA', (total_width, max_height), "WHITE")
     
     y_offset = 0
     for im in images:
         new_im.paste(im, (0,y_offset))
         y_offset += im.size[1]
+
     # convert to bytes
     imgByteArr = io.BytesIO()
     new_im.save(imgByteArr, format='PNG')
     imgByteArr.seek(0)
-    return imgByteArr
-'''
-async def skillSearchRotatingPage(client, ctx, title, description, footer, icons):
-    temp_image_url = "attachment://"
 
-    embed = discord.Embed()
-    embed.set_image(url=temp_image_url+"temp.png")        
-    
-    embed.color = 3066993
-    embed.title = title
-    embed.description = description
-    embed.set_footer(text=footer)
-    
-    msg = await ctx.send(embed=embed, file=discord.File(icons, filename="temp.png"))
-    return msg,embed'''
+    return imgByteArr

@@ -41,7 +41,7 @@ async def run(dbConfig, client, ctx):
     embed.title = title
     embed.description = description
     embed.set_footer(text=footer)
-    embed.set_image(url="attachment://bento.png")
+    embed.set_image(url="attachment://yes.png")
     await ctx.send(embed=embed, file=discord.File("./images/bento/yes.png"))
 
 
