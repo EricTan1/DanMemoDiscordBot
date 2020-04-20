@@ -64,13 +64,13 @@ async def run(dbConfig, client, ctx, *search):
                     skillinfo = db.assembleAdventurerSkill(skillid[2:])
                     (pos1,pos2) = dup_dict_ad.get(adventurerid)
                     # skill is on [1]
-                    rotating_list[pos1][pos2][1] = rotating_list[pos1][pos2][1] + skillinfo[0]+skillinfo[1]+"\n"
+                    rotating_list[pos1][pos2][1] = rotating_list[pos1][pos2][1] + skillinfo[0].strip() + "\n"+skillinfo[1]+"\n"
                 else:
                     #db.assembleAdventurerCharacterData(adventurerid)
                     skillinfo = db.assembleAdventurerSkill(skillid[2:])
                     #skillinfo[0]+skillinfo[1]+"\n"
                     names = db.assembleAdventurerCharacterName(adventurerid)
-                    temp_list.append(["[{}] {}".format(names[0],names[1]),skillinfo[0]+skillinfo[1]+"\n"])
+                    temp_list.append(["[{}] {}".format(names[0],names[1]),skillinfo[0].strip() + "\n"+skillinfo[1]+"\n"])
                     try:
                         file_name = "./lottery/"+"{} {}".format(names[0],names[1]).strip()+"/hex.png"
                         f = open(file_name,"r")
@@ -87,13 +87,13 @@ async def run(dbConfig, client, ctx, *search):
                     skillinfo = db.assembleAssistSkill(skillid[2:])
                     (pos1,pos2) = dup_dict_as.get(assistid)
                     # skill is on [1]
-                    rotating_list[pos1][pos2][1] = rotating_list[pos1][pos2][1] + skillinfo[0]+skillinfo[1]+"\n"
+                    rotating_list[pos1][pos2][1] = rotating_list[pos1][pos2][1] + skillinfo[0].strip() + "\n"+skillinfo[1]+"\n"
                 else:
                     #db.assembleAssistCharacterData(assistid)
                     skillinfo=db.assembleAssistSkill(skillid[2:])
                     #skillinfo[0] + skillinfo[1]+"\n"
                     names = db.assembleAssistCharacterName(assistid)
-                    temp_list.append(["[{}] {}".format(names[0],names[1]),skillinfo[0] + skillinfo[1]+"\n"])
+                    temp_list.append(["[{}] {}".format(names[0],names[1]),skillinfo[0].strip() + "\n" + skillinfo[1]+"\n"])
                     try:
                         file_name = "./lottery/"+"{} {}".format(names[0],names[1]).strip()+"/hex.png"
                         f = open(file_name,"r")
