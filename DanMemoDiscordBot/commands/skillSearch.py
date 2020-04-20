@@ -50,33 +50,27 @@ async def run(dbConfig, client, ctx, *search):
         temp_list = []
         file_list = []
         discord_file_list = []
-        assist_dup = set()
+        dup_dict_ad = dict()
+        dup_dict_as = dict()
         rotating_list.append(temp_list)
+        # position  = len(rotating_list), len(temp_list)
         total_results = len(my_set)
         for skillid in my_set:
             if("Ad" in skillid):
                 adventurerid = db.getAdventurerIdFromSkill(skillid[2:])
-                #db.assembleAdventurerCharacterData(adventurerid)
-                skillinfo = db.assembleAdventurerSkill(skillid[2:])
-                #skillinfo[0]+skillinfo[1]+"\n"
-                names = db.assembleAdventurerCharacterName(adventurerid)
-                temp_list.append(("[{}] {}".format(names[0],names[1]),skillinfo[0]+skillinfo[1]+"\n"))
-                try:
-                    file_name = "./lottery/"+"{} {}".format(names[0],names[1]).strip()+"/hex.png"
-                    f = open(file_name,"r")
-                    f.close()
-                    file_list.append(file_name)                    
-                except:
-                    file_list.append("./lottery/gac_dummy/hex.png")
-            elif("As" in skillid):
-                assistid = db.getAssistIdFromSkill(skillid[2:])
-                if (not(assistid in assist_dup)):
-                    assist_dup.add(assistid)
-                    #db.assembleAssistCharacterData(assistid)
-                    skillinfo=db.assembleAssistSkill(skillid[2:])
-                    #skillinfo[0] + skillinfo[1]+"\n"
-                    names = db.assembleAssistCharacterName(assistid)
-                    temp_list.append(("[{}] {}".format(names[0],names[1]),skillinfo[0] + skillinfo[1]+"\n"))
+                if(adventurerid in dup_dict_ad):
+                    count = count -1
+                    total_results = total_results -1
+                    skillinfo = db.assembleAdventurerSkill(skillid[2:])
+                    (pos1,pos2) = dup_dict_ad.get(adventurerid)
+                    # skill is on [1]
+                    rotating_list[pos1][pos2][1] = rotating_list[pos1][pos2][1] + skillinfo[0]+skillinfo[1]+"\n"
+                else:
+                    #db.assembleAdventurerCharacterData(adventurerid)
+                    skillinfo = db.assembleAdventurerSkill(skillid[2:])
+                    #skillinfo[0]+skillinfo[1]+"\n"
+                    names = db.assembleAdventurerCharacterName(adventurerid)
+                    temp_list.append(["[{}] {}".format(names[0],names[1]),skillinfo[0]+skillinfo[1]+"\n"])
                     try:
                         file_name = "./lottery/"+"{} {}".format(names[0],names[1]).strip()+"/hex.png"
                         f = open(file_name,"r")
@@ -84,13 +78,34 @@ async def run(dbConfig, client, ctx, *search):
                         file_list.append(file_name)
                     except:
                         file_list.append("./lottery/gac_dummy/hex.png")
-                else:
+                    dup_dict_ad[adventurerid] = (len(rotating_list)-1, len(temp_list)-1)
+            elif("As" in skillid):
+                assistid = db.getAssistIdFromSkill(skillid[2:])
+                if(assistid in dup_dict_as):
                     count = count -1
                     total_results = total_results -1
+                    skillinfo = db.assembleAssistSkill(skillid[2:])
+                    (pos1,pos2) = dup_dict_as.get(assistid)
+                    # skill is on [1]
+                    rotating_list[pos1][pos2][1] = rotating_list[pos1][pos2][1] + skillinfo[0]+skillinfo[1]+"\n"
+                else:
+                    #db.assembleAssistCharacterData(assistid)
+                    skillinfo=db.assembleAssistSkill(skillid[2:])
+                    #skillinfo[0] + skillinfo[1]+"\n"
+                    names = db.assembleAssistCharacterName(assistid)
+                    temp_list.append(["[{}] {}".format(names[0],names[1]),skillinfo[0] + skillinfo[1]+"\n"])
+                    try:
+                        file_name = "./lottery/"+"{} {}".format(names[0],names[1]).strip()+"/hex.png"
+                        f = open(file_name,"r")
+                        f.close()
+                        file_list.append(file_name)
+                    except:
+                        file_list.append("./lottery/gac_dummy/hex.png")
+                    dup_dict_as[assistid] = (len(rotating_list)-1, len(temp_list)-1)
             else:
                 skillinfo=db.assembleAdventurerDevelopment(skillid[2:])
                 #skillinfo[0] + skillinfo[1]+"\n"
-                temp_list.append((skillinfo[2],skillinfo[0] + "\n"+ skillinfo[1]+"\n"))
+                temp_list.append([skillinfo[2],skillinfo[0] + "\n"+ skillinfo[1]+"\n"])
                 try:
                     file_name = "./lottery/"+skillinfo[2].strip()+"/hex.png"
                     f = open(file_name,"r")
