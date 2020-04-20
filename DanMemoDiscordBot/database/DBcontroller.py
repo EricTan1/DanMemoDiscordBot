@@ -391,7 +391,7 @@ class DBcontroller:
     return (skillname,ret)
   
   def assembleAdventurerDevelopment(self, adventurerDevelopmentid):
-    self._mycursor.execute("SELECT ad.name,a.name,m.value,adv.title,c.name FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.adventurer as adv on adv.adventurerid = ad.adventurerid LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid LEFT JOIN danmemo.modifier as m on ad.modifierid = m.modifierid LEFT JOIN danmemo.character as c on adv.characterid= c.characterid WHERE ad.adventurerdevelopmentid = {}".replace("danmemo", self.database).format(adventurerDevelopmentid))
+    self._mycursor.execute("SELECT ad.name,a.name,m.value,adv.title,c.name,adv.adventurerid FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.adventurer as adv on adv.adventurerid = ad.adventurerid LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid LEFT JOIN danmemo.modifier as m on ad.modifierid = m.modifierid LEFT JOIN danmemo.character as c on adv.characterid= c.characterid WHERE ad.adventurerdevelopmentid = {}".replace("danmemo", self.database).format(adventurerDevelopmentid))
     for row in self._mycursor:
       skillname = row[0].strip()
       temp_attribute = row[1]
@@ -403,8 +403,11 @@ class DBcontroller:
       if(temp_modifier[1:].isnumeric() and temp_modifier[0]!='x'):
         temp_modifier= temp_modifier+"%"
       skilleffect = "{} {}".format(temp_attribute,temp_modifier)
-      adventurername = row[3] + " " + row[4]
-      return (skillname,skilleffect,adventurername)
+      #adventurername = row[3] + " " + row[4]
+      adtitle = row[3]
+      adname=row[4]
+      adid=row[5]
+      return (skillname,skilleffect,adtitle, adname, adid)
     
   def assembleAdventurerDevelopmentFromAdId(self, adventurerid):
     self._mycursor.execute("SELECT ad.name,a.name,m.value FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.adventurer as adv on adv.adventurerid = ad.adventurerid LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid LEFT JOIN danmemo.modifier as m on ad.modifierid = m.modifierid LEFT JOIN danmemo.character as c on adv.characterid= c.characterid WHERE adv.adventurerid = {}".replace("danmemo", self.database).format(adventurerid))

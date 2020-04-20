@@ -104,15 +104,22 @@ async def run(dbConfig, client, ctx, *search):
                     dup_dict_as[assistid] = (len(rotating_list)-1, len(temp_list)-1)
             else:
                 skillinfo=db.assembleAdventurerDevelopment(skillid[2:])
-                #skillinfo[0] + skillinfo[1]+"\n"
-                temp_list.append([skillinfo[2],skillinfo[0] + "\n"+ skillinfo[1]+"\n"])
-                try:
-                    file_name = "./lottery/"+skillinfo[2].strip()+"/hex.png"
-                    f = open(file_name,"r")
-                    f.close()
-                    file_list.append(file_name)
-                except:
-                    file_list.append("./lottery/gac_dummy/hex.png")                    
+                adventurerid = skillinfo[4]
+                if(adventurerid in dup_dict_ad):
+                    count = count -1
+                    total_results = total_results -1
+                    (pos1,pos2) = dup_dict_ad.get(adventurerid)
+                    # skill is on [1]
+                    rotating_list[pos1][pos2][1] = rotating_list[pos1][pos2][1] + skillinfo[0].strip() + "\n"+skillinfo[1]+"\n"
+                else:
+                    temp_list.append(["[{}] {}".format(skillinfo[2],skillinfo[3]),skillinfo[0] + "\n"+ skillinfo[1]+"\n"])
+                    try:
+                        file_name = "./lottery/{} {}".format(skillinfo[2],skillinfo[3]).strip()+"/hex.png"
+                        f = open(file_name,"r")
+                        f.close()
+                        file_list.append(file_name)
+                    except:
+                        file_list.append("./lottery/gac_dummy/hex.png")
             count = count +1
             if(count ==4):
                 await imageHorizontalConcat(client,file_list,discord_file_list)
