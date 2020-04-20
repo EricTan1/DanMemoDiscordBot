@@ -23,9 +23,6 @@ async def run(dbConfig, client, ctx, *search):
     
     skilleffects_id_list = db.skillSearch(my_search,{})
     print(skilleffects_id_list)
-    
-    
-    my_set = set()
     message =""
     # image concat breaks if 0 results
     if(len(skilleffects_id_list) == 0):
@@ -35,16 +32,6 @@ async def run(dbConfig, client, ctx, *search):
         temp_embed.description = "No results!"
         await ctx.send(embed=temp_embed)
     elif(len(skilleffects_id_list) <=100):
-        for skilleffectsid in skilleffects_id_list:
-            print(skilleffectsid)
-            if("Ad" in skilleffectsid):
-                skillid = db.getAdSkillIdFromEffect(skilleffectsid[2:])
-                my_set.add("Ad"+str(skillid))            
-            elif("As" in skilleffectsid):
-                skillid = db.getAsSkillIdFromEffect(skilleffectsid[2:])
-                my_set.add("As"+str(skillid))
-            else:
-                my_set.add(str(skilleffectsid))                
         rotating_list = []
         count = 0
         temp_list = []
@@ -54,8 +41,8 @@ async def run(dbConfig, client, ctx, *search):
         dup_dict_as = dict()
         rotating_list.append(temp_list)
         # position  = len(rotating_list), len(temp_list)
-        total_results = len(my_set)
-        for skillid in my_set:
+        total_results = len(skilleffects_id_list)
+        for skillid in skilleffects_id_list:
             if("Ad" in skillid):
                 adventurerid = db.getAdventurerIdFromSkill(skillid[2:])
                 if(adventurerid in dup_dict_ad):
