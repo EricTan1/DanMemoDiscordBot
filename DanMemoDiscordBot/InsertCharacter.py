@@ -2,13 +2,13 @@ import json
 import os
 
 import sys
-sys.path.append('entities/')
+from database.DBcontroller import DBcontroller
+from database.DBcontroller import DatabaseEnvironment, DBConfig
 
-from DBcontroller import DBcontroller
-from Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
-from BaseConstants import Element, Target, Type, Attribute, Modifier, Speed
-from Character import Character
-from Assist import AssistStats, Assist, AssistSkillEffects, AssistSkill
+from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
+from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier, Speed
+from database.entities.Character import Character
+from database.entities.Assist import AssistStats, Assist, AssistSkillEffects, AssistSkill
 
 
 class AdventureC:
@@ -50,9 +50,15 @@ class InsertCharacter:
                                              None,
                                              adventureComplete._title)
         # stats
+        stat_list = {"hp","mp","physical_attack","magic_attack","defense","strength","endurance","dexterity","agility","magic"}
+        temp_list = set()
         for attributeKeys in adventureComplete.stats:
+            temp_list.add(attributeKeys.lower())
             attributeid = self.getBaseConstants(Attribute(None, attributeKeys),False)
             self._db.insertData(AdventurerStats(None, adventurerid, attributeid, str(adventureComplete.stats.get(attributeKeys))))
+        if(stat_list != temp_list):
+            print("HEY STAT NAMED WRONG >:( FOR : "+adventureComplete._title + " " + adventureComplete._name)
+            raise Exception('spam', 'eggs')
         # skills
         for skillsKeys in adventureComplete.skills:
             skillsList = adventureComplete.skills.get(skillsKeys)
@@ -66,20 +72,22 @@ class InsertCharacter:
             # development
             else:
                 for skills in skillsList:
+                    attr_str = ""
                     for effects in skills.get("effects"):
-                        temp_attribute = effects.get("attribute")
+                        attr_str = attr_str +" "+effects.get("attribute")
                         temp_modifier = effects.get("modifier")
                         if(temp_modifier == None):
-                            temp_modifier = ""                        
+                            temp_modifier = ""
                         if(len(temp_modifier) > 0 and temp_modifier[len(temp_modifier)-1] == "%"):
                             temp_modifier = temp_modifier[:len(temp_modifier)-1]
-                        attributeid = self.getBaseConstants(Attribute(None, temp_attribute), False)
                         modifierid = self.getBaseConstants(Modifier(None, temp_modifier), True)
                         #AdventurerDevelopment
-                        self._db.insertData(AdventurerDevelopment(None, adventurerid, skills.get("name"), attributeid,
-                         modifierid))                            
+                    attributeid = self.getBaseConstants(Attribute(None, attr_str), False)
+                    self._db.insertData(AdventurerDevelopment(None, adventurerid, skills.get("name"), attributeid,
+                        modifierid))
             
     def insertAdventurerSkillEffects(self, adventurerskillid, skilleffectList):
+        ele_list = ['light', 'wind', 'fire', 'dark', 'ice', 'water', 'earth', 'thunder']
         # AdventurerSkillEffects SET UP        
         for effects in skilleffectList:
             #Type+Element
@@ -88,7 +96,11 @@ class InsertCharacter:
                 temp_type = ""
             temp_element = effects.get("element")
             if(temp_element == None):
-                temp_element = ""            
+                temp_element = ""
+            if(temp_type.split("_")[0] in ele_list):
+                temp_split = temp_type.split("_")
+                temp_element = temp_split[0]
+                temp_type = temp_split[1] + "_" +temp_split[2]
                 #temp_index = temp_value.find("_")
                 #temp_element = temp_value[0:temp_index]
                 #temp_ad_ele = temp_element
@@ -126,9 +138,15 @@ class InsertCharacter:
                                      None,
                                      assistComplete._title)
         # stats
+        stat_list = {"hp","mp","physical_attack","magic_attack","defense","strength","endurance","dexterity","agility","magic"}
+        temp_list = set()
         for attributeKeys in assistComplete.stats:
+            temp_list.add(attributeKeys.lower())
             attributeid = self.getBaseConstants(Attribute(None, attributeKeys),False)
             self._db.insertData(AssistStats(None, assistid, attributeid, str(assistComplete.stats.get(attributeKeys))))
+        if(stat_list != temp_list):
+            print("HEY STAT NAMED WRONG >:( FOR : "+assistComplete._title + " " + assistComplete._name)
+            raise Exception('spam', 'eggs')
         # skills
         for skills in assistComplete.skills:
             assistskillid = self._db.insertData(AssistSkill(None, assistid, skills.get("name")))
@@ -211,9 +229,10 @@ class InsertCharacter:
         return ret
 
 if __name__ == "__main__":
-    path = "../../database/update"
-    db = DBcontroller("localhost","root","danmemo","3306","danmemo")
+    path = "../../DB/updatedas"
+    db = DBcontroller(DBConfig(DatabaseEnvironment.LOCAL))
     ic = InsertCharacter(db)
+    my_set = set()
     for filename in os.listdir(path):
         with open(path + '/' + filename, 'r', encoding="utf8") as f:
             as_dict = json.load(f)
@@ -221,6 +240,8 @@ if __name__ == "__main__":
                 as_dict["limited"]=False
             temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
             ic.insertAssist(temp_as)
+            
             #(self, title, name, types, stars, limited, ascended, stats, skills)
             #temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
             #ic.insertAdventurer(temp_ad)
+

@@ -1,7 +1,6 @@
 import json
 import os
 import sys
-from DBcontroller import DBcontroller
 from urllib.parse import urlparse
 import mysql.connector
 
@@ -30,20 +29,21 @@ for filename in os.listdir(path):
                 for row in mycursor:
                     temp_alias =row[0]
                 #assist
-                alias_sql = 'SELECT alias FROM danmemo.assist WHERE title="{}";'.format(temp_line)
-                mycursor.execute(alias_sql)
+                #alias_sql = 'SELECT alias FROM danmemo.assist WHERE title="{}";'.format(temp_line)
+                #mycursor.execute(alias_sql)
                 
-                for row in mycursor:
-                    temp_alias =row[0]
+                #for row in mycursor:
+                    #temp_alias =row[0]
                 
+                print(temp_line)
                 print(temp_alias)
                 if(not(alias_name.lower() in temp_alias)):
                     if(temp_alias == "None"):
-                        sql = 'UPDATE danmemo.assist SET alias = "{}" WHERE title="{}";'.format(alias_name,temp_line)
+                        sql = 'UPDATE danmemo.adventurer SET alias = "{}" WHERE title="{}";'.format(alias_name,temp_line)
                         mycursor.execute(sql)
                         connection.commit()
                     elif(temp_alias != "null"):
-                        sql = 'UPDATE danmemo.assist SET alias = "{}" WHERE title="{}";'.format(temp_alias+"_"+alias_name,temp_line)
+                        sql = 'UPDATE danmemo.adventurer SET alias = "{}" WHERE title="{}";'.format(temp_alias+"_"+alias_name,temp_line)
                         mycursor.execute(sql)
                         connection.commit()
 

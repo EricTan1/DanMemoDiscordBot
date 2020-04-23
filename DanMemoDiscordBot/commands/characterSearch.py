@@ -10,7 +10,7 @@ import io
 from urllib.parse import urlparse
 import itertools
 
-from commands.utils import get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status
+from commands.utils import get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status, HeroAscensionStatsD, HeroAscensionStatsH
 from database.DBcontroller import DBcontroller
 from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
 from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier
@@ -47,6 +47,7 @@ async def run(dbConfig, client, ctx, *search):
             info = db.assembleAssist(((my_list[0])[3])[2:])
             #print(info)
             is_adv = False
+        print(info)
         temp_embed.add_field(name="Stats", value=await assembleStats(info[3],0,"",0), inline=True)
         temp_embed.add_field(name="Abilities", value=await assembleAbilities(info[3],0,"",0), inline=True)
         temp_embed.title = info[1]
@@ -82,7 +83,7 @@ async def run(dbConfig, client, ctx, *search):
     #try:
     if(is_embed and is_files):
         if(is_adv):
-            await pageAdHandler(client, ctx, temp_embed,file_list, dev_embed,info[3], info[6])
+            await pageAdHandler(client, ctx, temp_embed,file_list, dev_embed,info[3], info[6], info[5])
         else:
             await pageASHandler(client, ctx,temp_embed,file_list,info[3])
     elif(is_embed):
@@ -95,7 +96,7 @@ async def run(dbConfig, client, ctx, *search):
         #await ctx.send("Sorry unable to find results")
     db.closeconnection()
 
-async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_embed, stats_dict, unit_type):
+async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_embed, stats_dict, unit_type,ascended):
     MAXLB = 5
     MAXHA = 6
     current_page = 0
@@ -111,7 +112,9 @@ async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_em
     hero_ascend_add = get_emoji("star_on").toString(ctx)
     hero_ascend_sub = get_emoji("star_off").toString(ctx)
     async def updateStats():
-        temp_embed.description = limit_break_add * current_limitbreak + limit_break_sub*(MAXLB-current_limitbreak)+ "    " + hero_ascend_add * current_ha + hero_ascend_sub*(MAXHA-current_ha)
+        temp_embed.description = limit_break_add * current_limitbreak + limit_break_sub*(MAXLB-current_limitbreak)
+        if(ascended):
+            temp_embed.description = temp_embed.description + "    " + hero_ascend_add * current_ha + hero_ascend_sub*(MAXHA-current_ha)
         # Stats 
         temp_embed.set_field_at(0,name="Stats", value=await assembleStats(stats_dict,current_limitbreak,unit_type,current_ha), inline=True)
         # Abilities
@@ -122,8 +125,9 @@ async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_em
     await msg.add_reaction(emoji2)
     await msg.add_reaction(limit_break_sub)
     await msg.add_reaction(limit_break_add)
-    await msg.add_reaction(hero_ascend_sub)
-    await msg.add_reaction(hero_ascend_add)
+    if(ascended):
+        await msg.add_reaction(hero_ascend_sub)
+        await msg.add_reaction(hero_ascend_add)
 
     # set_field_at(index, *, name, value, inline=True)
     def check(reaction, user):
@@ -181,13 +185,13 @@ async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_em
             else:
                 current_limitbreak = 0
             await updateStats()
-        if str(reaction.emoji) == hero_ascend_sub:
+        if str(reaction.emoji) == hero_ascend_sub and ascended:
             if(current_ha > 0):
                 current_ha = current_ha -1
             else:
                 current_ha = MAXHA
             await updateStats()
-        if str(reaction.emoji) == hero_ascend_add:
+        if str(reaction.emoji) == hero_ascend_add and ascended:
             if(current_ha < MAXHA):
                 current_ha = current_ha +1
             else:
@@ -260,6 +264,20 @@ async def assembleStats(stats_dict : dict, limitbreak:int,unit_type:str,heroasce
         temp_pat = str(int(stats_dict.get("physical_attack")[limitbreak]) + HeroAscensionStatsM.PAT.value[heroascend])
         temp_mat = str(int(stats_dict.get("magic_attack")[limitbreak]) + HeroAscensionStatsM.MAT.value[heroascend])
         temp_def = str(int(stats_dict.get("defense")[limitbreak]) + HeroAscensionStatsM.DEF.value[heroascend])
+    # healer
+    elif(unit_type.lower() == "healer_type"):
+        temp_hp = str(int(stats_dict.get("hp")[limitbreak]) + HeroAscensionStatsH.HP.value[heroascend])
+        temp_mp = str(int(stats_dict.get("mp")[limitbreak]) + HeroAscensionStatsH.MP.value[heroascend])
+        temp_pat = str(int(stats_dict.get("physical_attack")[limitbreak]) + HeroAscensionStatsH.PAT.value[heroascend])
+        temp_mat = str(int(stats_dict.get("magic_attack")[limitbreak]) + HeroAscensionStatsH.MAT.value[heroascend])
+        temp_def = str(int(stats_dict.get("defense")[limitbreak]) + HeroAscensionStatsH.DEF.value[heroascend])
+    # defense
+    elif(unit_type.lower() == "defense_type"):
+        temp_hp = str(int(stats_dict.get("hp")[limitbreak]) + HeroAscensionStatsD.HP.value[heroascend])
+        temp_mp = str(int(stats_dict.get("mp")[limitbreak]) + HeroAscensionStatsD.MP.value[heroascend])
+        temp_pat = str(int(stats_dict.get("physical_attack")[limitbreak]) + HeroAscensionStatsD.PAT.value[heroascend])
+        temp_mat = str(int(stats_dict.get("magic_attack")[limitbreak]) + HeroAscensionStatsD.MAT.value[heroascend])
+        temp_def = str(int(stats_dict.get("defense")[limitbreak]) + HeroAscensionStatsD.DEF.value[heroascend])
     # balance
     else:
         temp_hp = str(int(stats_dict.get("hp")[limitbreak]) + HeroAscensionStatsB.HP.value[heroascend])
@@ -267,7 +285,7 @@ async def assembleStats(stats_dict : dict, limitbreak:int,unit_type:str,heroasce
         temp_pat = str(int(stats_dict.get("physical_attack")[limitbreak]) + HeroAscensionStatsB.PAT.value[heroascend])
         temp_mat = str(int(stats_dict.get("magic_attack")[limitbreak]) + HeroAscensionStatsB.MAT.value[heroascend])
         temp_def = str(int(stats_dict.get("defense")[limitbreak]) + HeroAscensionStatsB.DEF.value[heroascend])
-        
+
     ret = ""
     ret = ret + "{} : {}\n".format("HP",temp_hp)
     ret = ret + "{} : {}\n".format("MP",temp_mp)
@@ -288,14 +306,24 @@ async def assembleAbilities(stats_dict : dict,limitbreak:int,unit_type:str,heroa
         temp_dex = str(int(stats_dict.get("dexterity")[limitbreak]) + HeroAscensionStatsM.DEX.value[heroascend])
         temp_agi = str(int(stats_dict.get("agility")[limitbreak]) + HeroAscensionStatsM.AGI.value[heroascend])
         temp_mag = str(int(stats_dict.get("magic")[limitbreak]) + HeroAscensionStatsM.MAG.value[heroascend])
-    # balance
+    elif (unit_type.lower() == "healer_type"):
+        temp_str = str(int(stats_dict.get("strength")[limitbreak]) + HeroAscensionStatsH.STR.value[heroascend])
+        temp_end = str(int(stats_dict.get("endurance")[limitbreak]) + HeroAscensionStatsH.END.value[heroascend])
+        temp_dex = str(int(stats_dict.get("dexterity")[limitbreak]) + HeroAscensionStatsH.DEX.value[heroascend])
+        temp_agi = str(int(stats_dict.get("agility")[limitbreak]) + HeroAscensionStatsH.AGI.value[heroascend])
+        temp_mag = str(int(stats_dict.get("magic")[limitbreak]) + HeroAscensionStatsH.MAG.value[heroascend])
+    elif (unit_type.lower() == "defense_type"):
+        temp_str = str(int(stats_dict.get("strength")[limitbreak]) + HeroAscensionStatsD.STR.value[heroascend])
+        temp_end = str(int(stats_dict.get("endurance")[limitbreak]) + HeroAscensionStatsD.END.value[heroascend])
+        temp_dex = str(int(stats_dict.get("dexterity")[limitbreak]) + HeroAscensionStatsD.DEX.value[heroascend])
+        temp_agi = str(int(stats_dict.get("agility")[limitbreak]) + HeroAscensionStatsD.AGI.value[heroascend])
+        temp_mag = str(int(stats_dict.get("magic")[limitbreak]) + HeroAscensionStatsD.MAG.value[heroascend])
     else:
         temp_str = str(int(stats_dict.get("strength")[limitbreak]) + HeroAscensionStatsB.STR.value[heroascend])
         temp_end = str(int(stats_dict.get("endurance")[limitbreak]) + HeroAscensionStatsB.END.value[heroascend])
         temp_dex = str(int(stats_dict.get("dexterity")[limitbreak]) + HeroAscensionStatsB.DEX.value[heroascend])
         temp_agi = str(int(stats_dict.get("agility")[limitbreak]) + HeroAscensionStatsB.AGI.value[heroascend])
         temp_mag = str(int(stats_dict.get("magic")[limitbreak]) + HeroAscensionStatsB.MAG.value[heroascend])
-
 
     ret = ""
     ret = ret + "{} : {}\n".format("Str.",temp_str)
