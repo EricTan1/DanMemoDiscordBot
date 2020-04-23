@@ -225,29 +225,41 @@ async def pageASHandler(client, ctx, temp_embed:discord.Embed, file_list, stats_
     def check(reaction, user):
         return (str(reaction.emoji) == limit_break_add
                 or str(reaction.emoji) == limit_break_sub) and user !=client.user and reaction.message.id == msg.id
-   
+    def wait_for_reaction(event_name):
+        return client.wait_for(event_name,check=check)
     while True:
-        try:
-            reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
-        except asyncio.TimeoutError:
+        pending_tasks = [wait_for_reaction("reaction_add"), wait_for_reaction("reaction_remove")]
+        done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
+
+        timeout = len(done_tasks) == 0
+
+        if not timeout:
+            task = done_tasks.pop()
+
+            reaction, user = await task
+
+        for remaining in itertools.chain(done_tasks, pending_tasks):
+            remaining.cancel()
+
+        if timeout:
             page_list[current_page].color = Status.KO.value
             await msg.edit(embed=page_list[current_page])
             break
-        else:
-            if str(reaction.emoji) == limit_break_sub:
-                if(current_limitbreak > 0):
-                    current_limitbreak = current_limitbreak -1
-                else:
-                    current_limitbreak = MAXLB
-                await updateStats()
-            if str(reaction.emoji) == limit_break_add:
-                if(current_limitbreak < MAXLB):
-                    current_limitbreak = current_limitbreak +1
-                else:
-                    current_limitbreak = 0
-                await updateStats()
-            page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))            
-            await msg.edit(embed=page_list[current_page])    
+
+        if str(reaction.emoji) == limit_break_sub:
+            if(current_limitbreak > 0):
+                current_limitbreak = current_limitbreak -1
+            else:
+                current_limitbreak = MAXLB
+            await updateStats()
+        if str(reaction.emoji) == limit_break_add:
+            if(current_limitbreak < MAXLB):
+                current_limitbreak = current_limitbreak +1
+            else:
+                current_limitbreak = 0
+            await updateStats()
+        page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+        await msg.edit(embed=page_list[current_page])    
 
 
 
