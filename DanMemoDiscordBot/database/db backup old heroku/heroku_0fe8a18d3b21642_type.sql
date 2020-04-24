@@ -26,7 +26,7 @@ CREATE TABLE `type` (
   `typeid` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   PRIMARY KEY (`typeid`)
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +35,7 @@ CREATE TABLE `type` (
 
 LOCK TABLES `type` WRITE;
 /*!40000 ALTER TABLE `type` DISABLE KEYS */;
-INSERT INTO `type` VALUES (59,'physical_type'),(60,'physical_attack'),(61,''),(62,'balance_type'),(63,'magic_attack'),(64,'attack'),(65,'magic_type'),(66,'type'),(67,'healer_type'),(68,'defense_type'),(69,'magical_attack');
+INSERT INTO `type` VALUES (59,'physical_type'),(60,'physical_attack'),(61,''),(62,'balance_type'),(63,'magic_attack'),(64,'attack'),(65,'magic_type'),(66,'type'),(67,'healer_type'),(68,'defense_type'),(69,'magical_attack'),(84,'single_damage_resist'),(85,'null_magic_attack_no_special'),(86,'all_damage_resist'),(88,'prevent_ko'),(89,'all_damage_resist_removal'),(90,'single_damage_resist_removal');
 /*!40000 ALTER TABLE `type` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-23 13:41:34
+-- Dump completed on 2020-04-23 14:26:54

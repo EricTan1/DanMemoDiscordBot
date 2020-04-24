@@ -35,7 +35,7 @@ CREATE TABLE `element` (
 
 LOCK TABLES `element` WRITE;
 /*!40000 ALTER TABLE `element` DISABLE KEYS */;
-INSERT INTO `element` VALUES (53,'light'),(54,''),(55,'wind'),(56,'physical'),(57,'fire'),(58,'dark'),(59,'ice'),(60,'water'),(61,'earth'),(62,'thunder');
+INSERT INTO `element` VALUES (53,'light'),(54,''),(55,'wind'),(57,'fire'),(58,'dark'),(59,'ice'),(60,'water'),(61,'earth'),(62,'thunder');
 /*!40000 ALTER TABLE `element` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-23 13:41:29
+-- Dump completed on 2020-04-23 14:26:50
