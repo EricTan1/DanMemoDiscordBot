@@ -10,76 +10,147 @@ import io
 from urllib.parse import urlparse
 import itertools
 
-from commands.utils import get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status, HeroAscensionStatsD, HeroAscensionStatsH
+from commands.utils import get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status, HeroAscensionStatsD, HeroAscensionStatsH, getDefaultEmoji
 from database.DBcontroller import DBcontroller
 from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
 from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier
 
 async def run(dbConfig, client, ctx, *search):
-    is_embed = False
-    is_files = False
 
-    my_search = " "
+
+    my_search = ""
     for words in search:
         my_search = my_search + words + " "
 
     db = DBcontroller(dbConfig)
-    my_list = db.characterSearch(my_search,{})
+    my_list = db.characterSearch(my_search.replace("[","").replace("]",""),{})
     print(my_list)
-
-    message = ""
-
     # exactly 1 result then display
     if len(my_list) == 0:
         message = "Sorry there are no results"
     elif len(my_list) == 1:
-        temp_embed = discord.Embed()
-        dev_embed = discord.Embed()
-        temp_embed.color = Status.OK.value
-        dev_embed.color = Status.OK.value
-        if "Ad" in (my_list[0])[3]:
-            info = db.assembleAdventurer(((my_list[0])[3])[2:])
-            #print(info)
-            for adventurerdev in info[4]:
-                dev_embed.add_field(name=adventurerdev[0], value=adventurerdev[1], inline=False)
-            is_adv = True
-        else:
-            info = db.assembleAssist(((my_list[0])[3])[2:])
-            #print(info)
-            is_adv = False
-        print(info)
-        temp_embed.add_field(name="Stats", value=await assembleStats(info[3],0,"",0), inline=True)
-        temp_embed.add_field(name="Abilities", value=await assembleAbilities(info[3],0,"",0), inline=True)
-        temp_embed.title = info[1]
-        dev_embed.title = info[1]
-        for skills in info[2]:
-            if skills[1] == "":
-                temp_embed.add_field(name=skills[0], value="placeholder", inline=False)                
-            else:
-                temp_embed.add_field(name=skills[0], value=skills[1], inline=False)
-                
-        try:
-            # images
-            file_list = []
-            # file_list.append(discord.File("./lottery/"+info[0], filename="hex.png"))
-            file_list.append(discord.File("./lottery/"+info[0]+"/hex.png"))
-            #file_list.append(discord.File("./lottery/"+info[0], filename="texture.png"))        
-            file_list.append(discord.File("./lottery/"+info[0] + "/texture.png"))
-            temp_embed.set_thumbnail(url="attachment://hex.png")
-            dev_embed.set_thumbnail(url="attachment://hex.png")
-            temp_embed.set_image(url="attachment://texture.png")
-            dev_embed.set_image(url="attachment://texture.png")
-            is_files = True
-        except:
-            pass
-        
-        is_embed = True
+        await singleAdventurer(client, ctx, db,my_list)
     else:
+        page_list=[]
+        temp_page = []
+        page_list.append(temp_page)
+        total_results = 0
         for Adventurersid in my_list:
-            if("Ad" in Adventurersid):
-                message= message + "[{}] {}\n".format(Adventurersid[1],Adventurersid[2])
-            else:
-                message= message + "[{}] {}\n".format(Adventurersid[1],Adventurersid[2])
+            total_results = total_results+1
+            temp_page.append(Adventurersid)
+            if(len(temp_page)>=9):
+                temp_page = []
+                page_list.append(temp_page)
+        await pageUnitsHandler(client,ctx,page_list,db,total_results,search)
+    db.closeconnection()
+
+async def pageUnitsHandler(client, ctx, page_list,db,total_results,search):
+    # set up
+    current_page = 0
+    temp_embed = discord.Embed()
+    temp_embed.description = "React on the numbers to display the corresponding units!"
+    temp_embed.color = Status.OK.value
+    temp_embed.title = "{} results for {}".format(str(total_results),search)
+    if(len(page_list) == 0):
+        page_list.append([["","No relevant characters to display","End of List"]])
+    temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+    emoji1 = '\u2b05'
+    emoji2 = '\u27a1'
+    emoji_list = ["one","two","three","four","five","six","seven","eight","nine"]
+    emoji_react = getDefaultEmoji(emoji_list)
+    def clearSetField(temp_embed:discord.Embed, field_list):
+        temp_embed.clear_fields()
+        count = 0
+        for skills in field_list:
+            temp_embed.add_field(value="[{}] {}".format(skills[1],skills[2]), name=emoji_react[count],inline=False)
+            count = count +1
+        return temp_embed
+    
+    temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
+    msg = await ctx.send(embed=temp_embed)
+    
+    await msg.add_reaction(emoji1)
+    await msg.add_reaction(emoji2)
+    for emoji in emoji_react:
+        await msg.add_reaction(emoji)
+    def check(reaction, user):
+        return ((str(reaction.emoji) in emoji_react) or (str(reaction.emoji) == emoji1) or (str(reaction.emoji) == emoji2)) and user !=client.user and reaction.message.id == msg.id
+    while True:
+        try:
+            reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+        except asyncio.TimeoutError:
+            temp_embed.color=Status.KO.value
+            await msg.edit(embed=temp_embed)
+            break
+        else:
+            # left
+            if str(reaction.emoji) == emoji1:
+                if(current_page > 0):
+                    current_page = current_page -1
+                else:
+                    current_page = len(page_list)-1
+                temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+                temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
+                await msg.edit(embed=temp_embed)
+            # right
+            if str(reaction.emoji) == emoji2:
+                if( current_page+1 < len(page_list)):
+                    current_page = current_page +1
+                else:
+                    current_page = 0
+                temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+                temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
+                await msg.edit(embed=temp_embed)
+            if((str(reaction.emoji) in emoji_react)):
+                if(len(page_list[current_page]) > emoji_react.index(reaction.emoji)):
+                    await msg.delete()
+                    await singleAdventurer(client, ctx, db,page_list[current_page][emoji_react.index(reaction.emoji)])
+           
+
+async def singleAdventurer(client, ctx, db,assistadventurerid):
+    is_embed = False
+    is_files = False
+    temp_embed = discord.Embed()
+    dev_embed = discord.Embed()
+    temp_embed.color = Status.OK.value
+    dev_embed.color = Status.OK.value
+    if "Ad" in (assistadventurerid)[3]:
+        info = db.assembleAdventurer(((assistadventurerid)[3])[2:])
+        #print(info)
+        for adventurerdev in info[4]:
+            dev_embed.add_field(name=adventurerdev[0], value=adventurerdev[1], inline=False)
+        is_adv = True
+    else:
+        info = db.assembleAssist(((assistadventurerid)[3])[2:])
+        #print(info)
+        is_adv = False
+    print(info)
+    temp_embed.add_field(name="Stats", value=await assembleStats(info[3],0,"",0), inline=True)
+    temp_embed.add_field(name="Abilities", value=await assembleAbilities(info[3],0,"",0), inline=True)
+    temp_embed.title = info[1]
+    dev_embed.title = info[1]
+    for skills in info[2]:
+        if skills[1] == "":
+            temp_embed.add_field(name=skills[0], value="placeholder", inline=False)                
+        else:
+            temp_embed.add_field(name=skills[0], value=skills[1], inline=False)
+            
+    try:
+        # images
+        file_list = []
+        # file_list.append(discord.File("./lottery/"+info[0], filename="hex.png"))
+        file_list.append(discord.File("./lottery/"+info[0]+"/hex.png"))
+        #file_list.append(discord.File("./lottery/"+info[0], filename="texture.png"))        
+        file_list.append(discord.File("./lottery/"+info[0] + "/texture.png"))
+        temp_embed.set_thumbnail(url="attachment://hex.png")
+        dev_embed.set_thumbnail(url="attachment://hex.png")
+        temp_embed.set_image(url="attachment://texture.png")
+        dev_embed.set_image(url="attachment://texture.png")
+        is_files = True
+    except:
+        pass
+    
+    is_embed = True
     #try:
     if(is_embed and is_files):
         if(is_adv):
@@ -87,14 +158,10 @@ async def run(dbConfig, client, ctx, *search):
         else:
             await pageASHandler(client, ctx,temp_embed,file_list,info[3])
     elif(is_embed):
-        await ctx.send(embed=temp_embed)
-    elif(is_files):
-        await ctx.send(files=file_list)
-    else:         
-        await ctx.send(message)
-    #except:
-        #await ctx.send("Sorry unable to find results")
-    db.closeconnection()
+        if(is_adv):
+            await pageAdHandler(client, ctx, temp_embed,None, dev_embed,info[3], info[6], info[5])
+        else:
+            await pageASHandler(client, ctx,temp_embed,None,info[3])    
 
 async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_embed, stats_dict, unit_type,ascended):
     MAXLB = 5
@@ -120,7 +187,10 @@ async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_em
         # Abilities
         temp_embed.set_field_at(1,name="Abilities", value=await assembleAbilities(stats_dict,current_limitbreak,unit_type,current_ha), inline=True)
     await updateStats()
-    msg = await ctx.send(files=file_list,embed=page_list[current_page])
+    if(file_list != None):
+        msg = await ctx.send(files=file_list,embed=page_list[current_page])
+    else:
+        msg = await ctx.send(embed=page_list[current_page])
     await msg.add_reaction(emoji1)
     await msg.add_reaction(emoji2)
     await msg.add_reaction(limit_break_sub)

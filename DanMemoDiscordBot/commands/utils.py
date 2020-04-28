@@ -4,6 +4,7 @@ import io
 import asyncio
 from enum import Enum
 from types import SimpleNamespace
+import json
 
 class Status(Enum):
     OK = 3066993
@@ -96,6 +97,20 @@ def format_row_as_sns(**kwargs):
     ns = SimpleNamespace(**d)
     return ns
 
+def getDefaultEmoji(emojiName):
+    # Give a list ret a list, give a value ret a value
+    # gives None if it doesn't exist
+    with open("emoji_map.json", 'r', encoding="utf8") as f:
+        emoji_json_dict = json.load(f)
+        if(isinstance(emojiName, list)):
+            ret_list = []
+            for emoji in emojiName:
+                ret_list.append(emoji_json_dict.get(emoji))
+            return ret_list
+        else:
+            return emoji_json_dict.get(emojiName)
+
+
 class CustomEmoji:
     def __init__(self, id_inner, name, plural, id_discord):
         self.id_inner = id_inner
@@ -184,7 +199,7 @@ async def skillSearchRotatingPage(client, ctx, search, page_list, total_results,
     # set up
     current_page = 0
     temp_embed = discord.Embed()
-    temp_embed.set_image(url=temp_image_url+"temp.png")        
+    temp_embed.set_image(url=temp_image_url+"temp.png")
     
     temp_embed.color = 3066993
     temp_embed.title = "{} results for {}".format(str(total_results),search)
@@ -228,6 +243,6 @@ async def skillSearchRotatingPage(client, ctx, search, page_list, total_results,
                     current_page = current_page +1
                 else:
                     current_page = 0
-            temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))            
+            temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
             temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
             await msg.edit(embed=temp_embed)
