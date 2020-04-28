@@ -29,7 +29,7 @@ async def run(dbConfig, client, ctx, *search):
     if len(my_list) == 0:
         message = "Sorry there are no results"
     elif len(my_list) == 1:
-        await singleAdventurer(client, ctx, db,my_list)
+        await singleAdventurer(client, ctx, db,my_list[0])
     else:
         page_list=[]
         temp_page = []
