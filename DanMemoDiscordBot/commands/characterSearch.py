@@ -18,7 +18,7 @@ from database.entities.BaseConstants import Element, Target, Type, Attribute, Mo
 async def run(dbConfig, client, ctx, *search):
 
 
-    my_search = ""
+    my_search = " "
     for words in search:
         my_search = my_search + words + " "
 
