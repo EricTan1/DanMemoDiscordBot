@@ -346,5 +346,8 @@
 	"aoe":"all_damage_resist",
 	"str.":"str",
 	"dex.":"dex",
-	"end.":"end"
+	"end.":"end",
+	"buff":"+",
+	"debuff":"-",
+	"reduce":"-"
 }
