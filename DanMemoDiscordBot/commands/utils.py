@@ -142,8 +142,9 @@ emojis = {  CustomEmoji("potato1","small potato","small potatoes",69824827338706
             CustomEmoji("star_on","star_on","star_on",700406541232242729),
             CustomEmoji("star_off","star_off","star_off",700406550044606470),
             CustomEmoji("square_off","square_off","square_off",700406581908602970),
-            CustomEmoji("square_on","square_on","square_on",700406590817435759)}
-
+            CustomEmoji("square_on","square_on","square_on",700406590817435759),
+            CustomEmoji("as_filter","as_filter","as_filter",707301404137750618),
+            CustomEmoji("ad_filter","ad_filter","ad_filter",707300588458737746)}
 def get_emoji(id_inner):
     for emoji in emojis:
         if emoji.id_inner == id_inner:
@@ -193,56 +194,3 @@ async def imageVerticalConcat(client, file_list):
     new_im.save(imgByteArr, format='PNG')
     imgByteArr.seek(0)
     return imgByteArr
-
-async def skillSearchRotatingPage(client, ctx, search, page_list, total_results, icons):
-    temp_image_url = "attachment://"
-    # set up
-    current_page = 0
-    temp_embed = discord.Embed()
-    temp_embed.set_image(url=temp_image_url+"temp.png")
-    
-    temp_embed.color = 3066993
-    temp_embed.title = "{} results for {}".format(str(total_results),search)
-    if(len(page_list) == 0):
-        page_list.append([["No relevant skills to display","End of List"]])    
-    temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
-    def clearSetField(temp_embed:discord.Embed, field_list):
-        temp_embed.clear_fields()
-        print(field_list)
-        for skills in field_list:
-            print(skills)
-            temp_embed.add_field(value=skills[1], name=skills[0],inline=False)
-        return temp_embed
-    
-    temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
-    msg = await ctx.send(embed=temp_embed, file=discord.File(icons, filename="temp.png"))
-    emoji1 = '\u2b05'
-    emoji2 = '\u27a1'
-    await msg.add_reaction(emoji1)
-    await msg.add_reaction(emoji2)
-    emojis = [emoji1, emoji2]
-    def check(reaction, user):
-        return (str(reaction.emoji) == emoji2 or str(reaction.emoji) == emoji1) and user !=client.user and reaction.message.id == msg.id
-    while True:
-        try:
-            reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
-        except asyncio.TimeoutError:
-            temp_embed.color=16203840
-            await msg.edit(embed=temp_embed)
-            break
-        else:
-            # left
-            if str(reaction.emoji) == emoji1:
-                if(current_page > 0):
-                    current_page = current_page -1
-                else:
-                    current_page = len(page_list)-1
-            # right
-            if str(reaction.emoji) == emoji2:
-                if( current_page+1 < len(page_list)):
-                    current_page = current_page +1
-                else:
-                    current_page = 0
-            temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
-            temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
-            await msg.edit(embed=temp_embed)
