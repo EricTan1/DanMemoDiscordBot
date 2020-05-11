@@ -100,6 +100,7 @@ class InsertCharacter:
             if(temp_type.split("_")[0] in ele_list):
                 temp_split = temp_type.split("_")
                 temp_element = temp_split[0]
+                print(temp_type)
                 temp_type = temp_split[1] + "_" +temp_split[2]
                 #temp_index = temp_value.find("_")
                 #temp_element = temp_value[0:temp_index]
@@ -229,20 +230,21 @@ class InsertCharacter:
         return ret
 
 if __name__ == "__main__":
-    path = "../../DB/missingad"
+    path = "../../DB/missingas"
     db = DBcontroller(DBConfig(DatabaseEnvironment.LOCAL))
     ic = InsertCharacter(db)
     my_set = set()
     for filename in os.listdir(path):
         with open(path + '/' + filename, 'r', encoding="utf8") as f:
             if(filename != "desktop.ini"):
+                print(filename)
                 as_dict = json.load(f)
                 if(as_dict.get("limited")== None):
                     as_dict["limited"]=False
-                #temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
-                #ic.insertAssist(temp_as)
+                temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
+                ic.insertAssist(temp_as)
                 
                 #(self, title, name, types, stars, limited, ascended, stats, skills)
-                temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
-                ic.insertAdventurer(temp_ad)
+                #temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
+                #ic.insertAdventurer(temp_ad)
 

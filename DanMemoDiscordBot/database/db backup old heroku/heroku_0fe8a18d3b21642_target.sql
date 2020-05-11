@@ -35,7 +35,7 @@ CREATE TABLE `target` (
 
 LOCK TABLES `target` WRITE;
 /*!40000 ALTER TABLE `target` DISABLE KEYS */;
-INSERT INTO `target` VALUES (33,'self'),(34,'foe'),(35,'foes'),(36,'allies'),(37,'skill'),(38,'ally'),(39,'alliees'),(40,'None');
+INSERT INTO `target` VALUES (33,'self'),(34,'foe'),(35,'foes'),(36,'allies'),(37,'skill'),(38,'ally'),(40,'None');
 /*!40000 ALTER TABLE `target` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-23 14:26:51
+-- Dump completed on 2020-04-24 13:01:49
