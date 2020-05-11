@@ -41,6 +41,10 @@ async def run(dbConfig, client, ctx, *search):
             if(len(temp_page)>=9):
                 temp_page = []
                 page_list.append(temp_page)
+
+        if(len(page_list) != 0 and len(page_list[len(page_list)-1])==0):
+            page_list.pop(len(page_list)-1)
+        
         await pageUnitsHandler(client,ctx,page_list,db,total_results,search)
     db.closeconnection()
 
