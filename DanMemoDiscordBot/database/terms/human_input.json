@@ -337,6 +337,8 @@
 	"per each [self] strength buff skill":"per_each_self_str_buff_skill",
 	"per each [self] strength buff":"per_each_self_str_buff",
 	"sa gauge charge gain":"sa_gauge_charge",
+	"sa guage": "sa_gauge_charge",
+	"s.a gauge": "sa_gauge_charge",
 	"removes":"removal",
 	"remove":"removal",
 	"st": "single_damage_resist",
