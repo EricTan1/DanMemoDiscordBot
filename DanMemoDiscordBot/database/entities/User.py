@@ -3,63 +3,69 @@ import datetime
 
 import database.DBcontroller 
 from database.entities.BaseConstants import Base
+from commands.utils import dict_to_sns, sns_to_dict
+
 
 class User():
     '''
     This class is an object that represents the User table in the DB
     '''
-    def __init__(self, user_id, discord_id:str, data:str):
+    def __init__(self, user_id, discord_id: str, crepes=None, last_bento_date=None, units=None):
         ''' (self, int, str, str) -> User
         userid: the inner id of the user
         discord_id: the id of the user in discord
-        data: all data of the user as json
         '''
         self.user_id = user_id
         self.discord_id = discord_id
-        if data is None:
-            self.data = {}
-        else:
-            self.data = data
+        self.crepes = crepes
+        self.last_bento_date = last_bento_date
+        self.units = units
 
     def __str__(self):
         return str(self.__dict__)
 
-    def dumpData(self):
+    '''def dumpData(self):
         return "'"+json.dumps(self.data)+"'"
+    
     def undumpData(dataJson):
         print(dataJson)
-        return json.loads(dataJson)
+        return json.loads(dataJson)'''
 
-    def get_user(dbConfig, author):
-        discord_id = "'"+str(author)+"'"
+    @staticmethod
+    def get_user(db_config, author):
+        discord_id = author
 
-        db = database.DBcontroller.DBcontroller(dbConfig)
-        user = db.getUser(discord_id)
+        db = database.DBcontroller.DBcontroller(db_config)
+        user = db.get_user(discord_id)
         db.closeconnection()
 
         if user is None:
-            user = User(None, discord_id, None)
+            user = User(None, discord_id)
 
         print(user)
 
         return user
 
-    def updateUser(self, dbConfig):
-        db = database.DBcontroller.DBcontroller(dbConfig)
-        db.updateUser(self)
+    def update_user(self, db_config, date, message_content):
+        db = database.DBcontroller.DBcontroller(db_config)
+        db.update_user(self, date, message_content)
         db.closeconnection()
 
-    def get_last_bento_date(self):
-        key = "last_bento_date"
-        date = self.data.get(key,None)
-        if date != None:
-            date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
-        return date
-    def set_last_bento_date(self,value):
-        self.data["last_bento_date"] = str(value)
+    def add_units(self,new_units):
+        if self.units is None:
+            self.units = {}
 
-    def get_crepes_number(self):
-        key = "crepes_number"
-        return self.data.get(key,None)
-    def set_crepes_number(self,value):
-        self.data["crepes_number"] = value
+        for unit in new_units:
+            key = User.get_unit_key(unit)
+
+            if not key in self.units:
+                self.units[key] = sns_to_dict(unit)
+                self.units[key]["number"] = 0
+
+            self.units[key]["number"] = self.units[key]["number"] + 1
+
+    @staticmethod
+    def get_unit_key(unit):
+        return "["+unit.unit_label+"] "+unit.character_name
+
+

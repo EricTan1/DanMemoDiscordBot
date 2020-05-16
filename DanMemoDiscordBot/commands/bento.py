@@ -4,32 +4,37 @@ import datetime
 from database.entities.User import User
 from commands.utils import Status, get_emoji, mention_author
 
+async def run(db_config, ctx):
+    author = str(ctx.message.author)
+    content = ctx.message.content
+    
+    print("\nReceived message from '"+author+"' with content '"+content+"'")
 
-async def run(dbConfig, client, ctx):
-    user = User.get_user(dbConfig, ctx.message.author)
+    user = User.get_user(db_config, author)
 
-    previous = user.get_last_bento_date()
+    previous = user.last_bento_date
     now = datetime.datetime.now()
 
-    if previous != None and previous.date() >= now.date():
-        await no_bento(user, client, ctx)
+    if previous is not None and previous.date() >= now.date():
+        await no_bento(user, ctx)
         return
 
-    currency_number = user.get_crepes_number()
+    currency_number = user.crepes
     if currency_number is None:
         currency_number = 0
-
     currency_number += 1
-    user.set_crepes_number(currency_number)
-    user.set_last_bento_date(now)
-    user.updateUser(dbConfig)
+
+    user.crepes = currency_number
+    user.last_bento_date = now
+
+    user.update_user(db_config,now,content)
 
     emoji = get_emoji("crepe")
-    emojiStr = emoji.toString(ctx)
+    emoji_str = emoji.toString(ctx)
 
     title = "Wait! Are you going to the dungeon today? Please take this with you! >///<"
 
-    description = mention_author(ctx) + " has received a " + emojiStr + "!"
+    description = mention_author(ctx) + " has received a " + emoji_str + "!"
 
     if currency_number > 1:
         footer = "There are " + str(currency_number) + " " + emoji.plural + " left in their bento box!"
@@ -45,13 +50,12 @@ async def run(dbConfig, client, ctx):
     await ctx.send(embed=embed, file=discord.File("./images/bento/yes.png"))
 
 
-async def no_bento(user, client, ctx):
-    currency_number = user.get_crepes_number()
+async def no_bento(user, ctx):
+    currency_number = user.crepes
     if currency_number is None:
         currency_number = 0
 
     emoji = get_emoji("crepe")
-    emojiStr = emoji.toString(ctx)
 
     title = "You are back already?"
 

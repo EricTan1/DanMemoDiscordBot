@@ -1,14 +1,14 @@
-import discord
 from PIL import Image
 import io
-import asyncio
 from enum import Enum
 from types import SimpleNamespace
 import json
 
+
 class Status(Enum):
     OK = 3066993
     KO = 16203840
+
 
 class GachaRates(Enum):
     ADVENTURER_2_STARS = 0.54
@@ -18,9 +18,11 @@ class GachaRates(Enum):
     ASSIST_3_STARS = 0.05
     ASSIST_4_STARS = 0.01
 
+
 class GachaRatesOnlyFourStars(Enum):
     ADVENTURER_4_STARS = 0.67
     ASSIST_4_STARS = 0.33
+
 
 class HeroAscensionStatsP(Enum):
     # PHYSICAL
@@ -35,6 +37,7 @@ class HeroAscensionStatsP(Enum):
     MAT=[0,5,10,15,24,33,50]
     DEF=[0,21,42,63,94,125,180]
 
+
 class HeroAscensionStatsM(Enum):
     # MAGICAL
     STR = [0,6,12,18,28,38,51]
@@ -47,6 +50,7 @@ class HeroAscensionStatsM(Enum):
     PAT = [0,6,12,18,28,38,51]
     MAT = [0,33,66,99,161,223,335]
     DEF = [0,19,38,57,86,115,161]
+
 
 class HeroAscensionStatsB(Enum):
     # BALANCE
@@ -61,6 +65,7 @@ class HeroAscensionStatsB(Enum):
     MAT = [0,28,56,84,141,198,310]
     DEF = [0,19,38,57,86,115,168]
 
+
 class HeroAscensionStatsD(Enum):
     # DEFENSIVE
     STR = [0,31,62,93,153,213,325]
@@ -73,6 +78,7 @@ class HeroAscensionStatsD(Enum):
     PAT = [0,31,62,93,153,213,325]
     MAT = [0,17,34,51,78,105,149]
     DEF = [0,19,38,57,86,115,168]
+
 
 class HeroAscensionStatsH(Enum):
     # HEALER
@@ -87,15 +93,26 @@ class HeroAscensionStatsH(Enum):
     MAT = [0,28,56,84,141,198,310]
     DEF = [0,19,38,57,86,115,168]
 
+
 def format_row_as_dict(**kwargs):
     for key in kwargs.keys():
         globals()[key]=kwargs[key]
     return kwargs
 
+
 def format_row_as_sns(**kwargs):
     d = format_row_as_dict(**kwargs)
     ns = SimpleNamespace(**d)
     return ns
+
+
+def dict_to_sns(d):
+    return SimpleNamespace(**d)
+
+
+def sns_to_dict(sns):
+    return vars(sns)
+
 
 def getDefaultEmoji(emojiName):
     # Give a list ret a list, give a value ret a value
@@ -117,8 +134,10 @@ class CustomEmoji:
         self.name = name
         self.plural = plural
         self.id_discord = id_discord
+
     def toString(self,ctx):
         return str(ctx.bot.get_emoji(self.id_discord))
+
 
 emojis = {  CustomEmoji("potato1","small potato","small potatoes",698248273387061439),
             CustomEmoji("potato2","medium potato","medium potatoes",698248273500307503),
@@ -145,17 +164,22 @@ emojis = {  CustomEmoji("potato1","small potato","small potatoes",69824827338706
             CustomEmoji("square_on","square_on","square_on",700406590817435759),
             CustomEmoji("as_filter","as_filter","as_filter",707301404137750618),
             CustomEmoji("ad_filter","ad_filter","ad_filter",707300588458737746)}
+
+
 def get_emoji(id_inner):
     for emoji in emojis:
         if emoji.id_inner == id_inner:
             return emoji
     raise Exception("Unknown emoji id:",id_inner)
 
+
 def mention_author(ctx):
     return ctx.message.author.mention
 
+
 def get_author(ctx):
     return str(ctx.message.author)
+
 
 async def imageHorizontalConcat(client, file_list, discord_file_list):
     images = [Image.open(x) for x in file_list]
@@ -175,6 +199,7 @@ async def imageHorizontalConcat(client, file_list, discord_file_list):
     new_im.save(imgByteArr, format='PNG')
     imgByteArr.seek(0)
     discord_file_list.append(imgByteArr)
+
 
 async def imageVerticalConcat(client, file_list):
     images = [Image.open(x) for x in file_list]

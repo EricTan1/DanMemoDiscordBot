@@ -5,6 +5,7 @@ import asyncio
 import time
 from numpy.random import choice
 from os.path import isfile
+import datetime
 
 from database.entities.User import User
 from commands.utils import Status, get_emoji, mention_author, GachaRates, GachaRatesOnlyFourStars
@@ -12,9 +13,14 @@ from commands.cache import Cache
 from database.DBcontroller import DBcontroller
 
 async def run(dbConfig, client, ctx, *args):
-    user = User.get_user(dbConfig, ctx.message.author)
+    author = str(ctx.message.author)
+    content = ctx.message.content
 
-    currency_number = user.get_crepes_number()
+    print("\nReceived message from '"+author+"' with content '"+content+"'")
+
+    user = User.get_user(dbConfig, author)
+
+    currency_number = user.crepes
     if currency_number is None:
         currency_number = 0
 
@@ -23,25 +29,14 @@ async def run(dbConfig, client, ctx, *args):
         return
 
     currency_number -= 1
-    user.set_crepes_number(currency_number)
+    user.crepes = currency_number
 
     pulls = get_pulls(10, GachaRates)
     pulls.extend(get_pulls(1, GachaRatesOnlyFourStars))
-    #pulls = [("adventurer", 4, 1, "Regiment Princess", "Ais Wallenstein")]*11
-    '''pulls = []
-    pulls.append(("adventurer",3,603,"Cyclop's New Year","Tsubaki Collbrande"))
-    pulls.append(("adventurer",3,556,"Little Detective","Lunor Faust"))
-    pulls.append(("adventurer",3,583,"Fist Fighter","Shakti Varma"))
-    pulls.append(("assist",3,325,"Goddess of Purity","Hestia"))
-    pulls.append(("adventurer",3,576,"Gale in Yukata","Ryu Lion"))
-    pulls.append(("adventurer",3,513,"Evanescent","Hitachi Chigusa"))
-    pulls.append(("assist",3,277,"Advisor","Eina Tulle"))
-    pulls.append(("adventurer",3,539,"Artel Tart","Liliruca Arde"))
-    pulls.append(("adventurer",3,607,"Ignis","Welf Crozzo"))
-    pulls.append(("adventurer",3,501,"Maenads","Filvis Challia"))
-    pulls.append(("assist",4,387,"In The End","Orna"))'''
     
-    user.updateUser(dbConfig)
+    user.add_units(pulls)
+    
+    user.update_user(dbConfig,datetime.datetime.now(),content)
 
     await ten_pull_message(ctx, currency_number, pulls[:-1])
     await last_pull_message(ctx, pulls)
@@ -54,7 +49,7 @@ async def no_gacha(user, currency_number, ctx):
     title = "Hold on! Who goes there?"
 
     description = "What do you think you are doing, " + mention_author(ctx) + "?"
-    description += " Come back when you have some " + emoji.name + " for me!"
+    description += " Come back when you have something for me!"
 
     footer = "There is " + str(currency_number) + " " + emoji.name + " left in your bento box!"
 
@@ -140,7 +135,12 @@ async def last_pull_message(ctx, pulls):
 
     title = "Nom nom... Fuwa fuwa! ♡"
     last_pull_message = "The crepe was really good, " + mention_author(ctx) + "! Let me add this:"
+
     last_pull_file = "./lottery/"+last_pull.unit_label+" "+last_pull.character_name+"/hex.png"
+
+    if not isfile(last_pull_file):
+        print("Could not find file at:",last_pull_file)
+        last_pull_file = "./lottery/gac_dummy/hex.png"
 
     last_pull_image = rarify("./lottery/"+last_pull.unit_label+" "+last_pull.character_name+"/",4)
 
@@ -180,6 +180,7 @@ def create_gif(gif_path, pulls, per_line, ms_per_frame):
         if isfile(path+suffix):
             image = rarify(path,pull.stars)
         else:
+            print("Could not find file at:",path+suffix)
             image = hidden_image
 
         pulls_images.append(image)
