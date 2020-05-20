@@ -29,10 +29,6 @@ async def run(client, ctx:commands.context, *search):
                 has_access = True
         if(has_access):
             errors = ""
-            day = 1
-            stage = 1
-            difficulty = 20
-            score = 0
             # number converting and understanding
             for arguments in search:
                 if("diff" in arguments or "difficulty" in arguments):
@@ -79,8 +75,15 @@ async def run(client, ctx:commands.context, *search):
                 temp_embed.description= errors
                 await ctx.send(embed=temp_embed)
             else:
-                await recordMockRun(ctx, current_user, day, stage, difficulty, score)
+                try:
 
+                    await recordMockRun(ctx, current_user, day, stage, difficulty, score)
+                except:
+                    temp_embed = discord.Embed()
+                    temp_embed.color = 16203840
+                    temp_embed.title = "Argument Error"
+                    temp_embed.description= "missing an argument"
+                    await ctx.send(embed=temp_embed)
 
 
 def remove_values_from_list(the_list, val):

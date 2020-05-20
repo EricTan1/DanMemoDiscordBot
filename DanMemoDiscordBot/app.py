@@ -16,6 +16,8 @@ import commands.rb as command_rb
 import commands.skillSearch as command_skillSearch
 import commands.FRrun as command_FRrun
 import commands.FRmock as command_FRmock
+import commands.FRping as command_FRping
+import commands.FRnewday as command_FRnewday
 
 from commands.utils import createGSpreadJSON
 
@@ -89,6 +91,16 @@ async def frrun(ctx, *search):
 async def frmock(ctx, *search):
     print("in")
     await command_FRmock.run(client,ctx,*search)
+
+@client.command(aliases=["frp","familiarushping"])
+async def frping(ctx, *search):
+    print("in")
+    await command_FRping.run(client,ctx,*search)
+
+@client.command(aliases=["frnd","familiarushnewday"])
+async def frnewday(ctx, *search):
+    print("in")
+    await command_FRnewday.run(client,ctx,*search)
 
 if __name__ == "__main__":
     TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
