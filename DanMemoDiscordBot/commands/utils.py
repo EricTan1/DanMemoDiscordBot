@@ -3,6 +3,7 @@ import io
 from enum import Enum
 from types import SimpleNamespace
 import json
+import os
 
 
 class Status(Enum):
@@ -219,3 +220,14 @@ async def imageVerticalConcat(client, file_list):
     new_im.save(imgByteArr, format='PNG')
     imgByteArr.seek(0)
     return imgByteArr
+
+async def createGSpreadJSON():
+    try:
+        my_json = os.environ.get("GSPREAD_IMANITY_JSON")
+        current_json = json.loads(str(my_json))
+        current_json["private_key"] = os.environ.get("GSPREAD_IMANITY_KEY").replace("\\n","\n")
+        # write the outfile
+        with open('./gspread.json', 'w') as outfile:
+            json.dump(current_json, outfile, indent=4, sort_keys=True)
+    except:
+        pass

@@ -14,6 +14,10 @@ import commands.help as command_help
 import commands.profile as command_profile
 import commands.rb as command_rb
 import commands.skillSearch as command_skillSearch
+import commands.FRrun as command_FRrun
+import commands.FRmock as command_FRmock
+
+from commands.utils import createGSpreadJSON
 
 if "IS_HEROKU" in os.environ:
     _command_prefix = "!$"
@@ -32,6 +36,7 @@ async def on_ready():
     #temp = [(e.id, e.name) for e in client.emojis]
     #print(temp)
     print("Bot is ready!")
+    await createGSpreadJSON()
 
 async def close(ctx):
     # embeded message to show that the bot is shut down
@@ -74,7 +79,17 @@ async def rb(ctx, character):
 @client.command(aliases=["dp","dispatchquest","dq"])
 async def dispatch(ctx, *search):
     await command_dispatch.run(dbConfig,client,ctx,*search)
-    
+
+@client.command(aliases=["frr","familiarushrun"])
+async def frrun(ctx, *search):
+    print("in")
+    await command_FRrun.run(client,ctx,*search)
+
+@client.command(aliases=["frm","familiarushmock"])
+async def frmock(ctx, *search):
+    print("in")
+    await command_FRmock.run(client,ctx,*search)
+
 if __name__ == "__main__":
     TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
     client.run(TOKEN)
