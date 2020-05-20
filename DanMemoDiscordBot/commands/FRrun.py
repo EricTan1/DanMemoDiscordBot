@@ -118,8 +118,43 @@ async def recordRealRun(ctx, user, day, stage, difficulty, score:int):
         column = column + 2
     print("{} {}".format(current_row, column))
     ws.update_cell(current_row, column, score)
-    ws = sh.worksheet("Basic Data")
 
+    # green, blue, pink, orange, purple, yellow
+    difficulty_color = {
+        "20":{
+        "red": 0.0,
+        "green": 0.5,
+        "blue": 0.0},
+        "40":{
+        "red": 0.1,
+        "green": 0.5,
+        "blue": 0.9},
+        "60":{
+        "red": 0.3,
+        "green": 0.1,
+        "blue": 0.6},
+        "80":{
+        "red": 0.9,
+        "green": 0.5,
+        "blue": 0.1},
+        "100":{
+        "red": 0.592,
+        "green": 0.333,
+        "blue": 0.705},
+        "110":{
+        "red": 0.0,
+        "green": 0.83,
+        "blue": 0.7}
+    }
+    temp_dict = {
+        "textFormat": {
+        }
+    }
+    temp_dict.get("textFormat")["foregroundColor"] = difficulty_color.get(str(difficulty))
+    
+    temp_add =ws.cell(current_row, column).address
+    ws.format(str(temp_add),temp_dict)
+    ws = sh.worksheet("Basic Data")
     # update basic data sheet
     discord_ids = ws.col_values(1)
     print(discord_ids)

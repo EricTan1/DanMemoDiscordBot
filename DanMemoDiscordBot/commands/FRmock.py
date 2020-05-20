@@ -75,15 +75,15 @@ async def run(client, ctx:commands.context, *search):
                 temp_embed.description= errors
                 await ctx.send(embed=temp_embed)
             else:
-                try:
+                # try:
 
-                    await recordMockRun(ctx, current_user, day, stage, difficulty, score)
-                except:
-                    temp_embed = discord.Embed()
-                    temp_embed.color = 16203840
-                    temp_embed.title = "Argument Error"
-                    temp_embed.description= "missing an argument"
-                    await ctx.send(embed=temp_embed)
+                await recordMockRun(ctx, current_user, day, stage, difficulty, score)
+                # except:
+                #     temp_embed = discord.Embed()
+                #     temp_embed.color = 16203840
+                #     temp_embed.title = "Argument Error"
+                #     temp_embed.description= "missing an argument"
+                #     await ctx.send(embed=temp_embed)
 
 
 def remove_values_from_list(the_list, val):
@@ -116,6 +116,48 @@ async def recordMockRun(ctx, user, day, stage, difficulty, score:int):
         column = column + 2
     print("{} {}".format(current_row, column))
     ws.update_cell(current_row, column, score)
+    # green, blue, pink, orange, purple, yellow
+    difficulty_color = {
+        "20":{
+        "red": 0.0,
+        "green": 0.5,
+        "blue": 0.0},
+        "40":{
+        "red": 0.1,
+        "green": 0.5,
+        "blue": 0.9},
+        "60":{
+        "red": 0.3,
+        "green": 0.1,
+        "blue": 0.6},
+        "80":{
+        "red": 0.9,
+        "green": 0.5,
+        "blue": 0.1},
+        "100":{
+        "red": 0.592,
+        "green": 0.333,
+        "blue": 0.705},
+        "110":{
+        "red": 0.0,
+        "green": 0.83,
+        "blue": 0.7}
+    }
+    print(str(difficulty))
+    print(difficulty_color.get(str(difficulty)))
+    temp_dict = {
+        "backgroundColor": {
+                "red": 0.86274509803,
+                "green": 0.86274509803,
+                "blue": 0.86274509803
+        }
+    }
+    my_dict = dict()
+    temp_dict["textFormat"] = my_dict
+    my_dict["foregroundColor"] = difficulty_color.get(str(difficulty))
+    
+    temp_add =ws.cell(current_row, column).address
+    ws.format(str(temp_add),temp_dict)
     ws = sh.worksheet("Basic Data")
 
     # update basic data sheet
