@@ -52,8 +52,7 @@ async def run(client, ctx:commands.context, *search):
                     if(stage > 3 or stage < 1):
                         errors = "Incorrect stage value please have a day between 1-3"
                 elif("s" in arguments or "score" in arguments):
-                    score = arguments.replace("score","").replace("s","").strip()
-                    
+                    score = arguments.replace("score","").replace("s","").replace(",","").strip()
                     if("m" in score):
                         score = score.replace("m","")
                         score = float(score)*1000000
