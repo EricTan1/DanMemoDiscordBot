@@ -30,20 +30,15 @@ async def run(client, ctx:commands.context, *search):
         if(has_access):
             errors = ""
             # number converting and understanding
+        if(has_access):
+            errors = ""
+            # number converting and understanding
             for arguments in search:
                 if("diff" in arguments or "difficulty" in arguments):
                     difficulty_list = [20,40,60,80,100,110]
                     difficulty = int(arguments.replace("difficulty","").replace("diff","").strip())
                     if (not difficulty in difficulty_list):
                         errors = "invalid difficulty please have a difficulty that is: 20,40,60,80,100 or 110"
-
-                elif("d" in arguments or "day" in arguments):
-                    try:
-                        day = int(arguments.replace("day","").replace("d","").strip())
-                    except:
-                        errors = "no decimals in days"
-                    if(day > 7 or day < 1):
-                        errors = "Incorrect day value please have a day between 1-7"
                 elif("st" in arguments or "stage" in arguments):
                     try:
                         stage = int(arguments.replace("stage","").replace("st","").strip())
@@ -51,8 +46,8 @@ async def run(client, ctx:commands.context, *search):
                         errors = "no decimals in stage"
                     if(stage > 3 or stage < 1):
                         errors = "Incorrect stage value please have a day between 1-3"
-                elif("s" in arguments or "score" in arguments):
-                    score = arguments.replace("score","").replace("s","").replace(",","").strip()
+                elif("dmg" in arguments or "damage" in arguments):
+                    score = arguments.replace("damage","").replace("dmg","").replace(",","").strip()
                     if("m" in score):
                         score = score.replace("m","")
                         score = float(score)*1000000
@@ -65,9 +60,17 @@ async def run(client, ctx:commands.context, *search):
                     try:
                         score = int(score)
                     except:
-                        errors = "please have a numerical score or have 'm', 'kk' or 'k' in the score"
+                        errors = "please have a numerical damage or have 'm', 'kk' or 'k' in the damage"
                     if(score <0):
-                        errors = "Negative score"
+                        errors = "Negative damage"
+                elif("d" in arguments or "day" in arguments):
+                    print(arguments)
+                    try:
+                        day = int(arguments.replace("day","").replace("d","").strip())
+                    except:
+                        errors = "no decimals in days"
+                    if(day > 7 or day < 1):
+                        errors = "Incorrect day value please have a day between 1-7"
             if(errors != ""):
                 temp_embed = discord.Embed()
                 temp_embed.color = 16203840
