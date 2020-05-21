@@ -142,10 +142,11 @@ async def recordRealRun(ctx, user, day, stage, difficulty, score:int):
         "green": 0.333,
         "blue": 0.705},
         "110":{
-        "red": 0.0,
-        "green": 0.83,
-        "blue": 0.7}
+        "red": 0.58,
+        "green": 0.2,
+        "blue": 0.2}
     }
+    
     temp_dict = {
         "textFormat": {
         }
