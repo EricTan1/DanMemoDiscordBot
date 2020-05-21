@@ -51,8 +51,8 @@ async def run(client, ctx:commands.context, *search):
                         errors = "no decimals in stage"
                     if(stage > 3 or stage < 1):
                         errors = "Incorrect stage value please have a day between 1-3"
-                elif("s" in arguments or "score" in arguments):
-                    score = arguments.replace("score","").replace("s","").strip()
+                elif("dam" in arguments or "damage" in arguments):
+                    score = arguments.replace("damage","").replace("dam","").replace(",","").strip()
                     
                     if("m" in score):
                         score = score.replace("m","")
@@ -66,9 +66,9 @@ async def run(client, ctx:commands.context, *search):
                     try:
                         score = int(score)
                     except:
-                        errors = "please have a numerical score or have 'm', 'kk' or 'k' in the score"
+                        errors = "please have a numerical damage or have 'm', 'kk' or 'k' in the damage"
                     if(score <0):
-                        errors = "Negative score"
+                        errors = "Negative damage"
             if(errors != ""):
                 temp_embed = discord.Embed()
                 temp_embed.color = 16203840
