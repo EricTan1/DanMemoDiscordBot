@@ -188,23 +188,23 @@ async def recordRealRun(ctx, user, day, stage, difficulty, score:int):
             ws.update_cell(row, 3, runs)
     
 
-        # update daily score sheet
-        ws = sh.worksheet("Daily Score")
-        # find the discord id. if it doesnt exist create one on the very bottom
-        discord_ids = ws.col_values(1,value_render_option='UNFORMATTED_VALUE')
-        if(str(user.id) in discord_ids):
-            row = discord_ids.index(str(user.id))+1
-        else:
-            row = len(remove_values_from_list(discord_ids,""))+2
-            ws.update_cell(row, 1, str(user.id))
-            ws.update_cell(row, 2, user.name)
-        # add score for that day (score day x)
-        column = day+2
-        current_date_score = ws.cell(row, column, value_render_option='UNFORMATTED_VALUE').value
-        if(str(current_date_score).strip() != ""):
-            #print("CURRENT DATE SCORE: " + str(current_date_score))
-            ws.update_cell(row, column, int(current_date_score)+score)
-        else:
-            ws.update_cell(row, column, score)
+        # # update daily score sheet
+        # ws = sh.worksheet("Daily Score")
+        # # find the discord id. if it doesnt exist create one on the very bottom
+        # discord_ids = ws.col_values(1,value_render_option='UNFORMATTED_VALUE')
+        # if(str(user.id) in discord_ids):
+        #     row = discord_ids.index(str(user.id))+1
+        # else:
+        #     row = len(remove_values_from_list(discord_ids,""))+2
+        #     ws.update_cell(row, 1, str(user.id))
+        #     ws.update_cell(row, 2, user.name)
+        # # add score for that day (score day x)
+        # column = day+2
+        # current_date_score = ws.cell(row, column, value_render_option='UNFORMATTED_VALUE').value
+        # if(str(current_date_score).strip() != ""):
+        #     #print("CURRENT DATE SCORE: " + str(current_date_score))
+        #     ws.update_cell(row, column, int(current_date_score)+score)
+        # else:
+        #     ws.update_cell(row, column, score)
 
         await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))
