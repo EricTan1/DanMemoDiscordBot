@@ -40,7 +40,7 @@ async def run(client, ctx:commands.context, *search):
             msg = "Please finish your runs before reset!\n"
             for index in range(0,len(runs)):
                 if(isinstance(runs[index], int)):
-                    if(runs[index] != 0):
+                    if(runs[index] != 0 and runs[index] <= 4 and index < len(discordids) and (discordids[index].strip() != "" or discordids[index]!= None)):
                         print(ctx.message)
                         print(ctx.message.guild)
                         print(ctx.message.guild.get_member(discordids[index]))

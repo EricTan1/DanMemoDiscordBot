@@ -34,8 +34,8 @@ async def run(client, ctx:commands.context, *search):
             ws = sh.worksheet("Basic Data")
 
             runs = ws.col_values(3, value_render_option='UNFORMATTED_VALUE')
-
-            for index in range(0,len(runs)):
+            # -1 b/c total runs
+            for index in range(0,len(runs)-1):
                 if(isinstance(runs[index], int)):
                     ws.update_cell(index+1, 3, 4)
             await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))
