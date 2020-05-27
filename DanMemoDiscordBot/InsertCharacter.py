@@ -10,6 +10,9 @@ from database.entities.BaseConstants import Element, Target, Type, Attribute, Mo
 from database.entities.Character import Character
 from database.entities.Assist import AssistStats, Assist, AssistSkillEffects, AssistSkill
 
+""" DB SETTING UP FILE json -> sql
+"""
+
 
 class AdventureC:
     def __init__(self, title, name, types, stars, limited, ascended, stats, skills):

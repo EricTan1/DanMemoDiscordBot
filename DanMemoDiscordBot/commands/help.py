@@ -2,6 +2,11 @@ import discord
 import os
 
 async def run(ctx):
+    """direct message the help command to that user
+
+    Arguments:
+        ctx {discord.context} -- the message context object
+    """
     temp_embed = discord.Embed()
     temp_embed.color = 3066993
     temp_embed.title = "Command List"

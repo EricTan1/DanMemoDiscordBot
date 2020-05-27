@@ -4,6 +4,11 @@ import sys
 from urllib.parse import urlparse
 import mysql.connector
 
+""" DB SETTING UP FILE PAIRS WITH HeroAscendable.txt
+"""
+
+
+
 connection = mysql.connector.connect(
     host="localhost",
     user="root",

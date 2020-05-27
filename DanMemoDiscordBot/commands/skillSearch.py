@@ -16,6 +16,14 @@ from database.entities.BaseConstants import Element, Target, Type, Attribute, Mo
 from commands.utils import imageHorizontalConcat, imageVerticalConcat, get_emoji, Status
 
 async def run(dbConfig, client, ctx, *search):
+    """ Skill Search
+    <CommandPrefix> <Search>
+    
+    Arguments:
+        dbConfig {[DBcontroller.dbConfig]} -- Database config usually local/environmental variables
+        client {[discord.Client]} -- the discord bot object
+        ctx {[discord.context]} -- command message context
+    """
     print(search)
     my_search = ""
     for words in search:
@@ -133,6 +141,17 @@ async def run(dbConfig, client, ctx, *search):
     db.closeconnection()
 
 async def skillSearchRotatingPage(client, ctx, search, page_list, total_results, icons):
+    """This handles the message scrolling of the skill search and all the other
+    page logic
+
+    Arguments:
+        client {discord.client} -- the discord bot object
+        ctx {discord.context} -- command message context
+        search {string} -- the search query
+        page_list {list of list} -- list of pages, Pages are lists with skills. Skills are tuples with [TITLE + NAME, SKILL INFO, FILTERS]
+        total_results {int} -- total number of results from the query
+        icons {BytesIO} -- image for the characters being searched
+    """
     filters = []
     current_page_list = page_list
     current_page = 0

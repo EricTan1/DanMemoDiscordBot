@@ -18,6 +18,12 @@ from database.entities.BaseConstants import Element, Target, Type, Attribute, Mo
 
 
 async def run(client, ctx:commands.context, *search):
+    """ resets the spreadsheet of everyone to 4 runs.
+
+    Arguments:
+        client {discord.client} -- discord bot object
+        ctx {commands.context} -- context of the message
+    """
     current_user = ctx.message.author
     print("in")
     if(current_user.guild.id == 708002106245775410):

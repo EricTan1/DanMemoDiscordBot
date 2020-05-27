@@ -5,6 +5,13 @@ from database.DBcontroller import DBcontroller
 from commands.utils import imageHorizontalConcat, imageVerticalConcat
 
 async def run(dbConfig, client, ctx, *search):
+    """ searchs for the relevant dispatch quest
+
+    Arguments:
+        client {discord.client} -- discord bot object
+        ctx {commands.context} -- context of the message
+        search {string} -- the dispatch quest to search for
+    """
     with open('./dispatchQuest/dispatch.json', 'r') as f:
         dispatch_dict = json.load(f)
     db = DBcontroller(dbConfig)

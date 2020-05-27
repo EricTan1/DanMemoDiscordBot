@@ -7,11 +7,17 @@ import os
 
 
 class Status(Enum):
+    """ the color codes for discord.embeds for showing message activity
+    OK = green
+    KO = red
+    """
     OK = 3066993
     KO = 16203840
 
 
 class GachaRates(Enum):
+    """ gacha rates for danmemo summoning
+    """
     ADVENTURER_2_STARS = 0.54
     ADVENTURER_3_STARS = 0.10
     ADVENTURER_4_STARS = 0.02
@@ -21,12 +27,15 @@ class GachaRates(Enum):
 
 
 class GachaRatesOnlyFourStars(Enum):
+    """gacha rates for pulling assist/adventurers
+    """
     ADVENTURER_4_STARS = 0.67
     ASSIST_4_STARS = 0.33
 
 
 class HeroAscensionStatsP(Enum):
-    # PHYSICAL
+    """ HA stats for physical units
+    """
     STR=[0,36,72,108,173,238,350]
     END=[0,21,42,63,94,125,180]
     DEX=[0,8,16,32,38,52,75]
@@ -40,7 +49,8 @@ class HeroAscensionStatsP(Enum):
 
 
 class HeroAscensionStatsM(Enum):
-    # MAGICAL
+    """ HA stats for magical units
+    """
     STR = [0,6,12,18,28,38,51]
     END = [0,19,38,57,86,115,161]
     DEX = [0,9,18,27,42,57,79]
@@ -54,7 +64,8 @@ class HeroAscensionStatsM(Enum):
 
 
 class HeroAscensionStatsB(Enum):
-    # BALANCE
+    """ HA stats for balance units
+    """
     STR = [0,15,30,45,70,95,137]
     END = [0,19,38,57,86,115,168]
     DEX = [0,11,22,33,50,67,95]
@@ -68,7 +79,8 @@ class HeroAscensionStatsB(Enum):
 
 
 class HeroAscensionStatsD(Enum):
-    # DEFENSIVE
+    """ HA stats for defensive units
+    """
     STR = [0,31,62,93,153,213,325]
     END = [0,19,38,57,86,115,168]
     DEX = [0,11,22,33,50,67,95]
@@ -82,7 +94,8 @@ class HeroAscensionStatsD(Enum):
 
 
 class HeroAscensionStatsH(Enum):
-    # HEALER
+    """ HA stats for healing units
+    """
     STR = [0,15,30,45,70,95,137]
     END = [0,19,38,57,86,115,168]
     DEX = [0,11,22,33,50,67,95]
@@ -116,8 +129,17 @@ def sns_to_dict(sns):
 
 
 def getDefaultEmoji(emojiName):
-    # Give a list ret a list, give a value ret a value
-    # gives None if it doesn't exist
+    """ given a list of emoji names or just an emoji name return the
+    unicode for that emoji
+
+    Arguments:
+        emojiName {string} -- the name of the default emojis in discord
+
+    Returns:
+        List of String or String -- unicode for the emoji name
+        None -- if emojis for that name don't exist
+    """
+
     with open("emoji_map.json", 'r', encoding="utf8") as f:
         emoji_json_dict = json.load(f)
         if(isinstance(emojiName, list)):
@@ -127,7 +149,8 @@ def getDefaultEmoji(emojiName):
             return ret_list
         else:
             return emoji_json_dict.get(emojiName)
-
+def remove_values_from_list(the_list, val):
+   return [value for value in the_list if value != val]
 
 class CustomEmoji:
     def __init__(self, id_inner, name, plural, id_discord):
@@ -222,6 +245,8 @@ async def imageVerticalConcat(client, file_list):
     return imgByteArr
 
 async def createGSpreadJSON():
+    ''' Sets up json file from environmental variables for google sheets
+    '''
     try:
         my_json = os.environ.get("GSPREAD_IMANITY_JSON")
         current_json = json.loads(str(my_json))

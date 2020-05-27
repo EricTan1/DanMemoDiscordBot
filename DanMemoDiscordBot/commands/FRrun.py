@@ -11,13 +11,30 @@ from urllib.parse import urlparse
 import itertools
 import gspread
 
-from commands.utils import get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status, HeroAscensionStatsD, HeroAscensionStatsH, getDefaultEmoji, createGSpreadJSON
+from commands.utils import get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status, HeroAscensionStatsD, HeroAscensionStatsH, getDefaultEmoji, createGSpreadJSON,remove_values_from_list
 from database.DBcontroller import DBcontroller
 from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
 from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier
 
 
 async def run(client, ctx:commands.context, *search):
+    """ record your real run
+
+    Arguments:
+        client {discord.client} -- discord bot object
+        ctx {commands.context} -- context of the message
+        
+        search {string} -- contains arguments on the info of your run
+
+            arguments for search:
+            <day> : 1-7
+            <diff>: 20,40,60,80,100,110
+            <stage>: 1,2,3
+            <damage>: >=0 (you can write 13m or 13kk instead of 13000000)
+
+            Search template:
+            diff<diff> day<day> stage<stage> damage<damage>
+    """
     current_user = ctx.message.author
     print("in")
     if(current_user.guild.id == 708002106245775410):
@@ -89,11 +106,17 @@ async def run(client, ctx:commands.context, *search):
                     await ctx.send(embed=temp_embed)
 
 
-
-def remove_values_from_list(the_list, val):
-   return [value for value in the_list if value != val]
-
 async def recordRealRun(ctx, user, day, stage, difficulty, score:int):
+    """ the logic and recording of the spreadsheet
+
+    Arguments:
+        ctx {discord.context} -- discord message context object
+        user {discord.user} -- the user that has sent the message
+        day {int} -- the day of the run: 1,2,3,4,5,6,7
+        stage {int} -- the stage # :1,2,3
+        difficulty {int} -- difficulty of the FR stage : 20,40,60,80,100,110
+        score {int} -- the score of the run
+    """
     gc = gspread.service_account(filename="./gspread.json")
 
     sh = gc.open("Imanity FR")

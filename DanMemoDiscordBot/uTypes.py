@@ -3,6 +3,8 @@ import os
 import sys
 from urllib.parse import urlparse
 import mysql.connector
+""" DB SETTING UP FILE
+"""
 
 path = "./unitTypes"
 connection = mysql.connector.connect(

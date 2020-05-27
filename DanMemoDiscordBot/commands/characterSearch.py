@@ -16,6 +16,14 @@ from database.entities.Adventurer import Adventurer, AdventurerSkill, Adventurer
 from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier
 
 async def run(dbConfig, client, ctx, *search):
+    """ Character Search
+    <CommandPrefix> <Search>
+    
+    Arguments:
+        dbConfig {[DBcontroller.dbConfig]} -- Database config usually local/environmental variables
+        client {[discord.Client]} -- the discord bot object
+        ctx {[discord.context]} -- command message context
+    """
     my_search = " "
     for words in search:
         my_search = my_search + words + " "
@@ -47,6 +55,17 @@ async def run(dbConfig, client, ctx, *search):
     db.closeconnection()
 
 async def pageUnitsHandler(client, ctx, page_list,db,total_results,search):
+    """This handles the message scrolling of the character search and all the other
+    page logic for multiple results
+
+    Arguments:
+        client {discord.client} -- the discord bot object
+        ctx {discord.context} -- command message context
+        page_list {list of list} -- list of pages, Pages are lists with adventurers. Adventurers are tuples with (id,title,adventurername) 
+        db {DBController.DBController} -- Database connector object
+        total_results {int} -- total number of results from the query
+        search {string} -- the search query
+    """
     # set up
     current_page = 0
     temp_embed = discord.Embed()
@@ -110,6 +129,15 @@ async def pageUnitsHandler(client, ctx, page_list,db,total_results,search):
            
 
 async def singleAdventurer(client, ctx, db,assistadventurerid):
+    """This handles the logic of choosing of the character search and setting up
+    for a single result search
+
+    Arguments:
+        client {discord.client} -- the discord bot object
+        ctx {discord.context} -- command message context
+        db {DBController.DBController} -- Database connector object
+        assistadventurerid {int} -- the assist/adventurer id of the wanted search
+    """
     is_embed = False
     is_files = False
     temp_embed = discord.Embed()
@@ -166,6 +194,18 @@ async def singleAdventurer(client, ctx, db,assistadventurerid):
             await pageASHandler(client, ctx,temp_embed,None,info[3])    
 
 async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_embed, stats_dict, unit_type,ascended):
+    """This handles the logic of the page handling for the single result adventurer
+
+    Arguments:
+        client {discord.client} -- the discord bot object
+        ctx {discord.context} -- command message context
+        temp_embed {discord.embed} -- adventurer stats/skills page
+        file_list {list of pictures} -- images to be displayed for pages
+        dev_embed {discord.embed} -- the adventurer development page
+        stats_dict {dict} -- the stats of the current unit
+        unit_type {string} -- balance,physical,magical for stats calculation
+        ascended {bool} -- adventurer has hero ascension or not
+    """
     MAXLB = 5
     MAXHA = 6
     current_page = 0
@@ -274,6 +314,15 @@ async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_em
 
 
 async def pageASHandler(client, ctx, temp_embed:discord.Embed, file_list, stats_dict):
+    """This handles the logic of the page handling for the single result assist
+
+    Arguments:
+        client {discord.client} -- the discord bot object
+        ctx {discord.context} -- command message context
+        temp_embed {discord.embed} -- assist stats/skills page
+        file_list {list of pictures} -- images to be displayed for pages
+        stats_dict {dict} -- the stats of the current unit
+    """
     MAXLB = 5
     current_page = 0
     current_limitbreak = 0
@@ -336,6 +385,17 @@ async def pageASHandler(client, ctx, temp_embed:discord.Embed, file_list, stats_
 
 
 async def assembleStats(stats_dict : dict, limitbreak:int,unit_type:str,heroascend:int):
+    """ Calculates stats based on limit break and hero ascension (if avaliable)
+
+    Arguments:
+        stats_dict {dict} -- the stats dictionary
+        limitbreak {int} -- the limit break of a unit, 0 = no LB, 5 = MLB
+        unit_type {str} -- balance, physical, magical
+        heroascend {int} -- the hero ascension #, 0 = no HA and 6 = MHA
+
+    Returns:
+        dict -- the stats dictionary
+    """
     if (unit_type.lower() == "physical_type"):
         temp_hp = str(int(stats_dict.get("hp")[limitbreak]) + HeroAscensionStatsP.HP.value[heroascend])
         temp_mp = str(int(stats_dict.get("mp")[limitbreak]) + HeroAscensionStatsP.MP.value[heroascend])
@@ -378,6 +438,17 @@ async def assembleStats(stats_dict : dict, limitbreak:int,unit_type:str,heroasce
     ret = ret + "{} : {}\n".format("DEF",temp_def)
     return ret
 async def assembleAbilities(stats_dict : dict,limitbreak:int,unit_type:str,heroascend:int):
+    """ Calculates Abilities based on limit break and hero ascension (if avaliable)
+
+    Arguments:
+        stats_dict {dict} -- the stats dictionary
+        limitbreak {int} -- the limit break of a unit, 0 = no LB, 5 = MLB
+        unit_type {str} -- balance, physical, magical
+        heroascend {int} -- the hero ascension #, 0 = no HA and 6 = MHA
+
+    Returns:
+        dict -- the stats dictionary
+    """
     if (unit_type.lower() == "physical_type"):
         temp_str = str(int(stats_dict.get("strength")[limitbreak]) + HeroAscensionStatsP.STR.value[heroascend])
         temp_end = str(int(stats_dict.get("endurance")[limitbreak]) + HeroAscensionStatsP.END.value[heroascend])

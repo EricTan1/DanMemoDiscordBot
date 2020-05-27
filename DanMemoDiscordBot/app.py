@@ -82,24 +82,20 @@ async def rb(ctx, character):
 async def dispatch(ctx, *search):
     await command_dispatch.run(dbConfig,client,ctx,*search)
 
-@client.command(aliases=["frr","familiarushrun"])
+#@client.command(aliases=["frr","familiarushrun"])
 async def frrun(ctx, *search):
-    print("in")
     await command_FRrun.run(client,ctx,*search)
 
-@client.command(aliases=["frm","familiarushmock"])
+#@client.command(aliases=["frm","familiarushmock"])
 async def frmock(ctx, *search):
-    print("in")
     await command_FRmock.run(client,ctx,*search)
 
-@client.command(aliases=["frp","familiarushping"])
+#@client.command(aliases=["frp","familiarushping"])
 async def frping(ctx, *search):
-    print("in")
     await command_FRping.run(client,ctx,*search)
 
-@client.command(aliases=["frnd","familiarushnewday"])
+#@client.command(aliases=["frnd","familiarushnewday"])
 async def frnewday(ctx, *search):
-    print("in")
     await command_FRnewday.run(client,ctx,*search)
 
 if __name__ == "__main__":

@@ -2,7 +2,8 @@ import json
 import os
 path = 'lottery/'
 import sys
-
+""" DATAMINE IMAGE SETTING UP FILE. Reduces space of images and renames folders to corresponding units.
+"""
 #for folders in os.listdir(path):
     #os.rename()
 with open('message.txt') as fp:
