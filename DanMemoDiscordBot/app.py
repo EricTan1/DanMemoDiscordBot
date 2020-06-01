@@ -18,6 +18,7 @@ import commands.FRrun as command_FRrun
 import commands.FRmock as command_FRmock
 import commands.FRping as command_FRping
 import commands.FRnewday as command_FRnewday
+import commands.addUpdateUnit as command_addUpdateUnit
 
 from commands.utils import createGSpreadJSON
 
@@ -81,6 +82,10 @@ async def rb(ctx, character):
 @client.command(aliases=["dp","dispatchquest","dq"])
 async def dispatch(ctx, *search):
     await command_dispatch.run(dbConfig,client,ctx,*search)
+
+@client.command(aliases=["auu"])
+async def addUpdateUnit(ctx, *search):
+    await command_addUpdateUnit.run(dbConfig,client,ctx,*search)
 
 #@client.command(aliases=["frr","familiarushrun"])
 async def frrun(ctx, *search):

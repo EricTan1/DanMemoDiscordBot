@@ -120,6 +120,18 @@ class DBcontroller:
             ret = "[{}] {}".format(row[0],row[1])
             print(row)
         return ret
+    def deleteById(self, entityname, column, value):
+        ''' (DBcontroller, Entity, str, ?) -> List of Entity
+        returns the entity list based on the columns
+        '''
+        sql = 'DELETE FROM {}.{} WHERE {}=%s'.format(self.database.lower(),
+                                                                                                     entityname.lower(),
+                                                                                                     column.lower())
+        
+        self._mycursor.execute(sql,(value,))
+        self._connection.commit()
+        print("exists and deleting")
+        return True
 
     def getDataColumn(self, entityname, column, value):
         ''' (DBcontroller, Entity, str, ?) -> List of Entity
