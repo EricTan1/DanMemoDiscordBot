@@ -703,6 +703,96 @@ class DBcontroller:
             res.append(row_as_dict)
         return res
 
+    def get_all_adventurers_skills(self):
+        sql = "SELECT ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, c.name\
+        FROM {}.adventurerskilleffects AS ase\
+        INNER JOIN {}.element AS e on e.elementid = ase.eleid\
+        INNER JOIN {}.modifier AS m on m.modifierid = ase.modifierid\
+        INNER JOIN {}.type AS ty on ty.typeid = ase.typeid\
+        INNER JOIN {}.target AS ta on ta.targetid = ase.Targetid\
+        INNER JOIN {}.attribute AS a on a.attributeid = ase.attributeid\
+        LEFT JOIN {}.speed AS s on ase.speedid = s.speedid\
+        INNER JOIN {}.adventurerskill AS ads on ads.adventurerskillid = ase.adventurerskillid\
+        INNER JOIN {}.adventurer AS ad on ad.adventurerid = ads.adventurerid\
+        INNER JOIN {}.character AS c on c.characterid = ad.characterid"\
+        .format(*((self.database.lower(),)*10))
+
+        print(sql)
+
+        self._mycursor.execute(sql)
+
+        res = []
+        unit_type = "adventurer"
+        for row in self._mycursor:
+            unit_id, character_id, alias, unit_label, stars, is_limited, character_name, is_collab = row
+            row_as_dict = format_row_as_sns(unit_type=unit_type, unit_id=unit_id, character_id=character_id, alias=alias, unit_label=unit_label, stars=stars, is_limited=is_limited, character_name=character_name, is_collab=is_collab)
+            res.append(row_as_dict)
+        return res
+
+    def get_all_adventurers_developments(self):
+        sql = "SELECT addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name\
+        FROM {}.adventurerdevelopment as addev\
+        INNER JOIN {}.modifier as m on m.modifierid = addev.modifierid\
+        INNER JOIN {}.attribute as a on a.attributeid = addev.attributeid\
+        INNER JOIN {}.adventurer as ad on ad.adventurerid = addev.adventurerid\
+        INNER JOIN {}.character as c on c.characterid = ad.characterid"\
+        .format(*((self.database.lower(),)*5))
+
+        self._mycursor.execute(sql)
+
+        res = []
+        unit_type = "adventurer"
+        for row in self._mycursor:
+            development, modifier, attribute, stars, title, alias, limited, character = row
+            row_as_dict = format_row_as_sns(unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
+            res.append(row_as_dict)
+        return res
+
+    def get_all_adventurers_skills(self):
+        sql = "SELECT ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name\
+        FROM {}.adventurerskilleffects AS ase\
+        INNER JOIN {}.element AS e on e.elementid = ase.eleid\
+        INNER JOIN {}.modifier AS m on m.modifierid = ase.modifierid\
+        INNER JOIN {}.type AS ty on ty.typeid = ase.typeid\
+        INNER JOIN {}.target AS ta on ta.targetid = ase.Targetid\
+        INNER JOIN {}.attribute AS a on a.attributeid = ase.attributeid\
+        LEFT JOIN {}.speed AS s on ase.speedid = s.speedid\
+        INNER JOIN {}.adventurerskill AS ads on ads.adventurerskillid = ase.adventurerskillid\
+        INNER JOIN {}.adventurer AS ad on ad.adventurerid = ads.adventurerid\
+        INNER JOIN {}.character AS c on c.characterid = ad.characterid"\
+        .format(*((self.database.lower(),)*10))
+
+        self._mycursor.execute(sql)
+
+        res = []
+        unit_type = "adventurer"
+        for row in self._mycursor:
+            duration, element, modifier, type, target, attribute, speed, stars, title, alias, limited, character = row
+            row_as_dict = format_row_as_sns(unit_type=unit_type, duration=duration, element=element, modifier=modifier, type=type, target=target, attribute=attribute, speed=speed, stars=stars, title=title, alias=alias, limited=limited, character=character)
+            res.append(row_as_dict)
+        return res
+
+    def get_all_assists_skills(self):
+        sql = "SELECT ase.duration, m.value as modifier, ta.name as target, a.name as attribute, assist.stars, assist.title, assist.alias, assist.limited, c.name\
+        FROM {}.assistskilleffects as ase\
+        INNER JOIN {}.modifier as m on m.modifierid = ase.modifierid\
+        INNER JOIN {}.target as ta on ta.targetid = ase.Targetid\
+        INNER JOIN {}.attribute as a on a.attributeid = ase.attributeid\
+        INNER JOIN {}.assistskill as ass on ass.assistskillid = ase.assistskillid\
+        INNER JOIN {}.assist as assist on assist.assistid = ass.assistid\
+        INNER JOIN {}.character as c on c.characterid = assist.characterid"\
+        .format(*((self.database.lower(),)*7))
+
+        self._mycursor.execute(sql)
+
+        res = []
+        unit_type = "assist"
+        for row in self._mycursor:
+            duration, modifier, target, attribute, stars, title, alias, limited, character = row
+            row_as_dict = format_row_as_sns(unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
+            res.append(row_as_dict)
+        return res
+
 
 if __name__ == "__main__":
     db_config = DBConfig(DatabaseEnvironment.LOCAL)

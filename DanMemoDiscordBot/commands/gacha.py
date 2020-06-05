@@ -4,7 +4,7 @@ import io
 import asyncio
 import time
 from numpy.random import choice
-from os.path import isfile, abspath
+from os.path import isfile, abspath, isdir
 import datetime
 
 from database.entities.User import User
@@ -40,7 +40,6 @@ async def run(dbConfig, client, ctx, *args):
 
     await ten_pull_message(ctx, currency_number, pulls[:-1])
     await last_pull_message(ctx, pulls)
-
 
 async def no_gacha(user, currency_number, ctx):
     emoji = get_emoji("crepe")
@@ -127,7 +126,6 @@ async def ten_pull_message(ctx, currency_number, pulls):
     embed.description = description
     embed.set_footer(text=footer)
     embed.set_image(url="attachment://"+gif_path)
-
     await ctx.send(embed=embed, file=discord.File(gif_path))
 
 async def last_pull_message(ctx, pulls):
@@ -136,15 +134,8 @@ async def last_pull_message(ctx, pulls):
     title = "Nom nom... Fuwa fuwa! ♡"
     last_pull_message = "The crepe was really good, " + mention_author(ctx) + "! Let me add this:"
 
-    last_pull_file = "./lottery/"+last_pull.unit_label+" "+last_pull.character_name+"/hex.png"
-
-    if not isfile(last_pull_file):
-        print("Could not find file at:",last_pull_file)
-        last_pull_file = "./lottery/gac_dummy/hex.png"
-
-    last_pull_image = rarify("./lottery/"+last_pull.unit_label+" "+last_pull.character_name+"/",4)
-
-    print(last_pull_file)
+    last_pull_path = get_folder(last_pull)
+    last_pull_image = rarify(last_pull_path,4)
 
     image_path = "pull11.png"
     imgByteArr = io.BytesIO()
@@ -161,32 +152,19 @@ async def last_pull_message(ctx, pulls):
     embed.description = last_pull_message
     #embed.add_field(name="x", value=last_pull_message, inline=False)
     embed.set_footer(text=footer)
-    
     #await ctx.send(embed=embed, file=discord.File(last_pull_file))
     embed.set_image(url="attachment://"+image_path)
-    
     await ctx.send(embed=embed, file=discord.File(imgByteArr, filename=image_path))
 
 def create_gif(gif_path, pulls, per_line, ms_per_frame):
-    suffix = "hex.png"
-
-    hidden = "./lottery/gac_dummy/"
-    hidden_image = Image.open(hidden+suffix)
-
     pulls_images = []
-
     for pull in pulls:
-        path = "./lottery/"+pull.unit_label+" "+pull.character_name+"/"#+suffix
-        if isfile(path+suffix):
-            image = rarify(path,pull.stars)
-        else:
-            print("Could not find file at:",path+suffix)
-            image = hidden_image
-
+        path = get_folder(pull)
+        image = rarify(path,pull.stars)
         pulls_images.append(image)
 
     gif_images = []
-
+    hidden_image = Image.open("./images/units/gac_dummy/hex.png")
     for i in range(len(pulls_images)+1):
         images_current_iteration = pulls_images[:i] + [hidden_image] * (len(pulls_images)-i)
 
@@ -258,28 +236,6 @@ def concatenate_images_vertically(image_paths):
 
     return imgByteArr
 
-def create_rarity_hex(path, rarity):
-    background_path = "./images/hex/"+str(rarity)+".png"
-    foreground_path = path + "hex.png"
-    border_path = "./images/hex/border.png"
-
-    updated_path = path + "pull.png"
-
-    background = Image.open(background_path).convert("RGBA")
-    foreground = Image.open(foreground_path).convert("RGBA")
-    border = Image.open(border_path).convert("RGBA")
-
-    updated = Image.new("RGB", background.size, (255, 255, 255))
-    updated.paste(background, (0,0), background)
-    updated.paste(foreground, (0,0), foreground)
-    updated.paste(border, (0,0), border)
-    '''
-    updated.paste(border,(0,0), mask = border.split()[3])
-    updated.paste(background,(0,0), mask = background.split()[3])
-    updated.paste(foreground,(0,0), mask = foreground.split()[3])
-    '''
-    updated.save(updated_path)
-
 def rarify(path, rarity):
     background_path = "./images/hex/"+str(rarity)+".png"
     foreground_path = path + "hex.png"
@@ -297,3 +253,12 @@ def rarify(path, rarity):
     updated.paste(border, (0,0), border)
     
     return updated
+
+def get_folder(unit):
+    path = "./images/units/"+unit.character_name+" ["+unit.unit_label+"]/"
+
+    if not isdir(path):
+        print("Could not find folder:",path)
+        path = "./images/units/gac_dummy/"
+
+    return path
