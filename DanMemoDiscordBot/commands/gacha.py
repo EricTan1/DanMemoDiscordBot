@@ -4,7 +4,7 @@ import io
 import asyncio
 import time
 from numpy.random import choice
-from os.path import isfile
+from os.path import isfile, abspath
 import datetime
 
 from database.entities.User import User
@@ -117,7 +117,7 @@ async def ten_pull_message(ctx, currency_number, pulls):
         footer = "There is " + str(currency_number) + " " + emoji.name + " left in your bento box!"
 
     per_line = 5
-    gif_path = "gacha.gif"
+    gif_path = "./images/gacha.gif"
     ms_per_frame = 1000
     create_gif(gif_path,pulls,per_line,ms_per_frame)
 
@@ -198,6 +198,9 @@ def create_gif(gif_path, pulls, per_line, ms_per_frame):
     save_gif(gif_images, gif_path, ms_per_frame)
 
 def save_gif(images, path, ms_per_frame):
+    print("Images:",images)
+    print("Relative path:",path)
+    print("Absolute path:",abspath(path))
     images[0].save(path, save_all=True, append_images=images[1:], optimize=False, duration=ms_per_frame)#, transparency=0) #loop=1
 
 def concatenate_images(images, per_line=5):
