@@ -1,8 +1,8 @@
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: localhost    Database: heroku_0fe8a18d3b21642
+-- Host: us-cdbr-iron-east-04.cleardb.net    Database: heroku_0fe8a18d3b21642
 -- ------------------------------------------------------
--- Server version	8.0.19
+-- Server version	5.5.56-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -23,10 +23,10 @@ DROP TABLE IF EXISTS `type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `type` (
-  `typeid` int NOT NULL AUTO_INCREMENT,
+  `typeid` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   PRIMARY KEY (`typeid`)
-) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +35,7 @@ CREATE TABLE `type` (
 
 LOCK TABLES `type` WRITE;
 /*!40000 ALTER TABLE `type` DISABLE KEYS */;
-INSERT INTO `type` VALUES (59,'physical_type'),(60,'physical_attack'),(61,''),(62,'balance_type'),(63,'magic_attack'),(64,'attack'),(65,'magic_type'),(66,'type'),(67,'healer_type'),(68,'defense_type'),(69,'magical_attack'),(84,'single_damage_resist'),(85,'null_magic_attack_no_special'),(86,'all_damage_resist'),(88,'prevent_ko'),(89,'all_damage_resist_removal'),(90,'single_damage_resist_removal'),(93,'physical_resist'),(94,'strength'),(95,'magic_resist');
+INSERT INTO `type` VALUES (59,'physical_type'),(60,'physical_attack'),(61,''),(62,'balance_type'),(63,'magic_attack'),(64,'attack'),(65,'magic_type'),(66,'type'),(67,'healer_type'),(68,'defense_type'),(69,'magical_attack'),(84,'single_damage_resist'),(85,'null_magic_attack_no_special'),(86,'all_damage_resist'),(88,'prevent_ko'),(89,'all_damage_resist_removal'),(90,'single_damage_resist_removal'),(93,'physical_resist'),(94,'strength'),(95,'magic_resist'),(102,'None');
 /*!40000 ALTER TABLE `type` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-11 16:17:19
+-- Dump completed on 2020-06-08 15:40:25
