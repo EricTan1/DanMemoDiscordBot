@@ -86,6 +86,9 @@ async def dispatch(ctx, *search):
 @client.command(aliases=["auu"])
 async def addUpdateUnit(ctx, *search):
     await command_addUpdateUnit.run(dbConfig,client,ctx,*search)
+    # refresh the cache
+    cache = Cache(dbConfig)
+
 
 #@client.command(aliases=["frr","familiarushrun"])
 async def frrun(ctx, *search):

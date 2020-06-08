@@ -11,6 +11,8 @@ from database.entities.BaseConstants import Element, Target, Type, Attribute, Mo
 import database.entities.User
 from database.entities.LogsCommand import LogsCommand
 from commands.utils import GachaRates, format_row_as_sns
+#from commands.cache import Cache
+
 
 
 class DatabaseEnvironment(Enum):
@@ -204,51 +206,122 @@ class DBcontroller:
         return ret_list
     
     def skillSearch(self,search, filter_dict):
+        from commands.cache import Cache
+        cache = Cache()
+        #units = cache.get_all_assists()
+        #units = [unit for unit in units if unit.stars == stars]
+
         # separate by commas
         searchwords_list = search.split(",")
         ret_dict =dict()
+        ret_dict_effect =dict()
         # get rid of spaces
         for index in range(0,len(searchwords_list)):
             searchwords_list[index] = searchwords_list[index].strip()
             # check if they are in the dict readable
             temp = self.human_input_dict.get(searchwords_list[index])
             if(temp != None):
-                searchwords_list[index] = temp
-            searchwords_list[index] = searchwords_list[index].replace(" ","_")
+                searchwords_list[index] = temp.strip()
+            #searchwords_list[index] = searchwords_list[index].replace(" ","_")
         print(searchwords_list)
         ele_set = {'light', 'wind', 'fire', 'dark', 'ice', 'water', 'earth', 'thunder'}
+        ad_skill_effects = cache.get_all_adventurers_skills_effects()
+        as_skill_effects = cache.get_all_assists_skills_effects()
+        ad_dev_effects = cache.get_all_adventurers_developments()
         for words in searchwords_list:
-            new_words = "%{}%".format(words)
+            new_words = words.lower()
             # Target, Attribute(), Modifier(Super, 10%), Type (phys/mag), Element(Wind/Light)
-            skillAdeffect_sql= "SELECT DISTINCT ase.AdventurerSkillid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE %s or e.name LIKE %s or ta.name=%s or ty.name LIKE %s or a.name LIKE %s or s.name LIKE %s".replace('danmemo',self.database)
-            skillAdElement_sql = "SELECT DISTINCT ase.AdventurerSkillid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid WHERE e.name = %s".replace('danmemo',self.database)
+            # row_as_dict = format_row_as_sns(adventurerskilleffectsid = adventurerskilleffectsid, adventurerskillid=adventurerskillid, unit_type=unit_type, duration=duration, element=element, modifier=modifier, type=type, target=target, attribute=attribute, speed=speed, stars=stars, title=title, alias=alias, limited=limited, character=character)
+            # row_as_dict = format_row_as_sns(assistskilleffectsid=assistskilleffectsid, assistskillid=assistskillid,unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
+
+            #skillAdeffect_sql= "SELECT DISTINCT ase.AdventurerSkillid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE %s or e.name LIKE %s or ta.name=%s or ty.name LIKE %s or a.name LIKE %s or s.name LIKE %s".replace('danmemo',self.database)
+            #skillAdElement_sql = "SELECT DISTINCT ase.AdventurerSkillid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid WHERE e.name = %s".replace('danmemo',self.database)
 
             #.format
             print(words)
             if(words.lower() in ele_set):
-                self._mycursorprepared.execute(skillAdElement_sql, (words,))
+                ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects 
+                                        if new_words == skilleffect.element.lower()]
+                #self._mycursorprepared.execute(skillAdElement_sql, (words,))
             else:
-                self._mycursorprepared.execute(skillAdeffect_sql, (new_words,new_words,words,new_words,new_words,new_words))
-            for row in self._mycursorprepared:
-                skillid = "Ad" + str(row[0])
-                print(skillid)
+                #self._mycursorprepared.execute(skillAdeffect_sql, (new_words,new_words,words,new_words,new_words,new_words))
+                # we want to iterate through every word
+                if(" " in new_words):
+                    temp_list = new_words.split(" ")
+                    if(len(temp_list) > 0):
+                        temp_word = temp_list.pop(0)
+                        ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects 
+                                                if temp_word in skilleffect.type.lower()
+                                                or temp_word == skilleffect.target.lower()
+                                                or temp_word in skilleffect.attribute.lower()
+                                                or temp_word in skilleffect.speed.lower()
+                                                or temp_word in skilleffect.modifier.lower()]
+                        # AND Logic for words
+                        for search in temp_list:
+                            ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects_ret 
+                                                if temp_word in skilleffect.type.lower()
+                                                or temp_word == skilleffect.target.lower()
+                                                or temp_word in skilleffect.attribute.lower()
+                                                or temp_word in skilleffect.speed.lower()
+                                                or temp_word in skilleffect.modifier.lower()]
+                    else:
+                        # empty
+                        ad_skill_effects_ret = []
+                        
+                else:
+                    ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects 
+                                            if new_words in skilleffect.type.lower()
+                                            or new_words == skilleffect.target.lower()
+                                            or new_words in skilleffect.attribute.lower()
+                                            or new_words in skilleffect.speed.lower()
+                                            or new_words in skilleffect.modifier.lower()]
+            my_set = set()
+            # distinct
+            for skilleffect in ad_skill_effects_ret:
+                skillid = (skilleffect.adventurerskilleffectsid,"Ad" +str(skilleffect.adventurerskillid))
+                if(ret_dict_effect.get(skillid) == None):
+                        ret_dict_effect[skillid] = 0
+                ret_dict_effect[skillid] = ret_dict_effect.get(skillid)+1
+                my_set.add(skilleffect.adventurerskillid)
+
+            for ids in my_set:
+                skillid = "Ad" + str(ids)
                 if(ret_dict.get(skillid) == None):
                         ret_dict[skillid] = 0
                 ret_dict[skillid] = ret_dict.get(skillid)+1
-            skillAseffect_sql= "SELECT DISTINCT ase.assistskillid FROM danmemo.assistskilleffects as ase INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid WHERE m.value LIKE %s or ta.name LIKE %s or a.name LIKE %s".replace('danmemo',self.database)
-            self._mycursorprepared.execute(skillAseffect_sql,(new_words,new_words,new_words))            
-            for row in self._mycursorprepared:
-                skillid = "As" + str(row[0])
+            
+            #skillAseffect_sql= "SELECT DISTINCT ase.assistskillid FROM danmemo.assistskilleffects as ase INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid WHERE m.value LIKE %s or ta.name LIKE %s or a.name LIKE %s".replace('danmemo',self.database)
+            #self._mycursorprepared.execute(skillAseffect_sql,(new_words,new_words,new_words))
+            as_skill_effects_ret = [skilleffect for skilleffect in as_skill_effects 
+                                        if new_words == skilleffect.target.lower()
+                                        or new_words in skilleffect.attribute.lower()
+                                        or new_words in skilleffect.modifier.lower()]
+            my_set = set()
+            # distinct
+            for skilleffect in as_skill_effects_ret:
+                skillid = (skilleffect.assistskilleffectsid,"As" +str(skilleffect.assistskillid))
+                if(ret_dict_effect.get(skillid) == None):
+                        ret_dict_effect[skillid] = 0
+                ret_dict_effect[skillid] = ret_dict_effect.get(skillid)+1
+                my_set.add(skilleffect.assistskillid)
+
+            for ids in my_set:
+                skillid = "As" + str(ids)
                 if(ret_dict.get(skillid) == None):
                         ret_dict[skillid] = 0
                 ret_dict[skillid] = ret_dict.get(skillid)+1
-            skillAveffect_sql='SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid WHERE a.name like %s or ad.name like %s'.replace("danmemo",self.database)
-            self._mycursorprepared.execute(skillAveffect_sql,(new_words,new_words))
-            for row in self._mycursorprepared:
-                skillid = "Av" + str(row[0])
+
+            #skillAveffect_sql='SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid WHERE a.name like %s or ad.name like %s'.replace("danmemo",self.database)
+            #self._mycursorprepared.execute(skillAveffect_sql,(new_words,new_words))
+            av_skill_effects_ret = [skilleffect for skilleffect in ad_dev_effects 
+                            if new_words in skilleffect.development.lower()
+                            or new_words in skilleffect.attribute.lower()]
+            for skilleffect in av_skill_effects_ret:
+                skillid = "Av" + str(skilleffect.adventurerdevelopmentid)
                 if(ret_dict.get(skillid) == None):
                         ret_dict[skillid] = 0
-                ret_dict[skillid] = ret_dict.get(skillid)+1            
+                ret_dict[skillid] = ret_dict.get(skillid)+1
+        # get all the skills with the highest freq
         ret_list=[]
         highest= None
         for keys in ret_dict:
@@ -260,7 +333,23 @@ class DBcontroller:
                 ret_list = [keys]
             elif(highest == ret_dict.get(keys)):
                 ret_list.append(keys)
-        print(ret_list)
+        # now sort by skilleffect id freq
+        dictlist = [(k,v) for k,v in ret_dict_effect.items()]
+        dictlist =  [skilleffect for skilleffect in dictlist 
+                        if (skilleffect[0])[1] in ret_list]
+        #sort list
+        # take second element for sort
+        def takeSecond(elem):
+            return elem[1]
+        dictlist.sort(key=takeSecond,reverse=True)
+        # final loop to get rid of skill duplicates
+        ret_list = []
+        dup_set = set()
+        for sortedValues in dictlist:
+            curr_id = (sortedValues[0])[1]
+            if(not(curr_id in dup_set)):
+                ret_list.append(curr_id)
+                dup_set.add(curr_id)
         return ret_list
 
     def assembleAdventurer(self, adventurerid):
@@ -363,6 +452,7 @@ class DBcontroller:
         return (skillname,ret)
 
     def assembleAdventurerSkill(self, skillid):
+
         ret = ""
         skillname = ""        
         skill_sql = "SELECT skilltype, skillname FROM danmemo.adventurerskill where adventurerskillid={}".replace("danmemo",self.database).format(skillid)
@@ -703,34 +793,118 @@ class DBcontroller:
             res.append(row_as_dict)
         return res
 
-    def get_all_adventurers_skills(self):
-        sql = "SELECT ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, c.name\
-        FROM {}.adventurerskilleffects AS ase\
-        INNER JOIN {}.element AS e on e.elementid = ase.eleid\
-        INNER JOIN {}.modifier AS m on m.modifierid = ase.modifierid\
-        INNER JOIN {}.type AS ty on ty.typeid = ase.typeid\
-        INNER JOIN {}.target AS ta on ta.targetid = ase.Targetid\
-        INNER JOIN {}.attribute AS a on a.attributeid = ase.attributeid\
-        LEFT JOIN {}.speed AS s on ase.speedid = s.speedid\
-        INNER JOIN {}.adventurerskill AS ads on ads.adventurerskillid = ase.adventurerskillid\
-        INNER JOIN {}.adventurer AS ad on ad.adventurerid = ads.adventurerid\
-        INNER JOIN {}.character AS c on c.characterid = ad.characterid"\
-        .format(*((self.database.lower(),)*10))
+    # def get_all_adventurers_skills(self):
+    #     sql = "SELECT ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, c.name\
+    #     FROM {}.adventurerskilleffects AS ase\
+    #     INNER JOIN {}.element AS e on e.elementid = ase.eleid\
+    #     INNER JOIN {}.modifier AS m on m.modifierid = ase.modifierid\
+    #     INNER JOIN {}.type AS ty on ty.typeid = ase.typeid\
+    #     INNER JOIN {}.target AS ta on ta.targetid = ase.Targetid\
+    #     INNER JOIN {}.attribute AS a on a.attributeid = ase.attributeid\
+    #     LEFT JOIN {}.speed AS s on ase.speedid = s.speedid\
+    #     INNER JOIN {}.adventurerskill AS ads on ads.adventurerskillid = ase.adventurerskillid\
+    #     INNER JOIN {}.adventurer AS ad on ad.adventurerid = ads.adventurerid\
+    #     INNER JOIN {}.character AS c on c.characterid = ad.characterid"\
+    #     .format(*((self.database.lower(),)*10))
 
-        print(sql)
+    #     print(sql)
 
-        self._mycursor.execute(sql)
+    #     self._mycursor.execute(sql)
 
-        res = []
-        unit_type = "adventurer"
-        for row in self._mycursor:
-            unit_id, character_id, alias, unit_label, stars, is_limited, character_name, is_collab = row
-            row_as_dict = format_row_as_sns(unit_type=unit_type, unit_id=unit_id, character_id=character_id, alias=alias, unit_label=unit_label, stars=stars, is_limited=is_limited, character_name=character_name, is_collab=is_collab)
-            res.append(row_as_dict)
-        return res
+    #     res = []
+    #     unit_type = "adventurer"
+    #     for row in self._mycursor:
+    #         unit_id, character_id, alias, unit_label, stars, is_limited, character_name, is_collab = row
+    #         row_as_dict = format_row_as_sns(unit_type=unit_type, unit_id=unit_id, character_id=character_id, alias=alias, unit_label=unit_label, stars=stars, is_limited=is_limited, character_name=character_name, is_collab=is_collab)
+    #         res.append(row_as_dict)
+    #     return res
 
+    # def get_all_adventurers_developments(self):
+    #     sql = "SELECT addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name\
+    #     FROM {}.adventurerdevelopment as addev\
+    #     INNER JOIN {}.modifier as m on m.modifierid = addev.modifierid\
+    #     INNER JOIN {}.attribute as a on a.attributeid = addev.attributeid\
+    #     INNER JOIN {}.adventurer as ad on ad.adventurerid = addev.adventurerid\
+    #     INNER JOIN {}.character as c on c.characterid = ad.characterid"\
+    #     .format(*((self.database.lower(),)*5))
+
+    #     self._mycursor.execute(sql)
+
+    #     res = []
+    #     unit_type = "adventurer"
+    #     for row in self._mycursor:
+    #         development, modifier, attribute, stars, title, alias, limited, character = row
+    #         row_as_dict = format_row_as_sns(unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
+    #         res.append(row_as_dict)
+    #     return res
+
+    # def get_all_adventurers_skills(self):
+    #     sql = "SELECT ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name\
+    #     FROM {}.adventurerskilleffects AS ase\
+    #     INNER JOIN {}.element AS e on e.elementid = ase.eleid\
+    #     INNER JOIN {}.modifier AS m on m.modifierid = ase.modifierid\
+    #     INNER JOIN {}.type AS ty on ty.typeid = ase.typeid\
+    #     INNER JOIN {}.target AS ta on ta.targetid = ase.Targetid\
+    #     INNER JOIN {}.attribute AS a on a.attributeid = ase.attributeid\
+    #     LEFT JOIN {}.speed AS s on ase.speedid = s.speedid\
+    #     INNER JOIN {}.adventurerskill AS ads on ads.adventurerskillid = ase.adventurerskillid\
+    #     INNER JOIN {}.adventurer AS ad on ad.adventurerid = ads.adventurerid\
+    #     INNER JOIN {}.character AS c on c.characterid = ad.characterid"\
+    #     .format(*((self.database.lower(),)*10))
+
+    #     self._mycursor.execute(sql)
+
+    #     res = []
+    #     unit_type = "adventurer"
+    #     for row in self._mycursor:
+    #         duration, element, modifier, type, target, attribute, speed, stars, title, alias, limited, character = row
+    #         row_as_dict = format_row_as_sns(unit_type=unit_type, duration=duration, element=element, modifier=modifier, type=type, target=target, attribute=attribute, speed=speed, stars=stars, title=title, alias=alias, limited=limited, character=character)
+    #         res.append(row_as_dict)
+    #     return res
+
+    # def get_all_assists_skills(self):
+    #     sql = "SELECT ase.duration, m.value as modifier, ta.name as target, a.name as attribute, assist.stars, assist.title, assist.alias, assist.limited, c.name\
+    #     FROM {}.assistskilleffects as ase\
+    #     INNER JOIN {}.modifier as m on m.modifierid = ase.modifierid\
+    #     INNER JOIN {}.target as ta on ta.targetid = ase.Targetid\
+    #     INNER JOIN {}.attribute as a on a.attributeid = ase.attributeid\
+    #     INNER JOIN {}.assistskill as ass on ass.assistskillid = ase.assistskillid\
+    #     INNER JOIN {}.assist as assist on assist.assistid = ass.assistid\
+    #     INNER JOIN {}.character as c on c.characterid = assist.characterid"\
+    #     .format(*((self.database.lower(),)*7))
+
+    #     self._mycursor.execute(sql)
+
+    #     res = []
+    #     unit_type = "assist"
+    #     for row in self._mycursor:
+    #         duration, modifier, target, attribute, stars, title, alias, limited, character = row
+    #         row_as_dict = format_row_as_sns(unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
+    #         res.append(row_as_dict)
+    #     return res
+
+
+    # def get_all_adventurers_developments(self):
+    #     sql = "SELECT addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name\
+    #     FROM {}.adventurerdevelopment as addev\
+    #     INNER JOIN {}.modifier as m on m.modifierid = addev.modifierid\
+    #     INNER JOIN {}.attribute as a on a.attributeid = addev.attributeid\
+    #     INNER JOIN {}.adventurer as ad on ad.adventurerid = addev.adventurerid\
+    #     INNER JOIN {}.character as c on c.characterid = ad.characterid"\
+    #     .format(*((self.database.lower(),)*5))
+
+    #     self._mycursor.execute(sql)
+
+    #     res = []
+    #     unit_type = "adventurer"
+    #     for row in self._mycursor:
+    #         development, modifier, attribute, stars, title, alias, limited, character = row
+    #         row_as_dict = format_row_as_sns(unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
+    #         res.append(row_as_dict)
+    #     return res
+    
     def get_all_adventurers_developments(self):
-        sql = "SELECT addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name\
+        sql = "SELECT addev.adventurerdevelopmentid,addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name\
         FROM {}.adventurerdevelopment as addev\
         INNER JOIN {}.modifier as m on m.modifierid = addev.modifierid\
         INNER JOIN {}.attribute as a on a.attributeid = addev.attributeid\
@@ -743,13 +917,25 @@ class DBcontroller:
         res = []
         unit_type = "adventurer"
         for row in self._mycursor:
-            development, modifier, attribute, stars, title, alias, limited, character = row
-            row_as_dict = format_row_as_sns(unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
+            adventurerdevelopmentid, development, modifier, attribute, stars, title, alias, limited, character = row
+            row_as_dict = format_row_as_sns(adventurerdevelopmentid=adventurerdevelopmentid,unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
             res.append(row_as_dict)
         return res
 
     def get_all_adventurers_skills(self):
-        sql = "SELECT ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name\
+        sql = "SELECT adventurerskillid, adventurerid, skillname, skilltype\
+        FROM {}.adventurerskill"\
+        .format(self.database.lower())
+        self._mycursor.execute(sql)
+        res = []
+        for row in self._mycursor:
+            adventurerskillid, adventurerid, skillname, skilltype= row
+            row_as_dict = format_row_as_sns(adventurerskillid= adventurerskillid, adventurerid= adventurerid, skillname=skillname, skilltype=skilltype)
+            res.append(row_as_dict)
+        return res
+
+    def get_all_adventurers_skills_effects(self):
+        sql = "SELECT ase.AdventurerSkillEffectsid, ase.AdventurerSkillid, ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name\
         FROM {}.adventurerskilleffects AS ase\
         INNER JOIN {}.element AS e on e.elementid = ase.eleid\
         INNER JOIN {}.modifier AS m on m.modifierid = ase.modifierid\
@@ -767,13 +953,25 @@ class DBcontroller:
         res = []
         unit_type = "adventurer"
         for row in self._mycursor:
-            duration, element, modifier, type, target, attribute, speed, stars, title, alias, limited, character = row
-            row_as_dict = format_row_as_sns(unit_type=unit_type, duration=duration, element=element, modifier=modifier, type=type, target=target, attribute=attribute, speed=speed, stars=stars, title=title, alias=alias, limited=limited, character=character)
+            adventurerskilleffectsid, adventurerskillid, duration, element, modifier, type, target, attribute, speed, stars, title, alias, limited, character = row
+            row_as_dict = format_row_as_sns(adventurerskilleffectsid = adventurerskilleffectsid, adventurerskillid=adventurerskillid, unit_type=unit_type, duration=duration, element=element, modifier=modifier, type=type, target=target, attribute=attribute, speed=speed, stars=stars, title=title, alias=alias, limited=limited, character=character)
             res.append(row_as_dict)
         return res
 
     def get_all_assists_skills(self):
-        sql = "SELECT ase.duration, m.value as modifier, ta.name as target, a.name as attribute, assist.stars, assist.title, assist.alias, assist.limited, c.name\
+        sql = "SELECT assistskillid, assistid, skillname\
+        FROM {}.assistskill"\
+        .format(self.database.lower())
+        self._mycursor.execute(sql)
+        res = []
+        for row in self._mycursor:
+            assistsskillid, assistsid, skillname= row
+            row_as_dict = format_row_as_sns(assistsskillid= assistsskillid, assistsid= assistsid, skillname=skillname)
+            res.append(row_as_dict)
+        return res
+
+    def get_all_assists_skills_effects(self):
+        sql = "SELECT ase.assistskilleffectsid, ase.assistskillid, ase.duration, m.value as modifier, ta.name as target, a.name as attribute, assist.stars, assist.title, assist.alias, assist.limited, c.name\
         FROM {}.assistskilleffects as ase\
         INNER JOIN {}.modifier as m on m.modifierid = ase.modifierid\
         INNER JOIN {}.target as ta on ta.targetid = ase.Targetid\
@@ -788,10 +986,12 @@ class DBcontroller:
         res = []
         unit_type = "assist"
         for row in self._mycursor:
-            duration, modifier, target, attribute, stars, title, alias, limited, character = row
-            row_as_dict = format_row_as_sns(unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
+            assistskilleffectsid, assistskillid,duration, modifier, target, attribute, stars, title, alias, limited, character = row
+            row_as_dict = format_row_as_sns(assistskilleffectsid=assistskilleffectsid, assistskillid=assistskillid,unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
             res.append(row_as_dict)
         return res
+    
+
 
 
 if __name__ == "__main__":

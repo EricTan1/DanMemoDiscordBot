@@ -14,6 +14,8 @@ from database.DBcontroller import DBcontroller
 from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
 from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier
 from commands.utils import imageHorizontalConcat, imageVerticalConcat, get_emoji, Status
+from commands.cache import Cache
+
 
 async def run(dbConfig, client, ctx, *search):
     """ Skill Search
@@ -24,7 +26,8 @@ async def run(dbConfig, client, ctx, *search):
         client {[discord.Client]} -- the discord bot object
         ctx {[discord.context]} -- command message context
     """
-    print(search)
+
+
     my_search = ""
     for words in search:
         my_search= my_search + words + " "
