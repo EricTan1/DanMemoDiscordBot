@@ -18,9 +18,9 @@ async def run(db_config, ctx):
     if previous_bento is not None:
         next_bracket = previous_bento.replace(microsecond=0, second=0, minute=0)
         if previous_bento.hour % 2 == 0:
-            next_bracket += datetime.timedelta(hours=2)
-        else:
             next_bracket += datetime.timedelta(hours=1)
+        else:
+            next_bracket += datetime.timedelta(hours=2)
 
         difference = (next_bracket - now).total_seconds()
         if difference > 0:
