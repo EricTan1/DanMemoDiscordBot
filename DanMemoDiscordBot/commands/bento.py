@@ -22,8 +22,9 @@ async def run(db_config, ctx):
         else:
             next_bracket += datetime.timedelta(hours=1)
 
-        if next_bracket >= now:
-            await no_bento(user, ctx)
+        difference = (next_bracket - now).total_seconds()
+        if difference > 0:
+            await no_bento(user, ctx, difference)
             return
             
     currency_number = user.crepes
@@ -57,7 +58,7 @@ async def run(db_config, ctx):
     await ctx.send(embed=embed, file=discord.File("./images/bento/yes.png"))
 
 
-async def no_bento(user, ctx):
+async def no_bento(user, ctx, difference):
     currency_number = user.crepes
     if currency_number is None:
         currency_number = 0
@@ -66,8 +67,11 @@ async def no_bento(user, ctx):
 
     title = "You are back already?"
 
+    minutes_left = int(difference / 60)
+
     description = "Sorry, I don't have anything ready for you, " + mention_author(ctx) + "..."
-    description += " Please come back again later!"
+    #description += " Please come back again later!"
+    description += " Please come back again in **" + str(minutes_left) + "** min!"
 
     if currency_number > 1:
         footer = "There are " + str(currency_number) + " " + emoji.plural + " left in your bento box!"
