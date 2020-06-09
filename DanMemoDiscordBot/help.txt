@@ -56,4 +56,28 @@ EXAMPLE:
 EXAMPLE BOT OUTPUT:
 E_1 - Anonymous Millionaire:
 Riveria, Dionysis, Raul, Amid
+F
+**Bento**
+Alias: Bento
+Usage: !$Bento
+Daily syr's lunch box! Get crepes to roll for the gacha
+F
+EXAMPLE:
+!$bento
+F
+**Gacha**
+Alias: gacha
+Usage: !$gacha
+Takes crepes from bento command and rolls the gacha
+F
+EXAMPLE:
+!$gacha
+F
+**Profile**
+Alias: profile
+Usage: !$profile
+Profile of all characters you have rolled gacha for
+F
+EXAMPLE:
+!$profile
 E
