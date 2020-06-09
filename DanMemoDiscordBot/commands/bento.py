@@ -12,7 +12,7 @@ async def run(db_config, ctx):
 
     user = User.get_user(db_config, author)
 
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(datetime.timezone.utc)
 
     previous_bento = user.last_bento_date
     if previous_bento is not None:
@@ -22,7 +22,14 @@ async def run(db_config, ctx):
         else:
             next_bracket += datetime.timedelta(hours=2)
 
+        print("previous_bento:",previous_bento)
+        print("next_bracket:",next_bracket)
+        next_bracket = next_bracket.replace(tzinfo=datetime.timezone.utc)
+        print("next_bracket aware:",next_bracket)
+
         difference = (next_bracket - now).total_seconds()
+        print("now:",now)
+        print("difference:",difference)
         if difference > 0:
             await no_bento(user, ctx, difference)
             return
