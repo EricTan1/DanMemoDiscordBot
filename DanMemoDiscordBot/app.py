@@ -71,7 +71,7 @@ async def bento(ctx):
 async def gacha(ctx,*args):
     await command_gacha.run(dbConfig,client,ctx,*args)
 
-@client.command(aliases=["p"])
+@client.command(aliases=["p","inventory"])
 async def profile(ctx,*args):
     await command_profile.run(dbConfig,client,ctx,*args)
 

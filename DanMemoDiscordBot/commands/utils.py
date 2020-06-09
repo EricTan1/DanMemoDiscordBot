@@ -26,6 +26,15 @@ class GachaRates(Enum):
     ASSIST_4_STARS = 0.01
 
 
+class GachaRatesEleventh(Enum):
+    """ gacha rates for eleventh draw
+    """
+    ADVENTURER_3_STARS = 0.64
+    ADVENTURER_4_STARS = 0.02
+    ASSIST_3_STARS = 0.33
+    ASSIST_4_STARS = 0.01
+
+
 class GachaRatesOnlyFourStars(Enum):
     """gacha rates for pulling assist/adventurers
     """

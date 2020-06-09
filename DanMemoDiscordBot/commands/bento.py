@@ -12,13 +12,22 @@ async def run(db_config, ctx):
 
     user = User.get_user(db_config, author)
 
-    previous = user.last_bento_date
-    now = datetime.datetime.now()
+    previous_bento = user.last_bento_date
+    if previous_bento is not None:
+        next_bracket = previous_bento.replace(microsecond=0, second=0, minute=0)
+        if previous_bento.hour % 2 == 0:
+            next_bracket += datetime.timedelta(hours=2)
+        else:
+            next_bracket += datetime.timedelta(hours=1)
 
-    if previous is not None and previous.date() >= now.date():
-        await no_bento(user, ctx)
-        return
-
+        now = datetime.datetime.now()
+        print("Previous bento date:",previous_bento)
+        print("Next bracket:",next_bracket)
+        print("Now:",now)
+        if next_bracket >= now:
+            await no_bento(user, ctx)
+            return
+            
     currency_number = user.crepes
     if currency_number is None:
         currency_number = 0
@@ -36,10 +45,10 @@ async def run(db_config, ctx):
 
     description = mention_author(ctx) + " has received a " + emoji_str + "!"
 
-    if currency_number > 1:
-        footer = "There are " + str(currency_number) + " " + emoji.plural + " left in their bento box!"
-    else:
+    if currency_number == 1:
         footer = "There is " + str(currency_number) + " " + emoji.name + " left in their bento box!"
+    else:
+        footer = "There are " + str(currency_number) + " " + emoji.plural + " left in their bento box!"
 
     embed = discord.Embed()
     embed.color = Status.OK.value
@@ -60,7 +69,7 @@ async def no_bento(user, ctx):
     title = "You are back already?"
 
     description = "Sorry, I don't have anything ready for you, " + mention_author(ctx) + "..."
-    description += " Please come back again tomorrow!"
+    description += " Please come back again later!"
 
     if currency_number > 1:
         footer = "There are " + str(currency_number) + " " + emoji.plural + " left in your bento box!"

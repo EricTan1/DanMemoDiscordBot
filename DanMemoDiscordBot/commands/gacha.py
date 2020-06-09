@@ -6,13 +6,30 @@ import time
 from numpy.random import choice
 from os.path import isfile, abspath, isdir
 import datetime
+from threading import Lock
 
 from database.entities.User import User
-from commands.utils import Status, get_emoji, mention_author, GachaRates, GachaRatesOnlyFourStars
+from commands.utils import Status, get_emoji, mention_author, GachaRates, GachaRatesEleventh, GachaRatesOnlyFourStars, getDefaultEmoji
 from commands.cache import Cache
 from database.DBcontroller import DBcontroller
 
+lock = Lock()
+
 async def run(dbConfig, client, ctx, *args):
+    #acquired = lock.acquire(blocking=True, timeout=60)
+    acquired = lock.acquire(blocking=False)
+    if acquired:
+        await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))
+    else:
+        await ctx.message.add_reaction(getDefaultEmoji("x"))
+        return
+    try:
+        await engine(dbConfig,client,ctx,*args)
+    finally:
+        if acquired:
+            lock.release()
+
+async def engine(dbConfig, client, ctx, *args):
     author = str(ctx.message.author)
     content = ctx.message.content
 
@@ -32,14 +49,13 @@ async def run(dbConfig, client, ctx, *args):
     user.crepes = currency_number
 
     pulls = get_pulls(10, GachaRates)
-    pulls.extend(get_pulls(1, GachaRatesOnlyFourStars))
+    pulls.extend(get_pulls(1, GachaRatesEleventh))
     
     user.add_units(pulls)
     
     user.update_user(dbConfig,datetime.datetime.now(),content)
 
-    await ten_pull_message(ctx, currency_number, pulls[:-1])
-    await last_pull_message(ctx, pulls)
+    await pull_messages(ctx, currency_number, pulls)
 
 async def no_gacha(user, currency_number, ctx):
     emoji = get_emoji("crepe")
@@ -50,7 +66,10 @@ async def no_gacha(user, currency_number, ctx):
     description = "What do you think you are doing, " + mention_author(ctx) + "?"
     description += " Come back when you have something for me!"
 
-    footer = "There is " + str(currency_number) + " " + emoji.name + " left in your bento box!"
+    if currency_number == 1:
+        footer = "There is " + str(currency_number) + " " + emoji.name + " left in your bento box!"
+    else:
+        footer = "There are " + str(currency_number) + " " + emoji.plural + " left in your bento box!"
 
     embed = discord.Embed()
     embed.color = Status.KO.value
@@ -102,33 +121,47 @@ def get_pulls(number, gacha_rates):
         pulls.append(get_random_unit(category))
     return pulls
 
-async def ten_pull_message(ctx, currency_number, pulls):
+async def pull_messages(ctx, currency_number, pulls):
     emoji = get_emoji("crepe")
     emojiStr = emoji.toString(ctx)
 
-    title = "Hold on! Who goes there?"
-    description = "I guess I could let you pull if you share your " + emoji.name + " with me. But please, don't get addicted."
-    description += "\n" + mention_author(ctx) + " has shared one " + emojiStr + " with Ais!"
+    #title = "Hold on! Who goes there?"
+    #description = "I guess I could let you pull if you share your " + emoji.name + " with me. But please, don't get addicted."
+    #description += "\n" + mention_author(ctx) + " has shared one " + emojiStr + " with Ais!"
 
-    if currency_number > 1:
-        footer = "There are " + str(currency_number) + " " + emoji.plural + " left in your bento box!"
-    else:
+    title = "Nom nom... Fuwa fuwa! ♡"
+
+    description = "The crepe was really good, " + mention_author(ctx) + "! Please take this:" + "\n"
+    for pull in pulls:
+        description += "🌟"*pull.stars + " [" + pull.unit_label + "] " + pull.character_name + "\n"
+
+    if currency_number == 1:
         footer = "There is " + str(currency_number) + " " + emoji.name + " left in your bento box!"
+    else:
+        footer = "There are " + str(currency_number) + " " + emoji.plural + " left in your bento box!"
 
     per_line = 5
     gif_path = "./images/gacha.gif"
     ms_per_frame = 1000
     create_gif(gif_path,pulls,per_line,ms_per_frame)
 
+    '''embed = discord.Embed()
+    embed.title = title
+    embed.description = description
+    embed.set_footer(text=footer)
+    embed.set_image(url="attachment://"+gif_path)'''
+    await ctx.send(file=discord.File(gif_path))
+
     embed = discord.Embed()
     embed.color = Status.OK.value
     embed.title = title
     embed.description = description
     embed.set_footer(text=footer)
-    embed.set_image(url="attachment://"+gif_path)
-    await ctx.send(embed=embed, file=discord.File(gif_path))
+    embed.set_image(url="attachment://yes.png")
+    await ctx.send(embed=embed, file=discord.File("./images/gacha/yes.png"))
 
-async def last_pull_message(ctx, pulls):
+
+'''async def last_pull_message(ctx, pulls):
     last_pull = pulls[-1]
 
     title = "Nom nom... Fuwa fuwa! ♡"
@@ -155,6 +188,8 @@ async def last_pull_message(ctx, pulls):
     #await ctx.send(embed=embed, file=discord.File(last_pull_file))
     embed.set_image(url="attachment://"+image_path)
     await ctx.send(embed=embed, file=discord.File(imgByteArr, filename=image_path))
+'''
+
 
 def create_gif(gif_path, pulls, per_line, ms_per_frame):
     pulls_images = []
@@ -168,7 +203,7 @@ def create_gif(gif_path, pulls, per_line, ms_per_frame):
     for i in range(len(pulls_images)+1):
         images_current_iteration = pulls_images[:i] + [hidden_image] * (len(pulls_images)-i)
 
-        full_imageBytes = concatenate_images(images_current_iteration, per_line)
+        full_imageBytes = concatenate_images_eleven_pulls(images_current_iteration)
         full_image = Image.open(full_imageBytes)
 
         gif_images.append(full_image)
@@ -181,18 +216,33 @@ def save_gif(images, path, ms_per_frame):
     print("Absolute path:",abspath(path))
     images[0].save(path, save_all=True, append_images=images[1:], optimize=False, duration=ms_per_frame)#, transparency=0) #loop=1
 
+def concatenate_images_eleven_pulls(images):
+    first_line = concatenate_images_horizontally(images[:6])
+    second_line = concatenate_images_horizontally(images[6:])
+
+    w1, h1 = first_line.size
+    w2, h2 = second_line.size
+
+    resized_second_line = Image.new(second_line.mode, (w1, h2), (255, 255, 255))
+    resized_second_line.paste(second_line, ((w1-w2)//2, 0))
+
+    images_lines = [convert_to_bytes(first_line),convert_to_bytes(resized_second_line)]
+
+    full_image = concatenate_images_vertically(images_lines,True)
+    return full_image
+
 def concatenate_images(images, per_line=5):
     chunks = [images[x:x+per_line] for x in range(0, len(images), per_line)]
 
     images_lines = []
     for chunk in chunks:
-        images_line = concatenate_images_horizontally(chunk)
+        images_line = concatenate_images_horizontally(chunk,True)
         images_lines.append(images_line)
 
-    full_image = concatenate_images_vertically(images_lines)
+    full_image = concatenate_images_vertically(images_lines,True)
     return full_image
 
-def concatenate_images_horizontally(images):
+def concatenate_images_horizontally(images,to_bytes=False):
     widths, heights = zip(*(i.size for i in images))
     
     total_width = sum(widths)
@@ -208,14 +258,12 @@ def concatenate_images_horizontally(images):
     white_bg = Image.new("RGB", new_im.size, (255, 255, 255))
     white_bg.paste(new_im, mask=new_im.split()[3]) # 3 is the alpha channel
 
-    # convert to bytes
-    imgByteArr = io.BytesIO()
-    white_bg.save(imgByteArr, format='PNG')
-    imgByteArr.seek(0)
+    if to_bytes:
+        return convert_to_bytes(white_bg)
+    else:
+        return white_bg
 
-    return imgByteArr
-
-def concatenate_images_vertically(image_paths):
+def concatenate_images_vertically(image_paths,to_bytes=False):
     images = [Image.open(x) for x in image_paths]
     widths, heights = zip(*(i.size for i in images))
     
@@ -229,11 +277,15 @@ def concatenate_images_vertically(image_paths):
         new_im.paste(im, (0,y_offset))
         y_offset += im.size[1]
 
-    # convert to bytes
-    imgByteArr = io.BytesIO()
-    new_im.save(imgByteArr, format='PNG')
-    imgByteArr.seek(0)
+    if to_bytes:
+        return convert_to_bytes(new_im)
+    else:
+        return new_im
 
+def convert_to_bytes(img):
+    imgByteArr = io.BytesIO()
+    img.save(imgByteArr, format='PNG')
+    imgByteArr.seek(0)
     return imgByteArr
 
 def rarify(path, rarity):
