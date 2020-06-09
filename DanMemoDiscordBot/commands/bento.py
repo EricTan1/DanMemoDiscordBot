@@ -12,6 +12,8 @@ async def run(db_config, ctx):
 
     user = User.get_user(db_config, author)
 
+    now = datetime.datetime.now()
+
     previous_bento = user.last_bento_date
     if previous_bento is not None:
         next_bracket = previous_bento.replace(microsecond=0, second=0, minute=0)
@@ -20,10 +22,6 @@ async def run(db_config, ctx):
         else:
             next_bracket += datetime.timedelta(hours=1)
 
-        now = datetime.datetime.now()
-        print("Previous bento date:",previous_bento)
-        print("Next bracket:",next_bracket)
-        print("Now:",now)
         if next_bracket >= now:
             await no_bento(user, ctx)
             return
