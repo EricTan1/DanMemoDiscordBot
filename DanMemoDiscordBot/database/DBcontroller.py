@@ -29,7 +29,7 @@ class DBConfig():
             self.port = "3306"
             self.database = "danmemo"
         elif environment == DatabaseEnvironment.HEROKU:
-            result = urlparse(os.environ.get("CLEARDB_DATABASE_URL"))
+            result = urlparse(os.environ.get("AWS_DATABASE_URL"))
             self.hostname = result.hostname
             self.username = result.username
             self.password = result.password
