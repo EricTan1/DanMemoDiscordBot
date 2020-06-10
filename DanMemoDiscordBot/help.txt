@@ -2,9 +2,9 @@ F
 **Character Search**
 Alias: cs, csearch
 Usage: !$cs <insert search here>
-If the bot can narrow down the search to one character then it
+If the bot can narrow down the search to one character, it
 will display that character information.
-Note bot supports stuff like "ny" for new year etc
+The bot also supports aliases ("ny" for "new year"...)
 F
 EXAMPLE:
 !$cs princess
@@ -21,7 +21,7 @@ Attributes can be:
 Target : foes, allies, foe, ally, self, skill
 Attribute : hp regen, sleep, phys resist, crit damage, seal...
 Modifier : super, hi, lo, 10%, 30%...
-Element: Fire, Water, Earth...
+Element: fire, water, earth...
 Type: physical, magical, balance...
 F
 EXAMPLE:
@@ -48,7 +48,7 @@ F
 **DispatchQuest**
 Alias: dp, dispatch, dq
 Usage: !$dp <quest>
-Gets all the special board dispatch quests relating to the search
+Gets all the special board dispatch quests related to the search
 F
 EXAMPLE:
 !$dp millionaire 1
