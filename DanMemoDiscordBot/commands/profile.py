@@ -76,7 +76,7 @@ async def summary_message(user, client, ctx, *args):
     for i in range(len(units_lines)):
         description += units_lines[i]
 
-    footer = "Total distinct number: " + str(len(units_lines))
+    footer = "Total distinct number: " + str(len(units))
 
     embed = discord.Embed()
     embed.color = Status.OK.value

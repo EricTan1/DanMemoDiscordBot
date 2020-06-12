@@ -697,7 +697,7 @@ class DBcontroller:
             return unit_type, stars, unit_id, title, name
 
     def get_user(self, discord_id):
-        sql = "SELECT user_id, discord_id, crepes, last_bento_date, units FROM {}.user user WHERE user.discord_id = %s"\
+        sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, gacha_mode FROM {}.user user WHERE user.discord_id = %s"\
             .format(self.database)
         print(sql)
         parameters = (discord_id,)
@@ -715,7 +715,9 @@ class DBcontroller:
             else:
                 units = json.loads(row[4])
 
-            user = database.entities.User.User(user_id, discordid, crepes, last_bento_date, units)
+            gacha_mode = row[5]
+
+            user = database.entities.User.User(user_id, discordid, crepes, last_bento_date, units, gacha_mode)
 
             return user
 
@@ -727,12 +729,12 @@ class DBcontroller:
 
     def update_user(self, user, date, command):
         if user.user_id is None:
-            sql = "INSERT INTO {}.user (discord_id, crepes, last_bento_date, units) VALUES (%s,%s,%s,%s)".format(self.database)
-            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units))
+            sql = "INSERT INTO {}.user (discord_id, crepes, last_bento_date, units, gacha_mode) VALUES (%s,%s,%s,%s,%s)".format(self.database)
+            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units), user.gacha_mode)
         else:
-            sql = "UPDATE {}.user SET discord_id = %s, crepes = %s, last_bento_date = %s, units = %s" \
+            sql = "UPDATE {}.user SET discord_id = %s, crepes = %s, last_bento_date = %s, units = %s, gacha_mode = %s" \
                   " WHERE user_id = %s".format(self.database)
-            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units), user.user_id)
+            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units), user.gacha_mode, user.user_id)
 
         log = LogsCommand(user.discord_id, date, command, sql, parameters)
         print(log)

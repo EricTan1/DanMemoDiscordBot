@@ -10,7 +10,7 @@ from threading import Lock
 from collections import Counter
 
 from database.entities.User import User
-from commands.utils import Status, get_emoji, mention_author, GachaRates, GachaRatesEleventh, GachaRatesOnlyFourStars, getDefaultEmoji
+from commands.utils import Status, get_emoji, mention_author, GachaRates, GachaRatesEleventh, GachaRatesOnlyFourStars, getDefaultEmoji, GachaModes
 from commands.cache import Cache
 from database.DBcontroller import DBcontroller
 
@@ -56,7 +56,7 @@ async def engine(dbConfig, client, ctx, *args):
     
     user.update_user(dbConfig,datetime.datetime.now(),content)
 
-    await pull_messages(ctx, currency_number, pulls)
+    await pull_messages(ctx, currency_number, pulls, user.gacha_mode)
 
 async def no_gacha(user, currency_number, ctx):
     emoji = get_emoji("crepe")
@@ -122,7 +122,7 @@ def get_pulls(number, gacha_rates):
         pulls.append(get_random_unit(category))
     return pulls
 
-async def pull_messages(ctx, currency_number, pulls):
+async def pull_messages(ctx, currency_number, pulls, gacha_mode):
     emoji = get_emoji("crepe")
     emojiStr = emoji.toString(ctx)
 
@@ -141,17 +141,16 @@ async def pull_messages(ctx, currency_number, pulls):
     else:
         footer = "There are " + str(currency_number) + " " + emoji.plural + " left in your bento box!"
 
-    per_line = 5
-    gif_path = "./images/gacha.gif"
-    ms_per_frame = 1000
-    create_gif(gif_path,pulls,per_line,ms_per_frame)
-
-    '''embed = discord.Embed()
-    embed.title = title
-    embed.description = description
-    embed.set_footer(text=footer)
-    embed.set_image(url="attachment://"+gif_path)'''
-    await ctx.send(file=discord.File(gif_path))
+    if gacha_mode == GachaModes.IMG.value:
+        img_path = "./images/gacha.png"
+        create_image(img_path,pulls)
+        await ctx.send(file=discord.File(img_path))
+    else:
+        #per_line = 5
+        gif_path = "./images/gacha.gif"
+        ms_per_frame = 1000
+        create_gif(gif_path,pulls,ms_per_frame)
+        await ctx.send(file=discord.File(gif_path))
 
     embed = discord.Embed()
     embed.color = Status.OK.value
@@ -191,8 +190,20 @@ async def pull_messages(ctx, currency_number, pulls):
     await ctx.send(embed=embed, file=discord.File(imgByteArr, filename=image_path))
 '''
 
+def create_image(img_path, pulls):
+    pulls_images = []
+    for pull in pulls:
+        path = get_folder(pull)
+        image = rarify(path,pull.stars)
+        pulls_images.append(image)
 
-def create_gif(gif_path, pulls, per_line, ms_per_frame):
+    full_imageBytes = concatenate_images_eleven_pulls(pulls_images)
+    full_image = Image.open(full_imageBytes)
+
+    full_image.save(img_path, "PNG")
+
+
+def create_gif(gif_path, pulls, ms_per_frame):
     pulls_images = []
     for pull in pulls:
         path = get_folder(pull)
@@ -212,8 +223,6 @@ def create_gif(gif_path, pulls, per_line, ms_per_frame):
     save_gif(gif_images, gif_path, ms_per_frame)
 
 def save_gif(images, path, ms_per_frame):
-    print("Images:",images)
-    print("Relative path:",path)
     print("Absolute path:",abspath(path))
     images[0].save(path, save_all=True, append_images=images[1:], optimize=False, duration=ms_per_frame)#, transparency=0) #loop=1
 

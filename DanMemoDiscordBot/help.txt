@@ -58,8 +58,8 @@ E_1 - Anonymous Millionaire:
 Riveria, Dionysis, Raul, Amid
 F
 **Bento**
-Alias: Bento
-Usage: !$Bento
+Alias: bento
+Usage: !$bento
 Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls 
 F
 EXAMPLE:
@@ -73,9 +73,17 @@ F
 EXAMPLE:
 !$gacha
 F
+**Gacha Mode**
+Alias: gachamode, gm
+Usage: !$gm <img/gif>
+Change the way your gacha pulls are shown
+F
+EXAMPLE:
+!$gachamode img
+F
 **Profile**
-Alias: profile, inventory
-Usage: !$profile
+Alias: profile, inventory, p
+Usage: !$profile <summary>
 Your personal stats and inventory
 F
 EXAMPLE:

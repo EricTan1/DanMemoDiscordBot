@@ -42,6 +42,13 @@ class GachaRatesOnlyFourStars(Enum):
     ASSIST_4_STARS = 0.33
 
 
+class GachaModes(Enum):
+    """how the gacha is being shown
+    """
+    GIF = 0
+    IMG = 1
+
+
 class HeroAscensionStatsP(Enum):
     """ HA stats for physical units
     """

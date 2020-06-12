@@ -10,6 +10,7 @@ import commands.bento as command_bento
 import commands.characterSearch as command_characterSearch
 import commands.dispatch as command_dispatch
 import commands.gacha as command_gacha
+import commands.gachaMode as command_gachaMode
 import commands.help as command_help
 import commands.profile as command_profile
 import commands.rb as command_rb
@@ -70,6 +71,10 @@ async def bento(ctx):
 @client.command(aliases=["pull"])
 async def gacha(ctx,*args):
     await command_gacha.run(dbConfig,client,ctx,*args)
+
+@client.command(aliases=["gm"])
+async def gachamode(ctx,*args):
+    await command_gachaMode.run(dbConfig,client,ctx,*args)
 
 @client.command(aliases=["p","inventory"])
 async def profile(ctx,*args):
