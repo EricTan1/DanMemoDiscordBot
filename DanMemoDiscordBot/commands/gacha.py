@@ -7,6 +7,7 @@ from numpy.random import choice
 from os.path import isfile, abspath, isdir
 import datetime
 from threading import Lock
+from collections import Counter
 
 from database.entities.User import User
 from commands.utils import Status, get_emoji, mention_author, GachaRates, GachaRatesEleventh, GachaRatesOnlyFourStars, getDefaultEmoji
@@ -314,3 +315,30 @@ def get_folder(unit):
         path = "./images/units/gac_dummy/"
 
     return path
+
+def test_gacha_rates():
+    number = 100_000
+    print("Simulating "+str(number)+" pulls")
+    pulls = random_pulls(number,GachaRatesEleventh)
+    print("Aggregating results")
+    counter = Counter(pulls)
+    print(counter)
+
+'''
+Result:
+Counter({
+'ADVENTURER_2_STARS': 54125, 
+'ASSIST_2_STARS': 28052, 
+'ADVENTURER_3_STARS': 9909, 
+'ASSIST_3_STARS': 4936, 
+'ADVENTURER_4_STARS': 1961, 
+'ASSIST_4_STARS': 1017})
+
+Expected:
+ADVENTURER_2_STARS = 0.54
+ASSIST_2_STARS = 0.28
+ADVENTURER_3_STARS = 0.10
+ASSIST_3_STARS = 0.05
+ADVENTURER_4_STARS = 0.02
+ASSIST_4_STARS = 0.01
+'''

@@ -17,6 +17,77 @@ async def run(dbConfig, client, ctx, *args):
 
     user = User.get_user(dbConfig, author)
 
+    if "summary" in args:
+        await summary_message(user, client, ctx, *args)
+    else:
+        await detailed_message(user, client, ctx, *args)
+
+
+async def summary_message(user, client, ctx, *args):
+    crepes = user.crepes
+    if crepes is None:
+        crepes = 0
+
+    currency_lines = []
+    currency_line = str(crepes)+" x "+get_emoji("crepe").toString(ctx)+"\n"
+    currency_lines.append(currency_line)
+
+    units = []
+    if user.units is not None:
+        for key in user.units:
+            units.append(user.units[key])
+    print(units)
+
+    units = sorted(units, key = operator.itemgetter("number"), reverse=True)
+    units = sorted(units, key = operator.itemgetter("unit_type"))
+    units = sorted(units, key = operator.itemgetter("stars"), reverse=True)
+
+    sorted_categories = []
+    previous_category = None
+    previous_number = None
+    for unit in units:
+        category = "🌟"*unit["stars"]
+        if unit["unit_type"] == "adventurer":
+            category += " " + get_emoji("ad_filter").toString(ctx)
+        elif unit["unit_type"] == "assist":
+            category += " " + get_emoji("as_filter").toString(ctx)
+        if unit["number"] > 1:
+            number = min(unit["number"]-1,5)
+            category += " " + get_emoji("limitbreak_"+str(number)).toString(ctx)
+
+        if category == previous_category:
+            previous_number += 1
+            sorted_categories[-1] = (category,previous_number)
+        else:
+            previous_category = category
+            previous_number = 1
+            sorted_categories.append((category,previous_number))
+
+    title = get_author(ctx)+"'s summary profile"
+
+    units_lines = []
+    for item in sorted_categories:
+        units_line = item[0] + " x " + str(item[1]) + "\n"
+        units_lines.append(units_line)
+    
+    description = ""
+    for line in currency_lines:
+        description += line
+    for i in range(len(units_lines)):
+        description += units_lines[i]
+
+    footer = "Total distinct number: " + str(len(units_lines))
+
+    embed = discord.Embed()
+    embed.color = Status.OK.value
+    embed.set_thumbnail(url=ctx.message.author.avatar_url)
+    embed.title = title
+    embed.description = description
+    embed.set_footer(text=footer)
+    await ctx.send(embed=embed)
+
+
+async def detailed_message(user, client, ctx, *args):
     crepes = user.crepes
     if crepes is None:
         crepes = 0

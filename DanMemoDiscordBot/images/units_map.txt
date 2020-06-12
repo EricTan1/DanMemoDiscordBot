@@ -418,7 +418,7 @@ ID;FULL;Label;Character
 1012044005;[God of Wine] Dionysus;God of Wine;Dionysus
 1012045001;[Elder Smith] Goibniu;Elder Smith;Goibniu
 1012045002;[Godly Swordsmith] Goibniu;Godly Swordsmith;Goibniu
-1012046001;[God of Origins] Goibniu;God of Origins;Goibniu
+1012046001;[God of Origins] Ouranos;God of Origins;Ouranos
 1012046002;[Godly Swordsmith] Goibniu;Godly Swordsmith;Goibniu
 1012051001;[Little Dame] Riveria (Girl);Little Dame;Riveria (Girl)
 1012053001;[Elven Childhood] Lefiya (Girl);Elven Childhood;Lefiya (Girl)
