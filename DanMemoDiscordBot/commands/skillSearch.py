@@ -43,7 +43,7 @@ async def run(dbConfig, client, ctx, *search):
         temp_embed.title = "ERROR"
         temp_embed.description = "No results!"
         await ctx.send(embed=temp_embed)
-    elif(len(skilleffects_id_list) <=100):
+    else:
         rotating_list = []
         count = 0
         temp_list = []
@@ -135,12 +135,6 @@ async def run(dbConfig, client, ctx, *search):
             await imageHorizontalConcat(client,file_list,discord_file_list)
         icons = await imageVerticalConcat(client,discord_file_list)
         await skillSearchRotatingPage(client,ctx,search,rotating_list,total_results,icons)
-    else:
-        temp_embed = discord.Embed()
-        temp_embed.color = 16203840
-        temp_embed.title = "ERROR"
-        temp_embed.description = "Too many results please try to narrow it down further"
-        await ctx.send(embed=temp_embed)        
     db.closeconnection()
 
 async def skillSearchRotatingPage(client, ctx, search, page_list, total_results, icons):
