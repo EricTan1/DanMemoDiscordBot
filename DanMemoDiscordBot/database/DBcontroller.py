@@ -259,11 +259,11 @@ class DBcontroller:
                         # AND Logic for words
                         for search in temp_list:
                             ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects_ret 
-                                                if temp_word in skilleffect.type.lower()
-                                                or temp_word == skilleffect.target.lower()
-                                                or temp_word in skilleffect.attribute.lower()
-                                                or temp_word in skilleffect.speed.lower()
-                                                or temp_word in skilleffect.modifier.lower()]
+                                                if search in skilleffect.type.lower()
+                                                or search == skilleffect.target.lower()
+                                                or search in skilleffect.attribute.lower()
+                                                or search in skilleffect.speed.lower()
+                                                or search in skilleffect.modifier.lower()]
                     else:
                         # empty
                         ad_skill_effects_ret = []
