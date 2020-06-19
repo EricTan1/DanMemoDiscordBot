@@ -93,6 +93,7 @@ async def addUpdateUnit(ctx, *search):
     await command_addUpdateUnit.run(dbConfig,client,ctx,*search)
     # refresh the cache
     cache = Cache(dbConfig)
+    cache.refreshcache(dbConfig)
 
 
 #@client.command(aliases=["frr","familiarushrun"])

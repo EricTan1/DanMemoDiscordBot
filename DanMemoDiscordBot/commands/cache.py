@@ -12,18 +12,8 @@ def singleton(cls, *args, **kw):
 class Cache(object):
     def __init__(self, dbConfig=None):
         self.data = {}
-
-        db = DBcontroller(dbConfig)
-
-        self.data["adventurers"] = db.get_all_adventurers()
-        self.data["assists"] = db.get_all_assists()
-        self.data["adventurers_developments"] = db.get_all_adventurers_developments()
-        self.data["adventurers_skills"] = db.get_all_adventurers_skills()
-        self.data["assists_skills"] = db.get_all_assists_skills()
-        self.data["adventurers_skills_effects"] = db.get_all_adventurers_skills_effects()
-        self.data["assists_skills_effects"] = db.get_all_assists_skills_effects()
-
-        db.closeconnection()
+        self.refreshcache(dbConfig)
+      
 
     def get_all_adventurers(self):
         return self.data["adventurers"]
@@ -45,3 +35,14 @@ class Cache(object):
 
     def get_all_assists_skills_effects(self):
         return self.data["assists_skills_effects"]
+    
+    def refreshcache(self, dbConfig):
+        db = DBcontroller(dbConfig)
+        self.data["adventurers"] = db.get_all_adventurers()
+        self.data["assists"] = db.get_all_assists()
+        self.data["adventurers_developments"] = db.get_all_adventurers_developments()
+        self.data["adventurers_skills"] = db.get_all_adventurers_skills()
+        self.data["assists_skills"] = db.get_all_assists_skills()
+        self.data["adventurers_skills_effects"] = db.get_all_adventurers_skills_effects()
+        self.data["assists_skills_effects"] = db.get_all_assists_skills_effects()
+        db.closeconnection()
