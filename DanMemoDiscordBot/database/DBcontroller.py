@@ -316,11 +316,24 @@ class DBcontroller:
             av_skill_effects_ret = [skilleffect for skilleffect in ad_dev_effects 
                             if new_words in skilleffect.development.lower()
                             or new_words in skilleffect.attribute.lower()]
+            print(av_skill_effects_ret)
+            my_set = set()
+           # distinct
+           #  adventurerdevelopmentid=adventurerdevelopmentid,unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
+
             for skilleffect in av_skill_effects_ret:
-                skillid = "Av" + str(skilleffect.adventurerdevelopmentid)
+                skillid = (skilleffect.adventurerdevelopmentid,"Av" +str(skilleffect.adventurerdevelopmentid))
+                if(ret_dict_effect.get(skillid) == None):
+                        ret_dict_effect[skillid] = 0
+                ret_dict_effect[skillid] = ret_dict_effect.get(skillid)+1
+                my_set.add(skilleffect.adventurerdevelopmentid)
+
+            for ids in my_set:
+                skillid = "Av" + str(ids)
                 if(ret_dict.get(skillid) == None):
                         ret_dict[skillid] = 0
                 ret_dict[skillid] = ret_dict.get(skillid)+1
+
         # get all the skills with the highest freq
         ret_list=[]
         highest= None
