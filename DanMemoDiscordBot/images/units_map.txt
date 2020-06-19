@@ -97,6 +97,7 @@ ID;FULL;Label;Character
 1011006009;[Regina] Riveria Ljos Alf;Regina;Riveria Ljos Alf
 1011006010;[Festive Royale] Riveria Ljos Alf;Festive Royale;Riveria Ljos Alf
 1011006011;[Crimson Balefire] Riveria Ljos Alf;Crimson Balefire;Riveria Ljos Alf
+1011006012;[Ninth Duel] Riveria Ljos Alf;Ninth Duel;Riveria Ljos Alf
 1011007001;[King] Ottarl;King;Ottarl
 1011007002;[Superior Reign] Ottarl;Superior Reign;Ottarl
 1011007003;[Mighty King] Ottarl;Mighty King;Ottarl
@@ -142,6 +143,7 @@ ID;FULL;Label;Character
 1011013002;[Torrential] Gareth Landrock;Torrential;Gareth Landrock
 1011013003;[The Great Wall] Gareth Landrock;The Great Wall;Gareth Landrock
 1011013004;[Sunrise Axe] Gareth Landrock;Sunrise Axe;Gareth Landrock
+1011013005;[Roaring Axe] Gareth Landrock;Roaring Axe;Gareth Landrock
 1011014001;[Thousand Blades] Hitachi Chigusa;Thousand Blades;Hitachi Chigusa
 1011014002;[Evanescent] Hitachi Chigusa;Evanescent;Hitachi Chigusa
 1011014003;[Sparkling Crystal] Hitachi Chigusa;Sparkling Crystal;Hitachi Chigusa
@@ -189,6 +191,7 @@ ID;FULL;Label;Character
 1011020011;[Lightning Flame] Ryu Lion;Lightning Flame;Ryu Lion
 1011020012;[Scarlet Elf] Ryu Lion;Scarlet Elf;Ryu Lion
 1011020013;[Elven Gale] Ryu Lion;Elven Gale;Ryu Lion
+1011020014;[Wind of Purity] Ryu Lion;Wind of Purity;Ryu Lion
 1011021001;[Foxy Princess] Sanjouno Haruhime;Foxy Princess;Sanjouno Haruhime
 1011021002;[Silver Fox] Sanjouno Haruhime;Silver Fox;Sanjouno Haruhime
 1011021003;[An Ocean of Virtue] Sanjouno Haruhime;An Ocean of Virtue;Sanjouno Haruhime
@@ -253,6 +256,8 @@ ID;FULL;Label;Character
 1011095001;[Crushing Fighter] Samira;Crushing Fighter;Samira
 1011098001;[Dueling Caster] Alicia Forestlight;Dueling Caster;Alicia Forestlight
 1011099001;[Delightful Mage] Elfy Colette;Delightful Mage;Elfy Colette
+1011102001;[Faith Keeper] Ardee Varma;Faith Keeper;Ardee Varma
+1011103001;[Flaming Blade] Alise Lovell;Flaming Blade;Alise Lovell
 1011500001;[Foreign Traveler] Kino & Hermes;Foreign Traveler;Kino & Hermes
 1011500002;[Traveler] Kino;Traveler;Kino
 1011502001;[Wondering Man] Shizu & Riku;Wondering Man;Shizu & Riku
@@ -276,6 +281,7 @@ ID;FULL;Label;Character
 1012003001;[Your Favorite] Liliruca Arde;Your Favorite;Liliruca Arde
 1012004001;[Onsen Samurai] Yamato Mikoto;Onsen Samurai;Yamato Mikoto
 1012004002;[Bathing Beauty] Yamato Mikoto;Bathing Beauty;Yamato Mikoto
+1012005001;[Key Strategist] Finn Deimne;Key Strategist;Finn Deimne
 1012006001;[Dark Divine] Riveria Ljos Alf;Dark Divine;Riveria Ljos Alf
 1012008001;[Lawful Judge] Asfi Al Andromeda;Lawful Judge;Asfi Al Andromeda
 1012011001;[Festive Blade] Welf Crozzo;Festive Blade;Welf Crozzo
@@ -435,6 +441,7 @@ ID;FULL;Label;Character
 1012089001;[Sacred Cup] Soma;Sacred Cup;Soma
 1012093001;[The Night Queen] Ishtar;The Night Queen;Ishtar
 1012096001;[God of War] Ares;God of War;Ares
+1012104001;[Justice Guardian] Astrea;Justice Guardian;Astrea
 1012504001;[Explosive Girl] Ti;Explosive Girl;Ti
 1012509001;[Sharp Thinker] Armin Arlert;Sharp Thinker;Armin Arlert
 1012511001;[Uncontrollable] Titan Eren;Uncontrollable;Titan Eren

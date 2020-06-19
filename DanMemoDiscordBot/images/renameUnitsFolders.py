@@ -15,8 +15,8 @@ with open("units_map.txt") as fp:
         new_folder_name = path+character+" ["+label+"]"
 
         try:
-            print("From '"+old_folder_name+"' to '"+new_folder_name+"'")
             os.rename(old_folder_name, new_folder_name)
+            print("From '"+old_folder_name+"' to '"+new_folder_name+"'")
         except Exception as e:
             #print("Could not find folder '"+old_folder_name+"' to rename it to '"+new_folder_name+"'")
             #print("Error: "+str(e))
