@@ -256,6 +256,10 @@ class DBcontroller:
                                                 or temp_word in skilleffect.attribute.lower()
                                                 or temp_word in skilleffect.speed.lower()
                                                 or temp_word in skilleffect.modifier.lower()]
+                        as_skill_effects_ret = [skilleffect for skilleffect in as_skill_effects 
+                                                if temp_word == skilleffect.target.lower()
+                                                or temp_word in skilleffect.attribute.lower()
+                                                or temp_word in skilleffect.modifier.lower()]
                         # AND Logic for words
                         for search in temp_list:
                             ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects_ret 
@@ -264,9 +268,14 @@ class DBcontroller:
                                                 or search in skilleffect.attribute.lower()
                                                 or search in skilleffect.speed.lower()
                                                 or search in skilleffect.modifier.lower()]
+                            as_skill_effects_ret = [skilleffect for skilleffect in as_skill_effects_ret 
+                                                if search == skilleffect.target.lower()
+                                                or search in skilleffect.attribute.lower()
+                                                or search in skilleffect.modifier.lower()]
                     else:
                         # empty
                         ad_skill_effects_ret = []
+                        as_skill_effects_ret = []
                         
                 else:
                     ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects 
@@ -275,8 +284,12 @@ class DBcontroller:
                                             or new_words in skilleffect.attribute.lower()
                                             or new_words in skilleffect.speed.lower()
                                             or new_words in skilleffect.modifier.lower()]
+                    as_skill_effects_ret = [skilleffect for skilleffect in as_skill_effects 
+                                            if new_words == skilleffect.target.lower()
+                                            or new_words in skilleffect.attribute.lower()
+                                            or new_words in skilleffect.modifier.lower()]
             my_set = set()
-            # distinct
+            # distinct adventurer
             for skilleffect in ad_skill_effects_ret:
                 skillid = (skilleffect.adventurerskilleffectsid,"Ad" +str(skilleffect.adventurerskillid))
                 if(ret_dict_effect.get(skillid) == None):
@@ -289,13 +302,7 @@ class DBcontroller:
                 if(ret_dict.get(skillid) == None):
                         ret_dict[skillid] = 0
                 ret_dict[skillid] = ret_dict.get(skillid)+1
-            
-            #skillAseffect_sql= "SELECT DISTINCT ase.assistskillid FROM danmemo.assistskilleffects as ase INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid WHERE m.value LIKE %s or ta.name LIKE %s or a.name LIKE %s".replace('danmemo',self.database)
-            #self._mycursorprepared.execute(skillAseffect_sql,(new_words,new_words,new_words))
-            as_skill_effects_ret = [skilleffect for skilleffect in as_skill_effects 
-                                        if new_words == skilleffect.target.lower()
-                                        or new_words in skilleffect.attribute.lower()
-                                        or new_words in skilleffect.modifier.lower()]
+            # assist
             my_set = set()
             # distinct
             for skilleffect in as_skill_effects_ret:
@@ -310,6 +317,7 @@ class DBcontroller:
                 if(ret_dict.get(skillid) == None):
                         ret_dict[skillid] = 0
                 ret_dict[skillid] = ret_dict.get(skillid)+1
+
 
             #skillAveffect_sql='SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid WHERE a.name like %s or ad.name like %s'.replace("danmemo",self.database)
             #self._mycursorprepared.execute(skillAveffect_sql,(new_words,new_words))
