@@ -68,7 +68,7 @@ async def help(ctx):
 async def bento(ctx):
     await command_bento.run(dbConfig,ctx)
     
-@client.command(aliases=["pull"])
+@client.command(aliases=["pull","g"])
 async def gacha(ctx,*args):
     await command_gacha.run(dbConfig,client,ctx,*args)
 
@@ -96,19 +96,19 @@ async def addUpdateUnit(ctx, *search):
     cache.refreshcache(dbConfig)
 
 
-#@client.command(aliases=["frr","familiarushrun"])
+@client.command(aliases=["frr","familiarushrun"])
 async def frrun(ctx, *search):
     await command_FRrun.run(client,ctx,*search)
 
-#@client.command(aliases=["frm","familiarushmock"])
+@client.command(aliases=["frm","familiarushmock"])
 async def frmock(ctx, *search):
     await command_FRmock.run(client,ctx,*search)
 
-#@client.command(aliases=["frp","familiarushping"])
+@client.command(aliases=["frp","familiarushping"])
 async def frping(ctx, *search):
     await command_FRping.run(client,ctx,*search)
 
-#@client.command(aliases=["frnd","familiarushnewday"])
+@client.command(aliases=["frnd","familiarushnewday"])
 async def frnewday(ctx, *search):
     await command_FRnewday.run(client,ctx,*search)
 

@@ -36,11 +36,8 @@ async def run(client, ctx:commands.context, *search):
             diff<diff> day<day> stage<stage> damage<damage>
     """
     current_user = ctx.message.author
-    print("in")
     if(current_user.guild.id == 708002106245775410):
         has_access = False
-        print("correct server")
-        print(current_user.roles)
         for temp_roles in current_user.roles:
             if(temp_roles.id ==708008774140690473 or temp_roles.id == 708005221586042881):
                 has_access = True
@@ -49,6 +46,7 @@ async def run(client, ctx:commands.context, *search):
             # number converting and understanding
         if(has_access):
             errors = ""
+            score_list = []
             # number converting and understanding
             for arguments in search:
                 if("diff" in arguments or "difficulty" in arguments):
@@ -65,21 +63,26 @@ async def run(client, ctx:commands.context, *search):
                         errors = "Incorrect stage value please have a day between 1-3"
                 elif("dmg" in arguments or "damage" in arguments):
                     score = arguments.replace("damage","").replace("dmg","").replace(",","").strip()
-                    if("m" in score):
-                        score = score.replace("m","")
-                        score = float(score)*1000000
-                    elif("kk" in score):
-                        score = score.replace("kk","")
-                        score = float(score)*1000000
-                    elif("k" in score):
-                        score = score.replace("k","")
-                        score = float(score)*1000
-                    try:
-                        score = int(score)
-                    except:
-                        errors = "please have a numerical damage or have 'm', 'kk' or 'k' in the damage"
-                    if(score <0):
-                        errors = "Negative damage"
+                    temp_scores = score.split("$")
+
+                    for items in temp_scores:
+                        temp_item = items
+                        if("m" in items):
+                            temp_item = temp_item.replace("m","")
+                            temp_item = float(temp_item)*1000000
+                        elif("kk" in temp_item):
+                            temp_item = temp_item.replace("kk","")
+                            temp_item = float(temp_item)*1000000
+                        elif("k" in temp_item):
+                            temp_item = temp_item.replace("k","")
+                            temp_item = float(temp_item)*1000
+                        try:
+                            temp_item = int(temp_item)
+                            score_list.append(temp_item)
+                        except:
+                            errors = "please have a numerical damage or have 'm', 'kk' or 'k' in the damage"
+                        if(temp_item <0):
+                            errors = "Negative damage"
                 elif("d" in arguments or "day" in arguments):
                     print(arguments)
                     try:
@@ -96,9 +99,12 @@ async def run(client, ctx:commands.context, *search):
                 await ctx.send(embed=temp_embed)
             else:
                 try:
-
-                    await recordRealRun(ctx, current_user, day, stage, difficulty, score)
+                    for scores in score_list:
+                        # 50m hardcap
+                        if scores < 50000000:
+                            await recordRealRun(ctx, current_user, day, stage, difficulty, scores)
                 except:
+                    await ctx.message.add_reaction(getDefaultEmoji("x"))
                     temp_embed = discord.Embed()
                     temp_embed.color = 16203840
                     temp_embed.title = "Argument Error"
@@ -197,6 +203,15 @@ async def recordRealRun(ctx, user, day, stage, difficulty, score:int):
     column = stage*3
     # recent score
     ws.update_cell(row, column+3, score)
+    # attachments
+    if (len(ctx.message.attachments) != 0):
+        cell_info = ""
+        for attachment in ctx.message.attachments:
+            cell_info = cell_info + attachment.url + "\n"
+            # end of stages column after 
+            ws.update_cell(row, 9+3+stage, cell_info)
+
+
     # check if there are any runs left
     runs = ws.cell(row, 3, value_render_option='UNFORMATTED_VALUE').value
     print(runs)
