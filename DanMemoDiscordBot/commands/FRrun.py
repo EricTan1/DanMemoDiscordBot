@@ -207,7 +207,7 @@ async def recordRealRun(ctx, user, day, stage, difficulty, score:int):
     if (len(ctx.message.attachments) != 0):
         cell_info = ""
         for attachment in ctx.message.attachments:
-            cell_info = cell_info + attachment.url + "\n"
+            cell_info = cell_info + '=IMAGE("{}")'.format(attachment.url) + "\n"
             # end of stages column after 
             ws.update_cell(row, 9+3+stage, cell_info)
 
