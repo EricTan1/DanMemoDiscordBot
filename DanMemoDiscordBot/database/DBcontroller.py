@@ -242,6 +242,10 @@ class DBcontroller:
             if(words.lower() in ele_set):
                 ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects 
                                         if new_words == skilleffect.element.lower()]
+                as_skill_effects_ret = [skilleffect for skilleffect in as_skill_effects 
+                                        if new_words == skilleffect.target.lower()
+                                        or new_words in skilleffect.attribute.lower()
+                                        or new_words in skilleffect.modifier.lower()]
                 #self._mycursorprepared.execute(skillAdElement_sql, (words,))
             else:
                 #self._mycursorprepared.execute(skillAdeffect_sql, (new_words,new_words,words,new_words,new_words,new_words))
