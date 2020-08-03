@@ -41,5 +41,7 @@ async def run(ctx):
     #temp_embed.description= msg
     # everyone did their 4 runs
     if(msg == "Please finish your runs before reset!\n"):
-        msg ="That was the last out of the 120 finest runs we had to offer! Was it enough to solidify our position as the greatest familia on the EU server? Yes? **Great! All according to plan!** Was it barely not good enough? Don't worry, operation #beatdivinemyth is still in progress. Strive to do even a little bit better than today, and we're sure to beat them eventually! がんばって!"
-    await ctx.send(msg,files=[discord.File("./ngnl.jpg")])    # ping everyone who doesnt have runs ==0
+        msg ="That was the last out of the 90 finest runs we had to offer! Was it enough to solidify our position as the greatest familia on the EU server? Yes? **Great! All according to plan!** Was it barely not good enough? Don't worry, operation #beatdivinemyth is still in progress. Strive to do even a little bit better than today, and we're sure to beat them eventually! がんばって!"
+        await ctx.send(msg,files=[discord.File("./ngnl.jpg")])    # ping everyone who doesnt have runs ==0
+    else:
+        await ctx.send(msg)

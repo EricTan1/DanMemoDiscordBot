@@ -27,6 +27,9 @@ import commands.FWGtargets as command_FWGTargets
 import commands.FWGattack as command_FWGAttack
 import commands.FWGsettarget as command_FWGSetTarget
 import commands.FWGping as command_FWGPing
+import commands.FWGleft as command_FWGLeft
+import commands.FWGtargets as command_FWGTargets
+import commands.FWGenemyattack as command_FWGEnemyAttack
 
 from commands.utils import createGSpreadJSON
 
@@ -40,9 +43,12 @@ dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
 cache = Cache(dbConfig)
 @client.event
 async def on_message(message):
-
-    if(message.channel.id==738834866002722967):
-        await command_FWGUpdateTeam.run(message)
+    # #screenshots
+    # if(message.channel.id==738834866002722967):
+    #     await command_FWGUpdateTeam.run(message)
+    # #enemy attacks
+    # elif(message.channel.id==739875599463743570):
+    #     await command_FWGEnemyAttack.run(message)
     await client.process_commands(message)
 
 @client.event
@@ -130,14 +136,18 @@ class FamiliaRush(commands.Cog):
         await command_FRnewday.run(client,ctx,*search)
 
 class FamiliaWarGame(commands.Cog):
+    # not too sure whether to implement since manually prob faster/better
     @commands.command(aliases=["fwgnd"])
     async def fwgNewDay(self, ctx):
         pass
-    @commands.command(aliases=["fwgut"])
+    #@commands.command(aliases=["fwgut"])
     async def fwgUpdateTeam(self, ctx, target:str):
         await command_FWGUpdateTeam.run(ctx.message)
     @commands.command(aliases=["fwga"])
     async def fwgAttack(self, ctx, target,medals:int):
+        await command_FWGAttack.run(client,ctx,target, medals)
+    #@commands.command(aliases=["fwgea"])
+    async def fwgEnemyAttack(self, ctx, target,medals:int):
         await command_FWGAttack.run(client,ctx,target, medals)
     @commands.command(aliases=["fwgp"])
     async def fwgPing(self, ctx):
@@ -146,11 +156,11 @@ class FamiliaWarGame(commands.Cog):
     async def fwgSetTarget(self, ctx,ally:discord.Member,enemy):
         await command_FWGSetTarget.run(ctx,ally,enemy)
     @commands.command(aliases=["fwgt","fwgTarget"])
-    async def fwgTargets(self, ctx,*optional):
-        pass
+    async def fwgTargets(self, ctx,*optional:discord.Member):
+        await command_FWGTargets.run(ctx, optional)
     @commands.command(aliases=["fwgl"])
     async def fwgLeft(self, ctx):
-        pass
+        await command_FWGLeft.run(ctx)
     @commands.command(aliases=["fwun"])
     async def fwgupdatenote(self, ctx, target, *note):
         await command_FWGUpdateNote.run(ctx,target,note)

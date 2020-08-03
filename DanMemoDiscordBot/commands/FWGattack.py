@@ -59,10 +59,11 @@ async def run(client,ctx,target,medals:int):
                 runs = runs -1
                 ws.update_cell(row, RUNS_COLUMN, runs)
             # add to attack basic data
+            attacked_info = ws.cell(row, ATTACKED_COLUMN, value_render_option='UNFORMATTED_VALUE').value
             if(medals == 0):
-                ws.update_cell(row, ATTACKED_COLUMN, "Lose,Target:{},Medals:0\n".format(target))
+                ws.update_cell(row, ATTACKED_COLUMN, "{}\nLose,Target:{},Medals:0".format(attacked_info,target))
             else:
-                ws.update_cell(row, ATTACKED_COLUMN, "Win,Target:{},Medals:{}\n".format(target,medals))
+                ws.update_cell(row, ATTACKED_COLUMN, "{}\nWin,Target:{},Medals:{}".format(attacked_info,target,medals))
             # add to medals gained total
             curr_medals = ws.cell(row, MEDAL_TOTAL_COLUMN, value_render_option='UNFORMATTED_VALUE').value
             ws.update_cell(row, MEDAL_TOTAL_COLUMN, curr_medals + medals+1)
@@ -109,15 +110,16 @@ async def run(client,ctx,target,medals:int):
                     ws.update_cell(row, LIEUT_GEN_COLUMN, "General")
                     ws.update_cell(row, ENEMY_MEDALS_LEFT, 60-medals)
             else:
-                enemy_medals = ws.cell(row, ENEMY_MEDALS_LEFT, value_render_option='UNFORMATTED_VALUE').value
+                enemy_medals = ws.cell(enemy_row, ENEMY_MEDALS_LEFT, value_render_option='UNFORMATTED_VALUE').value
                 if(enemy_medals - medals < 0 ):
-                    ws.update_cell(row, ENEMY_MEDALS_LEFT, 0)
+                    ws.update_cell(enemy_row, ENEMY_MEDALS_LEFT, 0)
                 else:
-                    ws.update_cell(row, ENEMY_MEDALS_LEFT, enemy_medals-medals)
+                    ws.update_cell(enemy_row, ENEMY_MEDALS_LEFT, enemy_medals-medals)
             # add to attack by enemy data
-            # check if win or lose (lose == 0)    
+            # check if win or lose (lose == 0)
+            attacked_by_info = ws.cell(enemy_row, ENEMY_ATTACKED_BY, value_render_option='UNFORMATTED_VALUE').value
             if(medals == 0):
-                ws.update_cell(row, ENEMY_ATTACKED_BY, "Win,Target:{}|{}\n".format(ctx.message.author.nick,discord_id))
+                ws.update_cell(enemy_row, ENEMY_ATTACKED_BY, "{}\nWin,Target:{}|{}".format(attacked_by_info,ctx.message.author.nick,discord_id))
             else:
-                ws.update_cell(row, ENEMY_ATTACKED_BY, "Lose,Target:{}|{}\n".format(ctx.message.author.nick,discord_id))    
+                ws.update_cell(enemy_row, ENEMY_ATTACKED_BY, "{}\nLose,Target:{}|{}".format(attacked_by_info,ctx.message.author.nick,discord_id))    
     
