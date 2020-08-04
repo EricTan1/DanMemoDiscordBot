@@ -29,7 +29,7 @@ async def run(message):
             ws = sh.worksheet("Enemy Data")
             cell_info = ""
             for attachment in message.attachments:
-                cell_info = cell_info + '=IMAGE("{}")'.format(attachment.url) + "\n"
+                cell_info = cell_info + '=IMAGE("{}",4,192,384)'.format(attachment.url) + "\n"
                 # end of stages column after 
                 ws.update_cell(row,TEAM_PIC_COLUMN,cell_info)
         else:
