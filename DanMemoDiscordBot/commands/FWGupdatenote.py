@@ -20,6 +20,9 @@ NOTE_COLUMN = 4
 
 
 async def run(ctx,target, note):
+    curr_note = ""
+    for words in note:
+        curr_note = curr_note + words + " " 
     # get the row based on target
     row = await calculateRowFWG(target)
     # update note on the enemy
@@ -28,7 +31,7 @@ async def run(ctx,target, note):
         sh = gc.open("Imanity FWG")
         ws = sh.worksheet("Enemy Data")
         cell_info = ws.cell(row, NOTE_COLUMN, value_render_option='UNFORMATTED_VALUE').value
-        ws.update_cell(row,NOTE_COLUMN,cell_info + "•" + note)
+        ws.update_cell(row,NOTE_COLUMN,cell_info + "\n•" + curr_note)
     if(row != -1):
         await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))
     else:

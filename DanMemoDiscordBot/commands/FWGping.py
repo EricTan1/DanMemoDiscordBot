@@ -29,10 +29,10 @@ async def run(ctx):
     msg = "Please finish your runs before reset!\n"
     for index in range(0,len(runs)):
         if(isinstance(runs[index], int)):
-            if(runs[index] != 0 and runs[index] <= 3 and index < len(discordids) and (discordids[index].strip() != "" or discordids[index]!= None)):
+            if(runs[index] != 0  and index < len(discordids) and discordids[index].strip() != "" and discordids[index]!= None):
                 print(ctx.message)
+                print(discordids[index].strip())
                 print(ctx.message.guild)
-                print(ctx.message.guild.get_member(discordids[index]))
                 msg = msg + "<@!{}>\n".format(discordids[index])
                 
     #temp_embed = discord.Embed()

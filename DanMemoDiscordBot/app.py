@@ -31,7 +31,7 @@ import commands.FWGleft as command_FWGLeft
 import commands.FWGtargets as command_FWGTargets
 import commands.FWGenemyattack as command_FWGEnemyAttack
 
-from commands.utils import createGSpreadJSON
+from commands.utils import createGSpreadJSON, checkperms
 
 if "IS_HEROKU" in os.environ:
     _command_prefix = "!$"
@@ -43,12 +43,12 @@ dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
 cache = Cache(dbConfig)
 @client.event
 async def on_message(message):
-    # #screenshots
-    # if(message.channel.id==738834866002722967):
-    #     await command_FWGUpdateTeam.run(message)
-    # #enemy attacks
-    # elif(message.channel.id==739875599463743570):
-    #     await command_FWGEnemyAttack.run(message)
+    #screenshots
+    if(message.channel.id==738834866002722967):
+        await command_FWGUpdateTeam.run(message)
+    #enemy attacks
+    elif(message.channel.id==739875599463743570):
+        await command_FWGEnemyAttack.run(message)
     await client.process_commands(message)
 
 @client.event
@@ -59,8 +59,8 @@ async def on_ready():
     #temp = [(e.id, e.name) for e in client.emojis]
     #print(temp)
     #client.add_cog(FamiliaRush())
-    #client.add_cog(FamiliaWarGame(client))
-    #await createGSpreadJSON()
+    client.add_cog(FamiliaWarGame(client))
+    await createGSpreadJSON()
     print("Bot is ready!")
 
 
@@ -145,28 +145,35 @@ class FamiliaWarGame(commands.Cog):
         await command_FWGUpdateTeam.run(ctx.message)
     @commands.command(aliases=["fwga"])
     async def fwgAttack(self, ctx, target,medals:int):
-        await command_FWGAttack.run(client,ctx,target, medals)
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGAttack.run(client,ctx,target, medals)
     #@commands.command(aliases=["fwgea"])
     async def fwgEnemyAttack(self, ctx, target,medals:int):
         await command_FWGAttack.run(client,ctx,target, medals)
     @commands.command(aliases=["fwgp"])
     async def fwgPing(self, ctx):
-        await command_FWGPing.run(ctx)
+        if(checkperms(ctx,708002106245775410,[708005221586042881,722152474743668867])):
+            await command_FWGPing.run(ctx)
     @commands.command(aliases=["fwgst"])
     async def fwgSetTarget(self, ctx,ally:discord.Member,enemy):
-        await command_FWGSetTarget.run(ctx,ally,enemy)
+        if(checkperms(ctx,708002106245775410,[722152474743668867])):
+            await command_FWGSetTarget.run(ctx,ally,enemy)
     @commands.command(aliases=["fwgt","fwgTarget"])
     async def fwgTargets(self, ctx,*optional:discord.Member):
-        await command_FWGTargets.run(ctx, optional)
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGTargets.run(ctx, optional)
     @commands.command(aliases=["fwgl"])
     async def fwgLeft(self, ctx):
-        await command_FWGLeft.run(ctx)
-    @commands.command(aliases=["fwun"])
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGLeft.run(ctx)
+    @commands.command(aliases=["fwgun"])
     async def fwgupdatenote(self, ctx, target, *note):
-        await command_FWGUpdateNote.run(ctx,target,note)
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGUpdateNote.run(ctx,target,note)
     @commands.command(aliases=["fwgi"])
     async def fwgInfo(self,ctx, target):
-        await command_FWGInfo.run(ctx,target)
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGInfo.run(ctx,target)
 
 if __name__ == "__main__":
     TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")

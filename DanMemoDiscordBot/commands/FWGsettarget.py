@@ -34,15 +34,16 @@ async def run(ctx,ally:discord.Member,enemy):
         gc = gspread.service_account(filename="./gspread.json")
         sh = gc.open("Imanity FWG")
         ws = sh.worksheet("Basic Data")
-        values_list = ws.col_values(DISCORD_ID_COLUMN, value_render_option='FORMULA')
+        values_list = ws.col_values(DISCORD_ID_COLUMN, value_render_option='UNFORMATTED_VALUE')
         print(values_list)
-        discord_id = ally.id
+        discord_id = str(ally.id)
         if(discord_id in values_list):
-            row = values_list.index(discord_id)
+            row = values_list.index(discord_id)+1
         else:
-            row = len(remove_values_from_list(values_list,""))-1
+            row = len(remove_values_from_list(values_list,""))
             ws.update_cell(row, DISCORD_ID_COLUMN, discord_id)
-            ws.update_cell(row, DISCORD_MEMBER_NAME, ally.nick)
+            ws.update_cell(row, DISCORD_MEMBER_NAME, ally.name)
         # get all current suggestions and add on to it
         curr_suggestions = ws.cell(row, ATTACK_SUGGESTION_COLUMN, value_render_option='UNFORMATTED_VALUE').value
         ws.update_cell(row, ATTACK_SUGGESTION_COLUMN, "{}\n{}".format(curr_suggestions,enemy))
+        await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))

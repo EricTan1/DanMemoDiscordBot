@@ -30,25 +30,35 @@ async def run(ctx,optional):
     gc = gspread.service_account(filename="./gspread.json")
     sh = gc.open("Imanity FWG")
     ws = sh.worksheet("Basic Data")
-    values_list = ws.col_values(DISCORD_ID_COLUMN, value_render_option='FORMULA')
-    print(values_list)
-    if(optional != None):
-        discord_id = optional.id
+    values_list = ws.col_values(DISCORD_ID_COLUMN, value_render_option='UNFORMATTED_VALUE')
+    print(optional)
+    if(optional != None and optional != tuple()):
+        discord_id = str(optional[0].id)
     else:
-        discord_id = ctx.message.author.id
+        discord_id = str(ctx.message.author.id)
     if(discord_id in values_list):
-        row = values_list.index(discord_id)
+        row = values_list.index(discord_id)+1
     else:
-        row = len(remove_values_from_list(values_list,""))-1
+        row = len(remove_values_from_list(values_list,""))
         ws.update_cell(row, DISCORD_ID_COLUMN, discord_id)
-        ws.update_cell(row, DISCORD_MEMBER_NAME, ctx.message.author.nick)
-    values_list = ws.row_values(row, value_render_option='FORMULA')
+        ws.update_cell(row, DISCORD_MEMBER_NAME, ctx.message.author.name)
     temp_embed = discord.Embed()
     temp_embed.color = 3066993
-    temp_embed.title = values_list[0]
-    temp_embed.description = "Medals Gained Total{}\n".format(values_list[MEDAL_TOTAL_COLUMN-1])
-    temp_embed.add_field(name="Attack Suggestion (Made by Heart):",value=values_list[ATTACK_SUGGESTION_COLUMN-1],inline=False)
-    temp_embed.add_field(name="Attacked:",value=values_list[ATTACKED_COLUMN-1],inline=False)    
-    temp_embed.add_field(name="Attacked By:",value=values_list[ATTACKED_BY_COLUMN-1],inline=False)    
+    temp_embed.title = ws.cell(row, DISCORD_MEMBER_NAME, value_render_option='UNFORMATTED_VALUE').value
+
+    medals_gained = ws.cell(row, MEDAL_TOTAL_COLUMN, value_render_option='UNFORMATTED_VALUE').value
+    temp_embed.description = "Medals Gained Total: {}\n".format(medals_gained)
+
+    attack_suggest = ws.cell(row, ATTACK_SUGGESTION_COLUMN, value_render_option='UNFORMATTED_VALUE').value
+    if(attack_suggest != ""):
+        temp_embed.add_field(name="Attack Suggestion (Made by Heart):",value=attack_suggest,inline=False)
+    
+    attacked = ws.cell(row, ATTACKED_COLUMN, value_render_option='UNFORMATTED_VALUE').value
+    if(attacked != ""):
+        temp_embed.add_field(name="Attacked:",value=attacked,inline=False)
+    
+    attacked_by = ws.cell(row, ATTACKED_BY_COLUMN, value_render_option='UNFORMATTED_VALUE').value
+    if(attacked_by != ""):
+        temp_embed.add_field(name="Attacked By:",value=attacked_by,inline=False)    
     await ctx.send(embed=temp_embed)
     # Display your runs, who you were attacked by, attacked and attack suggestion from heart

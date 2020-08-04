@@ -38,20 +38,21 @@ async def run(message:discord.Message):
             gc = gspread.service_account(filename="./gspread.json")
             sh = gc.open("Imanity FWG")
             ws = sh.worksheet("Basic Data")
-            values_list = ws.col_values(DISCORD_ID_COLUMN, value_render_option='FORMULA')
-            discord_id = message.mentions[0].id
+            values_list = ws.col_values(DISCORD_ID_COLUMN, value_render_option='UNFORMATTED_VALUE')
+            discord_id = str(message.mentions[0].id)
             if(discord_id in values_list):
-                row = values_list.index(discord_id)
+                row = values_list.index(discord_id)+1
             else:
-                row = len(remove_values_from_list(values_list,""))-1
+                row = len(remove_values_from_list(values_list,""))
                 ws.update_cell(row, DISCORD_ID_COLUMN, discord_id)
-                ws.update_cell(row, DISCORD_MEMBER_NAME, message.mentions[0].nick)
+                ws.update_cell(row, DISCORD_MEMBER_NAME, message.mentions[0].name)
             # update attacked by (ally)
             attacked_by_info = ws.cell(row, ATTACKED_BY_COLUMN, value_render_option='UNFORMATTED_VALUE').value
-            ws.update_cell(row, ATTACKED_BY_COLUMN, "{}\n{},Target:{}".format(attacked_by_info,status,message_args[0]))
+            ws.update_cell(row, ATTACKED_BY_COLUMN, "{}\n{} {} against you".format(attacked_by_info,message_args[0],status.capitalize()))
             # update attacked (enemy)
             ws = sh.worksheet("Enemy Data")
-            ws.update_cell(enemy_row, ENEMY_ATTACKED, "{}\n{},Target:{}".format(attacked_by_info,status,message_args[0]))
+            attacked_by_info = ws.cell(enemy_row, ENEMY_ATTACKED, value_render_option='UNFORMATTED_VALUE').value
+            ws.update_cell(enemy_row, ENEMY_ATTACKED, "{}\n{} against {}".format(attacked_by_info,status.capitalize(),message.mentions[0].name))
             await message.add_reaction(getDefaultEmoji("white_check_mark"))
         else:
             await message.add_reaction(getDefaultEmoji("x"))

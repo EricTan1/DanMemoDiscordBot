@@ -293,3 +293,12 @@ async def calculateRowFWG(target:str):
     except:
         return -1
     return row
+
+def checkperms(ctx,guild_id,perm_list):
+    current_user = ctx.message.author
+    if(current_user.guild.id == guild_id):
+        has_access = False
+        for temp_roles in current_user.roles:
+            if(temp_roles.id in perm_list):
+                has_access = True
+    return has_access
