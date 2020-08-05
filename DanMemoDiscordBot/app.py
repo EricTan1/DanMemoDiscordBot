@@ -30,6 +30,7 @@ import commands.FWGping as command_FWGPing
 import commands.FWGleft as command_FWGLeft
 import commands.FWGtargets as command_FWGTargets
 import commands.FWGenemyattack as command_FWGEnemyAttack
+import commands.FWGnewday as command_FWGNewDay
 
 from commands.utils import createGSpreadJSON, checkperms
 
@@ -139,7 +140,8 @@ class FamiliaWarGame(commands.Cog):
     # not too sure whether to implement since manually prob faster/better
     @commands.command(aliases=["fwgnd"])
     async def fwgNewDay(self, ctx):
-        pass
+        if(checkperms(ctx,708002106245775410,[708005221586042881,722152474743668867])):
+            await command_FWGNewDay.run(ctx)
     #@commands.command(aliases=["fwgut"])
     async def fwgUpdateTeam(self, ctx, target:str):
         await command_FWGUpdateTeam.run(ctx.message)
