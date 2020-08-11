@@ -42,15 +42,15 @@ else:
 client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True)
 dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
 cache = Cache(dbConfig)
-@client.event
-async def on_message(message):
-    #screenshots
-    if(message.channel.id==738834866002722967):
-        await command_FWGUpdateTeam.run(message)
-    #enemy attacks
-    elif(message.channel.id==739875599463743570):
-        await command_FWGEnemyAttack.run(message)
-    await client.process_commands(message)
+# @client.event
+# async def on_message(message):
+#     #screenshots
+#     if(message.channel.id==738834866002722967):
+#         await command_FWGUpdateTeam.run(message)
+#     #enemy attacks
+#     elif(message.channel.id==739875599463743570):
+#         await command_FWGEnemyAttack.run(message)
+#     await client.process_commands(message)
 
 @client.event
 async def on_ready():
@@ -60,7 +60,7 @@ async def on_ready():
     #temp = [(e.id, e.name) for e in client.emojis]
     #print(temp)
     #client.add_cog(FamiliaRush())
-    client.add_cog(FamiliaWarGame(client))
+    #client.add_cog(FamiliaWarGame(client))
     await createGSpreadJSON()
     print("Bot is ready!")
 
