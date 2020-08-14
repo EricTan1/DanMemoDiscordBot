@@ -499,7 +499,9 @@ class DBcontroller:
             if(temp_type == None or temp_type.strip() == "None"):
                 temp_type = ""
             if(temp_element == None or temp_element.strip() == "None"):
-                temp_element = ""            
+                temp_element = ""
+            else:
+                temp_element = temp_element.capitalize()
             if(temp_speed== None or temp_speed.strip() == "None"):
                 temp_speed = ""
             if(temp_attribute == None or temp_attribute.strip() == "None"):
