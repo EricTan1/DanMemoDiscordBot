@@ -49,6 +49,13 @@ class GachaModes(Enum):
     IMG = 1
 
 
+class TopCategories(Enum):
+    """ available categories for top users command
+    """
+    WHALES = 0
+    GOURMETS = 1
+
+
 class HeroAscensionStatsP(Enum):
     """ HA stats for physical units
     """

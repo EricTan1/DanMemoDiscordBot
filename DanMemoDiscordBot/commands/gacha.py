@@ -32,11 +32,12 @@ async def run(dbConfig, client, ctx, *args):
 
 async def engine(dbConfig, client, ctx, *args):
     author = str(ctx.message.author)
+    authorUniqueId = str(ctx.message.author.id)
     content = ctx.message.content
+    
+    print("\nReceived message from '"+author+"("+authorUniqueId+")' with content '"+content+"'")
 
-    print("\nReceived message from '"+author+"' with content '"+content+"'")
-
-    user = User.get_user(dbConfig, author)
+    user = User.get_user(dbConfig, author, authorUniqueId)
 
     currency_number = user.crepes
     if currency_number is None:
@@ -53,6 +54,7 @@ async def engine(dbConfig, client, ctx, *args):
     pulls.extend(get_pulls(1, GachaRatesEleventh))
     
     user.add_units(pulls)
+    user.update_stats()
     
     user.update_user(dbConfig,datetime.datetime.now(),content)
 

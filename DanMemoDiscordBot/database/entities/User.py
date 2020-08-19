@@ -10,7 +10,7 @@ class User():
     '''
     This class is an object that represents the User table in the DB
     '''
-    def __init__(self, user_id, discord_id: str, crepes=None, last_bento_date=None, units=None, gacha_mode=0):
+    def __init__(self, user_id, discord_id: str, crepes=None, last_bento_date=None, units=None, gacha_mode=0, discord_unique_id=None, units_distinct_number=0, units_score=0):
         ''' (self, int, str, str) -> User
         userid: the inner id of the user
         discord_id: the id of the user in discord
@@ -21,6 +21,9 @@ class User():
         self.last_bento_date = last_bento_date
         self.units = units
         self.gacha_mode = gacha_mode
+        self.discord_unique_id = discord_unique_id
+        self.units_distinct_number = units_distinct_number
+        self.units_score = units_score
 
     def __str__(self):
         return str(self.__dict__)
@@ -33,17 +36,20 @@ class User():
         return json.loads(dataJson)'''
 
     @staticmethod
-    def get_user(db_config, author):
+    def get_user(db_config, author, authorUniqueId):
         discord_id = author
+        discord_unique_id = authorUniqueId
 
         db = database.DBcontroller.DBcontroller(db_config)
-        user = db.get_user(discord_id)
+        user = db.get_user(discord_id,discord_unique_id)
         db.closeconnection()
 
         if user is None:
-            user = User(None, discord_id)
+            user = User(None, discord_id, discord_unique_id=discord_unique_id)
+        if user.discord_unique_id is None:
+            user.discord_unique_id = discord_unique_id
 
-        print(user)
+        print("Retrieved user:",user)
 
         return user
 
@@ -65,8 +71,15 @@ class User():
 
             self.units[key]["number"] = self.units[key]["number"] + 1
 
+    def update_stats(self):
+        self.units_distinct_number = len(self.units)
+
+        units_score = 0
+        for key in self.units:
+            units_score += min(self.units[key]["number"],6)
+        self.units_score = units_score
+
+
     @staticmethod
     def get_unit_key(unit):
         return "["+unit.unit_label+"] "+unit.character_name
-
-

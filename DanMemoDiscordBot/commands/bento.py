@@ -6,11 +6,12 @@ from commands.utils import Status, get_emoji, mention_author
 
 async def run(db_config, ctx):
     author = str(ctx.message.author)
+    authorUniqueId = str(ctx.message.author.id)
     content = ctx.message.content
     
-    print("\nReceived message from '"+author+"' with content '"+content+"'")
+    print("\nReceived message from '"+author+"("+authorUniqueId+")' with content '"+content+"'")
 
-    user = User.get_user(db_config, author)
+    user = User.get_user(db_config, author, authorUniqueId)
 
     now = datetime.datetime.now(datetime.timezone.utc)
 

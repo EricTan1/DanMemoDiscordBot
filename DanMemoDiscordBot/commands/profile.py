@@ -7,15 +7,15 @@ import itertools
 from database.entities.User import User
 from commands.utils import Status, get_emoji, get_author, mention_author, dict_to_sns, sns_to_dict
 from commands.cache import Cache
-from database.DBcontroller import DBcontroller
 
 async def run(dbConfig, client, ctx, *args):
     author = str(ctx.message.author)
+    authorUniqueId = str(ctx.message.author.id)
     content = ctx.message.content
+    
+    print("\nReceived message from '"+author+"("+authorUniqueId+")' with content '"+content+"'")
 
-    print("\nReceived message from '"+author+"' with content '"+content+"'")
-
-    user = User.get_user(dbConfig, author)
+    user = User.get_user(dbConfig, author, authorUniqueId)
 
     if "summary" in args:
         await summary_message(user, client, ctx, *args)
@@ -76,7 +76,8 @@ async def summary_message(user, client, ctx, *args):
     for i in range(len(units_lines)):
         description += units_lines[i]
 
-    footer = "Total distinct number: " + str(len(units))
+    footer = "Total distinct number: " + str(user.units_distinct_number) + "\n"
+    footer += "Score: " + str(user.units_score)
 
     embed = discord.Embed()
     embed.color = Status.OK.value
@@ -121,7 +122,7 @@ async def detailed_message(user, client, ctx, *args):
 
     current_page = 0
     per_page = 20
-    number_pages = math.ceil(len(units_lines)//per_page)
+    number_pages = math.ceil(len(units_lines)/per_page)
     if number_pages == 0:
         number_pages = 1
 

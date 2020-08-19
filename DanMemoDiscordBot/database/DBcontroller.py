@@ -10,7 +10,7 @@ from database.entities.Adventurer import Adventurer, AdventurerSkill, Adventurer
 from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier
 import database.entities.User
 from database.entities.LogsCommand import LogsCommand
-from commands.utils import GachaRates, format_row_as_sns
+from commands.utils import GachaRates, format_row_as_sns, TopCategories
 #from commands.cache import Cache
 
 
@@ -723,11 +723,11 @@ class DBcontroller:
             print(unit_type, stars, unit_id, title, name)
             return unit_type, stars, unit_id, title, name
 
-    def get_user(self, discord_id):
-        sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, gacha_mode FROM {}.user user WHERE user.discord_id = %s"\
+    def get_user(self, discord_id, discord_unique_id):
+        sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, gacha_mode, discord_unique_id, units_distinct_number, units_score FROM {}.user user WHERE user.discord_id = %s or user.discord_unique_id = %s"\
             .format(self.database)
         print(sql)
-        parameters = (discord_id,)
+        parameters = (discord_id,discord_unique_id)
 
         self._mycursor.execute(sql,parameters)
         for row in self._mycursor:
@@ -743,10 +743,46 @@ class DBcontroller:
                 units = json.loads(row[4])
 
             gacha_mode = row[5]
+            discord_unique_id = row[6]
+            units_distinct_number = row[7]
+            units_score = row[8]
 
-            user = database.entities.User.User(user_id, discordid, crepes, last_bento_date, units, gacha_mode)
+            user = database.entities.User.User(user_id, discordid, crepes, last_bento_date, units, gacha_mode, discord_unique_id, units_distinct_number, units_score)
 
             return user
+
+    def get_top_users(self, category):
+        if category == TopCategories.GOURMETS:
+            column = "crepes"
+        else:
+            column = "units_score"
+
+        sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, gacha_mode, discord_unique_id, units_distinct_number, units_score FROM {}.user user WHERE user.{} > 0 ORDER BY user.{} DESC"\
+            .format(self.database, column, column)
+        print(sql)
+
+        self._mycursor.execute(sql)
+        users = []
+        for row in self._mycursor:
+            user_id = row[0]
+            discordid = row[1]
+            #data = database.entities.User.User.undumpData(self.remove_quotes(row[2]))
+            crepes = row[2]
+            last_bento_date = row[3]
+
+            if row[4] is None:
+                units = None
+            else:
+                units = json.loads(row[4])
+
+            gacha_mode = row[5]
+            discord_unique_id = row[6]
+            units_distinct_number = row[7]
+            units_score = row[8]
+
+            user = database.entities.User.User(user_id, discordid, crepes, last_bento_date, units, gacha_mode, discord_unique_id, units_distinct_number, units_score)
+            users.append(user)
+        return users
 
     @staticmethod
     def remove_quotes(string):
@@ -756,12 +792,12 @@ class DBcontroller:
 
     def update_user(self, user, date, command):
         if user.user_id is None:
-            sql = "INSERT INTO {}.user (discord_id, crepes, last_bento_date, units, gacha_mode) VALUES (%s,%s,%s,%s,%s)".format(self.database)
-            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units), user.gacha_mode)
+            sql = "INSERT INTO {}.user (discord_id, crepes, last_bento_date, units, gacha_mode, discord_unique_id, units_distinct_number, units_score) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)".format(self.database)
+            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units), user.gacha_mode, user.discord_unique_id, user.units_distinct_number, user.units_score)
         else:
-            sql = "UPDATE {}.user SET discord_id = %s, crepes = %s, last_bento_date = %s, units = %s, gacha_mode = %s" \
+            sql = "UPDATE {}.user SET discord_id = %s, crepes = %s, last_bento_date = %s, units = %s, gacha_mode = %s, discord_unique_id = %s, units_distinct_number = %s, units_score = %s" \
                   " WHERE user_id = %s".format(self.database)
-            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units), user.gacha_mode, user.user_id)
+            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units), user.gacha_mode, user.discord_unique_id, user.units_distinct_number, user.units_score, user.user_id)
 
         log = LogsCommand(user.discord_id, date, command, sql, parameters)
         print(log)

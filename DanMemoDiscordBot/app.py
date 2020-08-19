@@ -15,6 +15,7 @@ import commands.help as command_help
 import commands.profile as command_profile
 import commands.rb as command_rb
 import commands.skillSearch as command_skillSearch
+import commands.topUsers as command_topUsers
 import commands.FRrun as command_FRrun
 import commands.FRmock as command_FRmock
 import commands.FRping as command_FRping
@@ -102,6 +103,10 @@ async def gachamode(ctx,*args):
 @client.command(aliases=["p","inventory"])
 async def profile(ctx,*args):
     await command_profile.run(dbConfig,client,ctx,*args)
+
+@client.command(aliases=["top"])
+async def topUsers(ctx,*args):
+    await command_topUsers.run(dbConfig,client,ctx,*args)
 
 @client.command(aliases=["recordbuster","record buster", "rbguide"])
 async def rb(ctx, character):
