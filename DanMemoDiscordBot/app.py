@@ -125,19 +125,19 @@ async def addUpdateUnit(ctx, *search):
     cache.refreshcache(dbConfig)
 
 class FamiliaRush(commands.Cog):
-    @client.command(aliases=["frr","familiarushrun"])
+    @commands.command(aliases=["frr","familiarushrun"])
     async def frrun(self, ctx, *search):
         await command_FRrun.run(client,ctx,*search)
 
-    @client.command(aliases=["frm","familiarushmock"])
+    @commands.command(aliases=["frm","familiarushmock"])
     async def frmock(self, ctx, *search):
         await command_FRmock.run(client,ctx,*search)
 
-    @client.command(aliases=["frp","familiarushping"])
+    @commands.command(aliases=["frp","familiarushping"])
     async def frping(self,ctx, *search):
         await command_FRping.run(client,ctx,*search)
 
-    @client.command(aliases=["frnd","familiarushnewday"])
+    @commands.command(aliases=["frnd","familiarushnewday"])
     async def frnewday(self, ctx, *search):
         await command_FRnewday.run(client,ctx,*search)
 
