@@ -72,12 +72,13 @@ async def run(dbConfig, client, ctx, *search):
                     # [TITLE + NAME, SKILL INFO, FILTERS]
                     temp_list.append(["__**[{}] {}**__".format(names[0],names[1]),"***{}***\n".format(skillinfo[0].strip()) + "\n"+skillinfo[1]+"\n",["adventurer"]])
                     try:
-                        file_name = "./lottery/"+"{} {}".format(names[0],names[1]).strip()+"/hex.png"
+                        file_name = "./images/units/"+"{} [{}]".format(names[1],names[0]).strip()+"/hex.png"
+                        print(file_name)
                         f = open(file_name,"r")
                         f.close()
                         file_list.append(file_name)
                     except:
-                        file_list.append("./lottery/gac_dummy/hex.png")
+                        file_list.append("./images/units/gac_dummy/hex.png")
                     dup_dict_ad[adventurerid] = (len(rotating_list)-1, len(temp_list)-1)
             elif("As" in skillid):
                 assistid = db.getAssistIdFromSkill(skillid[2:])
@@ -95,12 +96,13 @@ async def run(dbConfig, client, ctx, *search):
                     names = db.assembleAssistCharacterName(assistid)
                     temp_list.append(["__**[{}] {}**__".format(names[0],names[1]),"***{}***\n".format(skillinfo[0].strip()) + skillinfo[1]+"\n",["assist"]])
                     try:
-                        file_name = "./lottery/"+"{} {}".format(names[0],names[1]).strip()+"/hex.png"
+                        file_name = "./images/units/"+"{} [{}]".format(names[1],names[0]).strip()+"/hex.png"
+                        print(file_name)
                         f = open(file_name,"r")
                         f.close()
                         file_list.append(file_name)
                     except:
-                        file_list.append("./lottery/gac_dummy/hex.png")
+                        file_list.append("./images/units/gac_dummy/hex.png")
                     dup_dict_as[assistid] = (len(rotating_list)-1, len(temp_list)-1)
             else:
                 skillinfo=db.assembleAdventurerDevelopment(skillid[2:])
@@ -114,12 +116,12 @@ async def run(dbConfig, client, ctx, *search):
                 else:
                     temp_list.append(["[{}] {}".format(skillinfo[2],skillinfo[3]),skillinfo[0] + "\n"+ skillinfo[1]+"\n",["adventurer"],"{} {}".format(skillinfo[2],skillinfo[3]).strip()])
                     try:
-                        file_name = "./lottery/{} {}".format(skillinfo[2],skillinfo[3]).strip()+"/hex.png"
+                        file_name = "./images/units/{} [{}]".format(skillinfo[3],skillinfo[2]).strip()+"/hex.png"
                         f = open(file_name,"r")
                         f.close()
                         file_list.append(file_name)
                     except:
-                        file_list.append("./lottery/gac_dummy/hex.png")
+                        file_list.append("./images/units/gac_dummy/hex.png")
             count = count +1
             if(count ==4):
                 await imageHorizontalConcat(client,file_list,discord_file_list)

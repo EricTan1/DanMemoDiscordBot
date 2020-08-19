@@ -169,13 +169,17 @@ async def singleAdventurer(client, ctx, db,assistadventurerid):
         # images
         file_list = []
         # file_list.append(discord.File("./lottery/"+info[0], filename="hex.png"))
-        file_list.append(discord.File("./lottery/"+info[0]+"/hex.png"))
+        character_name = info[1].split("]")[1][1:].split("\n")[0]
+        character_title = info[1].split("[")[1].split("]")[0]
+        folder_name = character_name + " [" + character_title + "]"
+        print("Info:",folder_name)
+        file_list.append(discord.File("./images/units/"+ folder_name + "/hex.png"))
         #file_list.append(discord.File("./lottery/"+info[0], filename="texture.png"))        
-        file_list.append(discord.File("./lottery/"+info[0] + "/texture.png"))
+        file_list.append(discord.File("./images/units/"+ folder_name + "/all_rectangle.png"))
         temp_embed.set_thumbnail(url="attachment://hex.png")
         dev_embed.set_thumbnail(url="attachment://hex.png")
-        temp_embed.set_image(url="attachment://texture.png")
-        dev_embed.set_image(url="attachment://texture.png")
+        temp_embed.set_image(url="attachment://all_rectangle.png")
+        dev_embed.set_image(url="attachment://all_rectangle.png")
         is_files = True
     except:
         pass
