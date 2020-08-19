@@ -724,7 +724,7 @@ class DBcontroller:
             return unit_type, stars, unit_id, title, name
 
     def get_user(self, discord_id, discord_unique_id):
-        sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, gacha_mode, discord_unique_id, units_distinct_number, units_score FROM {}.user user WHERE user.discord_id = %s or user.discord_unique_id = %s"\
+        sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, units_summary, gacha_mode, discord_unique_id, units_distinct_number, units_score FROM {}.user user WHERE user.discord_id = %s or user.discord_unique_id = %s"\
             .format(self.database)
         print(sql)
         parameters = (discord_id,discord_unique_id)
@@ -742,12 +742,17 @@ class DBcontroller:
             else:
                 units = json.loads(row[4])
 
-            gacha_mode = row[5]
-            discord_unique_id = row[6]
-            units_distinct_number = row[7]
-            units_score = row[8]
+            if row[5] is None:
+                units_summary = None
+            else:
+                units_summary = json.loads(row[5])
 
-            user = database.entities.User.User(user_id, discordid, crepes, last_bento_date, units, gacha_mode, discord_unique_id, units_distinct_number, units_score)
+            gacha_mode = row[6]
+            discord_unique_id = row[7]
+            units_distinct_number = row[8]
+            units_score = row[9]
+
+            user = database.entities.User.User(user_id, discordid, crepes, last_bento_date, units, units_summary, gacha_mode, discord_unique_id, units_distinct_number, units_score)
 
             return user
 
@@ -757,7 +762,7 @@ class DBcontroller:
         else:
             column = "units_score"
 
-        sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, gacha_mode, discord_unique_id, units_distinct_number, units_score FROM {}.user user WHERE user.{} > 0 ORDER BY user.{} DESC"\
+        sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, units_summary, gacha_mode, discord_unique_id, units_distinct_number, units_score FROM {}.user user WHERE user.{} > 0 ORDER BY user.{} DESC"\
             .format(self.database, column, column)
         print(sql)
 
@@ -775,12 +780,17 @@ class DBcontroller:
             else:
                 units = json.loads(row[4])
 
-            gacha_mode = row[5]
-            discord_unique_id = row[6]
-            units_distinct_number = row[7]
-            units_score = row[8]
+            if row[5] is None:
+                units_summary = None
+            else:
+                units_summary = json.loads(row[5])
 
-            user = database.entities.User.User(user_id, discordid, crepes, last_bento_date, units, gacha_mode, discord_unique_id, units_distinct_number, units_score)
+            gacha_mode = row[6]
+            discord_unique_id = row[7]
+            units_distinct_number = row[8]
+            units_score = row[9]
+
+            user = database.entities.User.User(user_id, discordid, crepes, last_bento_date, units, units_summary, gacha_mode, discord_unique_id, units_distinct_number, units_score)
             users.append(user)
         return users
 
@@ -792,12 +802,12 @@ class DBcontroller:
 
     def update_user(self, user, date, command):
         if user.user_id is None:
-            sql = "INSERT INTO {}.user (discord_id, crepes, last_bento_date, units, gacha_mode, discord_unique_id, units_distinct_number, units_score) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)".format(self.database)
-            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units), user.gacha_mode, user.discord_unique_id, user.units_distinct_number, user.units_score)
+            sql = "INSERT INTO {}.user (discord_id, crepes, last_bento_date, units_summary, gacha_mode, discord_unique_id, units_distinct_number, units_score) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)".format(self.database)
+            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units_summary), user.gacha_mode, user.discord_unique_id, user.units_distinct_number, user.units_score)
         else:
-            sql = "UPDATE {}.user SET discord_id = %s, crepes = %s, last_bento_date = %s, units = %s, gacha_mode = %s, discord_unique_id = %s, units_distinct_number = %s, units_score = %s" \
+            sql = "UPDATE {}.user SET discord_id = %s, crepes = %s, last_bento_date = %s, units_summary = %s, gacha_mode = %s, discord_unique_id = %s, units_distinct_number = %s, units_score = %s" \
                   " WHERE user_id = %s".format(self.database)
-            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units), user.gacha_mode, user.discord_unique_id, user.units_distinct_number, user.units_score, user.user_id)
+            parameters = (user.discord_id, user.crepes, user.last_bento_date, json.dumps(user.units_summary), user.gacha_mode, user.discord_unique_id, user.units_distinct_number, user.units_score, user.user_id)
 
         log = LogsCommand(user.discord_id, date, command, sql, parameters)
         print(log)
