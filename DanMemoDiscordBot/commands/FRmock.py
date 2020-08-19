@@ -46,6 +46,7 @@ async def run(client, ctx:commands.context, *search):
                 has_access = True
         if(has_access):
             errors = ""
+            score_list = []
             # number converting and understanding
             for arguments in search:
                 if("diff" in arguments or "difficulty" in arguments):
@@ -62,21 +63,25 @@ async def run(client, ctx:commands.context, *search):
                         errors = "Incorrect stage value please have a day between 1-3"
                 elif("dmg" in arguments or "damage" in arguments):
                     score = arguments.replace("damage","").replace("dmg","").replace(",","").strip()
-                    if("m" in score):
-                        score = score.replace("m","")
-                        score = float(score)*1000000
-                    elif("kk" in score):
-                        score = score.replace("kk","")
-                        score = float(score)*1000000
-                    elif("k" in score):
-                        score = score.replace("k","")
-                        score = float(score)*1000
-                    try:
-                        score = int(score)
-                    except:
-                        errors = "please have a numerical damage or have 'm', 'kk' or 'k' in the damage"
-                    if(score <0):
-                        errors = "Negative damage"
+                    temp_scores = score.split("$")
+                    for items in temp_scores:
+                        temp_item = items.lower()
+                        if("m" in items):
+                            temp_item = temp_item.replace("m","")
+                            temp_item = float(temp_item)*1000000
+                        elif("kk" in temp_item):
+                            temp_item = temp_item.replace("kk","")
+                            temp_item = float(temp_item)*1000000
+                        elif("k" in temp_item):
+                            temp_item = temp_item.replace("k","")
+                            temp_item = float(temp_item)*1000
+                        try:
+                            temp_item = int(temp_item)
+                            score_list.append(temp_item)
+                        except:
+                            errors = "please have a numerical damage or have 'm', 'kk' or 'k' in the damage"
+                        if(temp_item <0):
+                            errors = "Negative damage"
                 elif("d" in arguments or "day" in arguments):
                     print(arguments)
                     try:
@@ -92,15 +97,17 @@ async def run(client, ctx:commands.context, *search):
                 temp_embed.description= errors
                 await ctx.send(embed=temp_embed)
             else:
-                # try:
-
-                await recordMockRun(ctx, current_user, day, stage, difficulty, score)
-                # except:
-                #     temp_embed = discord.Embed()
-                #     temp_embed.color = 16203840
-                #     temp_embed.title = "Argument Error"
-                #     temp_embed.description= "missing an argument"
-                #     await ctx.send(embed=temp_embed)
+                try:
+                    for scores in score_list:
+                        await recordMockRun(ctx, current_user, day, stage, difficulty, scores)
+                    await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))
+                except:
+                    await ctx.message.add_reaction(getDefaultEmoji("x"))
+                    temp_embed = discord.Embed()
+                    temp_embed.color = 16203840
+                    temp_embed.title = "Argument Error"
+                    temp_embed.description= "missing an argument"
+                    await ctx.send(embed=temp_embed)
 
 async def recordMockRun(ctx, user, day, stage, difficulty, score:int):
     """ the logic and recording of the spreadsheet
@@ -199,4 +206,10 @@ async def recordMockRun(ctx, user, day, stage, difficulty, score:int):
     column = stage*3
     # recent score
     ws.update_cell(row, column+3, score)
-    await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))
+    # attachments
+    if (len(ctx.message.attachments) != 0):
+        cell_info = ""
+        for attachment in ctx.message.attachments:
+            cell_info = cell_info + '=IMAGE("{}")'.format(attachment.url) + "\n"
+            # end of stages column after 
+            ws.update_cell(row, 9+3+stage, cell_info)

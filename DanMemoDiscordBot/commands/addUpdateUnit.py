@@ -265,7 +265,7 @@ if __name__ == "__main__":
 
 async def run(dbConfig, client, ctx, *search):
     # permission checking
-    if(ctx.message.author.id == 175045433662504961 or ctx.message.author.id == 271030697219588096):
+    if(ctx.message.author.id == 175045433662504961 or ctx.message.author.id == 271030697219588096 or ctx.message.author.id == 204693066500538368):
         db = DBcontroller(dbConfig)
         ic = InsertCharacter(db)
         # loop through all attachments and get their value

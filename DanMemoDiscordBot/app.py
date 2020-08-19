@@ -20,17 +20,37 @@ import commands.FRmock as command_FRmock
 import commands.FRping as command_FRping
 import commands.FRnewday as command_FRnewday
 import commands.addUpdateUnit as command_addUpdateUnit
+import commands.FWGupdateteam as command_FWGUpdateTeam
+import commands.FWGinfo as command_FWGInfo
+import commands.FWGupdatenote as command_FWGUpdateNote
+import commands.FWGtargets as command_FWGTargets
+import commands.FWGattack as command_FWGAttack
+import commands.FWGsettarget as command_FWGSetTarget
+import commands.FWGping as command_FWGPing
+import commands.FWGleft as command_FWGLeft
+import commands.FWGtargets as command_FWGTargets
+import commands.FWGenemyattack as command_FWGEnemyAttack
+import commands.FWGnewday as command_FWGNewDay
 
-from commands.utils import createGSpreadJSON
+from commands.utils import createGSpreadJSON, checkperms
 
 if "IS_HEROKU" in os.environ:
     _command_prefix = "!$"
 else:
     _command_prefix = "$$"
 
-client = commands.Bot(command_prefix=_command_prefix, help_command=None)
+client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True)
 dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
 cache = Cache(dbConfig)
+# @client.event
+# async def on_message(message):
+#     #screenshots
+#     if(message.channel.id==738834866002722967):
+#         await command_FWGUpdateTeam.run(message)
+#     #enemy attacks
+#     elif(message.channel.id==739875599463743570):
+#         await command_FWGEnemyAttack.run(message)
+#     await client.process_commands(message)
 
 @client.event
 async def on_ready():
@@ -39,8 +59,11 @@ async def on_ready():
     '''
     #temp = [(e.id, e.name) for e in client.emojis]
     #print(temp)
-    print("Bot is ready!")
+    #client.add_cog(FamiliaRush())
+    #client.add_cog(FamiliaWarGame(client))
     await createGSpreadJSON()
+    print("Bot is ready!")
+
 
 async def close(ctx):
     # embeded message to show that the bot is shut down
@@ -68,7 +91,7 @@ async def help(ctx):
 async def bento(ctx):
     await command_bento.run(dbConfig,ctx)
     
-@client.command(aliases=["pull"])
+@client.command(aliases=["pull","g"])
 async def gacha(ctx,*args):
     await command_gacha.run(dbConfig,client,ctx,*args)
 
@@ -86,6 +109,7 @@ async def rb(ctx, character):
 
 @client.command(aliases=["dp","dispatchquest","dq"])
 async def dispatch(ctx, *search):
+    print("work")
     await command_dispatch.run(dbConfig,client,ctx,*search)
 
 @client.command(aliases=["auu"])
@@ -95,22 +119,63 @@ async def addUpdateUnit(ctx, *search):
     cache = Cache(dbConfig)
     cache.refreshcache(dbConfig)
 
+class FamiliaRush(commands.Cog):
+    @client.command(aliases=["frr","familiarushrun"])
+    async def frrun(self, ctx, *search):
+        await command_FRrun.run(client,ctx,*search)
 
-#@client.command(aliases=["frr","familiarushrun"])
-async def frrun(ctx, *search):
-    await command_FRrun.run(client,ctx,*search)
+    @client.command(aliases=["frm","familiarushmock"])
+    async def frmock(self, ctx, *search):
+        await command_FRmock.run(client,ctx,*search)
 
-#@client.command(aliases=["frm","familiarushmock"])
-async def frmock(ctx, *search):
-    await command_FRmock.run(client,ctx,*search)
+    @client.command(aliases=["frp","familiarushping"])
+    async def frping(self,ctx, *search):
+        await command_FRping.run(client,ctx,*search)
 
-#@client.command(aliases=["frp","familiarushping"])
-async def frping(ctx, *search):
-    await command_FRping.run(client,ctx,*search)
+    @client.command(aliases=["frnd","familiarushnewday"])
+    async def frnewday(self, ctx, *search):
+        await command_FRnewday.run(client,ctx,*search)
 
-#@client.command(aliases=["frnd","familiarushnewday"])
-async def frnewday(ctx, *search):
-    await command_FRnewday.run(client,ctx,*search)
+class FamiliaWarGame(commands.Cog):
+    # not too sure whether to implement since manually prob faster/better
+    @commands.command(aliases=["fwgnd"])
+    async def fwgNewDay(self, ctx):
+        if(checkperms(ctx,708002106245775410,[708005221586042881,722152474743668867])):
+            await command_FWGNewDay.run(ctx)
+    #@commands.command(aliases=["fwgut"])
+    async def fwgUpdateTeam(self, ctx, target:str):
+        await command_FWGUpdateTeam.run(ctx.message)
+    @commands.command(aliases=["fwga"])
+    async def fwgAttack(self, ctx, target,medals:int):
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGAttack.run(client,ctx,target, medals)
+    #@commands.command(aliases=["fwgea"])
+    async def fwgEnemyAttack(self, ctx, target,medals:int):
+        await command_FWGAttack.run(client,ctx,target, medals)
+    @commands.command(aliases=["fwgp"])
+    async def fwgPing(self, ctx):
+        if(checkperms(ctx,708002106245775410,[708005221586042881,722152474743668867])):
+            await command_FWGPing.run(ctx)
+    @commands.command(aliases=["fwgst"])
+    async def fwgSetTarget(self, ctx,ally:discord.Member,enemy):
+        if(checkperms(ctx,708002106245775410,[722152474743668867])):
+            await command_FWGSetTarget.run(ctx,ally,enemy)
+    @commands.command(aliases=["fwgt","fwgTarget"])
+    async def fwgTargets(self, ctx,*optional:discord.Member):
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGTargets.run(ctx, optional)
+    @commands.command(aliases=["fwgl"])
+    async def fwgLeft(self, ctx):
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGLeft.run(ctx)
+    @commands.command(aliases=["fwgun"])
+    async def fwgupdatenote(self, ctx, target, *note):
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGUpdateNote.run(ctx,target,note)
+    @commands.command(aliases=["fwgi"])
+    async def fwgInfo(self,ctx, target):
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGInfo.run(ctx,target)
 
 if __name__ == "__main__":
     TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
