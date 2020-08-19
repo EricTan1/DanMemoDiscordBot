@@ -172,7 +172,6 @@ async def singleAdventurer(client, ctx, db,assistadventurerid):
         character_name = info[1].split("]")[1][1:].split("\n")[0]
         character_title = info[1].split("[")[1].split("]")[0]
         folder_name = character_name + " [" + character_title + "]"
-        print("Info:",folder_name)
         file_list.append(discord.File("./images/units/"+ folder_name + "/hex.png"))
         #file_list.append(discord.File("./lottery/"+info[0], filename="texture.png"))        
         file_list.append(discord.File("./images/units/"+ folder_name + "/all_rectangle.png"))

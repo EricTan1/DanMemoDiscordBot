@@ -73,7 +73,6 @@ async def run(dbConfig, client, ctx, *search):
                     temp_list.append(["__**[{}] {}**__".format(names[0],names[1]),"***{}***\n".format(skillinfo[0].strip()) + "\n"+skillinfo[1]+"\n",["adventurer"]])
                     try:
                         file_name = "./images/units/"+"{} [{}]".format(names[1],names[0]).strip()+"/hex.png"
-                        print(file_name)
                         f = open(file_name,"r")
                         f.close()
                         file_list.append(file_name)
@@ -97,7 +96,6 @@ async def run(dbConfig, client, ctx, *search):
                     temp_list.append(["__**[{}] {}**__".format(names[0],names[1]),"***{}***\n".format(skillinfo[0].strip()) + skillinfo[1]+"\n",["assist"]])
                     try:
                         file_name = "./images/units/"+"{} [{}]".format(names[1],names[0]).strip()+"/hex.png"
-                        print(file_name)
                         f = open(file_name,"r")
                         f.close()
                         file_list.append(file_name)
