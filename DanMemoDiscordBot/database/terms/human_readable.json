@@ -143,4 +143,7 @@
 	"null_ailments":"Null Ailments",
 	"per_each_self_water_buff_skill": "per each [Self] Water Attack Dmg. Buff Skill",
 	"str_mag_debuff_removal_no_assist": "removes Str. & Mag. Debuffs exc. Assist Skills"
+	"str_mag_buff_removal_no_assist": "removes Str. & Mag. Buffs exc. Assist Skills"
+	"str_mag_agi_buff_removal_no_assist": "removes Str., Mag. & Agi. Buffs exc. Assist Skills"
+	"str_mag_hp_regen_buff_removal_no_assist": "removes Str. & Mag. Buffs and HP Regen Skills exc. Assist Skills"
 }
