@@ -53,10 +53,10 @@
 	"physical_resist_buff_removal_no_assist": "removes all P.Resist Buffs exc Assist Skills",
 	"str_buff_removal_no_assist": "removes all Str. Buffs exc Assist Skills",
 	"magic_buff_removal_no_assist": "removes all Mag. Buffs exc Assist Skills",
-  "guard_rate_buff_removal_no_assist": "removes all Guard Rate Buffs exc Assist Skills",
+	"guard_rate_buff_removal_no_assist": "removes all Guard Rate Buffs exc Assist Skills",
 	"debuff_removal_no_assist": "removes all Debuffs exc Assist Skills",
 	"hp_regen_removal_no_assist": "removes all HP Regen exc Assist Skills",
-  "hp_buff_removal_no_assist": "removes all HP Buff exc Assist Skills",
+	"hp_buff_removal_no_assist": "removes all HP Buff exc Assist Skills",
 	"all_damage_resist_removal_no_assist": "removes all All-target Attack DMG Resist exc Assist Skills",
 	"str_debuff_removal_no_assist": "removes Str. Debuffs exc Assist Skills",
 	"mag_debuff_removal_no_assist": "removes Mag. Debuffs exc Assist Skills",
@@ -127,12 +127,12 @@
 	"plant_killer": "Plant Killer",
 	"dragon_killer": "Dragon Killer",
 	"ogre_killer": "Ogre Killer",
-	"per_each_targets_physical_resist_reduction_skill":"per each target's P.Resist reduction skill",
-	"physical_resist_debuff_removal_no_assist":"removes all P.Resist Debuffs exc Assist Skills",
+	"per_each_targets_physical_resist_reduction_skill": "per each target's P.Resist reduction skill",
+	"physical_resist_debuff_removal_no_assist": "removes all P.Resist Debuffs exc Assist Skills",
 	"per_each_foe_magic_resist_debuff_skill": "per each Target's M.Resist Reduction Skill",
-	"per_each_strength_and_magic_debuff_skill":"per each Target's Str. and Mag. Reduction"
-	"per_each_self_str_buff_skill":	"per each [Self] Str. Buff Skill",
-	"per_each_self_str_buff":"per each [Self] Str. Buff",
+	"per_each_strength_and_magic_debuff_skill": "per each Target's Str. and Mag. Reduction",
+	"per_each_self_str_buff_skill": "per each [Self] Str. Buff Skill",
+	"per_each_self_str_buff": "per each [Self] Str. Buff",
 	"per_each_self_critical_rate_buff_skill": "per each [Self] Critical Rate Buff Skill",
 	"per_each_self_mag_buff_skill": "per each [Self] Mag. Buff Skill",
 	"per_each_fire_attack_buff_skill": "per each [Self] Fire Attack Dmg. Buff Skill",
@@ -144,10 +144,10 @@
 	"per_each_self_single_all_targets_damage_resist": "per each Target's skill effect that increases Dmg. received (Attack Type: All & Single Targets)",
 	"per_each_self_dex_buff_skill": "per each [Self] Dex. Buff Skill",
 	"per_each_self_agi_buff_skill": "per each [Self] Agi. Buff Skill",
-	"null_ailments":"Null Ailments",
+	"null_ailments": "Null Ailments",
 	"per_each_self_water_buff_skill": "per each [Self] Water Attack Dmg. Buff Skill",
-	"str_mag_debuff_removal_no_assist": "removes Str. & Mag. Debuffs exc. Assist Skills"
-	"str_mag_buff_removal_no_assist": "removes Str. & Mag. Buffs exc. Assist Skills"
-	"str_mag_agi_buff_removal_no_assist": "removes Str., Mag. & Agi. Buffs exc. Assist Skills"
+	"str_mag_debuff_removal_no_assist": "removes Str. & Mag. Debuffs exc. Assist Skills",
+	"str_mag_buff_removal_no_assist": "removes Str. & Mag. Buffs exc. Assist Skills",
+	"str_mag_agi_buff_removal_no_assist": "removes Str., Mag. & Agi. Buffs exc. Assist Skills",
 	"str_mag_hp_regen_buff_removal_no_assist": "removes Str. & Mag. Buffs and HP Regen Skills exc. Assist Skills"
 }
