@@ -100,9 +100,8 @@ async def run(client, ctx:commands.context, *search):
             else:
                 try:
                     for scores in score_list:
-                        # 50m hardcap
-                        if scores < 50000000:
-                            await recordRealRun(ctx, current_user, day, stage, difficulty, scores)
+                        # no cap
+                        await recordRealRun(ctx, current_user, day, stage, difficulty, scores)
                 except:
                     await ctx.message.add_reaction(getDefaultEmoji("x"))
                     temp_embed = discord.Embed()
@@ -247,5 +246,5 @@ async def recordRealRun(ctx, user, day, stage, difficulty, score:int):
         #     ws.update_cell(row, column, int(current_date_score)+score)
         # else:
         #     ws.update_cell(row, column, score)
-
+        await ctx.message.add_reaction(getDefaultEmoji(":regional_indicator_r:"))
         await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))
