@@ -246,5 +246,5 @@ async def recordRealRun(ctx, user, day, stage, difficulty, score:int):
         #     ws.update_cell(row, column, int(current_date_score)+score)
         # else:
         #     ws.update_cell(row, column, score)
-        await ctx.message.add_reaction(getDefaultEmoji(":regional_indicator_r:"))
+        await ctx.message.add_reaction(getDefaultEmoji("regional_indicator_r"))
         await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))

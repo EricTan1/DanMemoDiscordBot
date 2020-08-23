@@ -100,7 +100,7 @@ async def run(client, ctx:commands.context, *search):
                 try:
                     for scores in score_list:
                         await recordMockRun(ctx, current_user, day, stage, difficulty, scores)
-                    await ctx.message.add_reaction(getDefaultEmoji(":regional_indicator_m:"))
+                    await ctx.message.add_reaction(getDefaultEmoji("regional_indicator_m"))
                     await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))
                 except:
                     await ctx.message.add_reaction(getDefaultEmoji("x"))
