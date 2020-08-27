@@ -20,6 +20,7 @@ ID;FULL;Label;Character
 1011001020;[Ready for Act] Bell Cranel;Ready for Act;Bell Cranel
 1011001021;[Pyonkichi MK-II] Bell Cranel;Pyonkichi MK-II;Bell Cranel
 1011001022;[Duel Strive] Bell Cranel;Duel Strive;Bell Cranel
+1011001023;[Fiesta Freese] Bell Cranel;Fiesta Freese;Bell Cranel
 1011002001;[Battle Princess] Ais Wallenstein;Battle Princess;Ais Wallenstein
 1011002002;[Girl of the Wind] Ais Wallenstein;Girl of the Wind;Ais Wallenstein
 1011002003;[Sword Princess] Ais Wallenstein;Sword Princess;Ais Wallenstein
@@ -47,6 +48,7 @@ ID;FULL;Label;Character
 1011002027;[Pacific Rhapsody] Ais Wallenstein;Pacific Rhapsody;Ais Wallenstein
 1011002028;[Mobile Suit Princess] Ais Wallenstein;Mobile Suit Princess;Ais Wallenstein
 1011002029;[Gallant Armor] Ais Wallenstein;Gallant Armor;Ais Wallenstein
+1011002031;[Storm Princess] Ais Wallenstein;Storm Princess;Ais Wallenstein
 1011003001;[Supporter] Liliruca Arde;Supporter;Liliruca Arde
 1011003002;[Artel Assist] Liliruca Arde;Artel Assist;Liliruca Arde
 1011003003;[Valor Support] Liliruca Arde;Valor Support;Liliruca Arde
@@ -87,6 +89,7 @@ ID;FULL;Label;Character
 1011005007;[Brave Swordsman] Finn Deimne;Brave Swordsman;Finn Deimne
 1011005008;[Oriental Attire] Finn Deimne;Oriental Attire;Finn Deimne
 1011005009;[Brave Spearman] Finn Deimne;Brave Spearman;Finn Deimne
+1011005010;[Unwavering Spear] Finn Deimne;Unwavering Spear;Finn Deimne
 1011006001;[Great Mage] Riveria Ljos Alf;Great Mage;Riveria Ljos Alf
 1011006002;[Nine Hell] Riveria Ljos Alf;Nine Hell;Riveria Ljos Alf
 1011006003;[Fairy Anthem] Riveria Ljos Alf;Fairy Anthem;Riveria Ljos Alf
@@ -102,6 +105,7 @@ ID;FULL;Label;Character
 1011007002;[Superior Reign] Ottarl;Superior Reign;Ottarl
 1011007003;[Mighty King] Ottarl;Mighty King;Ottarl
 1011007004;[Fierce Rage] Ottarl;Fierce Rage;Ottarl
+1011007005;[The King's War] Ottarl;The King's War;Ottarl
 1011008001;[Alchemist] Asfi Al Andromeda;Alchemist;Asfi Al Andromeda
 1011008002;[Combat Commander] Asfi Al Andromeda;Combat Commander;Asfi Al Andromeda
 1011008003;[Perseus] Asfi Al Andromeda;Perseus;Asfi Al Andromeda
@@ -192,6 +196,7 @@ ID;FULL;Label;Character
 1011020012;[Scarlet Elf] Ryu Lion;Scarlet Elf;Ryu Lion
 1011020013;[Elven Gale] Ryu Lion;Elven Gale;Ryu Lion
 1011020014;[Wind of Purity] Ryu Lion;Wind of Purity;Ryu Lion
+1011020015;[Justice Succession] Ryu Lion;Justice Succession;Ryu Lion
 1011021001;[Foxy Princess] Sanjouno Haruhime;Foxy Princess;Sanjouno Haruhime
 1011021002;[Silver Fox] Sanjouno Haruhime;Silver Fox;Sanjouno Haruhime
 1011021003;[An Ocean of Virtue] Sanjouno Haruhime;An Ocean of Virtue;Sanjouno Haruhime
@@ -235,6 +240,7 @@ ID;FULL;Label;Character
 1011073001;[Fist Fighter] Shakti Varma;Fist Fighter;Shakti Varma
 1011073002;[Casino Lady] Shakti Varma;Casino Lady;Shakti Varma
 1011073003;[Blue Lotus] Shakti Varma;Blue Lotus;Shakti Varma
+1011073004;[City Guardian] Shakti Varma;City Guardian;Shakti Varma
 1011078001;[Virgin Goddess] Artemis;Virgin Goddess;Artemis
 1011079001;[Clown] Argonaut;Clown;Argonaut
 1011079002;[The Dawn] Argonaut;The Dawn;Argonaut
@@ -258,6 +264,11 @@ ID;FULL;Label;Character
 1011099001;[Delightful Mage] Elfy Colette;Delightful Mage;Elfy Colette
 1011102001;[Faith Keeper] Ardee Varma;Faith Keeper;Ardee Varma
 1011103001;[Flaming Blade] Alise Lovell;Flaming Blade;Alise Lovell
+1011103002;[Flaming Will] Alise Lovell;Flaming Will;Alise Lovell
+1011105001;[Conspired Hand] Lyra;Conspired Hand;Lyra
+1011106001;[Scarlet Sword] Gojouno Kaguya;Scarlet Sword;Gojouno Kaguya
+1011110001;[Predator] Zard;Predator;Zard
+1011111001;[Silence] Alfia;Silence;Alfia
 1011500001;[Foreign Traveler] Kino & Hermes;Foreign Traveler;Kino & Hermes
 1011500002;[Traveler] Kino;Traveler;Kino
 1011502001;[Wondering Man] Shizu & Riku;Wondering Man;Shizu & Riku
@@ -284,6 +295,7 @@ ID;FULL;Label;Character
 1012005001;[Key Strategist] Finn Deimne;Key Strategist;Finn Deimne
 1012006001;[Dark Divine] Riveria Ljos Alf;Dark Divine;Riveria Ljos Alf
 1012008001;[Lawful Judge] Asfi Al Andromeda;Lawful Judge;Asfi Al Andromeda
+1012008002;[Wings of Succession] Asfi Al Andromeda;Wings of Succession;Asfi Al Andromeda
 1012011001;[Festive Blade] Welf Crozzo;Festive Blade;Welf Crozzo
 1012014001;[Cowgirl Dress] Hitachi Chigusa;Cowgirl Dress;Hitachi Chigusa
 1012020002;[Expert Advisor] Ryu Lion;Expert Advisor;Ryu Lion
@@ -330,6 +342,7 @@ ID;FULL;Label;Character
 1012027036;[Adventurer's Set] Hestia;Adventurer's Set;Hestia
 1012027037;[Space Ribbon] Hestia;Space Ribbon;Hestia
 1012027038;[Pasture Goddess] Hestia;Pasture Goddess;Hestia
+1012027040;[Celebration Goddess] Hestia;Celebration Goddess;Hestia
 1012028001;[Crafty Goddess] Loki;Crafty Goddess;Loki
 1012028002;[Cheers!] Loki;Cheers!;Loki
 1012028003;[Trickster] Loki;Trickster;Loki
@@ -351,6 +364,7 @@ ID;FULL;Label;Character
 1012029011;[Pure Bride] Syr Flover;Pure Bride;Syr Flover
 1012029012;[New Year Kimono] Syr Flover;New Year Kimono;Syr Flover
 1012029013;[Faithful Formal] Syr Flover;Faithful Formal;Syr Flover
+1012029014;[Devoted Hand] Syr Flover;Devoted Hand;Syr Flover
 1012030001;[Receptionist] Eina Tulle;Receptionist;Eina Tulle
 1012030002;[Advisor] Eina Tulle;Advisor;Eina Tulle
 1012030003;[Scholar] Eina Tulle;Scholar;Eina Tulle
@@ -381,6 +395,7 @@ ID;FULL;Label;Character
 1012032009;[Queen of Beauty] Freya;Queen of Beauty;Freya
 1012032010;[Dreamy Swimmer] Freya;Dreamy Swimmer;Freya
 1012032011;[Captivating Beauty] Freya;Captivating Beauty;Freya
+1012032012;[Divine Gaze] Freya;Divine Gaze;Freya
 1012033001;[God of the Masses] Ganesha;God of the Masses;Ganesha
 1012033002;[Mighty Elephant] Ganesha;Mighty Elephant;Ganesha
 1012033003;[Masked Lord] Ganesha;Masked Lord;Ganesha
@@ -430,6 +445,7 @@ ID;FULL;Label;Character
 1012053001;[Elven Childhood] Lefiya (Girl);Elven Childhood;Lefiya (Girl)
 1012061001;[Young Blacksmith] Hephaistios (Girl);Young Blacksmith;Hephaistios (Girl)
 1012062001;[Little Goddess] Hestia (Girl);Little Goddess;Hestia (Girl)
+1012066001;[Bursting Chariot] Allen Fromel;Bursting Chariot;Allen Fromel
 1012072001;[Vigorous Medi-God] Diancecht;Vigorous Medi-God;Diancecht
 1012078001;[Innocent Goddess] Artemis;Innocent Goddess;Artemis
 1012078002;[Sleeping Innocence] Artemis;Sleeping Innocence;Artemis
@@ -442,6 +458,7 @@ ID;FULL;Label;Character
 1012093001;[The Night Queen] Ishtar;The Night Queen;Ishtar
 1012096001;[God of War] Ares;God of War;Ares
 1012104001;[Justice Guardian] Astrea;Justice Guardian;Astrea
+1012109001;[The Origin of Darkness] Erebus;The Origin of Darkness;Erebus
 1012504001;[Explosive Girl] Ti;Explosive Girl;Ti
 1012509001;[Sharp Thinker] Armin Arlert;Sharp Thinker;Armin Arlert
 1012511001;[Uncontrollable] Titan Eren;Uncontrollable;Titan Eren
