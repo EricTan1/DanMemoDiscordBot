@@ -222,6 +222,19 @@ class DBcontroller:
             temp = self.human_input_dict.get(searchwords_list[index])
             if(temp != None):
                 searchwords_list[index] = temp.strip()
+            # if its not whole sentences try single words
+            replace_list = []
+            for words in searchwords_list[index].split(" "):
+                
+                print(searchwords_list[index])
+                print(words)
+                temp = self.human_input_dict.get(words)
+                if(temp != None):
+                    # (old,new)
+                    replace_list.append((words, temp.strip()))
+            for (old,new) in replace_list:
+                searchwords_list[index] = searchwords_list[index].replace(old,new)
+
             #searchwords_list[index] = searchwords_list[index].replace(" ","_")
         print(searchwords_list)
         ele_set = {'light', 'wind', 'fire', 'dark', 'ice', 'water', 'earth', 'thunder'}
