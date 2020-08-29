@@ -98,5 +98,4 @@ Show the biggest Whales/Gourmets, all servers combined
 F
 EXAMPLE:
 !$top
-F
 E
