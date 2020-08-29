@@ -98,4 +98,20 @@ Show the biggest Whales/Gourmets, all servers combined
 F
 EXAMPLE:
 !$top
+F
+**Invite**
+Alias: invite
+Usage: !$invite
+Get the bot invite link
+F
+EXAMPLE:
+!$invite
+F
+**Support**
+Alias: support
+Usage: !$support
+Get a link to our support server. Please contact Eric#5731 or Yon#7436
+F
+EXAMPLE:
+!$support
 E

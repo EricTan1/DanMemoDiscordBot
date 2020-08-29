@@ -12,9 +12,11 @@ import commands.dispatch as command_dispatch
 import commands.gacha as command_gacha
 import commands.gachaMode as command_gachaMode
 import commands.help as command_help
+import commands.invite as command_invite
 import commands.profile as command_profile
 import commands.rb as command_rb
 import commands.skillSearch as command_skillSearch
+import commands.support as command_support
 import commands.topUsers as command_topUsers
 import commands.FRrun as command_FRrun
 import commands.FRmock as command_FRmock
@@ -88,6 +90,14 @@ async def skillSearch(ctx, *search):
 async def help(ctx):
     await command_help.run(ctx)
 
+@client.command()
+async def invite(ctx):
+    await command_invite.run(ctx)
+
+@client.command(aliases=["imanity","bestFamilia"])
+async def support(ctx):
+    await command_support.run(ctx)
+
 @client.command(aliases=["daily","b"])
 async def bento(ctx):
     await command_bento.run(dbConfig,ctx)
@@ -108,7 +118,7 @@ async def profile(ctx,*args):
 async def topUsers(ctx,*args):
     await command_topUsers.run(dbConfig,client,ctx,*args)
 
-@client.command(aliases=["recordbuster","record buster", "rbguide"])
+@client.command(aliases=["recordbuster","rbguide"])
 async def rb(ctx, character):
     await command_rb.run(ctx,character)
 
