@@ -90,4 +90,13 @@ Your personal stats and inventory
 F
 EXAMPLE:
 !$profile
+F
+**Top**
+Alias: top
+Usage: !$top <crepes>
+Show the biggest Whales/Gourmets, all servers combined
+F
+EXAMPLE:
+!$top
+F
 E
