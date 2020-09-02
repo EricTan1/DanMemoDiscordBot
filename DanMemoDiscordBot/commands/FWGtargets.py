@@ -10,6 +10,7 @@ import io
 from urllib.parse import urlparse
 import itertools
 import gspread
+import re
 
 from commands.utils import calculateRowFWG,get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status, HeroAscensionStatsD, HeroAscensionStatsH, getDefaultEmoji, createGSpreadJSON,remove_values_from_list
 from database.DBcontroller import DBcontroller
@@ -25,6 +26,7 @@ MEDAL_TOTAL_COLUMN=6
 LIEUT_GEN_COLUMN = 3
 ENEMY_MEDALS_LEFT = 5
 ENEMY_ATTACKED_BY=6
+TEAM_PIC=8
 async def run(ctx,optional):
     # check if discord id inside the spreadsheet if not then add it with first time set up
     gc = gspread.service_account(filename="./gspread.json")
@@ -60,5 +62,11 @@ async def run(ctx,optional):
     attacked_by = ws.cell(row, ATTACKED_BY_COLUMN, value_render_option='UNFORMATTED_VALUE').value
     if(attacked_by != ""):
         temp_embed.add_field(name="Attacked By:",value=attacked_by,inline=False)    
+    
+    regex = r'"([^"]*)"'
+    image = ws.cell(row, TEAM_PIC, value_render_option='FORMULA').value
+    image_str = re.findall(regex, image)
+    if(len(image_str) != 0):
+        temp_embed.set_image(url=image_str[0].replace('"',""))
     await ctx.send(embed=temp_embed)
     # Display your runs, who you were attacked by, attacked and attack suggestion from heart

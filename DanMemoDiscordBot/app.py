@@ -34,6 +34,7 @@ import commands.FWGleft as command_FWGLeft
 import commands.FWGtargets as command_FWGTargets
 import commands.FWGenemyattack as command_FWGEnemyAttack
 import commands.FWGnewday as command_FWGNewDay
+import commands.FWGnotesearch as command_FWGNoteSearch
 
 from commands.utils import createGSpreadJSON, checkperms
 
@@ -45,15 +46,18 @@ else:
 client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True)
 dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
 cache = Cache(dbConfig)
-# @client.event
-# async def on_message(message):
-#     #screenshots
-#     if(message.channel.id==738834866002722967):
-#         await command_FWGUpdateTeam.run(message)
-#     #enemy attacks
-#     elif(message.channel.id==739875599463743570):
-#         await command_FWGEnemyAttack.run(message)
-#     await client.process_commands(message)
+@client.event
+async def on_message(message):
+    #enemy screenshots
+    if(message.channel.id==738834866002722967):
+        await command_FWGUpdateTeam.run(message,False)
+    #ally screenshotsat least     
+    elif(message.channel.id==750447321317114067):
+        await command_FWGUpdateTeam.run(message,True)
+    #enemy attacks
+    elif(message.channel.id==739875599463743570):
+        await command_FWGEnemyAttack.run(message)
+    await client.process_commands(message)
 
 @client.event
 async def on_ready():
@@ -62,8 +66,8 @@ async def on_ready():
     '''
     #temp = [(e.id, e.name) for e in client.emojis]
     #print(temp)
-    client.add_cog(FamiliaRush())
-    #client.add_cog(FamiliaWarGame(client))
+    #client.add_cog(FamiliaRush())
+    client.add_cog(FamiliaWarGame(client))
     await createGSpreadJSON()
     print("Bot is ready!")
 
@@ -158,8 +162,8 @@ class FamiliaWarGame(commands.Cog):
         if(checkperms(ctx,708002106245775410,[708005221586042881,722152474743668867])):
             await command_FWGNewDay.run(ctx)
     #@commands.command(aliases=["fwgut"])
-    async def fwgUpdateTeam(self, ctx, target:str):
-        await command_FWGUpdateTeam.run(ctx.message)
+    async def fwgUpdateTeam(self, ctx, target:str,isally):
+        await command_FWGUpdateTeam.run(ctx.message, isally)
     @commands.command(aliases=["fwga"])
     async def fwgAttack(self, ctx, target,medals:int):
         if(checkperms(ctx,708002106245775410,[708008774140690473])):
@@ -191,6 +195,10 @@ class FamiliaWarGame(commands.Cog):
     async def fwgInfo(self,ctx, target):
         if(checkperms(ctx,708002106245775410,[708008774140690473])):
             await command_FWGInfo.run(ctx,target)
+    @commands.command(aliases=["fwgns"])
+    async def fwgNoteSearch(self,ctx, *search):
+        if(checkperms(ctx,708002106245775410,[708008774140690473])):
+            await command_FWGNoteSearch.run(ctx,search)
 
 if __name__ == "__main__":
     TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")

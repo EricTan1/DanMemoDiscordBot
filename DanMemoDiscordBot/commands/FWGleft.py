@@ -31,9 +31,8 @@ async def run(ctx):
     print(runs)
     msg = "Enemies left:\n"
     for index in range(0,len(runs)):
-        if(isinstance(runs[index], int)):
-            if(runs[index] != 0 and index < len(discordids) and (discordids[index].strip() != "" or discordids[index]!= None)):
-                msg = msg + "Position: {} Medals Left: {}\n".format(discordids[index],runs[index])
+        if(runs[index] != 0 and index < len(discordids) and (discordids[index].strip() != "" or discordids[index]!= None)):
+            msg = msg + "**Position:** {} **Medals** Left: {}\n".format(discordids[index],runs[index])
     if(msg == "Enemies left:\n"):
         msg ="There are no more enemies left"
         await ctx.send(msg)
