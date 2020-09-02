@@ -60,6 +60,7 @@ async def run(message, isally):
             row = len(remove_values_from_list(values_list,""))
             ws.update_cell(row, DISCORD_ID_COLUMN, discord_id)
             ws.update_cell(row, DISCORD_MEMBER_NAME, message.author.name)
+        cell_info = ""
         # update ally pic
         for attachment in message.attachments:
                 cell_info = cell_info + '=IMAGE("{}",4,192,384)'.format(attachment.url) + "\n"
