@@ -44,7 +44,7 @@ async def run(dbConfig, client, ctx, *search):
         for Adventurersid in my_list:
             total_results = total_results+1
             temp_page.append(Adventurersid)
-            if(len(temp_page)>=9):
+            if(len(temp_page)>=10):
                 temp_page = []
                 page_list.append(temp_page)
 
@@ -77,7 +77,7 @@ async def pageUnitsHandler(client, ctx, page_list,db,total_results,search):
     temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
     emoji1 = '\u2b05'
     emoji2 = '\u27a1'
-    emoji_list = ["one","two","three","four","five","six","seven","eight","nine"]
+    emoji_list = ["zero","one","two","three","four","five","six","seven","eight","nine"]
     emoji_react = getDefaultEmoji(emoji_list)
     def clearSetField(temp_embed:discord.Embed, field_list):
         temp_embed.clear_fields()
@@ -88,7 +88,9 @@ async def pageUnitsHandler(client, ctx, page_list,db,total_results,search):
         return temp_embed
     
     temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
-    msg = await ctx.send(embed=temp_embed)
+    temp_embed.set_image(url="attachment://temp.png")
+    icons = get_units_image(page_list)
+    msg = await ctx.send(embed=temp_embed, file=discord.File(icons, filename="temp.png"))
     
     await msg.add_reaction(emoji1)
     await msg.add_reaction(emoji2)
@@ -96,37 +98,50 @@ async def pageUnitsHandler(client, ctx, page_list,db,total_results,search):
         await msg.add_reaction(emoji)
     def check(reaction, user):
         return ((str(reaction.emoji) in emoji_react) or (str(reaction.emoji) == emoji1) or (str(reaction.emoji) == emoji2)) and user !=client.user and reaction.message.id == msg.id
+    def wait_for_reaction(event_name):
+        return client.wait_for(event_name,check=check)
     while True:
-        try:
-            reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
-        except asyncio.TimeoutError:
-            temp_embed.color=Status.KO.value
+        pending_tasks = [wait_for_reaction("reaction_add"), wait_for_reaction("reaction_remove")]
+        done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
+
+        timeout = len(done_tasks) == 0
+
+        if not timeout:
+            task = done_tasks.pop()
+
+            reaction, user = await task
+
+        for remaining in itertools.chain(done_tasks, pending_tasks):
+            remaining.cancel()
+
+        if timeout:
+            temp_embed.color = Status.KO.value
             await msg.edit(embed=temp_embed)
             break
-        else:
-            # left
-            if str(reaction.emoji) == emoji1:
-                if(current_page > 0):
-                    current_page = current_page -1
-                else:
-                    current_page = len(page_list)-1
-                temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
-                temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
-                await msg.edit(embed=temp_embed)
-            # right
-            if str(reaction.emoji) == emoji2:
-                if( current_page+1 < len(page_list)):
-                    current_page = current_page +1
-                else:
-                    current_page = 0
-                temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
-                temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
-                await msg.edit(embed=temp_embed)
-            if((str(reaction.emoji) in emoji_react)):
-                if(len(page_list[current_page]) > emoji_react.index(reaction.emoji)):
-                    await msg.delete()
-                    await singleAdventurer(client, ctx, db,page_list[current_page][emoji_react.index(reaction.emoji)])
-           
+
+        # left
+        if str(reaction.emoji) == emoji1:
+            if(current_page > 0):
+                current_page = current_page -1
+            else:
+                current_page = len(page_list)-1
+            temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+            temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
+            await msg.edit(embed=temp_embed)
+        # right
+        if str(reaction.emoji) == emoji2:
+            if( current_page+1 < len(page_list)):
+                current_page = current_page +1
+            else:
+                current_page = 0
+            temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+            temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
+            await msg.edit(embed=temp_embed)
+        if((str(reaction.emoji) in emoji_react)):
+            if(len(page_list[current_page]) > emoji_react.index(reaction.emoji)):
+                await msg.delete()
+                await singleAdventurer(client, ctx, db,page_list[current_page][emoji_react.index(reaction.emoji)])
+       
 
 async def singleAdventurer(client, ctx, db,assistadventurerid):
     """This handles the logic of choosing of the character search and setting up
@@ -172,6 +187,8 @@ async def singleAdventurer(client, ctx, db,assistadventurerid):
         character_name = info[1].split("]")[1][1:].split("\n")[0]
         character_title = info[1].split("[")[1].split("]")[0]
         folder_name = character_name + " [" + character_title + "]"
+        print(folder_name)
+        print("./images/units/"+ folder_name + "/hex.png")
         file_list.append(discord.File("./images/units/"+ folder_name + "/hex.png"))
         #file_list.append(discord.File("./lottery/"+info[0], filename="texture.png"))        
         file_list.append(discord.File("./images/units/"+ folder_name + "/all_rectangle.png"))
@@ -490,3 +507,80 @@ async def assembleAbilities(stats_dict : dict,limitbreak:int,unit_type:str,heroa
     ret = ret + "{} : {}\n".format("Agi.",temp_agi)
     ret = ret + "{} : {}\n".format("Mag.",temp_mag)
     return ret
+
+
+def get_units_image(page_list):
+    images = []
+    for page in page_list:
+        for unit in page:
+            path = "./images/units/"+unit[2]+" ["+unit[1]+"]/"
+            if not os.path.isdir(path):
+                print("Could not find folder:",path)
+                path = "./images/units/gac_dummy/"
+            path += "hex.png"
+
+            image = Image.open(path)
+            images.append(image)
+
+    full_image = concatenate_images(images, per_line=5, white_background=False)
+    return full_image
+
+def concatenate_images(images, per_line=4, white_background=False):
+    chunks = [images[x:x+per_line] for x in range(0, len(images), per_line)]
+
+    images_lines = []
+    for chunk in chunks:
+        images_line = concatenate_images_horizontally(chunk,True,white_background)
+        images_lines.append(images_line)
+
+    full_image = concatenate_images_vertically(images_lines,True)
+    return full_image
+
+def concatenate_images_horizontally(images,to_bytes=False,white_background=False):
+    widths, heights = zip(*(i.size for i in images))
+    
+    total_width = sum(widths)
+    max_height = max(heights)
+    
+    new_im = Image.new("RGBA", (total_width, max_height))
+    x_offset = 0
+    for im in images:
+        new_im.paste(im, (x_offset,0))
+        x_offset += im.size[0]
+
+    if white_background:
+        new_im.load() # required for png.split()
+        image = Image.new("RGB", new_im.size, (255, 255, 255))
+        image.paste(new_im, mask=new_im.split()[3]) # 3 is the alpha channel
+    else:
+        image = new_im
+
+    if to_bytes:
+        return convert_to_bytes(image)
+    else:
+        return image
+
+def concatenate_images_vertically(image_paths,to_bytes=False):
+    images = [Image.open(x) for x in image_paths]
+    widths, heights = zip(*(i.size for i in images))
+    
+    total_width = max(widths)
+    max_height = sum(heights)
+    
+    new_im = Image.new('RGBA', (total_width, max_height))
+    
+    y_offset = 0
+    for im in images:
+        new_im.paste(im, (0,y_offset))
+        y_offset += im.size[1]
+
+    if to_bytes:
+        return convert_to_bytes(new_im)
+    else:
+        return new_im
+
+def convert_to_bytes(img):
+    imgByteArr = io.BytesIO()
+    img.save(imgByteArr, format='PNG')
+    imgByteArr.seek(0)
+    return imgByteArr
