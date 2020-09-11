@@ -49,6 +49,7 @@ ID;FULL;Label;Character
 1011002028;[Mobile Suit Princess] Ais Wallenstein;Mobile Suit Princess;Ais Wallenstein
 1011002029;[Gallant Armor] Ais Wallenstein;Gallant Armor;Ais Wallenstein
 1011002031;[Storm Princess] Ais Wallenstein;Storm Princess;Ais Wallenstein
+1011002032;[Seabreeze Princess] Ais Wallenstein;Seabreeze Princess;Ais Wallenstein
 1011003001;[Supporter] Liliruca Arde;Supporter;Liliruca Arde
 1011003002;[Artel Assist] Liliruca Arde;Artel Assist;Liliruca Arde
 1011003003;[Valor Support] Liliruca Arde;Valor Support;Liliruca Arde
@@ -200,6 +201,7 @@ ID;FULL;Label;Character
 1011021001;[Foxy Princess] Sanjouno Haruhime;Foxy Princess;Sanjouno Haruhime
 1011021002;[Silver Fox] Sanjouno Haruhime;Silver Fox;Sanjouno Haruhime
 1011021003;[An Ocean of Virtue] Sanjouno Haruhime;An Ocean of Virtue;Sanjouno Haruhime
+1011021004;[Foxy Yukata] Sanjouno Haruhime;Foxy Yukata;Sanjouno Haruhime
 1011022001;[Magnificent Ruler] Aisha Belka;Magnificent Ruler;Aisha Belka
 1011022002;[Brave Antianeira] Aisha Belka;Brave Antianeira;Aisha Belka
 1011024001;[Medicinal Archer] Naza Ersuisu;Medicinal Archer;Naza Ersuisu
@@ -217,6 +219,7 @@ ID;FULL;Label;Character
 1011041003;[Gallant Fighter] Chloe Lolo;Gallant Fighter;Chloe Lolo
 1011041004;[Catty] Chloe Lolo;Catty;Chloe Lolo
 1011042001;[Black Fist] Lunor Faust;Black Fist;Lunor Faust
+1011042002;[Blazing Fist] Lunor Faust;Blazing Fist;Lunor Faust
 1011043002;[Dea Saint] Amid Teasanare;Dea Saint;Amid Teasanare
 1011043003;[Beach Saint] Amid Teasanare;Beach Saint;Amid Teasanare
 1011043004;[Temporary Healer] Amid Teasanare;Temporary Healer;Amid Teasanare
@@ -259,6 +262,7 @@ ID;FULL;Label;Character
 1011092002;[First Dream] Cassandra Ilion;First Dream;Cassandra Ilion
 1011092003;[Dreamy Beach] Cassandra Ilion;Dreamy Beach;Cassandra Ilion
 1011094001;[Wild Fantasy] Lena Tally;Wild Fantasy;Lena Tally
+1011094002;[Azure Bloom] Lena Tally;Azure Bloom;Lena Tally
 1011095001;[Crushing Fighter] Samira;Crushing Fighter;Samira
 1011098001;[Dueling Caster] Alicia Forestlight;Dueling Caster;Alicia Forestlight
 1011099001;[Delightful Mage] Elfy Colette;Delightful Mage;Elfy Colette
@@ -343,6 +347,7 @@ ID;FULL;Label;Character
 1012027037;[Space Ribbon] Hestia;Space Ribbon;Hestia
 1012027038;[Pasture Goddess] Hestia;Pasture Goddess;Hestia
 1012027040;[Celebration Goddess] Hestia;Celebration Goddess;Hestia
+1012027041;[Carnival Goddess] Hestia;Carnival Goddess;Hestia
 1012028001;[Crafty Goddess] Loki;Crafty Goddess;Loki
 1012028002;[Cheers!] Loki;Cheers!;Loki
 1012028003;[Trickster] Loki;Trickster;Loki
@@ -365,6 +370,7 @@ ID;FULL;Label;Character
 1012029012;[New Year Kimono] Syr Flover;New Year Kimono;Syr Flover
 1012029013;[Faithful Formal] Syr Flover;Faithful Formal;Syr Flover
 1012029014;[Devoted Hand] Syr Flover;Devoted Hand;Syr Flover
+1012029015;[Summer Color] Syr Flover;Summer Color;Syr Flover
 1012030001;[Receptionist] Eina Tulle;Receptionist;Eina Tulle
 1012030002;[Advisor] Eina Tulle;Advisor;Eina Tulle
 1012030003;[Scholar] Eina Tulle;Scholar;Eina Tulle
