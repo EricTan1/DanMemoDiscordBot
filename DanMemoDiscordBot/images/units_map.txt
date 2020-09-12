@@ -224,6 +224,7 @@ ID;FULL;Label;Character
 1011043003;[Beach Saint] Amid Teasanare;Beach Saint;Amid Teasanare
 1011043004;[Temporary Healer] Amid Teasanare;Temporary Healer;Amid Teasanare
 1011043005;[Priestess Image] Amid Teasanare;Priestess Image;Amid Teasanare
+1011043006;[Sunset Saint] Amid Teasanare;Sunset Saint;Amid Teasanare
 1011047001;[Faithful Mage] Line Arshe;Faithful Mage;Line Arshe
 1011047002;[Twilight Supporter] Line Arshe;Twilight Supporter;Line Arshe
 1011048001;[Dogfight] Mord Latro;Dogfight;Mord Latro
