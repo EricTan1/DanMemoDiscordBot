@@ -92,8 +92,8 @@ async def skillSearch(ctx, *search):
     await command_skillSearch.run(dbConfig,client,ctx,*search)
 
 @client.command(aliases=["h","command","commands"])
-async def help(ctx):
-    await command_help.run(ctx)
+async def help(ctx,*args):
+    await command_help.run(ctx,*args)
 
 @client.command()
 async def invite(ctx):

@@ -1,20 +1,19 @@
 F
-**Character Search**
+**CHARACTER SEARCH**
 Alias: cs, csearch
 Usage: !$cs <insert search here>
-If the bot can narrow down the search to one character, it
-will display that character information.
-The bot also supports aliases ("ny" for "new year"...)
+Supports aliases (such as "ny" for "new year")
 F
-EXAMPLE:
+Example:
 !$cs princess
 
 EXAMPLE BOT OUTPUT:
 Bathroom Princess Ais Wallenstein
 Battle Princess Ais Wallenstein
 Bunny Princess Ais Wallenstein
+
 F
-**Skill Search**
+**SKILL SEARCH**
 Alias: ss, ssearch
 Usage: !$ss <attribute1>,<attribute2>,<attribute3>
 Attributes can be:
@@ -26,92 +25,108 @@ Type: physical, magical, balance...
 **Advanced Guide:**
 https://docs.google.com/document/d/1XTNPLRg5CXTPFVMpOyY_W0KkPtGAXOWATCRvNIVc08E/edit?usp=sharing
 F
-EXAMPLE:
+Example:
 !$ss allies, phys resist
 
 EXAMPLE BOT OUTPUT:
 Bathroom Princess Ais Wallenstein
-combat: Veter Schrimm
+Combat: Veter Schrimm
 [Allies] +40% P.Resist /3 turn(s)
 
 Casino Lady Shakti Varma
-combat: Suzila
+Combat: Suzila
 [Allies] +35% Guard Rate /3 turn(s)
 [Allies] +35% P.Resist /3 turn(s)
+
 F
-**Record Buster**
+**RECORD BUSTER**
 Alias: recordbuster, rb, rbguide
 Usage: !$rb <character>
 Characters : Ottar, Riveria, Revis, Finn
 F
-EXAMPLE:
+Example:
 !$rb ottar
+
 F
-**DispatchQuest**
+**DISPATCH QUESTS**
 Alias: dp, dispatch, dq
 Usage: !$dp <quest>
-Gets all the special board dispatch quests related to the search
+Displays all the special board dispatch quests related to the search
 F
-EXAMPLE:
+Example:
 !$dp millionaire 1
 
 EXAMPLE BOT OUTPUT:
 E_1 - Anonymous Millionaire:
 Riveria, Dionysis, Raul, Amid
+
 F
-**Bento**
+**BENTO**
 Alias: bento
 Usage: !$bento
-Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls 
+Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!
+
 F
-EXAMPLE:
-!$bento
-F
-**Gacha**
+**GACHA**
 Alias: gacha, pull
 Usage: !$gacha
-Trade a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included
+Trades a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included
+
 F
-EXAMPLE:
-!$gacha
-F
-**Gacha Mode**
+**GACHA MODE**
 Alias: gachamode, gm
 Usage: !$gm <img/gif>
-Change the way your gacha pulls are shown
+Changes the way your gacha pulls are shown
 F
-EXAMPLE:
+Example:
 !$gachamode img
+!$gachamode gif
+
 F
-**Profile**
+**PROFILE**
 Alias: profile, inventory, p
 Usage: !$profile <summary>
 Your personal stats and inventory
 F
-EXAMPLE:
+Example:
 !$profile
+!$profile summary
+
 F
-**Top**
+**TOP**
 Alias: top
 Usage: !$top <crepes>
-Show the biggest Whales/Gourmets, all servers combined
+Shows the biggest Whales/Gourmets, all servers combined
 F
-EXAMPLE:
+Example:
 !$top
+!$top crepes
+
 F
-**Invite**
+**POPULARITY**
+Alias: popularity
+Usage: !$popularity
+Displays current Ais popularity
+
+F
+**INVITE**
 Alias: invite
 Usage: !$invite
-Get the bot invite link
+Sends the bot invite link
+
 F
-EXAMPLE:
-!$invite
-F
-**Support**
+**SUPPORT**
 Alias: support
 Usage: !$support
-Get a link to our support server. Please contact Eric#5731 or Yon#7436
+Sends a link to our support server. Please contact Eric#5731 or Yon#7436
+
 F
-EXAMPLE:
-!$support
+**HELP**
+Alias: help
+Usage: !$help <server>
+Sends the commands summary to user or server
+F
+Example:
+!$help
+!$help server
 E
