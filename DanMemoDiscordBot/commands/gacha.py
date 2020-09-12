@@ -150,7 +150,7 @@ async def pull_messages(ctx, currency_number, pulls, gacha_mode):
     else:
         #per_line = 5
         gif_path = "./images/gacha.gif"
-        ms_per_frame = 1000
+        ms_per_frame = 500
         create_gif(gif_path,pulls,ms_per_frame)
         await ctx.send(file=discord.File(gif_path))
 

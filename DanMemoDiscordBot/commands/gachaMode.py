@@ -8,9 +8,12 @@ from database.DBcontroller import DBcontroller
 
 async def run(dbConfig, client, ctx, *args):
     author = str(ctx.message.author)
+    authorUniqueId = str(ctx.message.author.id)
     content = ctx.message.content
+    
+    print("\nReceived message from '"+author+"("+authorUniqueId+")' with content '"+content+"'")
 
-    print("\nReceived message from '"+author+"' with content '"+content+"'")
+    user = User.get_user(dbConfig, author, authorUniqueId)
 
     if "img" in args:
         gacha_mode = GachaModes.IMG
@@ -19,7 +22,7 @@ async def run(dbConfig, client, ctx, *args):
     else:
         await ctx.message.add_reaction(getDefaultEmoji("x"))
 
-    user = User.get_user(dbConfig, author)
+    user = User.get_user(dbConfig, author, authorUniqueId)
     user.gacha_mode = gacha_mode.value
     user.update_user(dbConfig,datetime.datetime.now(),content)
 
