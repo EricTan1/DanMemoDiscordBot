@@ -121,7 +121,7 @@ async def run(dbConfig, client, ctx, *search):
                     except:
                         file_list.append("./images/units/gac_dummy/hex.png")
             count = count +1
-            if(count ==4):
+            if(count == 5):
                 await imageHorizontalConcat(client,file_list,discord_file_list)
                 temp_list = []
                 file_list= []                
@@ -131,7 +131,7 @@ async def run(dbConfig, client, ctx, *search):
         # remove last empty list
         if(len(rotating_list[len(rotating_list)-1]) == 0):
             rotating_list.pop(len(rotating_list)-1)
-        elif(len(rotating_list[len(rotating_list)-1]) < 4):
+        elif(len(rotating_list[len(rotating_list)-1]) < 5):
             await imageHorizontalConcat(client,file_list,discord_file_list)
         icons = await imageVerticalConcat(client,discord_file_list)
         await skillSearchRotatingPage(client,ctx,search,rotating_list,total_results,icons)
@@ -170,7 +170,7 @@ async def skillSearchRotatingPage(client, ctx, search, page_list, total_results,
                         is_filtered = False
                 if is_filtered:
                     temp_page.append(skills)
-                if len(temp_page) == 4:
+                if len(temp_page) == 5:
                     temp_page =[]
                     current_page_list.append(temp_page)
         print(current_page_list)

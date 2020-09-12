@@ -18,6 +18,7 @@ import commands.rb as command_rb
 import commands.skillSearch as command_skillSearch
 import commands.support as command_support
 import commands.topUsers as command_topUsers
+import commands.popularity as command_popularity
 import commands.FRrun as command_FRrun
 import commands.FRmock as command_FRmock
 import commands.FRping as command_FRping
@@ -101,6 +102,10 @@ async def invite(ctx):
 @client.command(aliases=["imanity","bestFamilia"])
 async def support(ctx):
     await command_support.run(ctx)
+
+@client.command()
+async def popularity(ctx):
+    await command_popularity.run(client,ctx)
 
 @client.command(aliases=["daily","b"])
 async def bento(ctx):
