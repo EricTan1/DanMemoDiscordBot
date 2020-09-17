@@ -35,6 +35,12 @@ class Cache(object):
 
     def get_all_assists_skills_effects(self):
         return self.data["assists_skills_effects"]
+
+    def get_assist_sa_gauge(self):
+        return self.data["assist_sa_gauge"]
+
+    def get_adventurer_sa_gauge(self):
+        return self.data["adventurer_sa_gauge"]
     
     def refreshcache(self, dbConfig):
         db = DBcontroller(dbConfig)
@@ -45,4 +51,6 @@ class Cache(object):
         self.data["assists_skills"] = db.get_all_assists_skills()
         self.data["adventurers_skills_effects"] = db.get_all_adventurers_skills_effects()
         self.data["assists_skills_effects"] = db.get_all_assists_skills_effects()
+        self.data["assist_sa_gauge"] = db.get_all_assist_sa_gauge_charge()
+        self.data["adventurer_sa_gauge"] = db.get_all_adventurer_sa_gauge_charge()
         db.closeconnection()

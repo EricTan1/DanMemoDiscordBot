@@ -36,6 +36,7 @@ import commands.FWGtargets as command_FWGTargets
 import commands.FWGenemyattack as command_FWGEnemyAttack
 import commands.FWGnewday as command_FWGNewDay
 import commands.FWGnotesearch as command_FWGNoteSearch
+import commands.saCalculator as command_saCalculator
 
 from commands.utils import createGSpreadJSON, checkperms
 
@@ -82,6 +83,10 @@ async def close(ctx):
     await ctx.send(embed=temp_embed)
     # shut down the bot
     await client.close()
+
+#@client.command(aliases=["sa"])
+async def sacalc(ctx):
+    await command_saCalculator.calculate()
 
 @client.command(aliases=["cs"])
 async def characterSearch(ctx, *search):

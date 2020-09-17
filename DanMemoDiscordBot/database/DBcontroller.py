@@ -1078,9 +1078,45 @@ class DBcontroller:
             row_as_dict = format_row_as_sns(assistskilleffectsid=assistskilleffectsid, assistskillid=assistskillid,unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
             res.append(row_as_dict)
         return res
-    
+    # attribute4 id 374 = sa_gauge_charge
+    def get_all_assist_sa_gauge_charge(self):
+        sql = "SELECT askill.skillname,assist.title,chara.name,ta.name, mo.value FROM\
+                {}.assistskilleffects as askille\
+                LEFT JOIN {}.assistskill as askill on askille.assistskillid = askill.assistskillid\
+                LEFT JOIN {}.assist as assist on assist.assistid = askill.assistid\
+                LEFT JOIN {}.character as chara on chara.characterid = assist.characterid\
+                LEFT JOIN {}.target as ta on ta.targetid = askille.targetid\
+                LEFT JOIN {}.modifier as mo on mo.modifierid = askille.modifierid\
+                where attributeid = 374;".format(*((self.database.lower(),)*6))
 
+        self._mycursor.execute(sql)
 
+        res = []
+        for row in self._mycursor:
+            skillname, title, name, target, modifier= row
+            row_as_dict = format_row_as_sns(skillname=skillname,title=title,name=name,modifier=modifier,target=target)
+            res.append(row_as_dict)
+        return res
+
+# attribute4 id 374 = sa_gauge_charge
+    def get_all_adventurer_sa_gauge_charge(self):
+        sql = "SELECT askill.skillname,adventurer.title,chara.name,ta.name, mo.value, askill.skilltype FROM\
+                aws_danmemo.adventurerskilleffects as askille\
+                LEFT JOIN aws_danmemo.adventurerskill as askill on askille.adventurerskillid = askill.adventurerskillid\
+                LEFT JOIN aws_danmemo.adventurer as adventurer on adventurer.adventurerid = askill.adventurerid\
+                LEFT JOIN aws_danmemo.character as chara on chara.characterid = adventurer.characterid\
+                LEFT JOIN aws_danmemo.target as ta on ta.targetid = askille.targetid\
+                LEFT JOIN aws_danmemo.modifier as mo on mo.modifierid = askille.modifierid\
+                where attributeid = 374;".format(*((self.database.lower(),)*6))
+
+        self._mycursor.execute(sql)
+
+        res = []
+        for row in self._mycursor:
+            skillname, title,name, target, modifier, skilltype= row
+            row_ad_dict = format_row_as_sns(skillname=skillname,title=title,name=name,target=target,modifier=modifier,skilltype=skilltype)
+            res.append(row_ad_dict)
+        return res
 
 if __name__ == "__main__":
     db_config = DBConfig(DatabaseEnvironment.LOCAL)
