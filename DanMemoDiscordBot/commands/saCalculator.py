@@ -79,7 +79,7 @@ async def run(ctx):
             temp_embed.description = errors
             await ctx.send(embed=temp_embed)
     else:
-        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the discription !$sa", file=discord.File("sacalc.txt"))
+        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the description !$sa", file=discord.File("sacalc.txt"))
 
 def verifyAndCast(my_list):
     ret = []
