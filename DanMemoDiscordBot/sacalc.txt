@@ -1,0 +1,17 @@
+# buff wipe turn 4 and turn 8 (for RBs such as finn,riveria and ottarl)? please fill in True or False
+BUFF_WIPE=False
+
+# Adventurers please state the sa gauge related adventurer's title separated by commas. First two slots are sacs and last slot is the last unit to come in ("!$ss sa gauage" for all sa related units)
+ADVENTURER=twilight supporter,x,x,x,x,x
+
+# Assists please state the sa gauge related assist's title separated by commas. First two slots are sacs and last slot is the last unit to come in ("!$ss sa gauage" for all sa related units)
+ASSIST=x,x,x,x,x,key strategist
+
+# TURN ORDERS: 4 = SA, 0 = no turn. separated by commas
+P3=1,1,1,1,1||1,1,1,1,1||1,1,1,1,4
+
+P4=1,1,1,1,1||1,1,1,1,4||1,1,1,1,4
+
+P5=1,1,1,1,1||1,1,1,1,1||1,1,1,1,4
+
+P6=0,0,1,4,1||1,1,1,1,1||1,1,1,1,1

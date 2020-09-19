@@ -84,9 +84,10 @@ async def close(ctx):
     # shut down the bot
     await client.close()
 
-#@client.command(aliases=["sa"])
+@client.command(aliases=["sa"])
 async def sacalc(ctx):
-    await command_saCalculator.calculate()
+    await command_saCalculator.run(ctx)
+    #await command_saCalculator.calculate()
 
 @client.command(aliases=["cs"])
 async def characterSearch(ctx, *search):
