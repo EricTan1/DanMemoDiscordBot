@@ -84,7 +84,7 @@ async def close(ctx):
     # shut down the bot
     await client.close()
 
-@client.command(aliases=["sa,sacalculator"])
+@client.command(aliases=["sa","sacalculator"])
 async def sacalc(ctx):
     await command_saCalculator.run(ctx)
     #await command_saCalculator.calculate()
