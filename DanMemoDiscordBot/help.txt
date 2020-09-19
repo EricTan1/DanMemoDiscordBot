@@ -60,7 +60,7 @@ EXAMPLE BOT OUTPUT:
 E_1 - Anonymous Millionaire:
 Riveria, Dionysis, Raul, Amid
 F
-**SACalculator**
+**SA CALCULATOR**
 Alias: sa, sacalc
 Usage: !$sa
 Please attach the notepad template with this command to calculate SA.
