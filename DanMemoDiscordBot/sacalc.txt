@@ -1,17 +1,44 @@
-# buff wipe turn 4 and turn 8 (for RBs such as finn,riveria and ottarl)? please fill in True or False
+# For RB bosses that wipe buffs turn 4, turn 8, etc. (i.e. RB bosses such as Finn, Riveria, and Ottarl) please fill in True or False below.
+# Thanks to Astrology#6666 for helping with instructions readability and PHEONIX#6807 for helping with SA calculations
+
 BUFF_WIPE=False
 
-# Adventurers please state the sa gauge related adventurer's title separated by commas. First two slots are sacs and last slot is the last unit to come in ("!$ss sa gauage" for all sa related units)
-ADVENTURER=twilight supporter,x,x,x,x,x
 
-# Assists please state the sa gauge related assist's title separated by commas. First two slots are sacs and last slot is the last unit to come in ("!$ss sa gauage" for all sa related units)
-ASSIST=x,x,x,x,x,key strategist
+# Adventurers please state the SA gauge related adventurer's title separated by commas. First two slots are sac units and last slot is the last unit to come in.
+
+ADVENTURER=x,x,x,x,x,x
+
+
+# Assists please state the sa gauge related assist's title separated by commas. First two slots are sacs and last slot is the last unit to come in.
+ASSIST=x,x,x,x,x,x
+
 
 # TURN ORDERS: 4 = SA, 0 = no turn. separated by commas
-P3=1,1,1,1,1||1,1,1,1,1||1,1,1,1,4
 
-P4=1,1,1,1,1||1,1,1,1,4||1,1,1,1,4
+P3=1,1,1,1,1,1,1,1,1,1,1,1,1,1,4
+P4=1,1,1,1,1,1,1,1,1,4,1,1,1,1,4
+P5=1,1,1,1,1,1,1,1,1,1,1,1,1,1,4
+P6=0,0,1,4,1,1,1,1,1,1,1,1,1,1,1
 
-P5=1,1,1,1,1||1,1,1,1,1||1,1,1,1,4
 
-P6=0,0,1,4,1||1,1,1,1,1||1,1,1,1,1
+Notes
+-To search units in ais bot use the command !$ss sa gauge (For all SA related units)
+-For Turn order, the names of the units cannot be entered, they need to stay P3-P6, but you can enter in the attack order if you choose 
+-All calculations are under the assumption you are extending buffs properly
+-You need attachments enabled for the channel to use this command
+
+
+Example:
+
+*BUFF_WIPE=False
+
+*ADVENTURER=twilight supporter,determination,x,x,x,x
+
+*ASSIST=x,x,Countess,x,x,key strategist
+
+*P3=1,2,3,3,1,2,3,3,2,3,1,3,3,4,3
+*P4=1,3,1,2,1,3,1,2,1,4,2,2,2,4,3
+*P5=2,1,3,1,2,1,3,1,1,4,1,1,1,4,1
+*P6=0,0,2,3,2,3,2,3,2,3,3,3,3,3,1
+
+Astrericks are there to not duplicate calculations
