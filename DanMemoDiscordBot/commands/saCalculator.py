@@ -121,8 +121,12 @@ async def calculate(ctx,is_revis, adventurer_order, assists_order,p3,p4,p5,p6):
     #ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects 
                             #if new_words == skilleffect.element.lower()]
     # party members turn order
-    p1 = [1]
-    p2 = [2]
+    p1 = [1,0,0,0,0,
+            0,0,0,0,0,
+            0,0,0,0,0]
+    p2 = [2,0,0,0,0,
+            0,0,0,0,0,
+            0,0,0,0,0]
     # p3 = [1,1,1,1,1,
     #         1,1,2,1,1,
     #         1,1,3,3,4]
