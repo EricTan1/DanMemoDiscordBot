@@ -10,7 +10,7 @@ async def run(ctx):
         # if template attached start to verify it
         contents = await message.attachments[0].read()
         contents_decode = contents.decode("utf-8").split("\n")
-        print(contents_decode)
+        #print(contents_decode)
         for line in contents_decode:
             print(line)
             #buff wipe verify
@@ -62,16 +62,22 @@ async def run(ctx):
                     p6 = verifyAndCast(stripped_line.split(","))
                 except:
                     errors += "make turn orders are numeric and it is either separated by commas or ||\n"
+            elif(stripped_line.startswith("TURNS=")):
+                stripped_line= stripped_line.replace("TURNS=","")
+                try:
+                    turns = int(stripped_line)
+                except:
+                    errors += "make turns numeric"
         # errors handling
         if (errors == ""):
-            try:
-                await calculate(ctx,is_revis,adventurer_order,assists_order,p3,p4,p5,p6)
-            except:
-                temp_embed = discord.Embed()
-                temp_embed.color = 16203840
-                temp_embed.title = "ERROR"
-                temp_embed.description = "Error trying to calculate SA"
-                await ctx.send(embed=temp_embed)
+            # try:
+            await calculate(ctx,is_revis,adventurer_order,assists_order,p3,p4,p5,p6,turns)
+            # except:
+            #     temp_embed = discord.Embed()
+            #     temp_embed.color = 16203840
+            #     temp_embed.title = "ERROR"
+            #     temp_embed.description = "Error trying to calculate SA"
+            #     await ctx.send(embed=temp_embed)
         else:
             temp_embed = discord.Embed()
             temp_embed.color = 16203840
@@ -89,21 +95,26 @@ def verifyAndCast(my_list):
     return ret
 
 # Speed Tier needs to be added and calcs need to happen at buff phase
-async def calculate(ctx,is_revis, adventurer_order, assists_order,p3,p4,p5,p6):
+async def calculate(ctx,is_revis, adventurer_order, assists_order,p3,p4,p5,p6,turns):
     curr_message = ""
     cache = Cache()
     # 1,2 = sacs in order aka index 0 and 1
     #is_revis = True
-    turns = 15
     current_turn = 0
     # sac choices
     # welf, galmus,kotori, alise, idol ais, haru
     #adventurer_order = ["twilight supporter","","","","",""]
     #assists_order = ["","","","","","key strategist"]
-
+    mlb_assist = [False,False,False,False,False,False]
+    
     for x in range(len(assists_order)):
+        temp_order = assists_order[x].lower()
+        if ("mlb" in temp_order):
+            mlb_assist[x] =True
+            temp_order = temp_order.replace("mlb","").strip()
+
         skill = [skilleffect for skilleffect in cache.get_assist_sa_gauge() 
-                        if assists_order[x].lower().strip() == skilleffect.title.lower().strip()]
+                        if temp_order == skilleffect.title.lower().strip()]
         if(len(skill) > 0):
             assists_order[x] = skill
         else:
@@ -121,12 +132,12 @@ async def calculate(ctx,is_revis, adventurer_order, assists_order,p3,p4,p5,p6):
     #ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects 
                             #if new_words == skilleffect.element.lower()]
     # party members turn order
-    p1 = [1,0,0,0,0,
-            0,0,0,0,0,
-            0,0,0,0,0]
-    p2 = [2,0,0,0,0,
-            0,0,0,0,0,
-            0,0,0,0,0]
+    add_on = [0]*turns
+    print(add_on)
+    p1 = [1]+add_on
+    p2 = [2]+add_on
+
+    print("p1 = : " + str(p1))
     # p3 = [1,1,1,1,1,
     #         1,1,2,1,1,
     #         1,1,3,3,4]
@@ -155,10 +166,13 @@ async def calculate(ctx,is_revis, adventurer_order, assists_order,p3,p4,p5,p6):
             sa_guage_adv = [0,0,0,0,0,0]
         # first sac
         if(current_turn == 0):
-            # APPLY ASSIST BUFFS t1 (first 4 assists)
+            # APPLY ASSIST BUFFS t1 (first 4 assists) 0 = not mlb 1 = mlb
             for index in [0,2,3,4]:
                 if(assists_order[index] != ""):
-                    assist_skill = assists_order[index][1]
+                    if(mlb_assist[index]):
+                        assist_skill = assists_order[index][1]
+                    else:
+                        assist_skill = assists_order[index][0]
                     # check mlb?
                     curr_mod = int(assist_skill.modifier)/100
                     if(assist_skill.target.lower() == "self"):
@@ -171,7 +185,10 @@ async def calculate(ctx,is_revis, adventurer_order, assists_order,p3,p4,p5,p6):
         # second sac
         elif(current_turn == 1):
             if(assists_order[1] != ""):
-                assist_skill = assists_order[1][1]
+                if(mlb_assist[1]):
+                    assist_skill = assists_order[1][1]
+                else:
+                    assist_skill = assists_order[1][0]
                 # check mlb?
                 curr_mod = int(assist_skill.modifier)/100
                 if(assist_skill.target.lower() == "self"):
@@ -184,7 +201,10 @@ async def calculate(ctx,is_revis, adventurer_order, assists_order,p3,p4,p5,p6):
         # last person comes in
         elif(current_turn == 2):
             if(assists_order[5] != ""):
-                assist_skill = assists_order[5][1]
+                if(mlb_assist[5]):
+                    assist_skill = assists_order[5][1]
+                else:
+                    assist_skill = assists_order[5][0]
                 # check mlb?
                 curr_mod = int(assist_skill.modifier)/100
                 if(assist_skill.target.lower() == "self"):
@@ -247,9 +267,9 @@ async def calculate(ctx,is_revis, adventurer_order, assists_order,p3,p4,p5,p6):
         # 4 SA hard cap
         if(current_sa_guage >56):
             current_sa_guage=56
-        #print("adv: {}".format(sa_guage_adv))
-        #print("as: {}".format(sa_guage_as))
-        curr_message = curr_message + "end of turn: {} with sa guage charge {}\n\n".format(current_turn+1, round(current_sa_guage/14,2))
+        curr_message = curr_message + "adv: {}\n".format(sa_guage_adv)
+        curr_message = curr_message + "as: {}\n".format(sa_guage_as)
+        curr_message = curr_message + "end of turn: {} with sa gauge charge {}\n\n".format(current_turn+1, round(current_sa_guage/14,2))
         #print("end of turn: {} with sa guage charge {}".format(current_turn+1, current_sa_guage/14))
         current_turn = current_turn +1
     # SA CALC
