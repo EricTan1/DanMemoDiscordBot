@@ -104,7 +104,8 @@ class InsertCharacter:
                 temp_split = temp_type.split("_")
                 temp_element = temp_split[0]
                 print(temp_type)
-                temp_type = temp_split[1] + "_" +temp_split[2]
+                if(temp_type != None and len(temp_split)==3):
+                    temp_type = temp_split[1] + "_" +temp_split[2]
                 #temp_index = temp_value.find("_")
                 #temp_element = temp_value[0:temp_index]
                 #temp_ad_ele = temp_element
