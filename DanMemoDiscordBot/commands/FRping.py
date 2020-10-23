@@ -24,13 +24,21 @@ async def run(client, ctx:commands.context, *search):
         client {discord.client} -- discord bot object
         ctx {commands.context} -- context of the message
     """
+    overkill=False
     # stage 1, stage 2, stage 3
     stage_roles = [712986243712942141,712986411040768060,712986433123516488]
     temp_search = 0
-    if len(search) == 1:
-        if search[0] == "1" or search[0] == "2" or search[0] == "3":
-            temp_search = int(search[0])
-            print("work")
+    if len(search) >= 1:
+        if search[0] == "1" or search[0] == "2" or search[0] == "3" or search[0].lower() == "stage1" or search[0].lower() == "stage2" or search[0].lower() == "stage3":
+            temp_search = int(search[0].replace("stage",""))
+            msg = "Stage {} is up! Please try to leave 1 run for overkill if you can\n".format(temp_search)
+        # OK etc
+        if(len(search) == 2):
+            if(search[1].lower()=="overkill" or search[1].lower()=="ok"):
+                msg = "Please prepare for Stage {} Overkill\n".format(temp_search)
+                overkill=True
+    else:
+        msg = "Please finish your runs before reset!\n"
     current_user = ctx.message.author
     print("in")
     if(current_user.guild.id == 708002106245775410):
@@ -48,7 +56,6 @@ async def run(client, ctx:commands.context, *search):
             runs = ws.col_values(3, value_render_option='UNFORMATTED_VALUE')
             print(discordids)
             print(runs)
-            msg = "Please finish your runs before reset!\n"
             for index in range(0,len(runs)):
                 if(isinstance(runs[index], int)):
                     if(runs[index] != 0 and runs[index] <= 4 and index < len(discordids) and (discordids[index].strip() != "" or discordids[index]!= None)):
@@ -57,7 +64,11 @@ async def run(client, ctx:commands.context, *search):
                             if(temp_search!=0):
                                 for temp_roles in member.roles:
                                     if(temp_roles.id == stage_roles[temp_search-1]):
-                                        msg = msg + "<@!{}>\n".format(discordids[index])
+                                        #OK = 1 run or more, not OK = 2 runs at least
+                                        if overkill == False and runs[index] >1:
+                                            msg = msg + "<@!{}>\n".format(discordids[index])
+                                        elif overkill == True:
+                                            msg = msg + "<@!{}>\n".format(discordids[index])
                             else:
                                 msg = msg + "<@!{}>\n".format(discordids[index])
             #temp_embed = discord.Embed()
