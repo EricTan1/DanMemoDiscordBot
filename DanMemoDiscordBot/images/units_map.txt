@@ -114,6 +114,7 @@ ID;FULL;Label;Character
 1011008006;[Onsen Princess] Asfi Al Andromeda;Onsen Princess;Asfi Al Andromeda
 1011008007;[Almighty Fighter] Asfi Al Andromeda;Almighty Fighter;Asfi Al Andromeda
 1011008009;[Thunderous Perseus] Asfi Al Andromeda;Thunderous Perseus;Asfi Al Andromeda
+1011008010;[Operation Idol] Asfi Al Andromeda;Operation Idol;Asfi Al Andromeda
 1011009001;[Berserker] Tione Hiryute;Berserker;Tione Hiryute
 1011009002;[Backdraft] Tione Hiryute;Backdraft;Tione Hiryute
 1011009003;[Pine Heart] Tione Hiryute;Pine Heart;Tione Hiryute
@@ -124,6 +125,8 @@ ID;FULL;Label;Character
 1011009008;[Blushing Peony] Tione Hiryute;Blushing Peony;Tione Hiryute
 1011009009;[Passionately Postal] Tione Hiryute;Passionately Postal;Tione Hiryute
 1011009010;[School Professor] Tione Hiryute;School Professor;Tione Hiryute
+1011009011;[Marine Snake] Tione Hiryute;Marine Snake;Tione Hiryute
+1011009012;[Valiant Intensity] Tione Hiryute;Valiant Intensity;Tione Hiryute
 1011010001;[Full Throttle] Tiona Hiryute;Full Throttle;Tiona Hiryute
 1011010002;[Berserker] Tiona Hiryute;Berserker;Tiona Hiryute
 1011010003;[Amazon] Tiona Hiryute;Amazon;Tiona Hiryute
@@ -132,6 +135,8 @@ ID;FULL;Label;Character
 1011010006;[Sweet Heart] Tiona Hiryute;Sweet Heart;Tiona Hiryute
 1011010007;[Amber Sunflower] Tiona Hiryute;Amber Sunflower;Tiona Hiryute
 1011010008;[Blustering Beauty] Tiona Hiryute;Blustering Beauty;Tiona Hiryute
+1011010009;[Marine Amazon] Tiona Hiryute;Marine Amazon;Tiona Hiryute
+1011010010;[Bursting Intensity] Tiona Hiryute;Bursting Intensity;Tiona Hiryute
 1011011001;[Blacksmith] Welf Crozzo;Blacksmith;Welf Crozzo
 1011011002;[Magic Sword Blood] Welf Crozzo;Magic Sword Blood;Welf Crozzo
 1011011003;[Ignis] Welf Crozzo;Ignis;Welf Crozzo
@@ -161,6 +166,7 @@ ID;FULL;Label;Character
 1011015005;[Demonslayer Samurai] Kashima Ouka;Demonslayer Samurai;Kashima Ouka
 1011016001;[High Novice] Raul Nord;High Novice;Raul Nord
 1011016002;[Night Buster] Raul Nord;Night Buster;Raul Nord
+1011017002;[Muddle] Lulune Louie;Muddle;Lulune Louie
 1011018001;[Thousand Elf] Lefiya Viridis;Thousand Elf;Lefiya Viridis
 1011018002;[Incantation] Lefiya Viridis;Incantation;Lefiya Viridis
 1011018003;[Bashful Elf] Lefiya Viridis;Bashful Elf;Lefiya Viridis
@@ -177,6 +183,7 @@ ID;FULL;Label;Character
 1011018014;[Model Student] Lefiya Viridis;Model Student;Lefiya Viridis
 1011018015;[Melodious Elf] Lefiya Viridis;Melodious Elf;Lefiya Viridis
 1011018016;[Arcanic Cascade] Lefiya Viridis;Arcanic Cascade;Lefiya Viridis
+1011018017;[Marine Thousand Elf] Lefiya Viridis;Marine Thousand Elf;Lefiya Viridis
 1011019001;[Maenads] Filvis Challia;Maenads;Filvis Challia
 1011019002;[Maenad's Maiden] Filvis Challia;Maenad's Maiden;Filvis Challia
 1011019003;[Cute Elf] Filvis Challia;Cute Elf;Filvis Challia
@@ -202,6 +209,7 @@ ID;FULL;Label;Character
 1011021002;[Silver Fox] Sanjouno Haruhime;Silver Fox;Sanjouno Haruhime
 1011021003;[An Ocean of Virtue] Sanjouno Haruhime;An Ocean of Virtue;Sanjouno Haruhime
 1011021004;[Foxy Yukata] Sanjouno Haruhime;Foxy Yukata;Sanjouno Haruhime
+1011021005;[Pearly Renard] Sanjouno Haruhime;Pearly Renard;Sanjouno Haruhime
 1011022001;[Magnificent Ruler] Aisha Belka;Magnificent Ruler;Aisha Belka
 1011022002;[Brave Antianeira] Aisha Belka;Brave Antianeira;Aisha Belka
 1011024001;[Medicinal Archer] Naza Ersuisu;Medicinal Archer;Naza Ersuisu
@@ -274,6 +282,9 @@ ID;FULL;Label;Character
 1011106001;[Scarlet Sword] Gojouno Kaguya;Scarlet Sword;Gojouno Kaguya
 1011110001;[Predator] Zard;Predator;Zard
 1011111001;[Silence] Alfia;Silence;Alfia
+1011117001;[Maverick Swordsman] Lyd;Maverick Swordsman;Lyd
+1011118001;[Golden Feathers] Ray;Golden Feathers;Ray
+1011119001;[Crimson Feathers] Fear;Crimson Feathers;Fear
 1011500001;[Foreign Traveler] Kino & Hermes;Foreign Traveler;Kino & Hermes
 1011500002;[Traveler] Kino;Traveler;Kino
 1011502001;[Wondering Man] Shizu & Riku;Wondering Man;Shizu & Riku
@@ -294,6 +305,7 @@ ID;FULL;Label;Character
 1012001001;[Living Dead Child] Bell Cranel;Living Dead Child;Bell Cranel
 1012002001;[Outside Orario] Ais Wallenstein;Outside Orario;Ais Wallenstein
 1012002002;[Backstage Princess] Ais Wallenstein;Backstage Princess;Ais Wallenstein
+1012002003;[Marine Sword Princess] Ais Wallenstein;Marine Sword Princess;Ais Wallenstein
 1012003001;[Your Favorite] Liliruca Arde;Your Favorite;Liliruca Arde
 1012004001;[Onsen Samurai] Yamato Mikoto;Onsen Samurai;Yamato Mikoto
 1012004002;[Bathing Beauty] Yamato Mikoto;Bathing Beauty;Yamato Mikoto
@@ -307,6 +319,7 @@ ID;FULL;Label;Character
 1012020003;[Elegant Vanguard] Ryu Lion;Elegant Vanguard;Ryu Lion
 1012020004;[Elven Employee] Ryu Lion;Elven Employee;Ryu Lion
 1012021001;[Devotion] Sanjouno Haruhime;Devotion;Sanjouno Haruhime
+1012022001;[Alluring Dancer] Aisha Belka;Alluring Dancer;Aisha Belka
 1012024001;[Silver Pharmacist] Naza Ersuisu;Silver Pharmacist;Naza Ersuisu
 1012024002;[Cyan] Naza Ersuisu;Cyan;Naza Ersuisu
 1012025001;[Ghost] Fels;Ghost;Fels
@@ -349,6 +362,7 @@ ID;FULL;Label;Character
 1012027038;[Pasture Goddess] Hestia;Pasture Goddess;Hestia
 1012027040;[Celebration Goddess] Hestia;Celebration Goddess;Hestia
 1012027041;[Carnival Goddess] Hestia;Carnival Goddess;Hestia
+1012027042;[I'm working!] Hestia;I'm working!;Hestia
 1012028001;[Crafty Goddess] Loki;Crafty Goddess;Loki
 1012028002;[Cheers!] Loki;Cheers!;Loki
 1012028003;[Trickster] Loki;Trickster;Loki
@@ -357,6 +371,7 @@ ID;FULL;Label;Character
 1012028006;[Oni Demon] Loki;Oni Demon;Loki
 1012028007;[Trickster's Truth] Loki;Trickster's Truth;Loki
 1012028008;[Whoever] Loki;Whoever;Loki
+1012028009;[Swimsuit Jester] Loki;Swimsuit Jester;Loki
 1012029001;[Fertility Staff] Syr Flover;Fertility Staff;Syr Flover
 1012029002;[A Loving Lunch] Syr Flover;A Loving Lunch;Syr Flover
 1012029003;[Brightened Pub] Syr Flover;Brightened Pub;Syr Flover
@@ -454,6 +469,7 @@ ID;FULL;Label;Character
 1012062001;[Little Goddess] Hestia (Girl);Little Goddess;Hestia (Girl)
 1012066001;[Bursting Chariot] Allen Fromel;Bursting Chariot;Allen Fromel
 1012072001;[Vigorous Medi-God] Diancecht;Vigorous Medi-God;Diancecht
+1012076001;[Port City Fisher] Njord;Port City Fisher;Njord
 1012078001;[Innocent Goddess] Artemis;Innocent Goddess;Artemis
 1012078002;[Sleeping Innocence] Artemis;Sleeping Innocence;Artemis
 1012080001;[Chained Reign] Ariadne;Chained Reign;Ariadne
@@ -466,6 +482,7 @@ ID;FULL;Label;Character
 1012096001;[God of War] Ares;God of War;Ares
 1012104001;[Justice Guardian] Astrea;Justice Guardian;Astrea
 1012109001;[The Origin of Darkness] Erebus;The Origin of Darkness;Erebus
+1012114001;[The Dragon's Daughter] Wiene;The Dragon's Daughter;Wiene
 1012504001;[Explosive Girl] Ti;Explosive Girl;Ti
 1012509001;[Sharp Thinker] Armin Arlert;Sharp Thinker;Armin Arlert
 1012511001;[Uncontrollable] Titan Eren;Uncontrollable;Titan Eren
