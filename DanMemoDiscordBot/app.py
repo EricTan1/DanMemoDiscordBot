@@ -66,6 +66,7 @@ async def on_ready():
     ''' () -> None
     This function initializes the bot.
     '''
+    print("test")
     #temp = [(e.id, e.name) for e in client.emojis]
     #print(temp)
     client.add_cog(FamiliaRush())
