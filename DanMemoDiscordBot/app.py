@@ -44,8 +44,11 @@ if "IS_HEROKU" in os.environ:
     _command_prefix = "!$"
 else:
     _command_prefix = "$$"
+# INTENTS
+intents = discord.Intents.default()
+intents.members = True
 
-client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True)
+client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True, intents=intents)
 dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
 cache = Cache(dbConfig)
 @client.event
