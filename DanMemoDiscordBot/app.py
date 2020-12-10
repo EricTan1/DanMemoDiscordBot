@@ -72,8 +72,8 @@ async def on_ready():
     print("test")
     #temp = [(e.id, e.name) for e in client.emojis]
     #print(temp)
-    client.add_cog(FamiliaRush())
-    #client.add_cog(FamiliaWarGame(client))
+    #client.add_cog(FamiliaRush())
+    client.add_cog(FamiliaWarGame(client))
     await createGSpreadJSON()
     print("Bot is ready!")
 
