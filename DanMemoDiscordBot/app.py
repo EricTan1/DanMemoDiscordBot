@@ -37,6 +37,7 @@ import commands.FWGenemyattack as command_FWGEnemyAttack
 import commands.FWGnewday as command_FWGNewDay
 import commands.FWGnotesearch as command_FWGNoteSearch
 import commands.saCalculator as command_saCalculator
+import commands.killer as command_killer
 
 from commands.utils import createGSpreadJSON, checkperms
 
@@ -53,6 +54,7 @@ dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
 cache = Cache(dbConfig)
 @client.event
 async def on_message(message):
+    
     #enemy screenshots
     if(message.channel.id==738834866002722967):
         await command_FWGUpdateTeam.run(message,False)
@@ -62,6 +64,7 @@ async def on_message(message):
     #enemy attacks
     elif(message.channel.id==739875599463743570):
         await command_FWGEnemyAttack.run(message)
+    # else image saving for commands?
     await client.process_commands(message)
 
 @client.event
@@ -72,6 +75,7 @@ async def on_ready():
     print("test")
     #temp = [(e.id, e.name) for e in client.emojis]
     #print(temp)
+    client.add_cog(Infographic(client))
     #client.add_cog(FamiliaRush())
     client.add_cog(FamiliaWarGame(client))
     await createGSpreadJSON()
@@ -120,7 +124,7 @@ async def popularity(ctx):
 @client.command(aliases=["daily","b"])
 async def bento(ctx):
     await command_bento.run(dbConfig,ctx)
-    
+
 @client.command(aliases=["pull","g"])
 async def gacha(ctx,*args):
     await command_gacha.run(dbConfig,client,ctx,*args)
@@ -137,9 +141,6 @@ async def profile(ctx,*args):
 async def topUsers(ctx,*args):
     await command_topUsers.run(dbConfig,client,ctx,*args)
 
-@client.command(aliases=["recordbuster","rbguide"])
-async def rb(ctx, character):
-    await command_rb.run(ctx,character)
 
 @client.command(aliases=["dp","dispatchquest","dq"])
 async def dispatch(ctx, *search):
@@ -152,6 +153,19 @@ async def addUpdateUnit(ctx, *search):
     # refresh the cache
     cache = Cache(dbConfig)
     cache.refreshcache(dbConfig)
+
+# commands that just bring up pictures
+class Infographic(commands.Cog):
+    #cp?
+    #killers
+    @commands.command(aliases=["slayer","slayers","killers"])
+    async def killer(self, ctx):
+        await command_killer.run(ctx)
+
+    @commands.command(aliases=["recordbuster","rbguide"])
+    async def rb(self, ctx, character):
+        await command_rb.run(ctx,character)
+
 
 class FamiliaRush(commands.Cog):
     @commands.command(aliases=["frr","familiarushrun"])
