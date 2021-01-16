@@ -17,9 +17,10 @@ async def run(ctx):
             stripped_line = line.strip()
             if(stripped_line.startswith("BUFF_WIPE=")):
                 stripped_line= stripped_line.replace("BUFF_WIPE=","")
-                if(stripped_line.lower()=="true"):
+                # do you want the buffs to be wiped
+                if(stripped_line.lower()=="false"):
                     is_revis = True
-                elif(stripped_line.lower()=="false"):
+                elif(stripped_line.lower()=="true"):
                     is_revis = False
                 else:
                     errors += "buff wipe is not True or False\n"
