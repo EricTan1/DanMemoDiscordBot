@@ -151,5 +151,6 @@
 	"strength_magic_agility_buff_removal_no_assist": "removes Str., Mag. & Agi. Buffs exc. Assist Skills",
 	"strength_magic_hp_regen_buff_removal_no_assist": "removes Str. & Mag. Buffs and HP Regen Skills exc. Assist Skills",
 	"fire_earth_wind_attack_removal_no_assist": "removes Fire, Earth, and Wind Attack Dmg. Buffs exc. Assist Skills",
-	"magic_buff_removal": "Mag. Buff exc. Assist Skills will be removed afterward"
+	"magic_buff_removal": "Mag. Buff exc. Assist Skills will be removed afterward",
+	"physical_magic_fire_water_thunder_earth_wind_light_dark_resist_buff_removal": "P. Resist, M. Resist, Fire/Water/Thunder/Earther/Wind/Light/Dark Resist Debuff"
 }
