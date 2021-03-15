@@ -109,6 +109,8 @@
 	"boost": "Boost",
 	"mag_temp": "w/temp. Mag. Boost",
 	"str_temp": "w/temp. Str. Boost",
+	"great_mag_temp": "w/temp. Great Mag. Boost",
+	"great_str_temp": "w/temp. Great Str. Boost",
 	"indexed_to": "indexed to",
 	"penetration_rate": "Penetration Rate",
 	"unguard_rate": "Unguard Rate",
