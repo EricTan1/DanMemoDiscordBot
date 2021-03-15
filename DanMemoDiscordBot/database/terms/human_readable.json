@@ -64,7 +64,7 @@
 	"agility_debuff_removal_no_assist": "removes Agi. Debuffs exc Assist Skills",
 	"removal_str_agi_dark_attack_no_assist": "Removes Str., Agi., and Dark Attack Dmg. Buffs exc. Assist Skills",
 	"removal_presist_no_assist": "removes P.Resist Buff",
-	"status_buff_removal_no_assist": "removes all Status Buffs exc. Assisst Skills",
+	"status_buff_removal_no_assist": "removes Status Buffs exc. Assisst Skills",
 	"agility_buff_removal_no_assist": "removes all Agility Buffs exc. Assist Skills",
 	"status_debuff_removal_no_assist": "removes Status Debuffs exc. Assisst Skills",
 	"removal_agility_dexterity_no_assist": "removes Agi. and Dex. Buffs exc. Assist Skills",
