@@ -54,6 +54,7 @@
 	"strength_buff_removal_no_assist": "removes all Str. Buffs exc Assist Skills",
 	"magic_buff_removal_no_assist": "removes all Mag. Buffs exc Assist Skills",
 	"guard_rate_buff_removal_no_assist": "removes all Guard Rate Buffs exc Assist Skills",
+	"aoe_resist_guard_rate_buff_removal_no_assist": "removes Dmg. Reduction (Attack Type: All Targets) & Guard Rate Buff Skills exc Assist Skills",
 	"debuff_removal_no_assist": "removes all Debuffs exc Assist Skills",
 	"hp_regen_removal_no_assist": "removes all HP Regen exc Assist Skills",
 	"hp_buff_removal_no_assist": "removes all HP Buff exc Assist Skills",
