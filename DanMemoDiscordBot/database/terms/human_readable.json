@@ -80,7 +80,7 @@
 	"magic_resist": "M.Resist",
 	"all_damage_resist": "Dmg. received (Attack Type: All Targets)",
 	"single_damage_resist": "Dmg. received (Attack Type: Single Target)",
-	"all_single_damage_resist": "Dmg. received (Attack Type: All and Single Targets)
+	"all_single_damage_resist": "Dmg. received (Attack Type: All and Single Targets)",
 	"light_resist": "Light Resist",
 	"fire_resist": "Fire Resist",
 	"dark_resist": "Dark Resist",
@@ -140,6 +140,7 @@
 	"per_each_self_critical_rate_buff_skill": "per each [Self] Critical Rate Buff Skill",
 	"per_each_self_mag_buff_skill": "per each [Self] Mag. Buff Skill",
 	"per_each_fire_attack_buff_skill": "per each [Self] Fire Attack Dmg. Buff Skill",
+	"per_each_thunder_attack_buff_skill": "per each [Self] Thunder Attack Dmg. Buff Skill",
 	"per_each_str_buff_and_earth_attack_buff_skill": "per each [Self] Str. and Earth Attack Dmg. Buff",
 	"per_each_earth_attack_buff_skill": "per each [Self] Earth Attack Dmg. Buff Skill",
 	"per_each_self_light_attack_buff_skill": "per each [Self] Light Attack Dmg. Buff Skill",
