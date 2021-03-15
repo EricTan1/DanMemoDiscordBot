@@ -149,6 +149,7 @@
 	"per_each_self_agi_buff_skill": "per each [Self] Agi. Buff Skill",
 	"null_ailments": "Null Ailments",
 	"per_each_self_water_buff_skill": "per each [Self] Water Attack Dmg. Buff Skill",
+	"per_each_self_mag_wind_buff_skill": "per each [Self] Mag. & Wind Attack Dmg. Buff Skill",
 	"strength_magic_debuff_removal_no_assist": "removes Str. & Mag. Debuffs exc. Assist Skills",
 	"strength_magic_buff_removal_no_assist": "removes Str. & Mag. Buffs exc. Assist Skills",
 	"strength_magic_agility_buff_removal_no_assist": "removes Str., Mag. & Agi. Buffs exc. Assist Skills",
