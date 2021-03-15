@@ -78,8 +78,8 @@
 	"counter_damage": "Counter Damage",
 	"physical_resist": "P.Resist",
 	"magic_resist": "M.Resist",
-	"all_damage_resist": "All-target Attack DMG Resist",
-	"single_damage_resist": "Single-target Attack DMG Resist",
+	"all_damage_resist": "Dmg. received (Attack Type: All Targets)",
+	"single_damage_resist": "Dmg. received (Attack Type: Single Target)",
 	"all_single_damage_resist": "Dmg. received (Attack Type: All and Single Targets)
 	"light_resist": "Light Resist",
 	"fire_resist": "Fire Resist",
