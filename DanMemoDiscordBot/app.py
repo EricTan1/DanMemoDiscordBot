@@ -77,7 +77,7 @@ async def on_ready():
     #print(temp)
     client.add_cog(Infographic(client))
     client.add_cog(FamiliaRush())
-    #client.add_cog(FamiliaWarGame(client))
+    client.add_cog(FamiliaWarGame(client))
     await createGSpreadJSON()
     print("Bot is ready!")
 
