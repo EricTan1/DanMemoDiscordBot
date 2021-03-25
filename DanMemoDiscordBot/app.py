@@ -38,6 +38,7 @@ import commands.FWGnewday as command_FWGNewDay
 import commands.FWGnotesearch as command_FWGNoteSearch
 import commands.saCalculator as command_saCalculator
 import commands.killer as command_killer
+import commands.getJson as command_getJson
 
 from commands.utils import createGSpreadJSON, checkperms
 
@@ -153,6 +154,10 @@ async def addUpdateUnit(ctx, *search):
     # refresh the cache
     cache = Cache(dbConfig)
     cache.refreshcache(dbConfig)
+
+@client.command(aliases=["gj"])
+async def getJson(ctx):
+    await command_getJson.run(client,ctx)
 
 # commands that just bring up pictures
 class Infographic(commands.Cog):
