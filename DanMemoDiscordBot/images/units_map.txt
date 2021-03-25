@@ -491,3 +491,51 @@ ID;FULL;Label;Character
 1012520001;[Efreet] Kotori Itsuka;Efreet;Kotori Itsuka
 1012524001;[At Home] Cow Girl;At Home;Cow Girl
 1012525001;[Hero of Six] Sword Maiden;Hero of Six;Sword Maiden
+1011002035;[Gracious Princess] Ais Wallenstein;Gracious Princess;Ais Wallenstein
+1011002034;[Thermae Princess] Ais Wallenstein;Thermae Princess;Ais Wallenstein 
+1011022003;[Rejuvenated Antianeira] Aisha Belka;Rejuvenated Antianeira;Aisha Belka
+1011049003;[Tipsy Tabby] Anakitty Autumn;Tipsy Tabby;Anakitty Autumn
+1011036005;[Sweet Tooth Tabby] Anya Fromel;Sweet Tooth Tabby;Anya Fromel
+1012088002;[Hot Spring Incident] Apollo;Hot Spring Incident;Apollo
+1011115001;[The Goddess's Shadow] Argana;The Goddess's Shadow;Argana
+1011116001;[The Poison Queen] Bache;The Poison Queen;Bache
+1011001025;[Liaris Blanc] Bell Cranel;Liaris Blanc;Bell Cranel
+1011012008;[Uniformed Werewolf] Bete Loga;Uniformed Werewolf;Bete Loga
+1011041005;[Candied Kitty] Chloe Lolo;Candied Kitty;Chloe Lolo
+1012030014;[Ensconced Elf] Eina Tulle;Ensconced Elf;Eina Tulle
+1012119001;[Crimson Sweetie] Fear;Crimson Sweetie;Fear
+1012025002;[Haar Ghost] Fels;Haar Ghost;Fels
+1011019007;[Merry Maiden] Filvis Challia;Merry Maiden;Filvis Challia
+1011005011;[Brave Blanc] Finn Deimne;Brave Blanc;Finn Deimne
+1011013006;[Intrepid Elgarm] Gareth Landrock;Intrepid Elgarm;Gareth Landrock
+1012027044;[Drenched Deity] Hestia;Drenched Deity;Hestia
+1012120001;[The Warrior God] Kali;The Warrior God;Kali
+1011018018;[Glinting Elf] Lefiya Viridis;Glinting Elf;Lefiya Viridis
+1011003020;[Petite Treat] Liliruca Arde;Petite Treat;Liliruca Arde
+1012028010;[Uniformed Jester] Loki;Uniformed Jester;Loki
+1011016003;[Glistening Knight] Raul Nord;Glistening Knight;Raul Nord
+1012118001;[Golden Sweetie] Ray;Golden Sweetie;Ray
+1011006013;[Royal Mage] Riveria Ljos Alf;Royal Mage;Riveria Ljos Alf
+1011020016;[Intoxicating Elf] Ryu Lion;Intoxicating Elf;Ryu Lion
+1011021006;[Hazy Vixen] Sanjouno Haruhime;Hazy Vixen;Sanjouno Haruhime
+1012021002;[In Dreams] Sanjouno Haruhime;In Dreams;Sanjouno Haruhime
+1012021003;[Sweet Vixen] Sanjouno Haruhime;Sweet Vixen;Sanjouno Haruhime
+1012089002;[Dazed Master] Soma;Dazed Master;Soma
+1012029016;[The Ivory Maiden] Syr Flover;The Ivory Maiden;Syr Flover
+1011010011;[Steamy Amazon] Tiona Hiryute;Steamy Amazon;Tiona Hiryute
+1011114002;[Sweetheart Dragon] Wiene;Sweetheart Dragon;Wiene
+1012012001;[Werewolf Blanc] Bete Loga;Werewolf Blanc;Bete Loga
+1012013001;[Elgarm Blanc] Gareth Landrock;Elgarm Blanc;Gareth Landrock
+1012018001;[Dazed Elf] Lefiya Viridis;Dazed Elf;Lefiya Viridis
+1012062002;[Youthful Goddess] Hestia (Girl);Youthful Goddess;Hestia (Girl)
+1012529001;[Sword Shaman Ribbon] Yukina Himeragi;Sword Shaman Ribbon;Yukina Himeragi
+1011529001;[Baby Sitter] Yukina Himeragi;Baby Sitter;Yukina Himeragi
+1011531001;[Shamanic War Dancer] Sayaka Kirasaka;Shamanic War Dancer;Sayaka Kirasaka
+1011024002;[Uniform Hound] Naza Ersuisu;Uniform Hound;Naza Ersuisu
+1012018002;[Uniform Elf] Lefiya Viridis;Uniform Elf;Lefiya Viridis
+1011530001;[Royalty] La Folia Rihavein;Royalty;La Folia Rihavein
+1012002004;[Royal Sword Princess] Ais Wallenstein;Royal Sword Princess;Ais Wallenstein
+;[Glacier Blade] Welf Crozzo;Glacier Blade;Welf Crozzo
+;[Decisive Will] Bell Cranel;Decisive Will;Bell Cranel
+;[Forbidden Chant] Fels;Forbidden Chant;Fels
+;[Drakguard's Will] Wiene;Drakguard's Will;Wiene
