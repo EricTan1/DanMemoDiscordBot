@@ -539,3 +539,4 @@ ID;FULL;Label;Character
 1011001024;[Decisive Will] Bell Cranel;Decisive Will;Bell Cranel
 1011025002;[Forbidden Chant] Fels;Forbidden Chant;Fels
 1011114001;[Drakguard's Will] Wiene;Drakguard's Will;Wiene
+1012046002;[Divine Skies] Ouranos;Divine Skies;Ouranos
