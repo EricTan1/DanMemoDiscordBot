@@ -540,3 +540,4 @@ ID;FULL;Label;Character
 1011025002;[Forbidden Chant] Fels;Forbidden Chant;Fels
 1011114001;[Drakguard's Will] Wiene;Drakguard's Will;Wiene
 1012046002;[Divine Skies] Ouranos;Divine Skies;Ouranos
+1012044006;[Classy Noble] Dionysus;Classy Noble;Dionysus
