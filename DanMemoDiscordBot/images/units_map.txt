@@ -535,7 +535,7 @@ ID;FULL;Label;Character
 1012018002;[Uniform Elf] Lefiya Viridis;Uniform Elf;Lefiya Viridis
 1011530001;[Royalty] La Folia Rihavein;Royalty;La Folia Rihavein
 1012002004;[Royal Sword Princess] Ais Wallenstein;Royal Sword Princess;Ais Wallenstein
-;[Glacier Blade] Welf Crozzo;Glacier Blade;Welf Crozzo
-;[Decisive Will] Bell Cranel;Decisive Will;Bell Cranel
-;[Forbidden Chant] Fels;Forbidden Chant;Fels
-;[Drakguard's Will] Wiene;Drakguard's Will;Wiene
+1011011008;[Glacier Blade] Welf Crozzo;Glacier Blade;Welf Crozzo
+1011001024;[Decisive Will] Bell Cranel;Decisive Will;Bell Cranel
+1011025002;[Forbidden Chant] Fels;Forbidden Chant;Fels
+1011114001;[Drakguard's Will] Wiene;Drakguard's Will;Wiene
