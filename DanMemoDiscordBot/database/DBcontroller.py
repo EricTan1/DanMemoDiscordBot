@@ -992,7 +992,7 @@ class DBcontroller:
     #     return res
     
     def get_all_adventurers_developments(self):
-        sql = "SELECT addev.adventurerdevelopmentid,addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name\
+        sql = "SELECT addev.adventurerdevelopmentid,addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name, addev.adventurerid\
         FROM {}.adventurerdevelopment as addev\
         INNER JOIN {}.modifier as m on m.modifierid = addev.modifierid\
         INNER JOIN {}.attribute as a on a.attributeid = addev.attributeid\
@@ -1005,8 +1005,8 @@ class DBcontroller:
         res = []
         unit_type = "adventurer"
         for row in self._mycursor:
-            adventurerdevelopmentid, development, modifier, attribute, stars, title, alias, limited, character = row
-            row_as_dict = format_row_as_sns(adventurerdevelopmentid=adventurerdevelopmentid,unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
+            adventurerdevelopmentid, development, modifier, attribute, stars, title, alias, limited, character,adventurerid = row
+            row_as_dict = format_row_as_sns(adventurerdevelopmentid=adventurerdevelopmentid,unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character, adventurerid=adventurerid)
             res.append(row_as_dict)
         return res
 
@@ -1115,6 +1115,32 @@ class DBcontroller:
         for row in self._mycursor:
             skillname, title,name, target, modifier, skilltype= row
             row_ad_dict = format_row_as_sns(skillname=skillname,title=title,name=name,target=target,modifier=modifier,skilltype=skilltype)
+            res.append(row_ad_dict)
+        return res
+
+    def get_all_adventurer_stats(self):
+        sql = "SELECT adventurerstatsid, adventurerid, advstats.attributeid, attri.name, value FROM aws_danmemo.adventurerstats as advstats\
+                LEFT JOIN aws_danmemo.attribute as attri on attri.attributeid=advstats.attributeid;".format(*((self.database.lower(),)*6))
+
+        self._mycursor.execute(sql)
+
+        res = []
+        for row in self._mycursor:
+            adventurerstatsid, adventurerid,attributeid, attriname, value= row
+            row_ad_dict = format_row_as_sns(adventurerstatsid=adventurerstatsid,adventurerid=adventurerid,attributeid=attributeid,attriname=attriname,value=value)
+            res.append(row_ad_dict)
+        return res
+
+    def get_all_assist_stats(self):
+        sql = "SELECT assiststatsid, assistid, asstats.attributeid, attri.name, value FROM aws_danmemo.assiststats as asstats\
+                LEFT JOIN aws_danmemo.attribute as attri on attri.attributeid=asstats.attributeid".format(*((self.database.lower(),)*6))
+
+        self._mycursor.execute(sql)
+
+        res = []
+        for row in self._mycursor:
+            assiststatsid, assistid,attributeid, attriname, value= row
+            row_ad_dict = format_row_as_sns(assiststatsid=assiststatsid,assistid=assistid,attributeid=attributeid,attriname=attriname,value=value)
             res.append(row_ad_dict)
         return res
 
