@@ -541,3 +541,7 @@ ID;FULL;Label;Character
 1011114001;[Drakguard's Will] Wiene;Drakguard's Will;Wiene
 1012046002;[Divine Skies] Ouranos;Divine Skies;Ouranos
 1012044006;[Classy Noble] Dionysus;Classy Noble;Dionysus
+1011018019;[DPS Psycho] Lefiya Viridis;DPS Psycho;Lefiya Viridis
+1011020018;[Jade Comet] Ryu Lion;Jade Comet;Ryu Lion
+1012003002;[Advisor Mech] Liliruca Arde;Advisor Mech;Liliruca Arde
+1012021004;[Neo Fox] Sanjouno Haruhime;Neo Fox;Sanjouno Haruhime
