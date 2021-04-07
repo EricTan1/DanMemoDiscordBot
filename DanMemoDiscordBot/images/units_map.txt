@@ -545,3 +545,7 @@ ID;FULL;Label;Character
 1011020018;[Jade Comet] Ryu Lion;Jade Comet;Ryu Lion
 1012003002;[Advisor Mech] Liliruca Arde;Advisor Mech;Liliruca Arde
 1012021004;[Neo Fox] Sanjouno Haruhime;Neo Fox;Sanjouno Haruhime
+1011011009;[Blood Ties] Welf Crozzo;Blood Ties;Welf Crozzo
+1011528001;[The Fourth Primogenitor] Kojo Akatsuki;The Fourth Primogenitor;Kojo Akatsuki
+1011529002;[Sword Shaman] Yukina Himeragi;Sword Shaman;Yukina Himeragi
+1012532001;[Sister of Primogenitor] Nagisa Akatsuki;Sister of Primogenitor;Nagisa Akatsuki
