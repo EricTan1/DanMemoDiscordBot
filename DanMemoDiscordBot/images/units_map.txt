@@ -549,3 +549,5 @@ ID;FULL;Label;Character
 1011528001;[The Fourth Primogenitor] Kojo Akatsuki;The Fourth Primogenitor;Kojo Akatsuki
 1011529002;[Sword Shaman] Yukina Himeragi;Sword Shaman;Yukina Himeragi
 1012532001;[Sister of Primogenitor] Nagisa Akatsuki;Sister of Primogenitor;Nagisa Akatsuki
+1011098002;[Waterside Eden] Alicia Forestlight;Waterside Eden; Alicia Forestlight
+1011099002;[Waterside Grimoire] Elfy Colette;Waterside Grimoire;Elfy Colette
