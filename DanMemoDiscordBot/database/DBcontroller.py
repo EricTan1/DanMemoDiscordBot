@@ -472,7 +472,14 @@ class DBcontroller:
             temp_modifier=row[1]
             temp_attribute=row[2]
             temp_duration = row[3]
-    
+
+            if(temp_attribute.lower()=="all_damage_resist" or temp_attribute.lower()=="single_damage_resist"):
+                temp_modifier = int(temp_modifier)*-1
+                if(temp_modifier > 0):
+                    temp_modifier = "+"+str(temp_modifier)
+                else:
+                    temp_modifier =str(temp_modifier)
+
             # [TARGET] Modifier Attribute /duration
             if(self.human_readable_dict.get(temp_target)!= None):
                 temp_target=self.human_readable_dict.get(temp_target)
@@ -480,6 +487,7 @@ class DBcontroller:
                 temp_modifier=self.human_readable_dict.get(temp_modifier)
             if(self.human_readable_dict.get(temp_attribute)!= None):
                 temp_attribute=self.human_readable_dict.get(temp_attribute)
+
             if(temp_modifier[1:].isnumeric() and temp_modifier[0]!='x'):
                 temp_modifier= temp_modifier+"%"
 
@@ -519,6 +527,12 @@ class DBcontroller:
                 temp_speed = ""
             if(temp_attribute == None or temp_attribute.strip() == "None"):
                 temp_attribute = ""
+            if(temp_attribute.lower()=="all_damage_resist" or temp_attribute.lower()=="single_damage_resist"):
+                temp_modifier = int(temp_modifier)*-1
+                if(temp_modifier > 0):
+                    temp_modifier = "+"+str(temp_modifier)
+                else:
+                    temp_modifier = str(temp_modifier)
             # [TARGET] Modifier Attribute /duration
             if(self.human_readable_dict.get(temp_target)!= None):
                 temp_target=self.human_readable_dict.get(temp_target)
