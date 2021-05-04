@@ -551,3 +551,10 @@ ID;FULL;Label;Character
 1012532001;[Sister of Primogenitor] Nagisa Akatsuki;Sister of Primogenitor;Nagisa Akatsuki
 1011098002;[Waterside Eden] Alicia Forestlight;Waterside Eden; Alicia Forestlight
 1011099002;[Waterside Grimoire] Elfy Colette;Waterside Grimoire;Elfy Colette
+1011002036;[Demon King] Ais Wallenstein;Demon King;Ais Wallenstein
+1012027045;[Divine Spirit] Hestia;Divine Spirit;Hestia
+1011008011;[Evil Business] Asfi Al Andromeda;Evil Business;Asfi Al Andromeda
+1011001026;[Girly Boy] Bell Cranel;Girly Boy;Bell Cranel
+1011027001;[Hero Goddess] Hestia;Hero Goddess;Hestia
+1012038005;[Live Commentator] Hermes;Live Commentator;Hermes
+1012003003;[Petite Spirit] Liliruca Arde;Petite Spirit;Liliruca Arde
