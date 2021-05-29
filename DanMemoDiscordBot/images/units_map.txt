@@ -558,3 +558,8 @@ ID;FULL;Label;Character
 1011027001;[Hero Goddess] Hestia;Hero Goddess;Hestia
 1012038005;[Live Commentator] Hermes;Live Commentator;Hermes
 1012003003;[Petite Spirit] Liliruca Arde;Petite Spirit;Liliruca Arde
+1012050001;[Youthful Sword Princess] Ais (Girl);Youthful Sword Princess;Ais (Girl)
+1011001027;[Gleaming Freese] Bell Cranel;Gleaming Freese;Bell Cranel
+1011111002;[Entrusted Sound] Alfia;Entrusted Sound;Alfia
+1011110002;[The Entruster] Zard;The Entruster;Zard
+
