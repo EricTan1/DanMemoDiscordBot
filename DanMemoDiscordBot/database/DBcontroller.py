@@ -1134,8 +1134,8 @@ class DBcontroller:
         return res
 
     def get_all_adventurer_stats(self):
-        sql = "SELECT adventurerstatsid, adventurerid, advstats.attributeid, attri.name, value FROM aws_danmemo.adventurerstats as advstats\
-                LEFT JOIN aws_danmemo.attribute as attri on attri.attributeid=advstats.attributeid;".format(*((self.database.lower(),)*6))
+        sql = "SELECT adventurerstatsid, adventurerid, advstats.attributeid, attri.name, value FROM {}.adventurerstats as advstats\
+                LEFT JOIN {}.attribute as attri on attri.attributeid=advstats.attributeid;".format(*((self.database.lower(),)*2))
 
         self._mycursor.execute(sql)
 
@@ -1147,8 +1147,8 @@ class DBcontroller:
         return res
 
     def get_all_assist_stats(self):
-        sql = "SELECT assiststatsid, assistid, asstats.attributeid, attri.name, value FROM aws_danmemo.assiststats as asstats\
-                LEFT JOIN aws_danmemo.attribute as attri on attri.attributeid=asstats.attributeid".format(*((self.database.lower(),)*6))
+        sql = "SELECT assiststatsid, assistid, asstats.attributeid, attri.name, value FROM {}.assiststats as asstats\
+                LEFT JOIN {}.attribute as attri on attri.attributeid=asstats.attributeid".format(*((self.database.lower(),)*2))
 
         self._mycursor.execute(sql)
 
