@@ -527,6 +527,7 @@ class DBcontroller:
                 temp_speed = ""
             if(temp_attribute == None or temp_attribute.strip() == "None"):
                 temp_attribute = ""
+                
             if(temp_attribute.lower()=="all_damage_resist" or temp_attribute.lower()=="single_damage_resist"):
                 temp_modifier = int(temp_modifier)*-1
                 if(temp_modifier > 0):
@@ -1115,12 +1116,12 @@ class DBcontroller:
 # attribute4 id 374 = sa_gauge_charge
     def get_all_adventurer_sa_gauge_charge(self):
         sql = "SELECT askill.skillname,adventurer.title,chara.name,ta.name, mo.value, askill.skilltype FROM\
-                aws_danmemo.adventurerskilleffects as askille\
-                LEFT JOIN aws_danmemo.adventurerskill as askill on askille.adventurerskillid = askill.adventurerskillid\
-                LEFT JOIN aws_danmemo.adventurer as adventurer on adventurer.adventurerid = askill.adventurerid\
-                LEFT JOIN aws_danmemo.character as chara on chara.characterid = adventurer.characterid\
-                LEFT JOIN aws_danmemo.target as ta on ta.targetid = askille.targetid\
-                LEFT JOIN aws_danmemo.modifier as mo on mo.modifierid = askille.modifierid\
+                {}.adventurerskilleffects as askille\
+                LEFT JOIN {}.adventurerskill as askill on askille.adventurerskillid = askill.adventurerskillid\
+                LEFT JOIN {}.adventurer as adventurer on adventurer.adventurerid = askill.adventurerid\
+                LEFT JOIN {}.character as chara on chara.characterid = adventurer.characterid\
+                LEFT JOIN {}.target as ta on ta.targetid = askille.targetid\
+                LEFT JOIN {}.modifier as mo on mo.modifierid = askille.modifierid\
                 where attributeid = 374;".format(*((self.database.lower(),)*6))
 
         self._mycursor.execute(sql)

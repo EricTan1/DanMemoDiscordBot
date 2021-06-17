@@ -39,13 +39,12 @@ import commands.FWGnotesearch as command_FWGNoteSearch
 import commands.saCalculator as command_saCalculator
 import commands.killer as command_killer
 import commands.getJson as command_getJson
+import commands.init as command_init
 
 from commands.utils import createGSpreadJSON, checkperms
 
-if "IS_HEROKU" in os.environ:
-    _command_prefix = "!$"
-else:
-    _command_prefix = "$$"
+
+_command_prefix = os.environ.get("COMMAND_PREFIX")
 # INTENTS
 intents = discord.Intents.default()
 intents.members = True
@@ -158,6 +157,10 @@ async def addUpdateUnit(ctx, *search):
 @client.command(aliases=["gj"])
 async def getJson(ctx):
     await command_getJson.run(client,ctx)
+    
+@client.command()
+async def init(ctx):
+    await command_init.run(ctx)
 
 # commands that just bring up pictures
 class Infographic(commands.Cog):
