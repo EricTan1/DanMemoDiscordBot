@@ -7,8 +7,8 @@ name = "pypi"
 python_version = "3.8"
 
 [scripts]
-start = "python -u KarylBot/app.py"
-pylint = "pylint KarylBot/"
+start = "python -u DanMemoDiscordBot/app.py"
+pylint = "pylint DanMemoDiscordBot/"
 
 [packages]
 "discord.py" = "==1.6.0"
