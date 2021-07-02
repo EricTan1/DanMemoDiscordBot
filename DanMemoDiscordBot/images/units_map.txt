@@ -562,4 +562,13 @@ ID;FULL;Label;Character
 1011001027;[Gleaming Freese] Bell Cranel;Gleaming Freese;Bell Cranel
 1011111002;[Entrusted Sound] Alfia;Entrusted Sound;Alfia
 1011110002;[The Entruster] Zard;The Entruster;Zard
+1012124001;[Antiquity Priestess] Ilia;Antiquity Priestess;Ilia
+1011011010;[Dauntless Blade] Welf Crozzo;Dauntless Blade;Welf Crozzo
+1011003021;[Devoted Sniper] Liliruca Arde;Devoted Sniper;Liliruca Arde
+1011021007;[Foxy Prayer] Sanjouno Haruhime;Foxy Prayer;Sanjouno Haruhime
+1012027046;[Goddess of Salvation] Hestia;Goddess of Salvation;Hestia
+1011001028;[Unbreakable Freese] Bell Cranel;Unbreakable Freese;Bell Cranel
+1012123001;[Vibrant Beauty] Aphrodite;Vibrant Beauty;Aphrodite
+1011123001;[Lunar Blesser] Aphrodite;Lunar Blesser;Aphrodite
+1012078003;[Moon Drop] Artemis;Moon Drop;Artemis
 
