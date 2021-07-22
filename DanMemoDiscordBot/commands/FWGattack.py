@@ -61,7 +61,7 @@ async def run(client,ctx,target,medals:int):
             general_count = role_column.count("General")
             print(general_count)
             print(lieutenant_count)
-            if((role == "?" or role =="" ) and (general_count < 1 or lieutenant_count < 3)):
+            if((role == "?" or role =="" or role == None) and (general_count < 1 or lieutenant_count < 3)):
                 print("in")
                 x_emoji = getDefaultEmoji("regional_indicator_m")
                 lieutenant_emoji = getDefaultEmoji("regional_indicator_l")
@@ -115,7 +115,7 @@ async def run(client,ctx,target,medals:int):
                     else:
                         is_medal=False
             # 100% Member
-            elif(role == "?" or role == ""):
+            elif(role == "?" or role == "" or role == None):
                 ws.update_cell(enemy_row, LIEUT_GEN_COLUMN, "Member")
                 ws.update_cell(enemy_row, ENEMY_MEDALS_LEFT, 6-medals)
             else:
