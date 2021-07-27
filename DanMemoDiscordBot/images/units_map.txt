@@ -571,4 +571,9 @@ ID;FULL;Label;Character
 1012123001;[Vibrant Beauty] Aphrodite;Vibrant Beauty;Aphrodite
 1011123001;[Lunar Blesser] Aphrodite;Lunar Blesser;Aphrodite
 1012078003;[Moon Drop] Artemis;Moon Drop;Artemis
-
+1011022004;[Blazing Antianeira] Aisha Belka;Blazing Antianeira;Aisha Belka
+1012088003;[Divine Sunrise] Apollo;Divine Sunrise;Apollo
+1011008012;[Flaming Soar] Asfi Al Andromeda;Flaming Soar;Asfi Al Andromeda
+1012078004;[Full Moon] Elpis;Full Moon;Elpis
+1011090002;[Glowing Pride] Hyakinthos Clio;Glowing Pride;Hyakinthos Clio
+1011020019;[Flaring Gale] Ryu Lion;Flaring Gale;Ryu Lion
