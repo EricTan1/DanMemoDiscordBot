@@ -577,3 +577,5 @@ ID;FULL;Label;Character
 1012078004;[Full Moon] Elpis;Full Moon;Elpis
 1011090002;[Glowing Pride] Hyakinthos Clio;Glowing Pride;Hyakinthos Clio
 1011020019;[Flaring Gale] Ryu Lion;Flaring Gale;Ryu Lion
+1011018020;[Fiesta Elf] Lefiya Viridis;Fiesta Elf;Lefiya Viridis
+1012002005;[Fiesta Princess] Ais Wallenstein;Fiesta Princess;Ais Wallenstein
