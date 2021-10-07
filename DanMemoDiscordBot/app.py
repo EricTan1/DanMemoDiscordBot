@@ -46,11 +46,11 @@ from commands.utils import createGSpreadJSON, checkperms
 
 _command_prefix = os.environ.get("COMMAND_PREFIX")
 # INTENTS
-intents = discord.Intents.default()
-intents.members = True
+#intents = discord.Intents.default()
+#intents.members = True
 
-client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True, intents=intents)
-dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
+client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True)
+dbConfig = DBConfig(DatabaseEnvironment.LOCAL)
 cache = Cache(dbConfig)
 @client.event
 async def on_message(message):
