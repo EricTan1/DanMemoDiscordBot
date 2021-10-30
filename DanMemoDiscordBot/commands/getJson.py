@@ -15,7 +15,7 @@ import discord
 
 async def run(client, ctx):
     if(ctx.message.author.id == 175045433662504961 or ctx.message.author.id == 271030697219588096 or ctx.message.author.id == 204693066500538368 or
-    ctx.message.author.id == 226786914294824960 or ctx.message.author.id == 531944688366649345 or ctx.message.author.id == 630794201700892702):
+    ctx.message.author.id == 226786914294824960 or ctx.message.author.id == 531944688366649345 or ctx.message.author.id == 630794201700892702 or ctx.message.author.id ==171619343946350592):
         cache = Cache()
         #SELECT a.adventurerid, a.characterid, a.typeid, a.alias, a.title, a.stars, a.limited, a.ascended,c.name, c.iscollab, t.name
         # unit_id, character_id, type_id, alias, unit_label, stars, is_limited, is_ascended, character_name, is_collab, type_name
