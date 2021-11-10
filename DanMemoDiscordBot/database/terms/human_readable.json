@@ -138,6 +138,7 @@
 	"per_each_self_str_buff_skill": "per each [Self] Str. Buff Skill",
 	"per_each_self_str_buff": "per each [Self] Str. Buff",
 	"per_each_self_critical_rate_buff_skill": "per each [Self] Critical Rate Buff Skill",
+	"per_each_self_guard_rate_buff_skill": "per each [Self] Guard Rate Buff Skill",
 	"per_each_self_mag_buff_skill": "per each [Self] Mag. Buff Skill",
 	"per_each_fire_attack_buff_skill": "per each [Self] Fire Attack Dmg. Buff Skill",
 	"per_each_thunder_attack_buff_skill": "per each [Self] Thunder Attack Dmg. Buff Skill",
