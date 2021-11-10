@@ -96,14 +96,14 @@ async def run(client, ctx):
                     curr_combat_effect["effects"]=curr_effects_list
                     current_adv_json.get("skills").get("combat").append(curr_combat_effect)
             #development
-            current_adv_json["development"] = []
+            current_adv_json.get("skills")["development"] = []
             ad_dev_effects_temp = [dev for dev in ad_dev_effects if current_adv.unit_id == dev.adventurerid]
 
             for curr_adv_dev in ad_dev_effects_temp:
                 curr_adv_dev_dict = dict()
                 curr_adv_dev_dict["name"] = curr_adv_dev.development
                 curr_adv_dev_dict["effects"]=[{"attribute":curr_adv_dev.attribute,"modifier":curr_adv_dev.modifier}]
-                current_adv_json.get("development").append(curr_adv_dev_dict)
+                current_adv_json.get("skills").get("development").append(curr_adv_dev_dict)
 
             with open('./testJsonAdv/{} - {}.json'.format(current_adv.unit_label, current_adv.character_name), 'w') as fp:
                 json.dump(current_adv_json, fp,indent=4)
