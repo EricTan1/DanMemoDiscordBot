@@ -528,7 +528,7 @@ class DBcontroller:
             if(temp_attribute == None or temp_attribute.strip() == "None"):
                 temp_attribute = ""
                 
-            if(temp_attribute.lower()=="all_damage_resist" or temp_attribute.lower()=="single_damage_resist"):
+            if(temp_attribute.lower()=="all_damage_resist" or temp_attribute.lower()=="single_damage_resist" or temp_type.lower()=="all_damage_resist" or temp_type.lower()=="single_damage_resist"):
                 temp_modifier = int(temp_modifier)*-1
                 if(temp_modifier > 0):
                     temp_modifier = "+"+str(temp_modifier)
