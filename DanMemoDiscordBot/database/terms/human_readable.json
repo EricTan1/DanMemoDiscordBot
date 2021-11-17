@@ -135,6 +135,7 @@
 	"physical_resist_debuff_removal_no_assist": "removes all P.Resist Debuffs exc Assist Skills",
 	"per_each_foe_magic_resist_debuff_skill": "per each Target's M.Resist Reduction Skill",
 	"per_each_strength_and_magic_debuff_skill": "per each Target's Str. and Mag. Reduction",
+	"per_each_targets_strength_and_magic_buff_skill": "per each Target's Str. & Mag. Buff Skill",
 	"per_each_self_str_buff_skill": "per each [Self] Str. Buff Skill",
 	"per_each_self_str_buff": "per each [Self] Str. Buff",
 	"per_each_self_critical_rate_buff_skill": "per each [Self] Critical Rate Buff Skill",
