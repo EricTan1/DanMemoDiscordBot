@@ -130,6 +130,8 @@ class HeroAscensionStatsH(Enum):
     MAT = [0,28,56,84,141,198,310]
     DEF = [0,19,38,57,86,115,168]
 
+def getElements():
+    return['light', 'wind', 'fire', 'dark', 'ice', 'water', 'earth', 'thunder']
 
 def format_row_as_dict(**kwargs):
     for key in kwargs.keys():
