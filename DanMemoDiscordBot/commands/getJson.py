@@ -55,7 +55,7 @@ async def run(client, ctx):
             current_adv_json["skills"] = dict()
             current_adv_json.get("skills")["special"] = dict()
             current_adv_json.get("skills")["combat"] = []
-            current_adv_json.get("skills")["additonals"] = dict()
+            current_adv_json.get("skills")["additionals"] = []
 
             for curr_skills in ad_skills_temp:
                 ad_skills_effect_temp = [skills for skills in ad_skill_effects if curr_skills.adventurerskillid == skills.adventurerskillid]
@@ -97,8 +97,10 @@ async def run(client, ctx):
                     curr_combat_effect["effects"]=curr_effects_list
                     current_adv_json.get("skills").get("combat").append(curr_combat_effect)
                 else:
-                    current_adv_json.get("skills").get("additonals")["name"]=curr_skills.skillname
-                    current_adv_json.get("skills").get("additonals")["effects"]=curr_effects_list
+                    curr_combat_effect = dict()
+                    curr_combat_effect["name"]=curr_skills.skillname
+                    curr_combat_effect["effects"]=curr_effects_list
+                    current_adv_json.get("skills").get("additionals").append(curr_combat_effect)
             #development
             current_adv_json.get("skills")["development"] = []
             ad_dev_effects_temp = [dev for dev in ad_dev_effects if current_adv.unit_id == dev.adventurerid]
