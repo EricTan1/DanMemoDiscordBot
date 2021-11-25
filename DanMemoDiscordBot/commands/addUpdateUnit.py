@@ -71,7 +71,11 @@ class InsertCharacter:
             elif(skillsKeys =="combat"):
                 for skills in skillsList:
                     adventurerskillid = self._db.insertData(AdventurerSkill(None, adventurerid, skills.get("name"),skillsKeys))
-                    self.insertAdventurerSkillEffects(adventurerskillid, skills.get("effects"))                    
+                    self.insertAdventurerSkillEffects(adventurerskillid, skills.get("effects"))
+            elif(skillsKeys =="additionals"):
+                for skills in skillsList:
+                    adventurerskillid = self._db.insertData(AdventurerSkill(None, adventurerid, skills.get("name"),skillsKeys))
+                    self.insertAdventurerSkillEffects(adventurerskillid, skills.get("effects"))
             # development
             else:
                 for skills in skillsList:
