@@ -64,7 +64,7 @@
 	"debuff_removal_no_assist": "removes all Debuffs exc Assist Skills",
 	"hp_regen_removal_no_assist": "removes all HP Regen exc Assist Skills",
 	"hp_buff_removal_no_assist": "removes all HP Buff exc Assist Skills",
-	"all_damage_resist_removal_no_assist": "removes all All-target Attack DMG Resist exc Assist Skills",
+	"all_damage_resist_removal_no_assist": "removes Dmg. Reduction (Attack Type: All Targets) exc. Assist Skills",
 	"strength_debuff_removal_no_assist": "removes Str. Debuffs exc Assist Skills",
 	"magic_debuff_removal_no_assist": "removes Mag. Debuffs exc Assist Skills",
 	"agility_debuff_removal_no_assist": "removes Agi. Debuffs exc Assist Skills",
