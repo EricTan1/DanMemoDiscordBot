@@ -80,7 +80,6 @@
 	"critical_rate_buff_removal_no_assist": "removes Critical Rate Buffs exc. Assist Skills",
 	"penetration_rate_buff_removal_no_assist": "removes Penetration Rate Buffs exc. Assist Skills",
 	"heal_buff_removal_no_assist": "removes Heal Buffs exc. Assist Skills",
-	"debuff_removal_no_assist": "removes all Debuffs exc. Assist Skills",
 	"hp_regen_removal_no_assist": "removes HP Regen exc. Assist Skills",
 	"status_buff_removal_no_assist": "removes Status Buffs exc. Assisst Skills",
 	"status_debuff_removal_no_assist": "removes Status Debuffs exc. Assisst Skills",
