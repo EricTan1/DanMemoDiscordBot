@@ -172,5 +172,6 @@
 	"fire_earth_wind_attack_removal_no_assist": "removes Fire, Earth, and Wind Attack Dmg. Buffs exc. Assist Skills",
 	"magic_buff_removal": "Mag. Buff exc. Assist Skills will be removed afterward",
 	"fire_water_thunder_earth_wind_light_dark_resist": "Fire, Water, Thunder, Earth, Wind, Light, and Dark Resist",
-	"physical_magic_fire_water_thunder_earth_wind_light_dark_resist_buff_removal": "P. Resist, M. Resist, Fire/Water/Thunder/Earth/Wind/Light/Dark Resist Debuff"
+	"physical_magic_fire_water_thunder_earth_wind_light_dark_resist_buff_removal": "P. Resist, M. Resist, Fire/Water/Thunder/Earth/Wind/Light/Dark Resist Debuff",
+	"additional_action": "Additional Actions"
 }
