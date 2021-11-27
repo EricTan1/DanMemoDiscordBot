@@ -10,74 +10,15 @@ totalDamage=0
 totalCounter=0
 # damage per unit tracker
 accumulateDamage=[0,0,0,0]
-elementResistDownBase = {"fire":0,"water":0,"thunder":0,"earth":-0.2,"wind":0,"light":0,"dark":0,"none":0}
-elementResistDownAdv= {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0}
-elementResistDownAst= {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0}
 
-# physical/magical resist
-typeResistDownBase={"physical":-0.1, "magic":0}
-typeResistDownAdv={"physical":0, "magic":0}
-typeResistDownAst={"physical":0, "magic":0}
-
-# current 4 active party members
-elementDamageBoostAdv=[
-  {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-  {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-  {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-  {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}]
-
-elementDamageBoostAst=[
-  {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-  {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-  {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-  {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}]
-
-targetResistDownAdv={"st":0,"aoe":0}
-targetResistDownAst={"st":0,"aoe":0}
-
-powerBoostAdv=[{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0},
-{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0},
-{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0},
-{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}]
-
-powerBoostAst=[{"hp":0,"mp":0,"strength":0.1, "magic":0,"agility":0,"endurance":0,"dexerity":0},
-{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0},
-{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0},
-{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}]
 ultRatio = 0.0
 counterRateBase = 0.0
 critRateBase = 0.0
 penRateBase = 0.0
 bossPowerUp = 0
-# Adv Stats
-# strength/magic stat
-power=[{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0},
-{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0},
-{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0},
-{"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}]
-# counter damage
-counterBoost=[0, 0, 0, 0]
-# critpen damage
-critPenBoost=[0.2, 0, 0, 0]
-# additonals count
-additonalCount=[0,0,0,0]
 
-# Special Parameter
-missBoost = [0,0,0,0]
-
-# append buffs to dict and remove once wiped
-# list of dict
-# {isbuff,Attribute,Modifier,duration}
-# each list object
-#{"isbuff":False,"attribute":"strength","modifier":-45,"duration":1}
-boostCheckEnemyAdv=[]
-boostCheckEnemyAst=[]
-
-boostCheckAlliesAdv=[[],[],[],[]]
-boostCheckAlliesAst=[[],[],[],[]]
-
-# base defence
-defense = 0
+# list of adventurers
+adv_list = []
 # Printing
 logprint = [1,1,1,1]
 counterprint = 1
@@ -87,159 +28,19 @@ totaldamageprint = 1
 ##################
 # RB adding buffs#
 ##################
-def boostCheckEnemyAppend(isbuff:bool,attribute:str,modifier:int,duration:int,is_assist:bool):
-  ''' (bool, str, int or float, int, bool) -> None
-    target: self, allies, foes, foe
-    attribute: strength, magic, st, aoe
-    modifier: -10 ,+50
-    duration: 1,2,3,4
-    is_assist: is this an assist buff or not
-  '''
-  global boostCheckEnemyAst
-  global boostCheckEnemyAdv
-  tempAppend = {"isbuff":isbuff,"attribute": attribute,"modifier": modifier,"duration": duration}
-  if(is_assist):
-    checkBuffExistsReplace(boostCheckEnemyAst, tempAppend)
-  else:
-    checkBuffExistsReplace(boostCheckEnemyAdv, tempAppend)
-
-def boostCheckAlliesAppend(isbuff:bool,attribute:str,modifier:int,duration:int,is_assist:bool, position:int):
-  ''' (bool, str, int or float, int, bool, int) -> None
-    target: self, allies, foes, foe
-    attribute: strength, magic, st, aoe
-    modifier: -10 ,+50
-    duration: 1,2,3,4
-    is_assist: is this an assist buff or not
-    position : the active unit position in the party
-  '''
-  global boostCheckAlliesAst
-  global boostCheckEnemyAdv
-  tempAppend = {"isbuff":isbuff,"attribute": attribute,"modifier": modifier,"duration": duration}
-  if(is_assist):
-    checkBuffExistsReplace(boostCheckAlliesAst[position], tempAppend)
-  else:
-    checkBuffExistsReplace(boostCheckEnemyAdv[position], tempAppend)
 
 
-def checkBuffExistsReplace(buffDebuffList:List, buffDebuff:dict):
-  ''' (list, dict) -> None
-    Check the buffs/debuffs in the list and replace if attribute and target is the same and 
-    if the modifier is equal or greater than the one in the list
 
-    buffDebuffList: list of buffs or debuffs
-    buffDebuff: dictionary of format
-                {isbuff,attribute,modifier,duration}
-                Example:{"isbuff":True","attribute":"strength","modifier":-45,"duration":1}
-  '''
-  pop_value = -1
-  #loop through the list to find the buff
-  for i in range (0, len(buffDebuffList)):
-    # dictionary here
-    curr_dict = buffDebuffList[i]
-    # if the buff exists then check modifier
-    if(curr_dict.get("attribute")== buffDebuff.get("attribute") and curr_dict.get("isbuff")== buffDebuff.get("isbuff")):
-      pop_value=i
 
-  if(pop_value==-1):
-    buffDebuffList.append(buffDebuff)
-  else:
-    curr_dict = buffDebuffList[pop_value]
-    # if the modifier of the buffdebuff is equal to greater to the one on the list then pop the list and replace it
-    if(curr_dict.get("isbuff")):
-      if(curr_dict.get("modifier") < buffDebuff.get("modifier")):
-          buffDebuffList.pop(i)
-          buffDebuffList.append(buffDebuff)
-    else:
-      if(curr_dict.get("modifier") > buffDebuff.get("modifier")):
-        buffDebuffList.pop(i)
-        buffDebuffList.append(buffDebuff)
-    # if its equal check duration and replace it with the longer one
-    if(curr_dict.get("modifier") == buffDebuff.get("modifier")):
-      if(curr_dict.get("duration") < buffDebuff.get("duration")):
-        buffDebuffList.pop(i)
-        buffDebuffList.append(buffDebuff)
+
 
 ##################
 # RB Clear Skill #
 ##################
-def RevisPowerUp():
-  boostCheckEnemyAppend(True,"strength",0,99,False)
-
-def RiveriaPowerUp():
-  boostCheckEnemyAppend(True,"magic",0,99,False)
-
-def RevisAdd():
-  global typeResistDownAdv
-  # debuffs own physical resists, take into account later magic resist debuffs
-  typeResistDownAdv["physical"] = min(typeResistDownAdv.get("physical"), -0.5)
-  boostCheckEnemyAppend(True,"strength",0,99,False)
-  
-def RevisInitial():
-  global typeResistDownAdv
-  typeResistDownAdv["physical"] = min(typeResistDownAdv.get("physical"), -0.5)
-
-
-def RevisClear():
-  global elementResistDownAdv
-  global typeResistDownAdv
-  global targetResistDownAdv
-  elementResistDownAdv= {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0}
-  typeResistDownAdv={"physical":0, "magic":0}
-  targetResistDownAdv={"st":0,"aoe":0}
-
-  # debuff remove from list boostCheckEnemyAdv
-  
-def RiveriaClear():
-  global elementDamageBoostAdv
-  global powerBoostAdv
-  elementDamageBoostAdv=[
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}]
-  powerBoostAdv=[{"strength":0, "magic":0}, {"strength":0, "magic":0}, {"strength":0, "magic":0}, {"strength":0, "magic":0}]
 
   # buff remove from list boostCheckAlliesAdv
 
-def FinnClear():
-  global elementResistDownAdv
-  global typeResistDownAdv
-  global targetResistDownAdv  
-  global elementDamageBoostAdv
-  global powerBoostAdv
-  elementResistDownAdv= {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0}
-  typeResistDownAdv={"physical":0, "magic":0}
-  targetResistDownAdv={"st":0,"aoe":0}
-  elementDamageBoostAdv=[
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}]
 
-  powerBoostAdv=[{"strength":0, "magic":0}, {"strength":0, "magic":0}, {"strength":0, "magic":0}, {"strength":0, "magic":0}]
-
-  # clear finn's debuffs from boostCheckEnemyAdv and your adv's buffs boostCheckAlliesAdv
-
-def FinnAdd():
-  global powerBoostAdv
-
-  # take the max of str/mag buffs
-  for adv in powerBoostAdv:
-    adv["strength"] = max(adv["strength"],1.5)
-    adv["magic"] = max(adv["magic"],1.5)
-  # str/mag buff
-  boostCheckEnemyAppend(True,"strength",150,99,False)
-  boostCheckEnemyAppend(True,"magic",150,99,False)
-
-def OttarlClear():
-  global elementDamageBoostAdv
-  global powerBoostAdv
-  elementDamageBoostAdv=[
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}, 
-    {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}]
-  powerBoostAdv=[{"strength":0, "magic":0}, {"strength":0, "magic":0}, {"strength":0, "magic":0}, {"strength":0, "magic":0}] 
 
 
 ###################
@@ -658,114 +459,7 @@ def DebugPrint():
 ##################    
 # SA and Counter #
 ##################
-def CombineSA(Char1,Char2,Char3,Char4):
-  global totalDamage
 
-
-
-  #powerBoostAdv=[{"strength":0, "magic":0}, {"strength":0, "magic":0}, {"strength":0, "magic":0}, {"strength":0, "magic":0}]
-  tempDamage = 0
-  character_list = [Char1,Char2,Char3,Char4]
-
-  for character in range(0,4):
-    isPhysical=power[character].get("magic") > power[character].get("strength")
-    
-    tempPower = max(power[character].get("strength"),power[character].get("magic"))
-    if(isPhysical):
-      tempPowerBoostAdv =powerBoostAdv[character].get("strength")
-      tempPowerBoostAst =powerBoostAst[character].get("strength")
-    else:
-      tempPowerBoostAdv =powerBoostAdv[character].get("magic")
-      tempPowerBoostAst =powerBoostAst[character].get("magic")
-    tempDamage= tempDamage + (character_list[character]*(1.16*tempPower*(1+tempPowerBoostAdv+tempPowerBoostAst)))
-
-  tempDamage = (tempDamage-defense)*\
-                (1-typeResistDownAdv.get("physical")-typeResistDownAst.get("physical"))*\
-                (1-targetResistDownAdv.get("magic")-targetResistDownAst.get("magic"))*\
-                3.7*1.5
-  print('Combine SA damage is {}'.format(np.floor(tempDamage).item()))
-  totalDamage = totalDamage + np.floor(tempDamage).item()
-
-def Counter(notIn=[0,0,0,0]):
-  global totalDamage
-  global accumulateDamage  
-  tempDamage = CounterDamageFunction(
-      location = 0,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Magic',
-      extraBoost = 0.25*counter0Active*counterScale,
-      NoType = 1          
-      )
-  if logprint[0] == 1 and counterprint == 1:
-    print('{} average single counter damage is {}'.format("PositionName0",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 1,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = 0.25*(1-notIn[1])*(counterScale)*counter1Active    
-      )            
-  if logprint[1] == 1 and counterprint == 1:
-    print('{} average single counter damage is {}'.format("PositionName1",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 2,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = 0.25*(1-notIn[2])*1*counter2Active
-      )
-  if logprint[2] == 1 and counterprint == 1:
-    print('{} average single counter damage is {}'.format("PositionName2",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 3,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = 0.25*(1-notIn[3])*counterScale     
-      )  
-  if logprint[3] == 1 and counterprint == 1:
-    print('{} average single counter damage is {}'.format("PositionName3",np.floor(tempDamage).item()))
-def Counters(notIn=[0,0,0,0]):
-  global totalDamage
-  global accumulateDamage
-  tempDamage = CounterDamageFunction(
-      location = 0,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Magic',
-      extraBoost = counter0Active*counterScale,
-      NoType = 1  
-      )               
-  if logprint[0] == 1 and counterprint == 1:
-    print('{} counter damage is {}'.format("PositionName0",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 1,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = (1-notIn[1])*(counterScale)*counter1Active        
-      ) 
-  if logprint[1] == 1 and counterprint == 1:
-    print('{} counter damage is {}'.format("PositionName1",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 2,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = (1-notIn[2])*1*counter2Active            
-      )  
-  if logprint[2] == 1 and counterprint == 1:
-    print('{} counter damage is {}'.format("PositionName2",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 3,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = (1-notIn[3])*counterScale   
-      )  
-  if logprint[3] == 1 and counterprint == 1:
-    print('{} counter damage is {}'.format("PositionName3",np.floor(tempDamage).item()))
 
 
 #############

@@ -131,7 +131,28 @@ class HeroAscensionStatsH(Enum):
     DEF = [0,19,38,57,86,115,168]
 
 def getElements():
-    return['light', 'wind', 'fire', 'dark', 'ice', 'water', 'earth', 'thunder']
+    return ['light', 'wind', 'fire', 'dark', 'ice', 'water', 'earth', 'thunder']
+
+def getStats():
+    return ["hp","mp","strength", "magic","agility","endurance","dexerity"]
+
+def getDamageBuffs():
+    ret = []
+    # elemental
+    for elements in getElements():
+        ret.append("{}_attack".format(elements))
+    # Stats
+    ret = ret + getStats()
+    return ret
+def getDamageDebuffs():
+    ret=[]
+    for elements in getElements():
+        ret.append("{}_resist".format(elements))
+    ret.append("physical_resist")
+    ret.append("magic_resist")
+    ret.append("all_damage_resist")
+    ret.append("single_damage_resist")
+    return ret
 
 def format_row_as_dict(**kwargs):
     for key in kwargs.keys():
