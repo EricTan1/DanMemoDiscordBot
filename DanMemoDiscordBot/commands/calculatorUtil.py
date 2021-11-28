@@ -577,7 +577,7 @@ async def interpretSkillAdventurerAttack(skillEffects, adventurer:Adventurer, en
   else:
     return None
 
-async def interpretSkillAdventurerEffects(skillEffects, adventurer:Adventurer, enemy:Enemy, adv_list):
+async def interpretSkillAdventurerEffects(skillEffects, adventurer:Adventurer, enemy:Enemy, adv_list:list):
   ''' (list of skilleffects, Adventurer, Enemy, list of Adventurer)
   '''
   # go through the effects
@@ -720,9 +720,7 @@ async def interpretSkillAdventurerEffects(skillEffects, adventurer:Adventurer, e
           if(curr_attribute.target.strip() == "self"):
             adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
 
-
-
-async def interpretSkillAssistEffects(skillEffects, adventurer:Adventurer, enemy:Enemy, adv_list):
+async def interpretSkillAssistEffects(skillEffects, adventurer:Adventurer, enemy:Enemy, adv_list:list):
   ''' (list of skilleffects, Adventurer, Enemy, list of Adventurer)
   '''
   # go through the effects
@@ -838,3 +836,41 @@ async def interpretSkillAssistEffects(skillEffects, adventurer:Adventurer, enemy
               curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
           if(curr_attribute.target.strip() == "self"):
             adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+
+async def counter(adv_list, enemy:Enemy, memboost:dict, counterRate:float):
+  ret = 0
+  # take the avg
+  # loop through and take the avg
+  for adv in adv_list:
+    # create adventurerCounter
+    is_physical = adv.get_stats().get("strength")>=adv.get_stats().get("magic")
+    if(is_physical):
+      temp_type = "physical"
+    else:
+      temp_type = "magic"
+    temp_noType = adv.elementAttackCounter == "None"
+
+    temp_adv_counter= AdventurerCounter(target="foe",extraBoost=1,noType=int(temp_noType),type=temp_type,element = adv.elementAttackCounter)
+    temp_counter_damage = CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate)*0.25
+    adv.add_damage(temp_counter_damage)
+    ret += temp_counter_damage
+  return ret
+    
+async def counters(adv_list, enemy:Enemy, memboost:dict, counterRate:float):
+  ret = 0
+  # take the avg
+  # loop through and take the avg
+  for adv in adv_list:
+    # create adventurerCounter
+    is_physical = adv.get_stats().get("strength")>=adv.get_stats().get("magic")
+    if(is_physical):
+      temp_type = "physical"
+    else:
+      temp_type = "magic"
+    temp_noType = adv.elementAttackCounter == "None"
+
+    temp_adv_counter= AdventurerCounter(target="foe",extraBoost=1,noType=int(temp_noType),type=temp_type,element = adv.elementAttackCounter)
+    temp_counter_damage = CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate)
+    adv.add_damage(temp_counter_damage)
+    ret += temp_counter_damage
+  return ret

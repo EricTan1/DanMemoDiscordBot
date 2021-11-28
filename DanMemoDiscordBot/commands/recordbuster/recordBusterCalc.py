@@ -245,7 +245,8 @@ async def run(client, ctx):
         #AdventurerCounter ???
 
         # agi calculation
-        skills_priority_list = [("agi","skill","adv")]
+        # ("agi","skill","adv")
+        skills_priority_list = []
         for active_adv in active_advs:
             temp_agi = active_adv.get_stats().get("agility") * (1 + active_adv.get_statsBoostAdv().get("agility") + active_adv.get_statsBoostAst().get("agility"))
             # combat
