@@ -241,6 +241,7 @@ async def run(client, ctx):
         total_damage += CombineSA(active_advs,enemy,character_sa_list)
         # RB boss turn
         enemy.turnOrder(turn,active_adv, 0)
+        enemy.turnOrderCounters(turn, active_adv, memboost, counterRate, 0)
 
         #AdventurerCounter ???
 
@@ -300,6 +301,7 @@ async def run(client, ctx):
             # not fast skill then rb can go
             if(not is_fast and not is_enemy_attacked):
                 enemy.turnOrder(turn,active_adv, 1)
+                enemy.turnOrderCounters(turn, active_adv, memboost, counterRate, 1)
                 is_enemy_attacked = True
             temp_damage = DamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost)
             interpretSkillAdventurerEffects(removed_sorted_skill[2],removed_sorted_skill[3],enemy,active_advs)
@@ -307,7 +309,7 @@ async def run(client, ctx):
             removed_sorted_skill[3].add_damage(temp_damage)
         # end of turn skills
         enemy.turnOrder(turn,active_adv, 2)
-
+        enemy.turnOrderCounters(turn, active_adv, memboost, counterRate, 2)
         
         # sacs
         if(turn +1 < 15 and sac_counter < 2):
