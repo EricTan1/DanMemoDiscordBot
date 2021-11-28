@@ -52,14 +52,17 @@ class Cache(object):
         db = DBcontroller(dbConfig)
         #SELECT a.adventurerid, a.characterid, a.typeid, a.alias, a.title, a.stars, a.limited, a.ascended,c.name, c.iscollab
         self.data["adventurers"] = db.get_all_adventurers()
+        #SELECT a.assistid, a.characterid, a.alias, a.title, a.stars, a.limited, c.name, c.iscollab
         self.data["assists"] = db.get_all_assists()
         #SELECT addev.adventurerdevelopmentid,addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name
         self.data["adventurers_developments"] = db.get_all_adventurers_developments()
         #SELECT adventurerskillid, adventurerid, skillname, skilltype
         self.data["adventurers_skills"] = db.get_all_adventurers_skills()
+        #SELECT assistskillid, assistid, skillname
         self.data["assists_skills"] = db.get_all_assists_skills()
         #SELECT ase.AdventurerSkillEffectsid, ase.AdventurerSkillid, ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name
         self.data["adventurers_skills_effects"] = db.get_all_adventurers_skills_effects()
+        #SELECT ase.assistskilleffectsid, ase.assistskillid, ase.duration, m.value as modifier, ta.name as target, a.name as attribute, assist.stars, assist.title, assist.alias, assist.limited, c.name
         self.data["assists_skills_effects"] = db.get_all_assists_skills_effects()
         self.data["assist_sa_gauge"] = db.get_all_assist_sa_gauge_charge()
         self.data["adventurer_sa_gauge"] = db.get_all_adventurer_sa_gauge_charge()

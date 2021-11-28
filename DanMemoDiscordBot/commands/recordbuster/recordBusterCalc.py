@@ -2,9 +2,11 @@ from discord.ext import commands
 import discord
 from commands.utils import getElements
 from commands.cache import Cache
-from commands.calculatorUtil import DamageFunction,CounterDamageFunction,SADamageFunction,CombineSA,interpretSkillAdventurerAttack,interpretSkillAdventurerEffects
+from commands.calculatorUtil import DamageFunction,CounterDamageFunction,SADamageFunction,CombineSA,interpretSkillAdventurerAttack,interpretSkillAdventurerEffects,interpretSkillAssistEffects
 import numpy as np
 from commands.entities.adventurer import Adventurer
+from commands.entities.assist import Assist
+
 from commands.entities.enemy import Enemy, Revis, Finn, Ottarl, Riveria
 from commands.entities.skills import AdventurerSkill, AdventurerCounter
 
@@ -49,7 +51,7 @@ async def run(client, ctx):
     # 1, 2, 3, 4, 5 ,6
     # sacs can be any order just list in SF
     unit_titles = ['Wondering Man','deathly dance','dazzling elf','Aschenputtel',"twilight supporter", "Drakguard's Will"]
-
+    ast_titles = ["mlb Key Strategist","","","","",""]
     unit_sacs_swap_turn =[1,4]
 
     # skillflow[row][column] = skillflow[unit][turn] = skillflow[0-5][0-14]
@@ -62,10 +64,56 @@ async def run(client, ctx):
         [-1, -1,  2,  4,   1, 3, 2, 3,   1, 2, 3, 3,   2, 1, 1]]) # unit 6
 
     ##############################
+    # Init Assists
+    ##############################
+    cache = Cache()
+    #SELECT a.assistid, a.characterid, a.alias, a.title, a.stars, a.limited, c.name, c.iscollab
+    ast_list = cache.get_all_assists()
+    # SELECT assistskillid, assistid, skillname
+    ast_skill = cache.get_all_assists_skills()
+    #SELECT ase.assistskilleffectsid, ase.assistskillid, ase.duration, m.value as modifier, ta.name as target, a.name as attribute, assist.stars, assist.title, assist.alias, assist.limited, c.name
+    ast_skill_effects = cache.get_all_adventurers_skills_effects()
+    
+    assist_list = []
+    for assist in ast_titles:
+        # parse assist titles by space
+        temp_ast_title_list = assist.split(' ')
+        is_mlb = False
+        if(len(temp_ast_title_list) > 0):
+            # its an mlb unit
+            if(temp_ast_title_list[0].lower() == "mlb"):
+                is_mlb = True
+                temp_ast_title_list.pop(0)
+            # rest of the title
+            temp_ast_title = " ".join(temp_ast_title_list)
+
+            ast_matches = [x for x in ast_list if x.title.lower() == temp_ast_title.lower()]
+            if(len(ast_matches) > 0):
+                current_assist = ast_matches[0]
+                ast_skill_matches = [x for x in ast_skill if x.assistid == current_assist.assistid]
+                ast_skill_effects = dict()
+                # non mlb skill and mlb skill
+                for ast_skill in ast_skill_matches:
+                    ast_skill_effects_matches = [x for x in ast_skill_effects if x.assistskillid == ast_skill.assistskillid]
+                    
+                    if("++" in ast_skill.skillname):
+                        if(is_mlb):
+                            assist_list.append(Assist(ast_skill_effects_matches))
+                    else:
+                        assist_list.append(Assist(ast_skill_effects_matches))
+            # no assist
+            else:
+                assist_list.append(Assist([]))
+        # no assist
+        else:
+            assist_list.append(Assist([]))
+
+
+
+    ##############################
     # Init Units
     ##############################
     #loading in characters
-    cache = Cache()
     # unit_id, character_id, type_id, alias, unit_label, stars, is_limited, is_ascended, character_name, is_collab, type_name
     ad_list = cache.get_all_adventurers()
     #SELECT adventurerskillid, adventurerid, skillname, skilltype
@@ -126,6 +174,7 @@ async def run(client, ctx):
                 adv_dev_matches = [x for x in ad_dev_effects if x.adventurerid == curr_unit.unit_id]
                 tempCounterBoost = 0
                 tempCritPenBoost= 0
+                tempElementAttackCounter = "None"
                 for curr_adv_dev_skill in adv_dev_matches:
                     dev_attribute_name = curr_adv_dev_skill.attribute
                     #print("modifier: {} modifier type: {}".format(curr_adv_dev_skill.modifier,type(curr_adv_dev_skill.modifier)))
@@ -133,7 +182,10 @@ async def run(client, ctx):
                         dev_modifier_percent = int(curr_adv_dev_skill.modifier.strip())/100
                     except:
                         dev_modifier_percent=0
-                    # critpen damage
+                    # elemental counters and normal attacks
+                    # Water Manifestation: H || element manifestation:letter
+                    if("manifestation" in curr_adv_dev_skill.name.lower()):
+                        tempElementAttackCounter = curr_adv_dev_skill.name.lower().split(" ")[0]
 
                     # Counter Damage & counter_damage
                     if("counter" in dev_attribute_name.lower() and "damage" in dev_attribute_name.lower()):
@@ -151,7 +203,8 @@ async def run(client, ctx):
                                     critPenBoost=tempCritPenBoost, 
                                     current_skills=current_skills,
                                     current_skills_agi_mod = current_skills_agi_mod, 
-                                    turnOrder = skillflow[unitsCounter]))
+                                    turnOrder = skillflow[unitsCounter],
+                                    elementAttackCounter=tempElementAttackCounter))
     ########################
     # Main Loop
     ########################
@@ -160,6 +213,11 @@ async def run(client, ctx):
     sac_counter = 0
     total_damage = 0
     for turn in range(0, 15):
+        # assist skills first turn!!
+        if(turn == 0):
+            for assistCount in range(0,4):
+                interpretSkillAssistEffects(assist_list[assistCount].skills,active_advs[assistCount],enemy,active_advs)
+
         # SADamageFunction(skill:AdventurerSkill,adventurer:Adventurer,enemy:Enemy, memboost:dict, combo:int,ultRatio:int)
         # CombineSA(adventurerList:list,enemy:Enemy, character_list:list):
         # SAs SA damage function, combine SA
@@ -184,6 +242,8 @@ async def run(client, ctx):
         # RB boss turn
         enemy.turnOrder(turn,active_adv, 0)
 
+        #AdventurerCounter ???
+
         # agi calculation
         skills_priority_list = [("agi","skill","adv")]
         for active_adv in active_advs:
@@ -198,6 +258,8 @@ async def run(client, ctx):
                 temp_adv_effects_list = active_adv.get_combatSkill(current_sf)
                 temp_adv_skill = interpretSkillAdventurerAttack(temp_adv_effects_list,active_advs[active_adv],enemy)
                 temp_damage = SADamageFunction(temp_adv_skill,active_advs[active_adv],enemy,memboost,sa_counter,ultRatio)
+                # interpret skills
+                interpretSkillAdventurerEffects(temp_adv_effects_list,active_advs[active_adv],enemy,active_advs)
                 # buff skills
                 if(temp_damage == None):
                     if(current_speed== "fast"):
@@ -239,16 +301,21 @@ async def run(client, ctx):
                 enemy.turnOrder(turn,active_adv, 1)
                 is_enemy_attacked = True
             temp_damage = DamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost)
+            interpretSkillAdventurerEffects(removed_sorted_skill[2],removed_sorted_skill[3],enemy,active_advs)
             total_damage += temp_damage
             removed_sorted_skill[3].add_damage(temp_damage)
         # end of turn skills
         enemy.turnOrder(turn,active_adv, 2)
+
+        
         # sacs
         if(turn +1 < 15 and sac_counter < 2):
             for active_adv in range(0, len(active_advs)):
                 # sac
                 if(active_advs[active_adv].get_turnOrder()[turn+1] == -1 and sac_counter < 2):
                     active_advs[active_adv] = unit_list[len(active_advs)+sac_counter]
+                    # assist
+                    interpretSkillAssistEffects(assist_list[len(active_advs)+sac_counter].skills,unit_list[len(active_advs)+sac_counter],enemy,active_advs)
                     sac_counter+=1
     print('Current total damage is {}'.format(total_damage))
     print('Current total score is {}'.format(total_damage*10*2))
