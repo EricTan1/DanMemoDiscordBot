@@ -136,6 +136,9 @@ def getElements():
 def getStats():
     return ["hp","mp","strength", "magic","agility","endurance","dexerity"]
 
+def getAilment():
+    return ["seal","charm","sleep", "taunt","stun","slow","poison"]
+
 def getDamageBuffs():
     ret = []
     # elemental
@@ -332,3 +335,41 @@ def checkperms(ctx,guild_id,perm_list):
             if(temp_roles.id in perm_list):
                 has_access = True
     return has_access
+
+async def checkBuffExistsReplace(buffDebuffList:list, buffDebuff:dict):
+  ''' (list, dict) -> None
+    Check the buffs/debuffs in the list and replace if attribute and target is the same and 
+    if the modifier is equal or greater than the one in the list
+
+    buffDebuffList: list of buffs or debuffs
+    buffDebuff: dictionary of format
+                {isbuff,attribute,modifier,duration}
+                Example:{"isbuff":True","attribute":"strength","modifier":-45,"duration":1}
+  '''
+  pop_value = -1
+  #loop through the list to find the buff
+  for i in range (0, len(buffDebuffList)):
+    # dictionary here
+    curr_dict = buffDebuffList[i]
+    # if the buff exists then check modifier
+    if(curr_dict.get("attribute")== buffDebuff.get("attribute") and curr_dict.get("isbuff")== buffDebuff.get("isbuff")):
+      pop_value=i
+
+  if(pop_value==-1):
+    buffDebuffList.append(buffDebuff)
+  else:
+    curr_dict = buffDebuffList[pop_value]
+    # if the modifier of the buffdebuff is equal to greater to the one on the list then pop the list and replace it
+    if(curr_dict.get("isbuff")):
+      if(curr_dict.get("modifier") < buffDebuff.get("modifier")):
+          buffDebuffList.pop(pop_value)
+          buffDebuffList.append(buffDebuff)
+    else:
+      if(curr_dict.get("modifier") > buffDebuff.get("modifier")):
+        buffDebuffList.pop(pop_value)
+        buffDebuffList.append(buffDebuff)
+    # if its equal check duration and replace it with the longer one
+    if(curr_dict.get("modifier") == buffDebuff.get("modifier") and curr_dict.get("duration") != None and buffDebuff.get("duration")!= None):
+      if(curr_dict.get("duration") < buffDebuff.get("duration")):
+        buffDebuffList.pop(pop_value)
+        buffDebuffList.append(buffDebuff)

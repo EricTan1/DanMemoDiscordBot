@@ -214,23 +214,23 @@ async def interpretExtraBoost(skillEffect, adventurer:Adventurer, enemy:Enemy):
 
     if(target == "self"):
         #boostCheckAlliesAdv
-        for selfBuffsAdv in adventurer.get_boostCheckAlliesAdv():
+        for selfBuffsAdv in adventurer.boostCheckAlliesAdv:
             if(selfBuffsAdv.get('isbuff') == (attribute_type == "buff")):
                 if(selfBuffsAdv.get('attribute') == attribute):
                     extra_boosts_modifier_value = extra_boosts_modifier_value + int(skillEffect.modifier.strip())/100
         #boostCheckAlliesAst
-        for selfBuffsAst in adventurer.get_boostCheckAlliesAst():
+        for selfBuffsAst in adventurer.boostCheckAlliesAst:
             if(selfBuffsAst.get('isbuff') == (attribute_type == "buff")):
                 if(selfBuffsAst.get('attribute') == attribute):
                     extra_boosts_modifier_value = extra_boosts_modifier_value + int(skillEffect.modifier.strip())/100
     #target aka foes/foe
     else:
-        for selfBuffsAdv in enemy.get_boostCheckEnemyAdv():
+        for selfBuffsAdv in enemy.boostCheckEnemyAdv:
             if(selfBuffsAdv.get('isbuff') == (attribute_type == "buff")):
                 if(selfBuffsAdv.get('attribute') == attribute):
                     extra_boosts_modifier_value = extra_boosts_modifier_value + int(skillEffect.modifier.strip())/100
         #boostCheckAlliesAst
-        for selfBuffsAst in enemy.get_boostCheckEnemyAst():
+        for selfBuffsAst in enemy.boostCheckEnemyAst:
             if(selfBuffsAst.get('isbuff') == (attribute_type == "buff")):
                 if(selfBuffsAst.get('attribute') == attribute):
                     extra_boosts_modifier_value = extra_boosts_modifier_value + int(skillEffect.modifier.strip())/100
@@ -240,17 +240,17 @@ async def interpretExtraBoost(skillEffect, adventurer:Adventurer, enemy:Enemy):
 
 '''
 if(curr_attribute.target.strip() == "self"):
-    temp_max = max(adventurer.get_elementDamageBoostAdv().get(curr_element), int(skillEffect.modifier))
+    temp_max = max(adventurer.elementDamageBoostAdv.get(curr_element), int(skillEffect.modifier))
     adventurer.elementDamageBoostAdv[curr_element] = temp_max
-    adventurer.set_boostCheckAlliesAdv(True,curr_attribute,skillEffect.modifier,skillEffect.duration)
+    await adventurer.set_boostCheckAlliesAdv(True,curr_attribute,skillEffect.modifier,skillEffect.duration)
 elif(curr_attribute.target.strip() == "allies"):
     for curr_adv in adv_list:
-        temp_max = max(curr_adv.get_elementDamageBoostAdv().get(curr_element), int(skillEffect.modifier))
+        temp_max = max(curr_adv.elementDamageBoostAdv.get(curr_element), int(skillEffect.modifier))
         curr_adv.elementDamageBoostAdv[curr_element] = temp_max
-        curr_adv.set_boostCheckAlliesAdv(True,curr_attribute,skillEffect.modifier,skillEffect.duration)
+        await curr_adv.set_boostCheckAlliesAdv(True,curr_attribute,skillEffect.modifier,skillEffect.duration)
 elif(curr_attribute.target.strip() == "foe" or curr_attribute.target.strip() == "foes"):
-    temp_min = min(enemy.get_elementResistDownAdv.get(), int(skillEffect.modifier))
+    temp_min = min(enemy.elementResistDownAdv.get(), int(skillEffect.modifier))
     enemy.elementResistDownAdv[curr_element] = temp_min
-    enemy.set_boostCheckEnemyAdv(False,curr_attribute,skillEffect.modifier,skillEffect.duration)
+    await enemy.set_boostCheckEnemyAdv(False,curr_attribute,skillEffect.modifier,skillEffect.duration)
 
 '''
