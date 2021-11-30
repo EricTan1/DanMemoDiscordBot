@@ -1,0 +1,61 @@
+[DEFAULT]
+# 0.96-1.04 damage range
+sa_rng = 1.00
+counterRate = 1
+memoria_boost = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+difficulty=7
+
+[revis]
+#physical or magic
+debuff=physical
+debuff_modifier=-0.5
+
+[enemy]
+boss_name = revis
+elemental_resist = {"fire":0,"water":-0.8,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
+type_resist={"physical":0, "magic":0}
+stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+
+[unit1]
+adventurer_title = test
+assist_title = test
+stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+enable_counter = true
+
+[unit2]
+adventurer_title = test
+assist_title = test
+stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+enable_counter = true
+
+[unit3]
+adventurer_title = test
+assist_title = test
+stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+enable_counter = true
+
+[unit4]
+adventurer_title = test
+assist_title = test
+stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+enable_counter = true
+
+[unit5]
+adventurer_title = test
+assist_title = test
+stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+enable_counter = true
+
+[unit6]
+adventurer_title = test
+assist_title = test
+stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+enable_counter = true
+
+[skillFlow]
+unit1 = [ 0,  0,  0,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0]
+unit2 = [ 0,  0,  0,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0]
+unit3 = [ 0,  0,  0,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0]
+unit4 = [ 0,  0,  0,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0]
+unit5 = [ 0,  0,  0,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0]
+unit6 = [ 0,  0,  0,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0]

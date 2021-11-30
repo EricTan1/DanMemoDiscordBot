@@ -2,7 +2,7 @@ from commands.utils import getElements, getDamageBuffs, getStats,checkBuffExists
 
 class Adventurer():
     def __str__(self) -> str:
-        return "name:{},\nelement boost:\nadv {} ast{},\nstatsboost:\nadv {} ast{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
+        return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
 
     def __init__(self, 
     stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}, 
@@ -123,7 +123,7 @@ class Adventurer():
                 temp_duration= buffsDebuffs.get("duration") + turns
                 buffsDebuffs["duration"] = temp_duration
         temp_expiry = [item for item in self.boostCheckAlliesAdv if isinstance(item.get("duration"),int) and item.get("duration") <= 0]
-        self.boostCheckAlliesAdv = [item for item in self.boostCheckAlliesAdv if isinstance(buffsDebuffs.get("duration"),int) and item.get("duration") > 0]
+        self.boostCheckAlliesAdv = [item for item in self.boostCheckAlliesAdv if isinstance(item.get("duration"),int) and item.get("duration") > 0]
         
 
         for buffsDebuffs in temp_expiry:

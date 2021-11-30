@@ -44,9 +44,9 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict):
         tempBoostTemp = 1.4
       else:   
         tempBoostTemp = 1.7      
-      if powerCoefficient == 'low' or 'lo':
+      if powerCoefficient == 'low' or powerCoefficient == 'lo':
         powerCoefficientTemp = 1.1
-      elif powerCoefficient == 'mid' or 'medium':
+      elif powerCoefficient == 'mid' or powerCoefficient == 'medium':
         powerCoefficientTemp = 1.15
       elif powerCoefficient == 'high':
         powerCoefficientTemp = 1.2
@@ -815,7 +815,7 @@ async def interpretSkillAssistEffects(skillEffects, adventurer, enemy, adv_list:
           if(skillEffect.target.strip() == "self"):
             await adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
 
-async def counter(adv_list, enemy, memboost:dict, counterRate:float):
+async def counter(adv_list, enemy, memboost:dict, counterRate:float,logs:dict):
   ret = 0
   # take the avg
   # loop through and take the avg
@@ -832,9 +832,14 @@ async def counter(adv_list, enemy, memboost:dict, counterRate:float):
     temp_counter_damage = await CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate)*0.25
     await adv.add_damage(temp_counter_damage)
     ret += temp_counter_damage
+
+  temp_list_logs = logs.get("counters")
+  temp_list_logs.append("average single counter damage for {:,}".format(int(ret)))
+  logs["counters"] = temp_list_logs
+
   return ret
     
-async def counters(adv_list, enemy, memboost:dict, counterRate:float):
+async def counters(adv_list, enemy, memboost:dict, counterRate:float, logs:dict):
   ret = 0
   # take the avg
   # loop through and take the avg
@@ -849,6 +854,10 @@ async def counters(adv_list, enemy, memboost:dict, counterRate:float):
 
     temp_adv_counter= AdventurerCounter(target="foe",extraBoost=1,noType=int(temp_noType),type=temp_type,element = adv.elementAttackCounter)
     temp_counter_damage = await CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate)
+
     await adv.add_damage(temp_counter_damage)
+    temp_list_logs = logs.get("counters")
+    temp_list_logs.append("{} counter damage for {:,}".format(adv.name,int(temp_counter_damage)))
+    logs["counters"] = temp_list_logs
     ret += temp_counter_damage
   return ret

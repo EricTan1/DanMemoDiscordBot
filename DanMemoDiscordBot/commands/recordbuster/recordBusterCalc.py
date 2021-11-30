@@ -1,75 +1,97 @@
 from discord.ext import commands
 import discord
-from commands.utils import getElements
+from commands.utils import getElements, getDifficultyMultiplier
 from commands.cache import Cache
-from commands.calculatorUtil import DamageFunction,CounterDamageFunction,SADamageFunction,CombineSA,interpretSkillAdventurerAttack,interpretSkillAdventurerEffects,interpretSkillAssistEffects
+from commands.calculatorUtil import DamageFunction,SADamageFunction,CombineSA,interpretSkillAdventurerAttack,interpretSkillAdventurerEffects,interpretSkillAssistEffects
 import numpy as np
 from commands.entities.adventurer import Adventurer
 from commands.entities.assist import Assist
 
 from commands.entities.enemy import Enemy, Revis, Finn, Ottarl, Riveria
-from commands.entities.skills import AdventurerSkill, AdventurerCounter
+from commands.entities.skills import AdventurerSkill
 
+import configparser
+import ast
+
+from commands.recordbuster.recordBusterCalcHandler import pageRBHandler
 
 async def run(client, ctx):
+    logs=[]
     # user sets
+    # read file
+    message = ctx.message
+    if(len(message.attachments) == 0):
+        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the description !$testrb", file=discord.File("RBConfig.txt"))
+    else:
+        # if template attached start to verify it
+        contents = await message.attachments[0].read()
+        contents_decode = contents.decode("utf-8")
+        config = configparser.ConfigParser()
+        config.read_string(contents_decode)
+        #test2 =ast.literal_eval(test)
+        #general settings
+        counterRate=config.getfloat("DEFAULT", "counterRate")
+        memboost=ast.literal_eval(config.get("DEFAULT", "memoria_boost"))
+        ultRatio=config.getfloat("DEFAULT", "sa_rng")
+        difficulty =config.getint("DEFAULT", "difficulty")
+        # counter_RNG
+        # skill_RNG
+        #units
+        unit_titles=[]
+        ast_titles=[]
+        unit_stats_list=[]
+        unit_enable_counter = []
+        for x in range(0,6):
+            unit_titles.append(config.get("unit{}".format(x+1), "adventurer_title"))
+            ast_titles.append(config.get("unit{}".format(x+1), "assist_title"))
+            unit_stats_list.append(ast.literal_eval(config.get("unit{}".format(x+1), "stats")))
+            unit_enable_counter.append(config.getboolean("unit{}".format(x+1), "enable_counter"))
+
+        #enemy
+        boss = config.get("enemy", "boss_name")
+        boss_elementResistDownBase=ast.literal_eval(config.get("enemy", "elemental_resist"))
+        boss_type_resist=ast.literal_eval(config.get("enemy", "type_resist"))
+        boss_stats = ast.literal_eval(config.get("enemy", "stats"))
+
+        #skillflow
+        sf_list = []
+
+        for x in range(0,6):
+            sf_list.append(ast.literal_eval(config.get("skillFlow", "unit{}".format(x+1))))
+        skillflow = np.array(sf_list)
+
+        # revis config
+        revis_type_debuff=config.get("revis", "debuff")
+        revis_type_mod=config.getfloat("revis", "debuff_modifier")
+        
+
     ##############################
     # Init boss
     ##############################
-    boss = 'Ottarl'
     if(boss.lower() == "revis"):
-        enemy = Revis(elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
-        typeResistDownBase={"physical":0, "magic":0}, 
-        stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0})
+        enemy = Revis(elementResistDownBase=boss_elementResistDownBase,
+        typeResistDownBase=boss_type_resist, 
+        stats=boss_stats,debuff_type=revis_type_debuff,debuff_mod=revis_type_mod)
     elif(boss.lower() == "finn"):
-        enemy = Finn(elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
-        typeResistDownBase={"physical":0, "magic":0}, 
-        stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":700,"dexerity":0})
+        enemy = Finn(elementResistDownBase=boss_elementResistDownBase,
+        typeResistDownBase=boss_type_resist, 
+        stats=boss_stats)
     elif(boss.lower() == "ottarl"):
-        enemy = Ottarl(elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
-        typeResistDownBase={"physical":0, "magic":-0.5}, 
-        stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":100,"dexerity":0})
+        enemy = Ottarl(elementResistDownBase=boss_elementResistDownBase,
+        typeResistDownBase=boss_type_resist, 
+        stats=boss_stats)
     elif(boss.lower() == "riveria"):
-        enemy = Riveria(elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
-        typeResistDownBase={"physical":0, "magic":0}, 
-        stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":100,"dexerity":0})
+        enemy = Riveria(elementResistDownBase=boss_elementResistDownBase,
+        typeResistDownBase=boss_type_resist, 
+        stats=boss_stats)
     else:
-        enemy = Enemy(elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
-        typeResistDownBase={"physical":0, "magic":0}, 
-        stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0})
+        # error here?
+        enemy = Enemy(elementResistDownBase=boss_elementResistDownBase,
+        typeResistDownBase=boss_type_resist, 
+        stats=boss_stats)
 
-    # 0.96-1.04 RNG 
-    ultRatio = 1.00
-    counterRate = 1
     critRate = 1
     penRate =1
-    counterRateBase = 0.0
-    critRateBase = 0.0
-    penRateBase = 0.0
-    memboost = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
-    # 1, 2, 3, 4, 5 ,6
-    # sacs can be any order just list in SF
-    unit_titles = ['offshore elf','beach saint','solid resolutions','santa princess',"war god's child", "casino lady"]
-    ast_titles = ["mlb pure white","mlb holy choir","mlb scholar","mlb Banquet Attire","Elf's Gift","Paradise Mood"]
-    #unit_sacs_swap_turn =[1,4]
-
-    # skillflow[row][column] = skillflow[unit][turn] = skillflow[0-5][0-14]
-
-    # -1 = nothing, 0 = reg attack, 1 = s1, 2 = s2, 3=s3, 4=sa
-    skillflow = np.array([
-        [ 3,  1,  1,  1,   3, 1, 1, 4,   3, 1, 1, 3,   4, 1, 4], # unit 1
-        [ 1,  2,  1,  1,   2, 1, 2, 1,   2, 1, 2, 1,   2, 1, 1], # unit 2
-        [ 1,  -1,  0,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0], # unit 3
-        [ 2,  2,  2,  2,   2, 2, 2, 2,   2, 2, 2, 2,   2, 2, 2], # unit 4
-        [ 0,  2,  -1,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0], # unit 5
-        [-1, -1,  2,  0,   1, 0, 1, 2,   1, 2, 1, 2,   1, 2, 3]]) # unit 6
-    unit_stats_list = [{"hp":0,"mp":0,"strength":0, "magic":2324,"agility":1000,"endurance":0,"dexerity":0},
-    {"hp":0,"mp":0,"strength":0, "magic":2209,"agility":800,"endurance":0,"dexerity":0},
-    {"hp":0,"mp":0,"strength":0, "magic":145,"agility":0,"endurance":0,"dexerity":0},
-    {"hp":0,"mp":0,"strength":0, "magic":1958,"agility":900,"endurance":0,"dexerity":0},
-    {"hp":0,"mp":0,"strength":0, "magic":190,"agility":0,"endurance":0,"dexerity":0},
-    {"hp":0,"mp":0,"strength":690, "magic":0,"agility":500,"endurance":0,"dexerity":0}]
-
     ##############################
     # Init Assists
     ##############################
@@ -104,15 +126,15 @@ async def run(client, ctx):
                     
                     if("++" in ast_skills.skillname):
                         if(is_mlb):
-                            assist_list.append(Assist(ast_skill_effects_matches))
+                            assist_list.append(Assist(ast_skill_effects_matches,"[{}] {}".format(current_assist.unit_label,current_assist.character_name)))
                     elif(not is_mlb):
-                        assist_list.append(Assist(ast_skill_effects_matches))
+                        assist_list.append(Assist(ast_skill_effects_matches,"[{}] {}".format(current_assist.unit_label,current_assist.character_name)))
             # no assist
             else:
-                assist_list.append(Assist([]))
+                assist_list.append(Assist([],""))
         # no assist
         else:
-            assist_list.append(Assist([]))
+            assist_list.append(Assist([],""))
 
 
 
@@ -218,7 +240,7 @@ async def run(client, ctx):
                                     current_skills_agi_mod = current_skills_agi_mod, 
                                     turnOrder = skillflow[unitsCounter],
                                     elementAttackCounter=tempElementAttackCounter,
-                                    name=unit_titles[unitsCounter]))
+                                    name="[{}] {}".format(unit_titles[unitsCounter],curr_unit.character_name)))
     ########################
     # Main Loop
     ########################
@@ -227,14 +249,23 @@ async def run(client, ctx):
     sac_counter = 0
     total_damage = 0
     for turn in range(0, 15):
-        print("Turn: {}".format(turn+1))
-        print(enemy)
-        for advs in active_advs:
-            print(advs)
+        # logging init
+        # enemy, unit{0-3}, turn
+        turn_logs = {"sa":[], "combat_skills":[], "counters":[], "sacs":[]}
+        logs.append(turn_logs)
+
+            
         # assist skills first turn!!
         if(turn == 0):
             for assistCount in range(0,4):
                 await interpretSkillAssistEffects(assist_list[assistCount].skills,active_advs[assistCount],enemy,active_advs)
+
+        # logging buffs/debuffs
+        turn_logs["turn"]=turn
+        #print("Turn: {}".format(turn+1))
+        turn_logs["enemy"]= str(enemy)
+        for active_adv_log in range(0, len(active_advs)):
+            turn_logs["unit{}".format(active_adv_log)] = str(active_advs[active_adv_log])
 
         # SADamageFunction(skill:AdventurerSkill,adventurer:Adventurer,enemy:Enemy, memboost:dict, combo:int,ultRatio:int)
         # CombineSA(adventurerList:list,enemy:Enemy, character_list:list):
@@ -253,7 +284,12 @@ async def run(client, ctx):
                 temp_adv_effects_list = await active_advs[active_adv].get_specialSkill()
                 temp_adv_skill = await interpretSkillAdventurerAttack(temp_adv_effects_list,active_advs[active_adv],enemy)
                 temp_damage = await SADamageFunction(temp_adv_skill,active_advs[active_adv],enemy,memboost,sa_counter,ultRatio)
-                print("{} SA damage for {}".format(active_advs[active_adv].name,temp_damage))
+
+
+                #print("{} SA damage for {}".format(active_advs[active_adv].name,int(temp_damage)))
+                temp_list_logs = turn_logs.get("sa")
+                temp_list_logs.append("{} SA damage for {:,}".format(active_advs[active_adv].name,int(temp_damage)))
+                turn_logs["sa"] = temp_list_logs
 
                 await interpretSkillAdventurerEffects(temp_adv_effects_list,active_advs[active_adv],enemy,active_advs)
                 total_damage += temp_damage
@@ -264,7 +300,7 @@ async def run(client, ctx):
         # RB boss turn
         await enemy.turnOrder(turn,active_advs, 0)
         
-        total_damage+=await enemy.turnOrderCounters(turn, active_advs, memboost, counterRate, 0)
+        total_damage+=await enemy.turnOrderCounters(turn, active_advs, memboost, counterRate, 0,turn_logs)
 
         # combat skills
         # agi calculation
@@ -325,23 +361,27 @@ async def run(client, ctx):
             # not fast skill then rb can go
             if(not is_fast and not is_enemy_attacked):
                 await enemy.turnOrder(turn,active_advs, 1)
-                total_damage+=await enemy.turnOrderCounters(turn, active_advs, memboost, counterRate, 1)
+                total_damage+=await enemy.turnOrderCounters(turn, active_advs, memboost, counterRate, 1,turn_logs)
                 is_enemy_attacked = True
             temp_damage = await DamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost)
-            if(temp_damage > 0):
-                print("{} skill {} damage for {}".format(removed_sorted_skill[3].name,removed_sorted_skill[3].turnOrder[turn],temp_damage))
+            #print("{} skill {} damage for {}".format(removed_sorted_skill[3].name,removed_sorted_skill[3].turnOrder[turn],temp_damage))
+
+            temp_list_logs = turn_logs.get("combat_skills")
+            temp_list_logs.append("{} skill {} damage for {:,}".format(removed_sorted_skill[3].name,removed_sorted_skill[3].turnOrder[turn],int(temp_damage)))
+            turn_logs["combat_skills"] = temp_list_logs
+
             await interpretSkillAdventurerEffects(removed_sorted_skill[4],removed_sorted_skill[3],enemy,active_advs)
             total_damage += temp_damage
             await removed_sorted_skill[3].add_damage(temp_damage)
         # end of turn skills
         await enemy.turnOrder(turn,active_advs, 2)
-        total_damage+=await enemy.turnOrderCounters(turn, active_advs, memboost, counterRate, 2)
-        if(turn+1 == 13):
-            for active_adv in active_advs:
-                print("{} with {} adv buffs".format(active_adv.name,active_adv.boostCheckAlliesAdv))
+        total_damage+=await enemy.turnOrderCounters(turn, active_advs, memboost, counterRate, 2,turn_logs)
+        #if(turn+1 == 13):
+            #for active_adv in active_advs:
+                #print("{} with {} adv buffs".format(active_adv.name,active_adv.boostCheckAlliesAdv))
         
-        if(turn+1 == 2):
-            print("{} with {} adv buffs".format("Ottarl",enemy.boostCheckEnemyAdv))
+        #if(turn+1 == 2):
+            #print("{} with {} adv buffs".format("Ottarl",enemy.boostCheckEnemyAdv))
 
         # allies tick down status buffs
         for active_adv in active_advs:
@@ -356,9 +396,21 @@ async def run(client, ctx):
             for active_adv in range(0, len(active_advs)):
                 # sac
                 if(active_advs[active_adv].turnOrder[turn+1] == -1 and sac_counter < 2):
+                    temp_list_logs = turn_logs.get("sacs")
+                    temp_list_logs.append("{} leaving. {} entering".format(active_advs[active_adv].name,unit_list[len(active_advs)+sac_counter].name))
+                    turn_logs["sacs"] = temp_list_logs
+
                     active_advs[active_adv] = unit_list[len(active_advs)+sac_counter]
+                    
                     # assist
                     await interpretSkillAssistEffects(assist_list[len(active_advs)+sac_counter].skills,unit_list[len(active_advs)+sac_counter],enemy,active_advs)
                     sac_counter+=1
-    print('Current total damage is {}'.format(total_damage))
-    print('Current total score is {}'.format(total_damage*6*2))
+    #print('Current total damage is {}'.format(total_damage))
+    # 6/8.5/10
+    #print('Current total score is {}'.format(total_damage*8.5*2))
+    await pageRBHandler(client, ctx, logs, total_damage, total_damage*getDifficultyMultiplier(difficulty)*2, unit_list, assist_list)
+
+
+
+
+

@@ -5,6 +5,9 @@ from types import SimpleNamespace
 import json
 import os
 
+def getDifficultyMultiplier(difficulty:int):
+    difficulty_dict = {5:6,6:8.5,7:10}
+    return difficulty_dict.get(difficulty)
 
 class Status(Enum):
     """ the color codes for discord.embeds for showing message activity

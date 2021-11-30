@@ -7,7 +7,7 @@ import asyncio
 class Enemy():
     
     def __str__(self) -> str:
-        return "elemental:\nbase {} ad{} as{},\ntype resist:\nbase {} ad{} as{},\ntarget resist:\nad{} as{}".format(self.elementResistDownBase,self.elementResistDownAdv,self.elementResistDownAst,self.typeResistDownBase,self.typeResistDownAdv,self.typeResistDownAst, self.targetResistDownAdv,self.targetResistDownAst )
+        return "elemental resist\nbase: {} adv: {} ast: {}\ntype resist\nbase: {} adv: {} ast: {}\ntarget resist\nadv: {} ast: {}".format(self.elementResistDownBase,self.elementResistDownAdv,self.elementResistDownAst,self.typeResistDownBase,self.typeResistDownAdv,self.typeResistDownAst, self.targetResistDownAdv,self.targetResistDownAst )
 
     def __init__(self, elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
     typeResistDownBase={"physical":0, "magic":0}, 
@@ -101,7 +101,7 @@ class Enemy():
         '''
         pass
 
-    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int):
+    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int, logs:dict):
         ''' speed : 0 - fast, 1- normal, 2- slow
         '''
         pass
@@ -119,7 +119,7 @@ class Enemy():
                 temp_duration= buffsDebuffs.get("duration") + turns
                 buffsDebuffs["duration"] = temp_duration
         tempExpiry = [item for item in self.boostCheckEnemyAdv if isinstance(item.get("duration"),int) and item.get("duration") <= 0]
-        self.boostCheckEnemyAdv = [item for item in self.boostCheckEnemyAdv if isinstance(buffsDebuffs.get("duration"),int) and item.get("duration") > 0]
+        self.boostCheckEnemyAdv = [item for item in self.boostCheckEnemyAdv if isinstance(item.get("duration"),int) and item.get("duration") > 0]
 
         for buffsDebuffs in tempExpiry:
             curr_attribute = buffsDebuffs.get("attribute")
@@ -192,20 +192,20 @@ class Finn(Enemy):
         if(turnOrder in [3,7] and speed ==2):
             await self.FinnClear(adv_list)
 
-    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int):
+    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int, logs:dict):
         ''' speed : 0 - fast, 1- normal, 2- slow
         '''
         ret = 0
         if(turnOrder+1 in [1,2,3,4,5,6,8,11,12,13,14] and speed==1):
-            ret+=await counters(adv_list, self,memboost,counterRate)
-            ret+=await counters(adv_list, self,memboost,counterRate)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
         if(turnOrder+1 in [7,9,10,15] and speed == 1):
-            ret+=await counters(adv_list, self,memboost,counterRate)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
 
         if(turnOrder+1 in [7,10,14] and speed == 0):
-            ret+=await counters(adv_list, self,memboost,counterRate)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
         if(turnOrder+1 in [15] and speed==1):
-            ret+=await counter(adv_list, self,memboost,counterRate)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
         return ret
 
 
@@ -234,28 +234,28 @@ class Riveria(Enemy):
         if(turnOrder in [3,7] and speed ==2):
             await self.RiveriaClear(adv_list)
     
-    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int):
+    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int,logs:dict):
         ''' speed : 0 - fast, 1- normal, 2- slow
         '''
         ret = 0
         if(turnOrder+1 in [1,5,6,10] and speed==1):
-            ret+=await counters(adv_list, self,memboost,counterRate)
-            ret+=await counters(adv_list, self,memboost,counterRate)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
         
         if(turnOrder+1 in [14] and speed==1):
-            ret+=await counters(adv_list, self,memboost,counterRate)
-            ret+=await counters(adv_list, self,memboost,counterRate)
-            ret+=await counters(adv_list, self,memboost,counterRate)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
 
         if(turnOrder+1 in [2,3,13] and speed == 1):
-            ret+=await counters(adv_list, self,memboost,counterRate)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
         
         if(turnOrder+1 in [2,3,4,7,8,9,11,12,13] and speed == 0):
-            ret+=await counters(adv_list, self,memboost,counterRate)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
         
         if(turnOrder+1 in [15] and speed == 1):
-            ret+=await counter(adv_list, self,memboost,counterRate)
-            ret+=await counter(adv_list, self,memboost,counterRate)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
         return ret
         
 class Ottarl(Enemy):
@@ -279,25 +279,25 @@ class Ottarl(Enemy):
         if(turnOrder in [0,2,3,4,6,7,8,10,11,12,13,14] and not speed == 1):
             await self.OttarlEndDebuff(adv_list)
     
-    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int):
+    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int,logs:dict):
         ''' speed : 0 - fast, 1- normal, 2- slow
         '''
         ret = 0
         if(turnOrder+1 in [1,3,4,5,7,8,9,11,12,15] and speed==1):
-            ret+=await counters(adv_list, self,memboost,counterRate)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
         if(turnOrder+1 in [1] and speed==1):
-            ret+=await counter(adv_list, self,memboost,counterRate)
-            ret+=await counter(adv_list, self,memboost,counterRate)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
         if(turnOrder+1 in [2,6,10] and speed==1):
-            ret+=await counter(adv_list, self,memboost,counterRate)
-            ret+=await counter(adv_list, self,memboost,counterRate)
-            ret+=await counter(adv_list, self,memboost,counterRate)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
         if(turnOrder+1 in [5,9] and speed==1):
-            ret+=await counter(adv_list, self,memboost,counterRate)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
         
         if(turnOrder+1 in [13,14] and speed==1):
-            ret+=await counters(adv_list, self,memboost,counterRate)
-            ret+=await counters(adv_list, self,memboost,counterRate)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
         return ret
         
 
@@ -305,17 +305,17 @@ class Revis(Enemy):
     async def RevisBuff(self):
         await self.set_boostCheckEnemyAdv(True,"strength",0.2,4)
 
-    async def RevisAdd(self, type):
+    async def RevisAdd(self, type, type_mod):
         # type = physical/magic
 
         # debuffs own physical resists, take into account later magic resist debuffs
-        await self.set_typeResistDownAdv(type,min(self.typeResistDownAdv.get(type), -0.5))
+        await self.set_typeResistDownAdv(type,min(self.typeResistDownAdv.get(type), type_mod))
         await self.set_boostCheckEnemyAdv(True,"strength",0.2,4)
-        await self.set_boostCheckEnemyAdv(False,"{}_resist".format(type),-0.5,4)
+        await self.set_boostCheckEnemyAdv(False,"{}_resist".format(type),type_mod,4)
     
-    async def RevisInitial(self,type):
-        await self.set_typeResistDownAdv(type,min(self.typeResistDownAdv.get(type), -0.5))
-        await self.set_boostCheckEnemyAdv(False,"{}_resist".format(type),-0.5,4)
+    async def RevisInitial(self,type,type_mod):
+        await self.set_typeResistDownAdv(type,min(self.typeResistDownAdv.get(type), type_mod))
+        await self.set_boostCheckEnemyAdv(False,"{}_resist".format(type),type_mod,4)
 
 
     async def RevisClear(self):
@@ -329,39 +329,47 @@ class Revis(Enemy):
         '''
         # turn 1
         if(turnOrder==0 and speed ==0):
-            await self.RevisInitial("physical")
+            await self.RevisInitial(self.debuff_type,self.debuff_mod)
         # 6 and 10
         elif((turnOrder == 5 or turnOrder == 9) and speed ==0):
             await self.RevisClear()
         # 3,7,11 both str buff and physical debuff
         elif((turnOrder == 3 or turnOrder == 7 or turnOrder == 11) and speed ==0):
-            await self.RevisAdd("physical")
+            await self.RevisAdd(self.debuff_type,self.debuff_mod)
         # end of turn 11 rebuff
         if(turnOrder == 10 and speed ==2):
             await self.RevisBuff()
     
-    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int):
+    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int,logs:dict):
             ''' speed : 0 - fast, 1- normal, 2- slow
             '''
             ret = 0
             # double aoe
             if(turnOrder+1 in [5,6,7,9,10,11] and speed==1):
-                ret+=await counters(adv_list, self,memboost,counterRate)
-                ret+=await counters(adv_list, self,memboost,counterRate)
+                ret+=await counters(adv_list, self,memboost,counterRate,logs)
+                ret+=await counters(adv_list, self,memboost,counterRate,logs)
             
             # ailment aoe
             if(turnOrder+1 in [5,6,7,8,9,10,11,12,13,14] and speed==1):
-                ret+=await counters(adv_list, self,memboost,counterRate)
+                ret+=await counters(adv_list, self,memboost,counterRate,logs)
 
             if(turnOrder+1 in [8,12] and speed==1):
-                ret+=await counters(adv_list, self,memboost,counterRate)
+                ret+=await counters(adv_list, self,memboost,counterRate,logs)
             
             if(turnOrder+1 in [13,14] and speed==1):
-                ret+=await counters(adv_list, self,memboost,counterRate)
-                ret+=await counters(adv_list, self,memboost,counterRate)
-                ret+=await counters(adv_list, self,memboost,counterRate)
+                ret+=await counters(adv_list, self,memboost,counterRate,logs)
+                ret+=await counters(adv_list, self,memboost,counterRate,logs)
+                ret+=await counters(adv_list, self,memboost,counterRate,logs)
             if(turnOrder+1 in [15] and speed==1):
-                ret+=await counter(adv_list, self,memboost,counterRate)
-                ret+=await counter(adv_list, self,memboost,counterRate)
+                ret+=await counter(adv_list, self,memboost,counterRate,logs)
+                ret+=await counter(adv_list, self,memboost,counterRate,logs)
             return ret
 
+    def __init__(self, elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
+    typeResistDownBase={"physical":0, "magic":0}, 
+    stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0},
+    debuff_type="physical",
+    debuff_mod=-0.5):
+        Enemy.__init__(self,elementResistDownBase,typeResistDownBase,stats)
+        self.debuff_type = debuff_type
+        self.debuff_mod = debuff_mod
