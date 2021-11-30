@@ -7,8 +7,8 @@ import asyncio
 class Enemy():
     
     def __str__(self) -> str:
-        return "elemental resist\nbase: {} adv: {} ast: {}\ntype resist\nbase: {} adv: {} ast: {}\ntarget resist\nadv: {} ast: {}".format(self.elementResistDownBase,self.elementResistDownAdv,self.elementResistDownAst,self.typeResistDownBase,self.typeResistDownAdv,self.typeResistDownAst, self.targetResistDownAdv,self.targetResistDownAst )
-
+        #return "elemental resist\nbase: {} adv: {} ast: {}\ntype resist\nbase: {} adv: {} ast: {}\ntarget resist\nadv: {} ast: {}".format(self.elementResistDownBase,self.elementResistDownAdv,self.elementResistDownAst,self.typeResistDownBase,self.typeResistDownAdv,self.typeResistDownAst, self.targetResistDownAdv,self.targetResistDownAst )
+        return "Buffs/Debuffs: {}".format(self.boostCheckEnemyAdv)
     def __init__(self, elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
     typeResistDownBase={"physical":0, "magic":0}, 
     stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}):

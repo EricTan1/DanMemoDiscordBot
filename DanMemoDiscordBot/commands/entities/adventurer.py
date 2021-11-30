@@ -2,8 +2,8 @@ from commands.utils import getElements, getDamageBuffs, getStats,checkBuffExists
 
 class Adventurer():
     def __str__(self) -> str:
-        return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
-
+       # return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
+        return "**{}**\nBuffs/Debuffs: {}".format(self.name,self.boostCheckAlliesAdv)
     def __init__(self, 
     stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}, 
     counterBoost=0, 

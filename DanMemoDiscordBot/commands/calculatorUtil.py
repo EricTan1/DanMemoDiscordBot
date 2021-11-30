@@ -640,16 +640,6 @@ async def interpretSkillAdventurerEffects(skillEffects, adventurer, enemy, adv_l
             temp_min = min(enemy.elementResistDownAdv.get(curr_element), curr_modifier)
             enemy.elementResistDownAdv[curr_element] = temp_min
             await enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
-      # status buff / debuffs extends/reduction
-      if("status" in curr_attribute and "buff" in curr_attribute):
-        temp_duration = int(skillEffect.duration)
-        if(skillEffect.target.strip() == "self"):
-          await adventurer.ExtendReduceBuffs(temp_duration)
-        elif(skillEffect.target.strip() == "allies"):
-          for curr_adv in adv_list:
-            await curr_adv.ExtendReduceBuffs(temp_duration)
-        elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          await enemy.ExtendReduceBuffs(temp_duration)
       if("status" in curr_attribute and "debuff" in curr_attribute):
         temp_duration = int(skillEffect.duration)
         if(skillEffect.target.strip() == "self"):
@@ -659,6 +649,16 @@ async def interpretSkillAdventurerEffects(skillEffects, adventurer, enemy, adv_l
             await curr_adv.ExtendReduceDebuffs(temp_duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
           await enemy.ExtendReduceDebuffs(temp_duration)
+      # status buff / debuffs extends/reduction
+      elif("status" in curr_attribute and "buff" in curr_attribute):
+        temp_duration = int(skillEffect.duration)
+        if(skillEffect.target.strip() == "self"):
+          await adventurer.ExtendReduceBuffs(temp_duration)
+        elif(skillEffect.target.strip() == "allies"):
+          for curr_adv in adv_list:
+            await curr_adv.ExtendReduceBuffs(temp_duration)
+        elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
+          await enemy.ExtendReduceBuffs(temp_duration)
 
       # additional refresh
       if(curr_attribute == "additional_action"):
@@ -783,16 +783,7 @@ async def interpretSkillAssistEffects(skillEffects, adventurer, enemy, adv_list:
             temp_min = min(enemy.elementResistDownAst.get(curr_element), curr_modifier)
             enemy.elementResistDownAst[curr_element] = temp_min
             await enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
-      # status buff / debuffs extends/reduction
-      if("status" in curr_attribute and "buff" in curr_attribute):
-        temp_duration = int(skillEffect.duration)
-        if(skillEffect.target.strip() == "self"):
-          await adventurer.ExtendReduceBuffs(temp_duration)
-        elif(skillEffect.target.strip() == "allies"):
-          for curr_adv in adv_list:
-            await curr_adv.ExtendReduceBuffs(temp_duration)
-        elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          await enemy.ExtendReduceBuffs(temp_duration)
+      
       if("status" in curr_attribute and "debuff" in curr_attribute):
         temp_duration = int(skillEffect.duration)
         if(skillEffect.target.strip() == "self"):
@@ -802,6 +793,16 @@ async def interpretSkillAssistEffects(skillEffects, adventurer, enemy, adv_list:
             await curr_adv.ExtendReduceDebuffs(temp_duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
           await enemy.ExtendReduceDebuffs(temp_duration)
+      # status buff / debuffs extends/reduction
+      elif("status" in curr_attribute and "buff" in curr_attribute):
+        temp_duration = int(skillEffect.duration)
+        if(skillEffect.target.strip() == "self"):
+          await adventurer.ExtendReduceBuffs(temp_duration)
+        elif(skillEffect.target.strip() == "allies"):
+          for curr_adv in adv_list:
+            await curr_adv.ExtendReduceBuffs(temp_duration)
+        elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
+          await enemy.ExtendReduceBuffs(temp_duration)
       else:
         if(isinstance(curr_modifier,int) and curr_attribute != None and curr_attribute != "none" and not curr_attribute in getAilment()):
           if(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):

@@ -254,6 +254,8 @@ async def run(client, ctx):
         turn_logs = {"sa":[], "combat_skills":[], "counters":[], "sacs":[]}
         logs.append(turn_logs)
 
+        if(turn+1 == 13):
+            print("lol")
             
         # assist skills first turn!!
         if(turn == 0):
@@ -348,7 +350,7 @@ async def run(client, ctx):
                         temp_type= "magic"
                     tempNoType = active_adv.elementAttackCounter.lower() == "none"
                     temp_adv_skill = AdventurerSkill(powerCoefficient="physical",noType=int(tempNoType),type=temp_type,element=active_adv.elementAttackCounter)
-                    skills_priority_list.append((temp_agi,current_speed,temp_adv_skill,active_adv,temp_adv_effects_list))
+                    skills_priority_list.append((temp_agi,current_speed,temp_adv_skill,active_adv,[]))
 
         sorted_skills_priority_list = sorted(skills_priority_list, key=lambda x: x[0], reverse=True)
         is_fast =True
@@ -373,6 +375,9 @@ async def run(client, ctx):
             await interpretSkillAdventurerEffects(removed_sorted_skill[4],removed_sorted_skill[3],enemy,active_advs)
             total_damage += temp_damage
             await removed_sorted_skill[3].add_damage(temp_damage)
+
+            # Additionals check here
+
         # end of turn skills
         await enemy.turnOrder(turn,active_advs, 2)
         total_damage+=await enemy.turnOrderCounters(turn, active_advs, memboost, counterRate, 2,turn_logs)
