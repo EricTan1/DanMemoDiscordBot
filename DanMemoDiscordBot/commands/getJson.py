@@ -136,7 +136,7 @@ async def run(client, ctx):
                         curr_effects_dict["speed"] = curr_effects.speed
                     curr_effects_list.append(curr_effects_dict)
                 curr_adv_dev_dict = dict()
-                curr_adv_dev_dict["name"]=curr_skills.skillname
+                curr_adv_dev_dict["name"]=curr_adv_dev.development
                 curr_adv_dev_dict["effects"]=curr_effects_list
                 current_adv_json.get("skills").get("development").append(curr_adv_dev_dict)
 
