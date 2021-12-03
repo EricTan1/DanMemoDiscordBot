@@ -19,7 +19,10 @@ class Cache(object):
         return self.data["adventurers"]
 
     def get_all_adventurers_developments(self):
-        return self.data["adventurers_developments"]
+        return self.data["adventurers_developments_skills"]
+    
+    def get_all_adventurers_developments_skills_effects(self):
+        return self.data["adventurers_developments_skills_effects"]
     
     def get_all_adventurers_skills(self):
         return self.data["adventurers_skills"]
@@ -46,7 +49,7 @@ class Cache(object):
         return self.data["adventurer_stats"]
 
     def get_all_assists_stats(self):
-        return self.data["assist_stats"]
+        return self.data["assist_stats"]  
     
     def refreshcache(self, dbConfig):
         db = DBcontroller(dbConfig)
@@ -55,7 +58,10 @@ class Cache(object):
         #SELECT a.assistid, a.characterid, a.alias, a.title, a.stars, a.limited, c.name, c.iscollab
         self.data["assists"] = db.get_all_assists()
         #SELECT addev.adventurerdevelopmentid,addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name
-        self.data["adventurers_developments"] = db.get_all_adventurers_developments()
+        self.data["adventurers_developments_skills"] = db.get_all_adventurers_developments_skills()
+        #SELECT addev.adventurerdevelopmentid,addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name, addev.adventurerid
+        self.data["adventurers_developments_skills_effects"] = db.get_all_adventurers_developments_skills_effects()
+
         #SELECT adventurerskillid, adventurerid, skillname, skilltype
         self.data["adventurers_skills"] = db.get_all_adventurers_skills()
         #SELECT assistskillid, assistid, skillname

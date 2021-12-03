@@ -5,7 +5,7 @@ import sys
 from database.DBcontroller import DBcontroller
 from database.DBcontroller import DatabaseEnvironment, DBConfig
 
-from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
+from database.entities.Adventurer import Adventurer, AdventurerDevelopmentSkillEffects, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
 from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier, Speed
 from database.entities.Character import Character
 from database.entities.Assist import AssistStats, Assist, AssistSkillEffects, AssistSkill
@@ -79,19 +79,10 @@ class InsertCharacter:
             # development
             else:
                 for skills in skillsList:
-                    attr_str = ""
-                    for effects in skills.get("effects"):
-                        attr_str = attr_str +" "+effects.get("attribute")
-                        temp_modifier = effects.get("modifier")
-                        if(temp_modifier == None):
-                            temp_modifier = ""
-                        if(len(temp_modifier) > 0 and temp_modifier[len(temp_modifier)-1] == "%"):
-                            temp_modifier = temp_modifier[:len(temp_modifier)-1]
-                        modifierid = self.getBaseConstants(Modifier(None, temp_modifier), True)
-                        #AdventurerDevelopment
-                    attributeid = self.getBaseConstants(Attribute(None, attr_str), False)
-                    self._db.insertData(AdventurerDevelopment(None, adventurerid, skills.get("name"), attributeid,
-                        modifierid))
+                    adventurerdevelopmentid = self._db.insertData(AdventurerDevelopment(None, adventurerid, skills.get("name")))
+                    self.insertAdventurerDevelopmentSkillEffects(adventurerdevelopmentid, skills.get("effects"))
+
+                    #self._db.insertData(AdventurerDevelopmentSkillEffects(None, adventurerdevelopmentid, skills.get("name"), attributeid, modifierid))
             
     def insertAdventurerSkillEffects(self, adventurerskillid, skilleffectList):
         ele_list = ['light', 'wind', 'fire', 'dark', 'ice', 'water', 'earth', 'thunder']
@@ -136,6 +127,50 @@ class InsertCharacter:
             # inserting effects
             self._db.insertData(AdventurerSkillEffects(None, adventurerskillid, targetid,
                  attributeid, modifierid, effects.get("duration"), typeid,eleid, speedid))
+
+    def insertAdventurerDevelopmentSkillEffects(self, adventurerdevelopmentid, skilleffectList):
+        ele_list = ['light', 'wind', 'fire', 'dark', 'ice', 'water', 'earth', 'thunder']
+        # AdventurerSkillEffects SET UP        
+        for effects in skilleffectList:
+            #Type+Element
+            temp_type = effects.get("type")
+            if(temp_type == None):
+                temp_type = ""
+            temp_element = effects.get("element")
+            if(temp_element == None):
+                temp_element = ""
+            if(temp_type.split("_")[0] in ele_list):
+                temp_split = temp_type.split("_")
+                temp_element = temp_split[0]
+                print(temp_type)
+                if(temp_type != None and len(temp_split)==3):
+                    temp_type = temp_split[1] + "_" +temp_split[2]
+                #temp_index = temp_value.find("_")
+                #temp_element = temp_value[0:temp_index]
+                #temp_ad_ele = temp_element
+                #temp_type = temp_value[temp_index+1:]
+            #else:
+                #temp_type = ""
+                #temp_element=""
+            # Element
+            eleid = self.getBaseConstants(Element(None, temp_element), False)
+            # Type for skills
+            typeid=self.getBaseConstants(Type(None, temp_type), False)
+            temp_target = effects.get("target")
+            temp_attribute = effects.get("attribute")
+            temp_speed = effects.get("speed")
+            temp_modifier = effects.get("modifier")
+            if(temp_modifier == None):
+                temp_modifier = ""
+            if(len(temp_modifier) > 0 and temp_modifier[len(temp_modifier)-1] == "%"):
+                temp_modifier = temp_modifier[:len(temp_modifier)-1]
+            targetid = self.getBaseConstants(Target(None, temp_target), False)
+            attributeid = self.getBaseConstants(Attribute(None, temp_attribute), False)
+            speedid = self.getBaseConstants(Speed(None, temp_speed), False)
+            modifierid = self.getBaseConstants(Modifier(None, temp_modifier), True)
+            # inserting effects
+            self._db.insertData(AdventurerDevelopmentSkillEffects(None, adventurerdevelopmentid, targetid,
+                 attributeid, modifierid, effects.get("duration"), typeid,eleid, speedid))
     
     def insertAssist(self, assistComplete:AssistC):
         characterid = self.getInsertCharacterID(assistComplete._name,
@@ -157,9 +192,10 @@ class InsertCharacter:
             print("HEY STAT NAMED WRONG >:( FOR : "+assistComplete._title + " " + assistComplete._name)
             raise Exception('spam', 'eggs')
         # skills
-        for skills in assistComplete.skills:
-            assistskillid = self._db.insertData(AssistSkill(None, assistid, skills.get("name")))
-            self.insertAssistSkillEffects(assistskillid, skills.get("effects"))
+        for skills_keys in assistComplete.skills:
+            for skills_list in assistComplete.skills.get(skills_keys):
+                assistskillid = self._db.insertData(AssistSkill(None, assistid, skills_list.get("name"),skills_keys))
+                self.insertAssistSkillEffects(assistskillid, skills_list.get("effects"))
 
     
     def insertAssistSkillEffects(self, assistskillid, skilleffectList):
@@ -179,7 +215,7 @@ class InsertCharacter:
             modifierid = self.getBaseConstants(Modifier(None, temp_modifier), True)
             # inserting effects
             self._db.insertData(AssistSkillEffects(None, assistskillid, targetid,
-                 attributeid, modifierid, effects.get("duration")))    
+                 attributeid, modifierid, effects.get("duration"), effects.get("max_activations")))
     
     
     def getBaseConstants(self, baseConstant, isMod):
@@ -289,6 +325,33 @@ async def run(dbConfig, client, ctx, *search):
                     temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
                     ic.insertAdventurer(temp_ad)
                 await ctx.send("character(s) has been added")
-            except :
+            except:
                 await ctx.send("Error in reading json")
         
+
+""" async def testAd(dbConfig, client, ctx):
+    db = DBcontroller(dbConfig)
+    ic = InsertCharacter(db)
+    for filename in os.listdir("./testJsonAdv/"):
+        if filename.endswith(".json"): 
+            # print(os.path.join(directory, filename))
+            with open('./testJsonAdv/{}'.format(filename)) as f:
+                as_dict = json.load(f)
+                if(as_dict.get("limited")== None):
+                    as_dict["limited"]=False
+                temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
+                ic.insertAdventurer(temp_ad)
+    await ctx.send("character(s) has been added")
+async def testAs(dbConfig, client, ctx):
+    db = DBcontroller(dbConfig)
+    ic = InsertCharacter(db)
+    for filename in os.listdir("./testJsonAs/"):
+        if filename.endswith(".json"): 
+            # print(os.path.join(directory, filename))
+            with open('./testJsonAs/{}'.format(filename)) as f:
+                as_dict = json.load(f)
+                if(as_dict.get("limited")== None):
+                    as_dict["limited"]=False
+                temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
+                ic.insertAssist(temp_as)
+    await ctx.send("character(s) has been added") """

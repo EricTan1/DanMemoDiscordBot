@@ -59,8 +59,7 @@ class AdventurerSkillEffects(Base):
 
 
 class AdventurerDevelopment(Base):
-    def __init__(self, adventurerdevelopmentid, adventurerid:int, name:str, attributeid:int,
-                 modifierid:int):
+    def __init__(self, adventurerdevelopmentid, adventurerid:int, name:str):
         ''' (AdventurerDevelopment, int, int, str, int,
              int) -> AdventurerDevelopment
              name : name of the development skill
@@ -68,8 +67,26 @@ class AdventurerDevelopment(Base):
         self.adventurerdevelopmentid = adventurerdevelopmentid
         self.adventurerid = int(adventurerid)
         self.name = str(name)
+        #self.attributeid = int(attributeid)
+        #self.modifierid = int(modifierid)
+    
+class AdventurerDevelopmentSkillEffects(Base):
+    def __init__(self, adventurerdevelopmentskilleffectsid,adventurerdevelopmentid, targetid:int, attributeid:int,
+                 modifierid:int, duration, typeid:int, eleid: int, speedid):
+        ''' (AdventurerDevelopment, int, int, str, int,
+             int) -> AdventurerDevelopment
+             name : name of the development skill
+        '''
+        self.adventurerdevelopmentskilleffectsid = adventurerdevelopmentskilleffectsid
+        self.adventurerdevelopmentid = adventurerdevelopmentid
         self.attributeid = int(attributeid)
         self.modifierid = int(modifierid)
+        self.targetid = targetid
+        self.duration = duration
+        self.typeid = typeid
+        self.eleid = eleid
+        self.speedid = speedid
+
         
     def __str__(self):
         ''' Placeholder for now we will add modifier and attribute after?

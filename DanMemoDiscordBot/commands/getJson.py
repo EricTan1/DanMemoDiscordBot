@@ -25,7 +25,9 @@ async def run(client, ctx):
         #SELECT ase.AdventurerSkillEffectsid, ase.AdventurerSkillid, ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name
         ad_skill_effects=cache.get_all_adventurers_skills_effects()
         #SELECT addev.adventurerdevelopmentid,addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name
-        ad_dev_effects = cache.get_all_adventurers_developments()
+        ad_dev_skills = cache.get_all_adventurers_developments()
+        #SELECT addev.adventurerdevelopmentid,addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name, addev.adventurerid
+        ad_dev_skill_effects = cache.get_all_adventurers_developments_skills_effects()
         #SELECT adventurerstatsid, adventurerid, advstats.attributeid, attri.name, value
         adv_stats = cache.get_all_adventurers_stats()
 
@@ -82,7 +84,7 @@ async def run(client, ctx):
                     if(curr_effects.attribute != "" and curr_effects.attribute != None):
                         curr_effects_dict["attribute"] = curr_effects.attribute
 
-                    if(curr_effects.speed != "" and curr_effects.speed != None):
+                    if(curr_effects.speed != "" and curr_effects.speed != None and curr_effects.speed.strip().lower() != "none"):
                         curr_effects_dict["speed"] = curr_effects.speed
                     curr_effects_list.append(curr_effects_dict)
 
@@ -96,19 +98,46 @@ async def run(client, ctx):
                     curr_combat_effect["name"]=curr_skills.skillname
                     curr_combat_effect["effects"]=curr_effects_list
                     current_adv_json.get("skills").get("combat").append(curr_combat_effect)
-                else:
+                elif(curr_skills.skilltype == "additionals"):
                     curr_combat_effect = dict()
                     curr_combat_effect["name"]=curr_skills.skillname
                     curr_combat_effect["effects"]=curr_effects_list
                     current_adv_json.get("skills").get("additionals").append(curr_combat_effect)
             #development
             current_adv_json.get("skills")["development"] = []
-            ad_dev_effects_temp = [dev for dev in ad_dev_effects if current_adv.unit_id == dev.adventurerid]
+            ad_dev_effects_temp = [dev for dev in ad_dev_skills if current_adv.unit_id == dev.adventurerid]
+            # 1 unit
 
             for curr_adv_dev in ad_dev_effects_temp:
+                ad_dev_skills_effect_temp = [skills for skills in ad_dev_skill_effects if curr_adv_dev.adventurerdevelopmentid == skills.adventurerdevelopmentid]
+                curr_effects_list = []
+                for curr_effects in ad_dev_skills_effect_temp:
+                    curr_effects_dict = dict()
+                    #duration, element, modifier, type, target, attribute, speed
+                    if(curr_effects.duration != "" and curr_effects.duration != None):
+                        curr_effects_dict["duration"] = curr_effects.duration
+
+                    if(curr_effects.element != "" and curr_effects.element != None):
+                        curr_effects_dict["element"] = curr_effects.element
+
+                    if(curr_effects.modifier != "" and curr_effects.modifier != None):
+                        curr_effects_dict["modifier"] = curr_effects.modifier
+
+                    if(curr_effects.type != "" and curr_effects.type != None):
+                        curr_effects_dict["type"] = curr_effects.type
+
+                    if(curr_effects.target != "" and curr_effects.target != None and curr_effects.target.strip().lower() != "None"):
+                        curr_effects_dict["target"] = curr_effects.target
+
+                    if(curr_effects.attribute != "" and curr_effects.attribute != None):
+                        curr_effects_dict["attribute"] = curr_effects.attribute
+
+                    if(curr_effects.speed != "" and curr_effects.speed != None and curr_effects.speed.strip().lower() != "None"):
+                        curr_effects_dict["speed"] = curr_effects.speed
+                    curr_effects_list.append(curr_effects_dict)
                 curr_adv_dev_dict = dict()
-                curr_adv_dev_dict["name"] = curr_adv_dev.development
-                curr_adv_dev_dict["effects"]=[{"attribute":curr_adv_dev.attribute,"modifier":curr_adv_dev.modifier}]
+                curr_adv_dev_dict["name"]=curr_skills.skillname
+                curr_adv_dev_dict["effects"]=curr_effects_list
                 current_adv_json.get("skills").get("development").append(curr_adv_dev_dict)
 
             with open('./testJsonAdv/{} - {}.json'.format(current_adv.unit_label, current_adv.character_name), 'w') as fp:
@@ -147,7 +176,9 @@ async def run(client, ctx):
 
             #skills
             as_skills_temp = [skills for skills in as_skill if current_as.unit_id == skills.assistsid]
-            current_as_json["skills"] = []
+            current_as_json["skills"] = dict()
+            current_as_json.get("skills")["regular"] = []
+            current_as_json.get("skills")["instant_effect"] = []
 
             for curr_skills in as_skills_temp:
                 as_skills_effect_temp = [skills for skills in as_skill_effects if curr_skills.assistsskillid == skills.assistskillid]
@@ -167,12 +198,23 @@ async def run(client, ctx):
 
                     if(curr_effects.attribute != "" and curr_effects.attribute != None):
                         curr_effects_dict["attribute"] = curr_effects.attribute
+
+                    if(curr_effects.maxActivcations != "" and curr_effects.maxActivcations != None):
+                        curr_effects_dict["max_activations"] = curr_effects.maxActivcations
                     curr_effects_list.append(curr_effects_dict)
 
-                curr_combat_effect = dict()
-                curr_combat_effect["name"]=curr_skills.skillname
-                curr_combat_effect["effects"]=curr_effects_list
-                current_as_json.get("skills").append(curr_combat_effect)
+                if(curr_skills.skilltype =="regular"):
+                    curr_combat_effect = dict()
+                    curr_combat_effect["name"]=curr_skills.skillname
+                    curr_combat_effect["effects"]=curr_effects_list
+                    current_as_json.get("skills").get("regular").append(curr_combat_effect)
+                # instant_effect
+                elif(curr_skills.skilltype =="instant_effect"):
+                    curr_combat_effect = dict()
+                    curr_combat_effect["name"]=curr_skills.skillname
+                    curr_combat_effect["effects"]=curr_effects_list
+                    current_as_json.get("skills").get("instant_effect").append(curr_combat_effect)
+    
             with open('./testJsonAs/{} - {}.json'.format(current_as.unit_label, current_as.character_name), 'w') as fp:
                 json.dump(current_as_json, fp,indent=4)
         

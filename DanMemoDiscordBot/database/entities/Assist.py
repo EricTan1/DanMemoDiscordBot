@@ -19,13 +19,14 @@ class Assist(Base):
         return self.title
 
 class AssistSkill(Base):
-    def __init__(self, assistskillid, assistid:int, skillname:str):
+    def __init__(self, assistskillid, assistid:int, skillname:str,skilltype:str):
         ''' (AssistSkill, int, int, int, int, str) -> AssistSkill
         skillname: the name of the skill of the assist
         '''
         self.assistskillid = assistskillid
         self.assistid = int(assistid)
         self.skillname = str(skillname)
+        self.skilltype=str(skilltype)
 
     def __str__(self):
         return self.skillname
@@ -34,8 +35,8 @@ class AssistSkill(Base):
 class AssistSkillEffects(Base):
 
     def __init__(self, assistskilleffectsid, assistskillid:int, targetid:int,
-                 attributeid:int, modifierid:int, duration):
-        ''' (AssistSkillEffects, int, int, int, int, int,
+                 attributeid:int, modifierid:int, duration,maxActivations):
+        ''' (AssistSkillEffects, int, int, int, int, int, int,
              int) -> AssistSkillEffects
              duration : some buffs/debuffs have durations
         '''
@@ -45,6 +46,7 @@ class AssistSkillEffects(Base):
         self.attributeid = int(attributeid)
         self.modifierid = int(modifierid)
         self.duration = duration
+        self.maxActivations = maxActivations
 
     def __str__(self):
         return str(self.assistskilleffectsid)
