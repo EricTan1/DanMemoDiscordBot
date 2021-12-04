@@ -22,6 +22,7 @@
 	"slow": "Slow",
 	"taunt": "Taunt",
 	"poison": "Poison",
+	"charm": "Charm",
 	"physical_attack": "P.Attack",
 	"magic_attack": "M.Attack",
 	"light_attack": "Light Attack Dmg.",
@@ -93,6 +94,7 @@
 	"taunt_resist": "Taunt Resist",
 	"charm_resist": "Charm Resist",
 	"poison_resist": "Poison Resist",
+	"charm_resist": "Charm Resist",
 	"hp_regen": "HP Regen",
 	"mp_regen": "MP Regen",
 	"mp_drain": "MP Drain",
@@ -165,8 +167,16 @@
 	"per_each_self_earth_attack_buff": "per each [Self] Earth Attack Dmg. Buff Skill",
 	"per_each_self_wind_attack_buff": "per each [Self] Wind Attack Dmg. Buff Skill",
 	"per_each_target_heal_debuff": "per each Target's Heal Reduction Skill",
+	"against_sleep_target": "only when a target is inflicted with Sleep",
+	"against_stun_target": "only when a target is inflicted with Stun",
+	"against_seal_target": "only when a target is inflicted with Seal",
+	"against_slow_target": "only when a target is inflicted with Slow",
+	"against_taunt_target": "only when a target is inflicted with Taunt",
+	"against_poison_target": "only when a target is inflicted with Poison",
+	"against_charm_target": "only when a target is inflicted with Charm",
 	"null_ailments": "Null Ailments",
 	"fire_water_thunder_earth_wind_light_dark_resist": "Fire, Water, Thunder, Earth, Wind, Light, and Dark Resist",
 	"physical_magic_fire_water_thunder_earth_wind_light_dark_resist_buff_removal": "P. Resist, M. Resist, Fire/Water/Thunder/Earth/Wind/Light/Dark Resist Debuff",
-	"additional_action": "Additional Actions"
+	"additional_action": "Additional Actions",
+	"instant_effect": "Instant Effect"
 }
