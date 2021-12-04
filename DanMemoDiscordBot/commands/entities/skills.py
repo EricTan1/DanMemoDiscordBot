@@ -24,7 +24,7 @@ class AdventurerSkill():
 
 class AdventurerCounter():
 
-    def __init__(self, target="foe", extraBoost=1,noType=0, type='physical', element=''):
+    def __init__(self, target="foe", extraBoost="",noType=0, type='physical', element=''):
         ''' (self, str, float, str, float, boolean, str, str, list of str)
         target: foes,foe
         NoType: does it have an element? Older units don't have elements
@@ -35,4 +35,5 @@ class AdventurerCounter():
         self.noType=noType
         self.type = type
         self.element=element
+        # str per_each_attribute_buff/debuff
         self.extraBoost = extraBoost

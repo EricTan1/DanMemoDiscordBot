@@ -21,10 +21,10 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict):
     if target == 'foe':
       if tempBoost == 'none':
         tempBoostTemp = 1.0
-      elif tempBoost == 'normal':   
-        tempBoostTemp = 1.3
-      elif tempBoost == 'normal2':   
-        tempBoostTemp = 1.4     
+      elif 'normal2' in tempBoost:
+        tempBoostTemp = 1.4  
+      elif 'normal' in tempBoost:
+        tempBoostTemp = 1.3   
       else:   
         tempBoostTemp = 1.6   
       if powerCoefficient == 'low' or powerCoefficient == 'lo':
@@ -100,6 +100,8 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict):
       tempElementResistDownAst = enemy.elementResistDownAst.get(skill.element)
       # elementDamageBoostAdv[location]
       tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv.get(skill.element)
+      if(memboost.get("{}_attack".format(skill.element)) != None):
+        tempElementDamageBoostAdv+=memboost.get("{}_attack".format(skill.element))
       # elementDamageBoostAst[location]
       tempElementDamageBoostAst = adventurer.elementDamageBoostAst.get(skill.element)
     else:
@@ -134,7 +136,7 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict):
     return np.floor(tempDamage).item()
   else:
     return 0
-async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memboost:dict, counterRate:int):
+async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memboost:dict, counterRate:int, extra_boost:int):
   ''' (AdventurerSkill, Adventurer, Enemy, dict) -> float
   memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
   '''
@@ -181,6 +183,8 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
     tempElementResistDownAst = enemy.elementResistDownAst.get(counter.element)
     # elementDamageBoostAdv[location]
     tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv.get(counter.element)
+    if(memboost.get("{}_attack".format(counter.element)) != None):
+        tempElementDamageBoostAdv+=memboost.get("{}_attack".format(counter.element))
     # elementDamageBoostAst[location]
     tempElementDamageBoostAst = adventurer.elementDamageBoostAst.get(counter.element)
   else:
@@ -209,7 +213,7 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
                (1+(1-counter.noType)*tempElementDamageBoostAdv+(1-counter.noType)*tempElementDamageBoostAst)*\
                (1+adventurer.critPenBoost+adventurer.counterBoost)*\
                (1-temptargetResistDownAdv-temptargetResistDownAst)*\
-               powerCoefficientTemp*1.5*(counter.extraBoost)*counterRate
+               powerCoefficientTemp*1.5*(extra_boost)*counterRate
   #totalDamage = totalDamage + tempDamage 
   #accumulateDamage[location] = accumulateDamage[location] + tempDamage
   #if(tempDamage > 0):
@@ -227,7 +231,7 @@ async def SADamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict
     powerCoefficientTemp = 1
     if tempBoost == 'none':
       tempBoostTemp = 1.0
-    elif tempBoost == 'normal':   
+    elif 'normal' in tempBoost:   
       tempBoostTemp = 1.4
     else:   
       tempBoostTemp = 1.7     
@@ -300,7 +304,10 @@ async def SADamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict
       # elementResistDownAst
       tempElementResistDownAst = enemy.elementResistDownAst.get(skill.element)
       # elementDamageBoostAdv[location]
+      
       tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv.get(skill.element)
+      if(memboost.get("{}_attack".format(skill.element)) != None):
+        tempElementDamageBoostAdv+=memboost.get("{}_attack".format(skill.element))
       # elementDamageBoostAst[location]
       tempElementDamageBoostAst = adventurer.elementDamageBoostAst.get(skill.element)
     else:
@@ -548,7 +555,8 @@ async def interpretSkillAdventurerAttack(skillEffects, adventurer, enemy):
     # for example str/mag debuff
     if(len(extra_boosts_effects) > 0):
       for extra_boosts in extra_boosts_effects:
-          extra_boosts_value = extra_boosts_value + interpretExtraBoost(extra_boosts, adventurer, enemy)
+          temp_extra_boosts = await interpretExtraBoost(extra_boosts, adventurer, enemy)
+          extra_boosts_value = extra_boosts_value + temp_extra_boosts
     #SELECT ase.AdventurerSkillEffectsid, ase.AdventurerSkillid, ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name
     ret = AdventurerSkill(target=damage_skill.target,tempBoost=temp_boost_mod,powerCoefficient=damage_skill.modifier,extraBoost=extra_boosts_value,noType=0,type=damage_skill.type,element=damage_skill.element,index_to=index_to_modifier)
     return ret
@@ -640,7 +648,8 @@ async def interpretSkillAdventurerEffects(skillEffects, adventurer, enemy, adv_l
             temp_min = min(enemy.elementResistDownAdv.get(curr_element), curr_modifier)
             enemy.elementResistDownAdv[curr_element] = temp_min
             await enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
-      if("status" in curr_attribute and "debuff" in curr_attribute):
+      # removal status_debuffs / status_buffs 
+      if("status" in curr_attribute and "debuff" in curr_attribute and skillEffect.duration != None):
         temp_duration = int(skillEffect.duration)
         if(skillEffect.target.strip() == "self"):
           await adventurer.ExtendReduceDebuffs(temp_duration)
@@ -650,7 +659,7 @@ async def interpretSkillAdventurerEffects(skillEffects, adventurer, enemy, adv_l
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
           await enemy.ExtendReduceDebuffs(temp_duration)
       # status buff / debuffs extends/reduction
-      elif("status" in curr_attribute and "buff" in curr_attribute):
+      elif("status" in curr_attribute and "buff" in curr_attribute and skillEffect.duration != None):
         temp_duration = int(skillEffect.duration)
         if(skillEffect.target.strip() == "self"):
           await adventurer.ExtendReduceBuffs(temp_duration)
@@ -660,15 +669,19 @@ async def interpretSkillAdventurerEffects(skillEffects, adventurer, enemy, adv_l
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
           await enemy.ExtendReduceBuffs(temp_duration)
 
+      # status buff removal and status debuff removal add
+
       # additional refresh
       if(curr_attribute == "additional_action"):
         if(skillEffect.target.strip() == "self"):
           await adventurer.set_additionalCount(int(skillEffect.duration))
       # removal skills
       elif("removal_no_assist" in curr_attribute):
-        is_buff = "buff" in curr_attribute
+        is_buff = not("debuff" in curr_attribute)
 
-        temp_list = curr_attribute.replace("removal_no_assist","").join("_")
+  
+
+        temp_list = curr_attribute.replace("removal_no_assist","").split("_")
         try:
           temp_list.remove("buff")
         except:
@@ -821,16 +834,14 @@ async def counter(adv_list, enemy, memboost:dict, counterRate:float,logs:dict):
   # take the avg
   # loop through and take the avg
   for adv in adv_list:
-    # create adventurerCounter
-    is_physical = adv.stats.get("strength")>=adv.stats.get("magic")
-    if(is_physical):
-      temp_type = "physical"
-    else:
-      temp_type = "magic"
-    temp_noType = adv.elementAttackCounter == "None"
 
-    temp_adv_counter= AdventurerCounter(target="foe",extraBoost=1,noType=int(temp_noType),type=temp_type,element = adv.elementAttackCounter)
-    temp_counter_damage = await CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate)*0.25
+    temp_adv_counter= adv.adventurerCounter
+    temp_extra_boost = 1
+    if(adv.adventurerCounter.extraBoost != None):
+      temp_extra_boost_value = await interpretExtraBoost(adv.adventurerCounter.extraBoost, adv, enemy)
+      temp_extra_boost += temp_extra_boost_value
+
+    temp_counter_damage = await CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate,extra_boost=temp_extra_boost)*0.25
     await adv.add_damage(temp_counter_damage)
     ret += temp_counter_damage
 
@@ -846,16 +857,13 @@ async def counters(adv_list, enemy, memboost:dict, counterRate:float, logs:dict)
   # loop through and take the avg
   for adv in adv_list:
     # create adventurerCounter
-    is_physical = adv.stats.get("strength")>=adv.stats.get("magic")
-    if(is_physical):
-      temp_type = "physical"
-    else:
-      temp_type = "magic"
-    temp_noType = adv.elementAttackCounter == "None"
-
-    temp_adv_counter= AdventurerCounter(target="foe",extraBoost=1,noType=int(temp_noType),type=temp_type,element = adv.elementAttackCounter)
-    temp_counter_damage = await CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate)
-
+  
+    temp_adv_counter= adv.adventurerCounter
+    temp_extra_boost = 1
+    if(adv.adventurerCounter.extraBoost != None):
+      temp_extra_boost_value = await interpretExtraBoost(adv.adventurerCounter.extraBoost, adv, enemy)
+      temp_extra_boost += temp_extra_boost_value
+    temp_counter_damage = await CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate,extra_boost=temp_extra_boost)
     await adv.add_damage(temp_counter_damage)
     temp_list_logs = logs.get("counters")
     temp_list_logs.append("{} counter damage for {:,}".format(adv.name,int(temp_counter_damage)))

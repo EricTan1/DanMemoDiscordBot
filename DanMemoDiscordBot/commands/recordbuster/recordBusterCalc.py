@@ -2,13 +2,13 @@ from discord.ext import commands
 import discord
 from commands.utils import getElements, getDifficultyMultiplier
 from commands.cache import Cache
-from commands.calculatorUtil import DamageFunction,SADamageFunction,CombineSA,interpretSkillAdventurerAttack,interpretSkillAdventurerEffects,interpretSkillAssistEffects
+from commands.calculatorUtil import CounterDamageFunction, DamageFunction,SADamageFunction,CombineSA,interpretSkillAdventurerAttack,interpretSkillAdventurerEffects,interpretSkillAssistEffects
 import numpy as np
 from commands.entities.adventurer import Adventurer
 from commands.entities.assist import Assist
 
 from commands.entities.enemy import Enemy, Revis, Finn, Ottarl, Riveria
-from commands.entities.skills import AdventurerSkill
+from commands.entities.skills import AdventurerSkill,AdventurerCounter
 
 import configparser
 import ast
@@ -152,6 +152,7 @@ async def run(client, ctx):
     ad_dev_effects = cache.get_all_adventurers_developments()
     #SELECT adventurerstatsid, adventurerid, advstats.attributeid, attri.name, value
     adv_stats = cache.get_all_adventurers_stats()
+    ad_dev_skill_effects = cache.get_all_adventurers_developments_skills_effects()
 
     # all the units
     unit_list=[]
@@ -197,41 +198,90 @@ async def run(client, ctx):
                 # development skills that boosts crit/pen dmg and counter damage
                 # counter damage
                 adv_dev_matches = [x for x in ad_dev_effects if x.adventurerid == curr_unit.unit_id]
+                adv_dev_effects_matches = []
                 tempCounterBoost = 0
                 tempCritPenBoost= 0
                 tempElementAttackCounter = "None"
+
+
+                # tempCounter
+                tempCounter_extraBoost=None
+                tempCounter_element = ""
+                #tempAttack
+                tempAttack_element = ""
+                is_physical = unit_stats_list[unitsCounter].get("strength")>=unit_stats_list[unitsCounter].get("magic")
+                if(is_physical):
+                    tempCounterAttack_type = "physical"
+                else:
+                    tempCounterAttack_type = "magic"
+                # counter attack type unit_stats_list[unitsCounter]
+
                 for curr_adv_dev_skill in adv_dev_matches:
-                    dev_attribute_name = curr_adv_dev_skill.attribute
-                    try:
-                        dev_modifier_percent = int(curr_adv_dev_skill.modifier.strip())/100
-                    except:
-                        dev_modifier_percent=0
-                    # elemental counters and normal attacks check all?
-                    # Water Manifestation: H || element manifestation:letter
-                    #if("manifestation" in curr_adv_dev_skill.development.lower()):
-                        #tempElementAttackCounter = curr_adv_dev_skill.development.lower().split(" ")[0]
+                    adv_dev_effects_matches = [x for x in ad_dev_skill_effects if x.adventurerdevelopmentid == curr_adv_dev_skill.adventurerdevelopmentid]
                     
-                    if("countering" in dev_attribute_name.lower() or "counter_attack" in dev_attribute_name.lower()):
-                        for element in getElements():
-                            if(element in curr_adv_dev_skill.development.lower()):
-                                tempElementAttackCounter = element
+                    for curr_adv_dev_skill_effects in adv_dev_effects_matches:
+                        dev_attribute_name = curr_adv_dev_skill_effects.attribute
+                        try:
+                            dev_modifier_percent = int(curr_adv_dev_skill_effects.modifier.strip())/100
+                        except:
+                            dev_modifier_percent=0
+                        # elemental counters and normal attacks check all?
+                        # Water Manifestation: H || element manifestation:letter
+                        #if("manifestation" in curr_adv_dev_skill.development.lower()):
+                            #tempElementAttackCounter = curr_adv_dev_skill.development.lower().split(" ")[0]
+                        
+                        if("countering" in dev_attribute_name.lower()):
+                            for element in getElements():
+                                if(element in curr_adv_dev_skill.development.lower()):
+                                    tempCounter_element = element
+                        if("attacking" in dev_attribute_name.lower()):
+                            for element in getElements():
+                                if(element in curr_adv_dev_skill.development.lower()):
+                                    tempAttack_element = element
+                        if("counter_attack" in dev_attribute_name.lower()):
+                            for element in getElements():
+                                if(element in curr_adv_dev_skill.development.lower()):
+                                    tempCounter_element = element
+                                    tempAttack_element = element
+                        #if("attacking" in dev_attribute_name.lower()):
 
-                    #if("attacking" in dev_attribute_name.lower()):
+                        
+                        #if("will of" in curr_adv_dev_skill.development.lower()):
+                            #tempElementAttackCounter = curr_adv_dev_skill.development.lower().split(" ")[2]
+                        # disable counter if healing
 
-                    
-                    #if("will of" in curr_adv_dev_skill.development.lower()):
-                        #tempElementAttackCounter = curr_adv_dev_skill.development.lower().split(" ")[2]
+                        # pressure skills decrease attacks
+                        # ray counter extends
+                        # disturbance
+                        # Hierophant 
+                        if("per_each" in dev_attribute_name.lower()):
+                            tempCounter_extraBoost = curr_adv_dev_skill_effects
 
-                    # Counter Damage & counter_damage
-                    if("counter" in dev_attribute_name.lower() and "damage" in dev_attribute_name.lower()):
-                        tempCounterBoost+= dev_modifier_percent
-                    # Penetration Damage & penetration_damage
-                    if("penetration" in dev_attribute_name.lower() and "damage" in dev_attribute_name.lower()):
-                        tempCritPenBoost+= dev_modifier_percent
-                    # Critical damage & critical_damage
-                    if("critical" in dev_attribute_name.lower() and "damage" in dev_attribute_name.lower()):
-                        tempCritPenBoost+= dev_modifier_percent
-                    # counter extra boosts calc >:(
+                        if("encouragement" in curr_adv_dev_skill.development.lower() or "blessing" in curr_adv_dev_skill.development.lower() or "disturbance" in curr_adv_dev_skill.development.lower() or "hierophant" in curr_adv_dev_skill.development.lower()):
+                            unit_enable_counter[unitsCounter] = False
+                        # Counter Damage & counter_damage
+                        if("counter" in dev_attribute_name.lower() and "damage" in dev_attribute_name.lower()):
+                            tempCounterBoost+= dev_modifier_percent
+                        # Penetration Damage & penetration_damage
+                        if("penetration" in dev_attribute_name.lower() and "damage" in dev_attribute_name.lower()):
+                            tempCritPenBoost+= dev_modifier_percent
+                        # Critical damage & critical_damage
+                        if("critical" in dev_attribute_name.lower() and "damage" in dev_attribute_name.lower()):
+                            tempCritPenBoost+= dev_modifier_percent
+                        # counter extra boosts calc >:(
+                # tempCounter_noType = 0, tempAttack_noType = 0
+                if(tempCounter_element == ""):
+                    tempCounter_noType = 1
+                else:
+                    tempCounter_noType = 0
+                
+                if(tempAttack_element == ""):
+                    tempAttack_noType = 1
+                else:
+                    tempAttack_noType = 0
+
+                tempCounter = AdventurerCounter(target="foe",extraBoost=tempCounter_extraBoost,noType=tempCounter_noType,type=tempCounterAttack_type,element = tempCounter_element)
+                tempAttack = AdventurerCounter(target="foe",extraBoost=None,noType=tempAttack_noType,type=tempCounterAttack_type,element = tempAttack_element)
                 # Create new adv object
                 unit_list.append(Adventurer(stats = unit_stats_list[unitsCounter], 
                                     counterBoost=tempCounterBoost, 
@@ -239,8 +289,9 @@ async def run(client, ctx):
                                     current_skills=current_skills,
                                     current_skills_agi_mod = current_skills_agi_mod, 
                                     turnOrder = skillflow[unitsCounter],
-                                    elementAttackCounter=tempElementAttackCounter,
-                                    name="[{}] {}".format(unit_titles[unitsCounter],curr_unit.character_name)))
+                                    adventurerCounter=tempCounter,
+                                    adventurerAttack=tempAttack,
+                                    name="[{}] {}".format(unit_titles[unitsCounter],curr_unit.character_name, unit_enable_counter[unitsCounter])))
     ########################
     # Main Loop
     ########################
@@ -254,8 +305,8 @@ async def run(client, ctx):
         turn_logs = {"sa":[], "combat_skills":[], "counters":[], "sacs":[]}
         logs.append(turn_logs)
 
-        if(turn+1 == 13):
-            print("lol")
+        if(turn+1 == 10):
+             print("lol")
             
         # assist skills first turn!!
         if(turn == 0):
@@ -348,8 +399,8 @@ async def run(client, ctx):
                     else:
                         temp_agi = temp_agi *0.5
                         temp_type= "magic"
-                    tempNoType = active_adv.elementAttackCounter.lower() == "none"
-                    temp_adv_skill = AdventurerSkill(powerCoefficient="physical",noType=int(tempNoType),type=temp_type,element=active_adv.elementAttackCounter)
+                    
+                    temp_adv_skill = active_adv.adventurerAttack
                     skills_priority_list.append((temp_agi,current_speed,temp_adv_skill,active_adv,[]))
 
         sorted_skills_priority_list = sorted(skills_priority_list, key=lambda x: x[0], reverse=True)
@@ -361,22 +412,44 @@ async def run(client, ctx):
             if(removed_sorted_skill[1] != "fast"):
                 is_fast = False
             # not fast skill then rb can go
-            if(not is_fast and not is_enemy_attacked):
+            if((not is_fast or len(sorted_skills_priority_list) == 0 )and not is_enemy_attacked):
                 await enemy.turnOrder(turn,active_advs, 1)
                 total_damage+=await enemy.turnOrderCounters(turn, active_advs, memboost, counterRate, 1,turn_logs)
                 is_enemy_attacked = True
-            temp_damage = await DamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost)
-            #print("{} skill {} damage for {}".format(removed_sorted_skill[3].name,removed_sorted_skill[3].turnOrder[turn],temp_damage))
-
+            
+            if(isinstance(removed_sorted_skill[2],AdventurerSkill) or removed_sorted_skill[2] == None):
+                temp_damage = await DamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost)
+            elif(isinstance(removed_sorted_skill[2],AdventurerCounter)):
+                # no extra boosts for auto attacks
+                temp_damage = await CounterDamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost,counterRate,1)
             temp_list_logs = turn_logs.get("combat_skills")
             temp_list_logs.append("{} skill {} damage for {:,}".format(removed_sorted_skill[3].name,removed_sorted_skill[3].turnOrder[turn],int(temp_damage)))
             turn_logs["combat_skills"] = temp_list_logs
 
+            # check if additional count == 0 so you dont attack this turn
+            perform_additional = False
+            if(removed_sorted_skill[3].additionalCount > 0):
+                perform_additional = True
+                removed_sorted_skill[3].additionalCount -= 1
             await interpretSkillAdventurerEffects(removed_sorted_skill[4],removed_sorted_skill[3],enemy,active_advs)
             total_damage += temp_damage
             await removed_sorted_skill[3].add_damage(temp_damage)
 
-            # Additionals check here
+            # additionals here
+            if(perform_additional):
+                temp_adv_effects_list = await removed_sorted_skill[3].get_additionals()
+                temp_adv_skill = await interpretSkillAdventurerAttack(temp_adv_effects_list,removed_sorted_skill[3],enemy)
+                # damage
+                temp_damage = await DamageFunction(temp_adv_skill,removed_sorted_skill[3],enemy,memboost)
+                # effects
+                await interpretSkillAdventurerEffects(temp_adv_effects_list,removed_sorted_skill[3],enemy,active_advs)
+                # logging and adding damage
+                temp_list_logs = turn_logs.get("combat_skills")
+                temp_list_logs.append("{} additional damage for {:,}".format(removed_sorted_skill[3].name,int(temp_damage)))
+                turn_logs["combat_skills"] = temp_list_logs
+                # damage adding
+                total_damage += temp_damage
+                await removed_sorted_skill[3].add_damage(temp_damage)
 
         # end of turn skills
         await enemy.turnOrder(turn,active_advs, 2)
@@ -395,7 +468,15 @@ async def run(client, ctx):
         #enemy statuses tick down
         await enemy.ExtendReduceDebuffs(-1)
         await enemy.ExtendReduceBuffs(-1)
+        
 
+        # memoria expiry end of turn
+        if(turn+1 == 5):
+            memboost["water_attack"] = 0
+            memboost["wind_attack"] = 0
+        if(turn+1 == 7):
+            memboost["strength"] = 0
+            memboost["magic"] = 0
         # sacs
         if(turn +1 < 15 and sac_counter < 2):
             for active_adv in range(0, len(active_advs)):

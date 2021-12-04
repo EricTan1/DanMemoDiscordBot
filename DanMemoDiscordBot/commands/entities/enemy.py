@@ -276,7 +276,7 @@ class Ottarl(Enemy):
         # start of turn 5 and start of turn 9
         if((turnOrder==3 or turnOrder==7) and speed == 2):
             await self.OttarlClear(adv_list)
-        if(turnOrder in [0,2,3,4,6,7,8,10,11,12,13,14] and not speed == 1):
+        if(turnOrder in [0,2,3,4,6,7,8,11,12,13,14] and not speed == 1):
             await self.OttarlEndDebuff(adv_list)
     
     async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int,logs:dict):

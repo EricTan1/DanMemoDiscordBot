@@ -1,4 +1,5 @@
 from commands.utils import getElements, getDamageBuffs, getStats,checkBuffExistsReplace
+from commands.entities.skills import AdventurerCounter
 
 class Adventurer():
     def __str__(self) -> str:
@@ -11,9 +12,19 @@ class Adventurer():
     current_skills={"combat": [], "special":[], "additionals": []},
     current_skills_agi_mod= {"combat": [], "special":[], "additionals": []},
     turnOrder = [0]*15,
-    elementAttackCounter = "None",
-    name =""):
+    adventurerCounter = AdventurerCounter(target="foe",extraBoost="",noType=0,type="physical",element = ""),
+    adventurerAttack = AdventurerCounter(target="foe",extraBoost="",noType=0,type="physical",element = ""),
+    name ="",
+    isCounter=True):
         ''' (self, dict, float, float) -> Adventurer
+        is_physical = adv.stats.get("strength")>=adv.stats.get("magic")
+    if(is_physical):
+      temp_type = "physical"
+    else:
+      temp_type = "magic"
+    temp_noType = adv.elementAttackCounter == "None"
+
+    temp_adv_counter= AdventurerCounter(target="foe",extraBoost=1,noType=int(temp_noType),type=temp_type,element = adv.elementAttackCounter)
         '''
         self.stats = stats
         self.counterBoost = counterBoost
@@ -21,7 +32,8 @@ class Adventurer():
         self.current_skills = current_skills
         self.current_skills_agi_mod= current_skills_agi_mod
         self.turnOrder = turnOrder
-        self.elementAttackCounter = elementAttackCounter
+        self.adventurerCounter = adventurerCounter
+        self.adventurerAttack= adventurerAttack
         # element attack
         self.elementDamageBoostAdv = {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
         self.elementDamageBoostAst = {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
@@ -32,7 +44,7 @@ class Adventurer():
         self.additionalCount=0
         # adv damage
         self.current_damage = 0
-
+        self.isCounter=isCounter
         # buffs and debuffs
         # append buffs to dict and remove once wiped
         # list of dict
@@ -153,7 +165,7 @@ class Adventurer():
             is_assist: is this an assist buff or not
             position : the active unit position in the party
         '''
-        self.boostCheckAlliesAdv = [item for item in self.boostCheckAlliesAdv if item.get("isbuff") != isbuff and item.get("attribute") != attribute]
+        self.boostCheckAlliesAdv = [item for item in self.boostCheckAlliesAdv if not(item.get("isbuff") == isbuff and item.get("attribute") == attribute)]
         # remove from actual thing
 
         if attribute in getDamageBuffs():
