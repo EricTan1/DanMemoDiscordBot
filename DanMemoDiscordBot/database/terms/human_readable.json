@@ -144,6 +144,7 @@
 	"per_each_target_magic_buff": "per each Target's Mag. Buff Skill",
 	"per_each_target_magic_debuff": "per each Target's Mag. Reduction Skill",
 	"per_each_self_agility_buff": "per each [Self] Agi. Buff Skill",
+	"per_each_target_agility_buff": "per each Target's Agi. Buff Skill",
 	"per_each_target_agility_debuff": "per each Target's Agi. Reduction Skill",
 	"per_each_self_dexterity_buff": "per each [Self] Dex. Buff Skill",
 	"per_each_target_dexterity_debuff": "per each Target's Dex. Reduction Skill",
