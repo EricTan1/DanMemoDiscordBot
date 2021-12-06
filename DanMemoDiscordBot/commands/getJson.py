@@ -198,9 +198,13 @@ async def run(client, ctx):
 
                     if(curr_effects.attribute != "" and curr_effects.attribute != None):
                         curr_effects_dict["attribute"] = curr_effects.attribute
+                    
+                    if(curr_effects.element != "" and curr_effects.element != None):
+                        curr_effects_dict["element"] = curr_effects.element
 
-                    if(curr_effects.maxActivcations != "" and curr_effects.maxActivcations != None):
-                        curr_effects_dict["max_activations"] = curr_effects.maxActivcations
+                    if(curr_effects.type != "" and curr_effects.type != None):
+                        curr_effects_dict["type"] = curr_effects.type
+                    
                     curr_effects_list.append(curr_effects_dict)
 
                 if(curr_skills.skilltype =="regular"):

@@ -59,8 +59,11 @@ async def pageRBHandler(client, ctx, logs, total_damage, total_score, unit_list,
         for sa in logs[turn_logs].get("sa"):
             temp_value +="{}\n".format(sa)
         # combatskills
-        for c_skill in logs[turn_logs].get("combat_skills"):
-            temp_value +="{}\n".format(c_skill)
+        #for c_skill in logs[turn_logs].get("combat_skills"):
+            #temp_value +="{}\n".format(c_skill)
+        # counters
+        for counter_skill in logs[turn_logs].get("counters"):
+            temp_value +="{}\n".format(counter_skill)
         # sacs
         for sacs in logs[turn_logs].get("sacs"):
             temp_value +="{}\n".format(sacs)

@@ -206,6 +206,8 @@ class InsertCharacter:
             temp_target = effects.get("target")
             temp_attribute = effects.get("attribute")
             temp_modifier = effects.get("modifier")
+            temp_element = effects.get("element")
+            temp_type = effects.get("type")
             if(temp_modifier==None):
                 temp_modifier=""
             if(len(temp_modifier) > 0 and temp_modifier[len(temp_modifier)-1] == "%"):
@@ -213,9 +215,17 @@ class InsertCharacter:
             targetid = self.getBaseConstants(Target(None, temp_target), False)
             attributeid = self.getBaseConstants(Attribute(None, temp_attribute), False)
             modifierid = self.getBaseConstants(Modifier(None, temp_modifier), True)
+            if(temp_element == None):
+                temp_element = ""
+            if(temp_type == None):
+                temp_type = ""
+
+            eleid = self.getBaseConstants(Element(None, temp_element), False)
+            typeid = self.getBaseConstants(Type(None, temp_type), False)
+
             # inserting effects
             self._db.insertData(AssistSkillEffects(None, assistskillid, targetid,
-                 attributeid, modifierid, effects.get("duration"), effects.get("max_activations")))
+                 attributeid, modifierid, effects.get("duration"), effects.get("max_activations"),eleid,typeid))
     
     
     def getBaseConstants(self, baseConstant, isMod):
@@ -312,21 +322,21 @@ async def run(dbConfig, client, ctx, *search):
         ic = InsertCharacter(db)
         # loop through all attachments and get their value
         for attach in ctx.message.attachments:
-            try:
-                my_json = await attach.read()
-                my_json = my_json.decode('utf8')
-                as_dict = json.loads(my_json)
-                if(as_dict.get("limited")== None):
-                    as_dict["limited"]=False
-                if("assist" in search[0].lower() or "as" in search[0].lower()):
-                    temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
-                    ic.insertAssist(temp_as)
-                elif("adventurer" in search[0].lower() or "ad" in search[0].lower()):
-                    temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
-                    ic.insertAdventurer(temp_ad)
-                await ctx.send("character(s) has been added")
-            except:
-                await ctx.send("Error in reading json")
+            #try:
+            my_json = await attach.read()
+            my_json = my_json.decode('utf8')
+            as_dict = json.loads(my_json)
+            if(as_dict.get("limited")== None):
+                as_dict["limited"]=False
+            if("assist" in search[0].lower() or "as" in search[0].lower()):
+                temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
+                ic.insertAssist(temp_as)
+            elif("adventurer" in search[0].lower() or "ad" in search[0].lower()):
+                temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
+                ic.insertAdventurer(temp_ad)
+            await ctx.send("character(s) has been added")
+            #except:
+                #await ctx.send("Error in reading json")
         
 
 """ async def testAd(dbConfig, client, ctx):

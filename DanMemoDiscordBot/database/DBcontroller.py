@@ -27,7 +27,7 @@ class DBConfig():
             self.username = "root"
             self.password = "danmemo"
             self.port = "3306"
-            self.database = "danmemo"
+            self.database = "aisbot"
         elif environment == DatabaseEnvironment.HEROKU:
             result = urlparse(os.environ.get("AWS_DATABASE_URL"))
             self.hostname = result.hostname
@@ -493,7 +493,14 @@ class DBcontroller:
         skillname = ""
         skilltype = ""
         skill_sql="SELECT skillname, skilltype FROM danmemo.assistskill where assistskillid={}".replace("danmemo",self.database).format(skillid)
-        effects_sql="SELECT t.name,m.value,a.name,e.duration, e.maxActivations FROM danmemo.assistskilleffects as e,danmemo.target as t,danmemo.modifier as m,danmemo.attribute as a where assistskillid={} and m.modifierid=e.modifierid and e.targetid = t.targetid and a.attributeid = e.attributeid".replace("danmemo",self.database).format(skillid)
+        effects_sql="SELECT t.name,m.value,a.name,e.duration, e.maxActivations, ele.name, ty.name\
+            FROM {}.assistskilleffects as e\
+            LEFT JOIN {}.element AS ele on ele.elementid = e.elementid\
+            INNER JOIN {}.modifier as m on m.modifierid = e.modifierid\
+            LEFT JOIN {}.type AS ty on ty.typeid = e.typeid\
+            INNER JOIN {}.target as t on t.targetid = e.Targetid\
+            INNER JOIN {}.attribute as a on a.attributeid = e.attributeid\
+            where assistskillid={}".format(*((self.database.lower(),)*6),skillid)
         self._mycursor.execute(skill_sql)
         # separate skill type from skill names :thinking: should be instant_effect and also regular
         for row in self._mycursor:
@@ -507,6 +514,8 @@ class DBcontroller:
             temp_attribute=row[2]
             temp_duration = row[3]
             temp_max_activations = row[4]
+            temp_element = row[5]
+            temp_type = row[6]
 
             if(temp_attribute.lower()=="all_damage_resist" or temp_attribute.lower()=="single_damage_resist"):
                 temp_modifier = int(temp_modifier)*-1
@@ -514,6 +523,15 @@ class DBcontroller:
                     temp_modifier = "+"+str(temp_modifier)
                 else:
                     temp_modifier =str(temp_modifier)
+            if(temp_type == None or temp_type.strip() == "None"):
+                temp_type = ""
+            if(temp_element == None or temp_element.strip() == "None"):
+                temp_element = ""
+            else:
+                temp_element = temp_element.capitalize()
+            
+            if(temp_attribute == None or temp_attribute.lower() == "none"):
+                temp_attribute = ""
 
             # [TARGET] Modifier Attribute /duration
             if(self.human_readable_dict.get(temp_target)!= None):
@@ -522,14 +540,20 @@ class DBcontroller:
                 temp_modifier=self.human_readable_dict.get(temp_modifier)
             if(self.human_readable_dict.get(temp_attribute)!= None):
                 temp_attribute=self.human_readable_dict.get(temp_attribute)
+            if(self.human_readable_dict.get(temp_type)!= None):
+                temp_type=self.human_readable_dict.get(temp_type)
+            if(self.human_readable_dict.get(temp_element)!= None):
+                temp_element=self.human_readable_dict.get(temp_element)
+            # element 
 
             if(temp_modifier[1:].isnumeric() and temp_modifier[0]!='x'):
                 temp_modifier= temp_modifier+"%"
 
+
             if(temp_duration != None and temp_duration.strip() != "None"):
-                ret=ret + "[{}] {} {} /{} turn(s) \n".format(temp_target,temp_modifier,temp_attribute,temp_duration)
+                ret=ret + "[{}] {} {} {} {} /{} turn(s) \n".format(temp_target,temp_modifier,temp_element,temp_type,temp_attribute,temp_duration)
             else:
-                ret=ret + "[{}] {} {} \n".format(temp_target,temp_modifier,temp_attribute)
+                ret=ret + "[{}] {} {} {} {} \n".format(temp_target,temp_modifier,temp_element,temp_type,temp_attribute)
             if(temp_max_activations !="None" and temp_max_activations!=None):
                 ret=ret + "**{} per turn**".format(temp_max_activations)    
         return (skillname, ret, skilltype)
@@ -1256,23 +1280,25 @@ class DBcontroller:
         return res
 
     def get_all_assists_skills_effects(self):
-        sql = "SELECT ase.assistskilleffectsid, ase.assistskillid, ase.duration, m.value as modifier, ta.name as target, a.name as attribute, assist.stars, assist.title, assist.alias, assist.limited, c.name, ase.maxActivations\
+        sql = "SELECT ase.assistskilleffectsid, ase.assistskillid, ase.duration, m.value as modifier, ta.name as target, a.name as attribute, assist.stars, assist.title, assist.alias, assist.limited, c.name, ase.maxActivations, e.name AS element, ty.name AS type\
         FROM {}.assistskilleffects as ase\
+        INNER JOIN {}.element AS e on e.elementid = ase.elementid\
         INNER JOIN {}.modifier as m on m.modifierid = ase.modifierid\
+        INNER JOIN {}.type AS ty on ty.typeid = ase.typeid\
         INNER JOIN {}.target as ta on ta.targetid = ase.Targetid\
         INNER JOIN {}.attribute as a on a.attributeid = ase.attributeid\
         INNER JOIN {}.assistskill as ass on ass.assistskillid = ase.assistskillid\
         INNER JOIN {}.assist as assist on assist.assistid = ass.assistid\
         INNER JOIN {}.character as c on c.characterid = assist.characterid"\
-        .format(*((self.database.lower(),)*7))
+        .format(*((self.database.lower(),)*9))
 
         self._mycursor.execute(sql)
 
         res = []
         unit_type = "assist"
         for row in self._mycursor:
-            assistskilleffectsid, assistskillid,duration, modifier, target, attribute, stars, title, alias, limited, character,maxActivcations = row
-            row_as_dict = format_row_as_sns(assistskilleffectsid=assistskilleffectsid, assistskillid=assistskillid,unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character,maxActivcations=maxActivcations)
+            assistskilleffectsid, assistskillid,duration, modifier, target, attribute, stars, title, alias, limited, character,maxActivcations, element,type = row
+            row_as_dict = format_row_as_sns(assistskilleffectsid=assistskilleffectsid, assistskillid=assistskillid,unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character,maxActivcations=maxActivcations,element=element,type=type)
             res.append(row_as_dict)
         return res
     # attribute4 id 374 = sa_gauge_charge
