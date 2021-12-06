@@ -322,21 +322,21 @@ async def run(dbConfig, client, ctx, *search):
         ic = InsertCharacter(db)
         # loop through all attachments and get their value
         for attach in ctx.message.attachments:
-            #try:
-            my_json = await attach.read()
-            my_json = my_json.decode('utf8')
-            as_dict = json.loads(my_json)
-            if(as_dict.get("limited")== None):
-                as_dict["limited"]=False
-            if("assist" in search[0].lower() or "as" in search[0].lower()):
-                temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
-                ic.insertAssist(temp_as)
-            elif("adventurer" in search[0].lower() or "ad" in search[0].lower()):
-                temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
-                ic.insertAdventurer(temp_ad)
-            await ctx.send("character(s) has been added")
-            #except:
-                #await ctx.send("Error in reading json")
+            try:
+                my_json = await attach.read()
+                my_json = my_json.decode('utf8')
+                as_dict = json.loads(my_json)
+                if(as_dict.get("limited")== None):
+                    as_dict["limited"]=False
+                if("assist" in search[0].lower() or "as" in search[0].lower()):
+                    temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
+                    ic.insertAssist(temp_as)
+                elif("adventurer" in search[0].lower() or "ad" in search[0].lower()):
+                    temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
+                    ic.insertAdventurer(temp_ad)
+                await ctx.send("character(s) has been added")
+            except:
+                await ctx.send("Error in reading json")
         
 
 """ async def testAd(dbConfig, client, ctx):
