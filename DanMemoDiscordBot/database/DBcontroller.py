@@ -1282,9 +1282,9 @@ class DBcontroller:
     def get_all_assists_skills_effects(self):
         sql = "SELECT ase.assistskilleffectsid, ase.assistskillid, ase.duration, m.value as modifier, ta.name as target, a.name as attribute, assist.stars, assist.title, assist.alias, assist.limited, c.name, ase.maxActivations, e.name AS element, ty.name AS type\
         FROM {}.assistskilleffects as ase\
-        INNER JOIN {}.element AS e on e.elementid = ase.elementid\
+        LEFT JOIN {}.element AS e on e.elementid = ase.elementid\
         INNER JOIN {}.modifier as m on m.modifierid = ase.modifierid\
-        INNER JOIN {}.type AS ty on ty.typeid = ase.typeid\
+        LEFT JOIN {}.type AS ty on ty.typeid = ase.typeid\
         INNER JOIN {}.target as ta on ta.targetid = ase.Targetid\
         INNER JOIN {}.attribute as a on a.attributeid = ase.attributeid\
         INNER JOIN {}.assistskill as ass on ass.assistskillid = ase.assistskillid\

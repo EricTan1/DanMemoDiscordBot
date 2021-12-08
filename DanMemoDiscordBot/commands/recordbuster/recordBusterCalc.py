@@ -305,7 +305,7 @@ async def run(client, ctx):
         turn_logs = {"sa":[], "combat_skills":[], "counters":[], "sacs":[]}
         logs.append(turn_logs)
 
-        if(turn+1 == 10):
+        if(turn+1 == 15):
              print("lol")
             
         # assist skills first turn!!

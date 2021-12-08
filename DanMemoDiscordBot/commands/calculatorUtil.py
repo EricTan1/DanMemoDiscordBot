@@ -6,7 +6,6 @@ from commands.entities.skills import AdventurerSkill,AdventurerCounter
 import numpy as np
 from commands.utils import getElements, getAilment
 
-
 async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict):
   ''' (AdventurerSkill, Adventurer, Enemy, dict) -> float
   memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
@@ -128,7 +127,7 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict):
                   -(1-skill.noType)*tempElementResistDownAst-tempTypeResistDownBase\
                   -tempTypeResistDownAdv-tempTypeResistDownAst)*\
                 (1+(1-skill.noType)*tempElementDamageBoostAdv+(1-skill.noType)*tempElementDamageBoostAst)*\
-                (1+adventurer.critPenBoost)*\
+                (1+adventurer.critPenBoost + 0.06)*\
                 (1-temptargetResistDownAdv-temptargetResistDownAst)*\
                 powerCoefficientTemp*1.5*(skill.extraBoost)
     #totalDamage = totalDamage + tempDamage 
@@ -211,7 +210,7 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
                 -(1-counter.noType)*tempElementResistDownAst-tempTypeResistDownBase\
                 -tempTypeResistDownAdv-tempTypeResistDownAst)*\
                (1+(1-counter.noType)*tempElementDamageBoostAdv+(1-counter.noType)*tempElementDamageBoostAst)*\
-               (1+adventurer.critPenBoost+adventurer.counterBoost)*\
+               (1+adventurer.critPenBoost+adventurer.counterBoost + 0.06)*\
                (1-temptargetResistDownAdv-temptargetResistDownAst)*\
                powerCoefficientTemp*1.5*(extra_boost)*counterRate
   #totalDamage = totalDamage + tempDamage 
@@ -336,7 +335,7 @@ async def SADamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict
                   -tempElementResistDownAst-tempTypeResistDownBase\
                   -tempTypeResistDownAdv-tempTypeResistDownAst)*\
                 (1+tempElementDamageBoostAdv+tempElementDamageBoostAst)*\
-                (1+adventurer.critPenBoost)*\
+                (1+adventurer.critPenBoost+ 0.06)*\
                 (1-temptargetResistDownAdv-temptargetResistDownAst)*\
                 powerCoefficientTemp*1.5*(skill.extraBoost)*(0.8+combo*0.2)*ultRatio
     #totalDamage = totalDamage + tempDamage 
@@ -489,9 +488,6 @@ async def interpretExtraBoost(skillEffect, adventurer, enemy):
     temp_list = temp_list[1:]
     attribute = "_".join(temp_list[:len(temp_list)-1])
     attribute_type = temp_list[-1]
-    print(target)
-    print(attribute)
-    print(attribute_type)
 
     if(target == "self"):
         #boostCheckAlliesAdv
@@ -699,7 +695,8 @@ async def interpretSkillAdventurerEffects(skillEffects, adventurer, enemy, adv_l
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
           await enemy.pop_boostCheckEnemyAdv(is_buff, temp_attribute)
       else:
-        if(isinstance(curr_modifier,int) and curr_attribute != None and curr_attribute != "none" and not curr_attribute in getAilment()):
+        NumberTypes = (int, float)
+        if(isinstance(curr_modifier,NumberTypes) and curr_attribute != None and curr_attribute != "none" and not curr_attribute in getAilment()):
           if(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
             #boostCheckEnemyAppend
             await enemy.set_boostCheckEnemyAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
@@ -817,7 +814,8 @@ async def interpretSkillAssistEffects(skillEffects, adventurer, enemy, adv_list:
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
           await enemy.ExtendReduceBuffs(temp_duration)
       else:
-        if(isinstance(curr_modifier,int) and curr_attribute != None and curr_attribute != "none" and not curr_attribute in getAilment()):
+        NumberTypes = (int, float)
+        if(isinstance(curr_modifier,NumberTypes) and curr_attribute != None and curr_attribute != "none" and not curr_attribute in getAilment()):
           if(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
             #boostCheckEnemyAppend
             await enemy.set_boostCheckEnemyAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
