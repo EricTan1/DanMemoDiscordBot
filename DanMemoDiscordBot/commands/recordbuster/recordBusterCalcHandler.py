@@ -122,14 +122,20 @@ async def pageRBHandler(client, ctx, logs, total_damage, total_score, unit_list,
 
             # boost check
             if(toggle_log_list.get("info")== True):
-                temp_value = ""
                 #temp_value+="Turn {}\n".format(turn_logs+1)
-                temp_value+="{}\n{}\n".format("**RB Boss**", logs[turn_logs].get("enemy"))
+                temp_value = ""
+                if(len(logs[turn_logs].get("enemy")) != 0):
+                    field_list_temp.append(("**RB Boss**",logs[turn_logs].get("enemy")))
+
+
+
                 # stats
                 for active_adv_count in range(0, 4):
-                    temp_value+="{}\n".format(logs[turn_logs].get("unit{}".format(active_adv_count)))
-                    if(temp_value != ""):
-                        field_list_temp.append(("**Info**",temp_value))
+                    #temp_value+="{}\n".format(logs[turn_logs].get("unit{}".format(active_adv_count)))
+                    if(len(logs[turn_logs].get("unit{}".format(active_adv_count))) != 0):
+                        field_list_temp.append(("\U0000200e", logs[turn_logs].get("unit{}".format(active_adv_count))))
+                    
+                    #field_list_temp.append(("**Info**",temp_value))
             # sacs
             temp_value = ""
             for sacs in logs[turn_logs].get("sacs"):
@@ -156,7 +162,8 @@ async def pageRBHandler(client, ctx, logs, total_damage, total_score, unit_list,
         return page_list
     page_list = await updateStats(page_list)
     # set footer for first page
-    page_list[current_page].description="react {} or {} to change pages\n"
+    page_list[current_page].description="react {} or {} to change pages\n{} to toggle sa/combat skills\n{} to toggle counters\n{}\
+         to toggle buffs/debuffs".format(emoji1,emoji2,attacks_toggle,counters_toggle,info_toggle)
     page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
 
     msg = await ctx.send(embed=page_list[current_page])
@@ -179,7 +186,6 @@ async def pageRBHandler(client, ctx, logs, total_damage, total_score, unit_list,
                 or str(payload.emoji) == info_toggle) and payload.user_id !=client.user.id and payload.message_id == msg.id
     
     def wait_for_reaction(event_name):
-        print(event_name)
         return client.wait_for(event_name,check=check)
 
     while True:
@@ -228,5 +234,7 @@ async def pageRBHandler(client, ctx, logs, total_damage, total_score, unit_list,
         if str(reaction.emoji) == info_toggle:
             toggle_log_list["info"] = not toggle_log_list.get("info")
             page_list = await updateStats(page_list)
-        page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))            
+        page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+        page_list[current_page].description="react {} or {} to change pages\n{} to toggle sa/combat skills\n{} to toggle counters\n{}\
+         to toggle buffs/debuffs".format(emoji1,emoji2,attacks_toggle,counters_toggle,info_toggle)
         await msg.edit(embed=page_list[current_page]) 

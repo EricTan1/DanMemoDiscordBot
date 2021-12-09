@@ -138,9 +138,10 @@ async def pageUnitsHandler(client, ctx, page_list,db,total_results,search):
             temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
             await msg.edit(embed=temp_embed)
         if((str(reaction.emoji) in emoji_react)):
-            if(len(page_list[current_page]) > emoji_react.index(reaction.emoji)):
+            print("test")
+            if(len(page_list[current_page]) > emoji_react.index(str(reaction.emoji))):
                 await msg.delete()
-                await singleAdventurer(client, ctx, db,page_list[current_page][emoji_react.index(reaction.emoji)])
+                await singleAdventurer(client, ctx, db,page_list[current_page][emoji_react.index(str(reaction.emoji))])
        
 
 async def singleAdventurer(client, ctx, db,assistadventurerid):
