@@ -208,11 +208,11 @@ async def skillSearchRotatingPage(client, ctx, search, page_list, total_results,
     await msg.add_reaction(as_filter)
 
     emojis = [emoji1, emoji2]
-    def check(reaction, user):
-                return (str(reaction.emoji) == emoji2 or 
-                str(reaction.emoji) == emoji1 or 
-                str(reaction.emoji)==ad_filter or 
-                str(reaction.emoji)==as_filter) and user !=client.user and reaction.message.id == msg.id
+    def check(payload):
+                return (str(payload.emoji) == emoji2 or 
+                str(payload.emoji) == emoji1 or 
+                str(payload.emoji)==ad_filter or 
+                str(payload.emoji)==as_filter) and payload.user_id !=client.user.id and payload.message_id == msg.id
 
     
     def wait_for_reaction(event_name):
@@ -220,7 +220,7 @@ async def skillSearchRotatingPage(client, ctx, search, page_list, total_results,
 
 
     while True:
-        pending_tasks = [wait_for_reaction("reaction_add"), wait_for_reaction("reaction_remove")]
+        pending_tasks = [wait_for_reaction("raw_reaction_add"), wait_for_reaction("raw_reaction_remove")]
         done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
 
         timeout = len(done_tasks) == 0
@@ -228,7 +228,7 @@ async def skillSearchRotatingPage(client, ctx, search, page_list, total_results,
         if not timeout:
             task = done_tasks.pop()
 
-            reaction, user = await task
+            reaction = await task
 
         for remaining in itertools.chain(done_tasks, pending_tasks):
             remaining.cancel()

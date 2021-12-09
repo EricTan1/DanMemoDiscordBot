@@ -6,8 +6,8 @@ from commands.entities.skills import AdventurerSkill,AdventurerCounter
 import numpy as np
 from commands.utils import getElements, getAilment
 
-async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict):
-  ''' (AdventurerSkill, Adventurer, Enemy, dict) -> float
+async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict,skillRatio):
+  ''' (AdventurerSkill, Adventurer, Enemy, dict, int) -> float
   memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
   '''
   if(skill != None):
@@ -122,14 +122,14 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict):
       temptargetResistDownAst = enemy.targetResistDownAst.get("aoe")
     temp_enemy_end = enemy.stats
 
-    tempDamage = (max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end.get("endurance"),0))*\
+    tempDamage = ((max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end.get("endurance"),0))*\
                 (1-(1-skill.noType)*tempElementResistDownBase-(1-skill.noType)*tempElementResistDownAdv\
                   -(1-skill.noType)*tempElementResistDownAst-tempTypeResistDownBase\
                   -tempTypeResistDownAdv-tempTypeResistDownAst)*\
                 (1+(1-skill.noType)*tempElementDamageBoostAdv+(1-skill.noType)*tempElementDamageBoostAst)*\
                 (1+adventurer.critPenBoost + 0.06)*\
                 (1-temptargetResistDownAdv-temptargetResistDownAst)*\
-                powerCoefficientTemp*1.5*(skill.extraBoost)
+                powerCoefficientTemp*1.5*(skill.extraBoost))*skillRatio
     #totalDamage = totalDamage + tempDamage 
     #accumulateDamage[location] = accumulateDamage[location] + tempDamage
     return np.floor(tempDamage).item()
@@ -139,6 +139,9 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
   ''' (AdventurerSkill, Adventurer, Enemy, dict) -> float
   memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
   '''
+  # disable counters for adventurer
+  if(adventurer.isCounter == False):
+    return 0
   # magic units have light element always if not specified
   if(counter.element.lower() == "none" and counter.noType == 1):
     if(counter.type == "magic"):
@@ -205,14 +208,14 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
     temptargetResistDownAst = enemy.targetResistDownAst.get("aoe")
   temp_enemy_end = enemy.stats
 
-  tempDamage = (max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end.get("endurance"),0))*\
+  tempDamage = ((max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end.get("endurance"),0))*\
                (1-(1-counter.noType)*tempElementResistDownBase-(1-counter.noType)*tempElementResistDownAdv\
                 -(1-counter.noType)*tempElementResistDownAst-tempTypeResistDownBase\
                 -tempTypeResistDownAdv-tempTypeResistDownAst)*\
                (1+(1-counter.noType)*tempElementDamageBoostAdv+(1-counter.noType)*tempElementDamageBoostAst)*\
                (1+adventurer.critPenBoost+adventurer.counterBoost + 0.06)*\
                (1-temptargetResistDownAdv-temptargetResistDownAst)*\
-               powerCoefficientTemp*1.5*(extra_boost)*counterRate
+               powerCoefficientTemp*1.5*(extra_boost))*counterRate
   #totalDamage = totalDamage + tempDamage 
   #accumulateDamage[location] = accumulateDamage[location] + tempDamage
   #if(tempDamage > 0):

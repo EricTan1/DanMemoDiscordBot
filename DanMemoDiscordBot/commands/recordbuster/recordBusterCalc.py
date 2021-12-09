@@ -30,12 +30,14 @@ async def run(client, ctx):
         config.read_string(contents_decode)
         #test2 =ast.literal_eval(test)
         #general settings
-        counterRate=config.getfloat("DEFAULT", "counterRate")
+        #counterRate=config.getfloat("DEFAULT", "counterRate")
         memboost=ast.literal_eval(config.get("DEFAULT", "memoria_boost"))
         ultRatio=config.getfloat("DEFAULT", "sa_rng")
         difficulty =config.getint("DEFAULT", "difficulty")
         # counter_RNG
+        counterRate = config.getfloat("DEFAULT", "counter_rng")
         # skill_RNG
+        skillRatio = config.getfloat("DEFAULT", "skill_rng")
         #units
         unit_titles=[]
         ast_titles=[]
@@ -291,7 +293,7 @@ async def run(client, ctx):
                                     turnOrder = skillflow[unitsCounter],
                                     adventurerCounter=tempCounter,
                                     adventurerAttack=tempAttack,
-                                    name="[{}] {}".format(unit_titles[unitsCounter],curr_unit.character_name, unit_enable_counter[unitsCounter])))
+                                    name="[{}] {}".format(unit_titles[unitsCounter],curr_unit.character_name, isCounter=unit_enable_counter[unitsCounter])))
     ########################
     # Main Loop
     ########################
@@ -418,7 +420,7 @@ async def run(client, ctx):
                 is_enemy_attacked = True
             
             if(isinstance(removed_sorted_skill[2],AdventurerSkill) or removed_sorted_skill[2] == None):
-                temp_damage = await DamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost)
+                temp_damage = await DamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost,skillRatio)
             elif(isinstance(removed_sorted_skill[2],AdventurerCounter)):
                 # no extra boosts for auto attacks
                 temp_damage = await CounterDamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost,counterRate,1)
@@ -440,7 +442,7 @@ async def run(client, ctx):
                 temp_adv_effects_list = await removed_sorted_skill[3].get_additionals()
                 temp_adv_skill = await interpretSkillAdventurerAttack(temp_adv_effects_list,removed_sorted_skill[3],enemy)
                 # damage
-                temp_damage = await DamageFunction(temp_adv_skill,removed_sorted_skill[3],enemy,memboost)
+                temp_damage = await DamageFunction(temp_adv_skill,removed_sorted_skill[3],enemy,memboost,skillRatio)
                 # effects
                 await interpretSkillAdventurerEffects(temp_adv_effects_list,removed_sorted_skill[3],enemy,active_advs)
                 # logging and adding damage

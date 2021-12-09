@@ -96,12 +96,12 @@ async def pageUnitsHandler(client, ctx, page_list,db,total_results,search):
     await msg.add_reaction(emoji2)
     for emoji in emoji_react:
         await msg.add_reaction(emoji)
-    def check(reaction, user):
-        return ((str(reaction.emoji) in emoji_react) or (str(reaction.emoji) == emoji1) or (str(reaction.emoji) == emoji2)) and user !=client.user and reaction.message.id == msg.id
+    def check(payload):
+        return ((str(payload.emoji) in emoji_react) or (str(payload.emoji) == emoji1) or (str(payload.emoji) == emoji2)) and payload.user_id !=client.user.id and payload.message_id == msg.id
     def wait_for_reaction(event_name):
         return client.wait_for(event_name,check=check)
     while True:
-        pending_tasks = [wait_for_reaction("reaction_add"), wait_for_reaction("reaction_remove")]
+        pending_tasks = [wait_for_reaction("raw_reaction_add"), wait_for_reaction("raw_reaction_remove")]
         done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
 
         timeout = len(done_tasks) == 0
@@ -109,7 +109,7 @@ async def pageUnitsHandler(client, ctx, page_list,db,total_results,search):
         if not timeout:
             task = done_tasks.pop()
 
-            reaction, user = await task
+            reaction = await task
 
         for remaining in itertools.chain(done_tasks, pending_tasks):
             remaining.cancel()
@@ -262,20 +262,21 @@ async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_em
         await msg.add_reaction(hero_ascend_add)
 
     # set_field_at(index, *, name, value, inline=True)
-    def check(reaction, user):
-        return (str(reaction.emoji) == emoji2 
-                or str(reaction.emoji) == emoji1 
-                or str(reaction.emoji) == hero_ascend_add
-                or str(reaction.emoji) == hero_ascend_sub
-                or str(reaction.emoji) == limit_break_add
-                or str(reaction.emoji) == limit_break_sub) and user !=client.user and reaction.message.id == msg.id
+    def check(payload):
+        
+        return (str(payload.emoji) == emoji2 
+                or str(payload.emoji) == emoji1 
+                or str(payload.emoji) == hero_ascend_add
+                or str(payload.emoji) == hero_ascend_sub
+                or str(payload.emoji) == limit_break_add
+                or str(payload.emoji) == limit_break_sub) and payload.user_id !=client.user.id and payload.message_id == msg.id
     
     def wait_for_reaction(event_name):
         return client.wait_for(event_name,check=check)
 
 
     while True:
-        pending_tasks = [wait_for_reaction("reaction_add"), wait_for_reaction("reaction_remove")]
+        pending_tasks = [wait_for_reaction("raw_reaction_add"), wait_for_reaction("raw_reaction_remove")]
         done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
 
         timeout = len(done_tasks) == 0
@@ -283,7 +284,7 @@ async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_em
         if not timeout:
             task = done_tasks.pop()
 
-            reaction, user = await task
+            reaction = await task
 
         for remaining in itertools.chain(done_tasks, pending_tasks):
             remaining.cancel()
@@ -363,13 +364,13 @@ async def pageASHandler(client, ctx, temp_embed:discord.Embed, file_list, stats_
     await msg.add_reaction(limit_break_sub)
     await msg.add_reaction(limit_break_add)
     # set_field_at(index, *, name, value, inline=True)
-    def check(reaction, user):
-        return (str(reaction.emoji) == limit_break_add
-                or str(reaction.emoji) == limit_break_sub) and user !=client.user and reaction.message.id == msg.id
+    def check(payload):
+        return (str(payload.emoji) == limit_break_add
+                or str(payload.emoji) == limit_break_sub) and payload.user_id !=client.user.id and payload.message_id == msg.id
     def wait_for_reaction(event_name):
         return client.wait_for(event_name,check=check)
     while True:
-        pending_tasks = [wait_for_reaction("reaction_add"), wait_for_reaction("reaction_remove")]
+        pending_tasks = [wait_for_reaction("raw_reaction_add"), wait_for_reaction("raw_reaction_remove")]
         done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
 
         timeout = len(done_tasks) == 0
@@ -377,7 +378,7 @@ async def pageASHandler(client, ctx, temp_embed:discord.Embed, file_list, stats_
         if not timeout:
             task = done_tasks.pop()
 
-            reaction, user = await task
+            reaction = await task
 
         for remaining in itertools.chain(done_tasks, pending_tasks):
             remaining.cancel()
