@@ -24,8 +24,11 @@ import commands.saCalculator as command_saCalculator
 import commands.killer as command_killer
 import commands.getJson as command_getJson
 import commands.init as command_init
+import commands.recordbuster.recordBusterCalc as command_rbCalc
+import traceback
 
-from commands.utils import createGSpreadJSON, checkperms
+
+from commands.utils import createGSpreadJSON, checkperms,hasAccess
 
 
 _command_prefix = os.environ.get("COMMAND_PREFIX")
@@ -67,6 +70,16 @@ async def close(ctx):
 async def sacalc(ctx):
     await command_saCalculator.run(ctx)
     #await command_saCalculator.calculate()
+
+@client.command(aliases=["rbc"])
+async def rbcalc(ctx):
+    # imanity server only and ex-imanity role
+    if(await hasAccess(ctx.message.author,[708002106245775410,698143969166622720],[708008774140690473,825721805489700876,699277609816555580,708302206780309544])):
+        try:
+            await command_rbCalc.run(client,ctx)
+        except:
+            tb = traceback.format_exc()
+            await ctx.send("ERROR:\n```{}```".format(tb))
 
 @client.command(aliases=["cs"])
 async def characterSearch(ctx, *search):

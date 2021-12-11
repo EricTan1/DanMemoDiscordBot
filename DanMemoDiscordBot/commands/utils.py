@@ -339,6 +339,15 @@ def checkperms(ctx,guild_id,perm_list):
                 has_access = True
     return has_access
 
+
+async def hasAccess(currentuser,guildid:list, roleid:list):
+    ret = False   
+    if(currentuser.guild.id in guildid):
+        for roles in currentuser.roles:
+            if roles.id in roleid:
+                ret=True
+    return ret
+
 async def checkBuffExistsReplace(buffDebuffList:list, buffDebuff:dict):
   ''' (list, dict) -> None
     Check the buffs/debuffs in the list and replace if attribute and target is the same and 
