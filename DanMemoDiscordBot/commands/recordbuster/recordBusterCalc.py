@@ -21,7 +21,7 @@ async def run(client, ctx):
     # read file
     message = ctx.message
     if(len(message.attachments) == 0):
-        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the description !$testrb", file=discord.File("RBConfig.txt"))
+        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the description !$rbc", file=discord.File("RBConfig.txt"))
     else:
         # if template attached start to verify it
         contents = await message.attachments[0].read()
