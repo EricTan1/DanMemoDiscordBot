@@ -11,7 +11,7 @@ class Enemy():
         return "{}".format(self.boostCheckEnemyAdv)
     def __init__(self, elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
     typeResistDownBase={"physical":0, "magic":0}, 
-    stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}):
+    stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}):
 
         self.elementResistDownBase = elementResistDownBase
         self.typeResistDownBase = typeResistDownBase
@@ -157,7 +157,7 @@ class Finn(Enemy):
         for adv in adv_list:
             # adv
             adv.elementDamageBoostAdv = {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
-            adv.statsBoostAdv = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+            adv.statsBoostAdv = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}
             await adv.clearBuffs()
             await adv.clearDebuffs()
 
@@ -218,7 +218,7 @@ class Riveria(Enemy):
         # remove all buffs!
         for adv in adv_list:
             adv.elementDamageBoostAdv = {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
-            adv.statsBoostAdv = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+            adv.statsBoostAdv = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}
             await adv.clearBuffs()
 
     async def RiveriaDebuff(self, adv_list, element):
@@ -263,7 +263,7 @@ class Ottarl(Enemy):
         # remove all buffs!
         for adv in adv_list:
             adv.elementDamageBoostAdv = {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
-            adv.statsBoostAdv = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+            adv.statsBoostAdv = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}
             await adv.clearBuffs()
     
     async def OttarlEndDebuff(self, adv_list):
@@ -367,7 +367,7 @@ class Revis(Enemy):
 
     def __init__(self, elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
     typeResistDownBase={"physical":0, "magic":0}, 
-    stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0},
+    stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0},
     debuff_type="physical",
     debuff_mod=-0.5):
         Enemy.__init__(self,elementResistDownBase,typeResistDownBase,stats)

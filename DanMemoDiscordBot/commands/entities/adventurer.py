@@ -6,7 +6,7 @@ class Adventurer():
        # return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
         return "**{}**\n{}".format(self.name,self.boostCheckAlliesAdv)
     def __init__(self, 
-    stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}, 
+    stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}, 
     counterBoost=0, 
     critPenBoost=0, 
     current_skills={"combat": [], "special":[], "additionals": []},
@@ -38,8 +38,8 @@ class Adventurer():
         self.elementDamageBoostAdv = {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
         self.elementDamageBoostAst = {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
         # str/mag boosts
-        self.statsBoostAdv={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
-        self.statsBoostAst={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexerity":0}
+        self.statsBoostAdv={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}
+        self.statsBoostAst={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}
         # additionals count
         self.additionalCount=0
         # adv damage
