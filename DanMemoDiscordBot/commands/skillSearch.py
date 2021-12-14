@@ -63,14 +63,20 @@ async def run(dbConfig, client, ctx, *search):
                     skillinfo = db.assembleAdventurerSkill(skillid[2:])
                     (pos1,pos2) = dup_dict_ad.get(adventurerid)
                     # skill is on [1]
-                    rotating_list[pos1][pos2][1] = rotating_list[pos1][pos2][1] +"***{}***\n".format(skillinfo[0].strip()) + "\n"+skillinfo[1]+"\n"
+                    skill = ("*{}*".format(skillinfo[0].strip()), skillinfo[1])
+                    rotating_list[pos1][pos2][1].append(skill)
                 else:
                     #db.assembleAdventurerCharacterData(adventurerid)
                     skillinfo = db.assembleAdventurerSkill(skillid[2:])
                     #skillinfo[0]+skillinfo[1]+"\n"
                     names = db.assembleAdventurerCharacterName(adventurerid)
                     # [TITLE + NAME, SKILL INFO, FILTERS]
-                    temp_list.append(["__**[{}] {}**__".format(names[0],names[1]),"***{}***\n".format(skillinfo[0].strip()) + "\n"+skillinfo[1]+"\n",["adventurer"]])
+                    temp_list.append(
+                        (
+                            ("\n__**[{}] {}**__".format(names[0],names[1]), ["adventurer"]),
+                            [ ("*{}*".format(skillinfo[0].strip()), skillinfo[1]) ]
+                        )
+                    )
                     try:
                         file_name = "./images/units/"+"{} [{}]".format(names[1],names[0]).strip()+"/hex.png"
                         f = open(file_name,"r")
@@ -87,13 +93,19 @@ async def run(dbConfig, client, ctx, *search):
                     skillinfo = db.assembleAssistSkill(skillid[2:])
                     (pos1,pos2) = dup_dict_as.get(assistid)
                     # skill is on [1]
-                    rotating_list[pos1][pos2][1] = rotating_list[pos1][pos2][1] + "***{}***\n".format(skillinfo[0].strip())+skillinfo[1]+"\n"
+                    skill = ("*{}*".format(skillinfo[0].strip()), skillinfo[1])
+                    rotating_list[pos1][pos2][1].append(skill)
                 else:
                     #db.assembleAssistCharacterData(assistid)
                     skillinfo=db.assembleAssistSkill(skillid[2:])
                     #skillinfo[0] + skillinfo[1]+"\n"
                     names = db.assembleAssistCharacterName(assistid)
-                    temp_list.append(["__**[{}] {}**__".format(names[0],names[1]),"***{}***\n".format(skillinfo[0].strip()) + skillinfo[1]+"\n",["assist"]])
+                    temp_list.append(
+                        (
+                            ("\n__**[{}] {}**__".format(names[0],names[1]), ["assist"]),
+                            [ ("*{}*".format(skillinfo[0].strip()), skillinfo[1]) ]
+                        )
+                    )
                     try:
                         file_name = "./images/units/"+"{} [{}]".format(names[1],names[0]).strip()+"/hex.png"
                         f = open(file_name,"r")
@@ -110,9 +122,15 @@ async def run(dbConfig, client, ctx, *search):
                     total_results = total_results -1
                     (pos1,pos2) = dup_dict_ad.get(adventurerid)
                     # skill is on [1]
-                    rotating_list[pos1][pos2][1] = rotating_list[pos1][pos2][1] + skillinfo[0].strip() + "\n"+skillinfo[1]+"\n"
+                    skill = (skillinfo[0].strip(), skillinfo[1])
+                    rotating_list[pos1][pos2][1].append(skill)
                 else:
-                    temp_list.append(["[{}] {}".format(skillinfo[2],skillinfo[3]),skillinfo[0] + "\n"+ skillinfo[1]+"\n",["adventurer"],"{} {}".format(skillinfo[2],skillinfo[3]).strip()])
+                    temp_list.append(
+                        (
+                            ("\n[{}] {}".format(skillinfo[2],skillinfo[3]), ["adventurer"]),
+                            [ (skillinfo[0], skillinfo[1]) ]
+                        )
+                    )
                     try:
                         file_name = "./images/units/{} [{}]".format(skillinfo[3],skillinfo[2]).strip()+"/hex.png"
                         f = open(file_name,"r")
@@ -166,7 +184,7 @@ async def skillSearchRotatingPage(client, ctx, search, page_list, total_results,
             for skills in pages:
                 is_filtered = True
                 for items in filters:
-                    if(not(items in skills[2])):
+                    if(not(items in skills[0][1])):
                         is_filtered = False
                 if is_filtered:
                     temp_page.append(skills)
@@ -193,7 +211,11 @@ async def skillSearchRotatingPage(client, ctx, search, page_list, total_results,
         temp_embed.description = "**Current Filters:** {}".format(str(filters))
         temp_embed.clear_fields()
         for skills in field_list:
-            temp_embed.add_field(value=skills[1], name=skills[0],inline=False)
+            title = skills[0][0] + "\n"
+            for skill in skills[1]:
+                title = title + skill[0]
+                temp_embed.add_field(value=skill[1], name=title,inline=False)
+                title = ""
         return temp_embed
     
     temp_embed = clearSetField(temp_embed, field_list=current_page_list[current_page])
