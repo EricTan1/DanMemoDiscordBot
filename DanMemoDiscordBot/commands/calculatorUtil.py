@@ -845,11 +845,14 @@ async def counter(adv_list, enemy, memboost:dict, counterRate:float,logs:dict):
     temp_counter_damage = await CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate,extra_boost=temp_extra_boost)*0.25
     await adv.add_damage(temp_counter_damage)
     ret += temp_counter_damage
+    # interpret the effects of counters
+    await interpretSkillAdventurerEffects(adv.counterEffects,adv,enemy,adv_list)
 
   temp_list_logs = logs.get("counters")
   temp_list_logs.append("average single counter damage for {:,}".format(int(ret)))
   logs["counters"] = temp_list_logs
 
+  
   return ret
     
 async def counters(adv_list, enemy, memboost:dict, counterRate:float, logs:dict):
@@ -870,4 +873,6 @@ async def counters(adv_list, enemy, memboost:dict, counterRate:float, logs:dict)
     temp_list_logs.append("{} counter damage for {:,}".format(adv.name,int(temp_counter_damage)))
     logs["counters"] = temp_list_logs
     ret += temp_counter_damage
+    # interpret the effects of counters
+    await interpretSkillAdventurerEffects(adv.counterEffects,adv,enemy,adv_list)
   return ret

@@ -208,6 +208,7 @@ async def run(client, ctx):
 
                     # tempCounter
                     tempCounter_extraBoost=None
+                    tempCounter_skillEffects = []
                     tempCounter_element = ""
                     #tempAttack
                     tempAttack_element = ""
@@ -236,6 +237,8 @@ async def run(client, ctx):
                                 for element in getElements():
                                     if(element in curr_adv_dev_skill.development.lower()):
                                         tempCounter_element = element
+                                # check if it has other effects and record it yukina etc
+                                tempCounter_skillEffects = adv_dev_effects_matches
                             if("attacking" in dev_attribute_name.lower()):
                                 for element in getElements():
                                     if(element in curr_adv_dev_skill.development.lower()):
@@ -293,7 +296,9 @@ async def run(client, ctx):
                                         turnOrder = skillflow[unitsCounter],
                                         adventurerCounter=tempCounter,
                                         adventurerAttack=tempAttack,
-                                        name="[{}] {}".format(unit_titles[unitsCounter],curr_unit.character_name, isCounter=unit_enable_counter[unitsCounter])))
+                                        name="[{}] {}".format(unit_titles[unitsCounter],curr_unit.character_name),
+                                        isCounter=unit_enable_counter[unitsCounter],
+                                        counterEffects=tempCounter_skillEffects))
         ########################
         # Main Loop
         ########################

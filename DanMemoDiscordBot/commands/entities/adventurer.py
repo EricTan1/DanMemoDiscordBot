@@ -15,7 +15,8 @@ class Adventurer():
     adventurerCounter = AdventurerCounter(target="foe",extraBoost="",noType=0,type="physical",element = ""),
     adventurerAttack = AdventurerCounter(target="foe",extraBoost="",noType=0,type="physical",element = ""),
     name ="",
-    isCounter=True):
+    isCounter=True,
+    counterEffects=[]):
         ''' (self, dict, float, float) -> Adventurer
         is_physical = adv.stats.get("strength")>=adv.stats.get("magic")
     if(is_physical):
@@ -45,6 +46,7 @@ class Adventurer():
         # adv damage
         self.current_damage = 0
         self.isCounter=isCounter
+        self.counterEffects = counterEffects
         # buffs and debuffs
         # append buffs to dict and remove once wiped
         # list of dict

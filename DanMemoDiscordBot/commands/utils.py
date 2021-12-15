@@ -137,7 +137,7 @@ def getElements():
     return ['light', 'wind', 'fire', 'dark', 'ice', 'water', 'earth', 'thunder']
 
 def getStats():
-    return ["hp","mp","strength", "magic","agility","endurance","dexerity"]
+    return ["hp","mp","strength", "magic","agility","endurance","dexterity"]
 
 def getAilment():
     return ["seal","charm","sleep", "taunt","stun","slow","poison"]

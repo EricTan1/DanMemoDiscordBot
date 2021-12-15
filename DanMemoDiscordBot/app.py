@@ -74,7 +74,7 @@ async def sacalc(ctx):
 @client.command(aliases=["rbc"])
 async def rbcalc(ctx):
     # imanity server only and ex-imanity role
-    if(await hasAccess(ctx.message.author,[708002106245775410,698143969166622720],[708008774140690473,825721805489700876,699277609816555580,708302206780309544])):
+    if(await hasAccess(ctx.message.author,[708002106245775410,698143969166622720],[708008774140690473,825721805489700876,699277609816555580,708302206780309544,913489903671738440])):
         try:
             await command_rbCalc.run(client,ctx)
         except:
