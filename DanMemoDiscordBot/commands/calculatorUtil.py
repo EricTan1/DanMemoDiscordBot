@@ -617,8 +617,8 @@ async def interpretSkillAdventurerEffects(skillEffects, adventurer, enemy, adv_l
           temp_min = min(enemy.typeResistDownAdv.get("magic"), curr_modifier)
           enemy.typeResistDownAdv["magic"] = temp_min
           await enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
-      # str/mag buffs
-      elif(curr_attribute=="strength" or curr_attribute=="magic"):
+      # STAT buffs including str/mag buffs
+      elif(curr_attribute in ["strength","magic","endurance","dexterity","agility"]):
         if(skillEffect.target.strip() == "self"):
           temp_max = max(adventurer.statsBoostAdv.get(curr_attribute.strip()), curr_modifier)
           adventurer.statsBoostAdv[curr_attribute.strip()] = temp_max
@@ -766,8 +766,8 @@ async def interpretSkillAssistEffects(skillEffects, adventurer, enemy, adv_list:
           temp_min = min(enemy.typeResistDownAst.get("magic"), curr_modifier)
           enemy.typeResistDownAst["magic"] = temp_min
           await enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
-      # str/mag buffs
-      elif(curr_attribute=="strength" or curr_attribute=="magic"):
+      # STATS || str/mag buffs
+      elif(curr_attribute in ["strength","magic","endurance","dexterity","agility"]):
         if(skillEffect.target.strip() == "self"):
           temp_max = max(adventurer.statsBoostAst.get(curr_attribute.strip()), curr_modifier)
           adventurer.statsBoostAst[curr_attribute.strip()] = temp_max
