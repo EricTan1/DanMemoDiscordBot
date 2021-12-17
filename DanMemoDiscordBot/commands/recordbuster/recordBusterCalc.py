@@ -133,10 +133,12 @@ async def run(client, ctx):
                             assist_list.append(Assist(ast_skill_effects_matches,"[{}] {}".format(current_assist.unit_label,current_assist.character_name)))
                 # no assist
                 else:
-                    assist_list.append(Assist([],""))
+                    raise ValueError('Can not find assist {}'.format(temp_ast_title))
+                    #assist_list.append(Assist([],""))
             # no assist
             else:
-                assist_list.append(Assist([],""))
+                raise ValueError('no assist found at all'.format(temp_ast_title))
+                #assist_list.append(Assist([],""))
 
 
 
@@ -299,6 +301,8 @@ async def run(client, ctx):
                                         name="[{}] {}".format(unit_titles[unitsCounter],curr_unit.character_name),
                                         isCounter=unit_enable_counter[unitsCounter],
                                         counterEffects=tempCounter_skillEffects))
+                else:
+                    raise ValueError('Can not find adventurer {}'.format(unit_titles[unitsCounter].lower()))
         ########################
         # Main Loop
         ########################
@@ -312,7 +316,7 @@ async def run(client, ctx):
             turn_logs = {"sa":[], "combat_skills":[], "counters":[], "sacs":[]}
             logs.append(turn_logs)
 
-            if(turn+1 == 15):
+            if(turn+1 == 14):
                 print("lol")
                 
             # assist skills first turn!!
