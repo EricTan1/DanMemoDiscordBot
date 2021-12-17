@@ -85,6 +85,7 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict,s
       tempPowerBoostAdv = 0
       tempPowerBoostAst = 0
       tempMemBoost = 0
+      powerCoefficientTemp = powerCoefficientTemp *1.96
       for index_to_attributes in skill.index_to:
         tempPower += adventurer.stats.get(index_to_attributes)
         tempPowerBoostAdv += adventurer.statsBoostAdv.get(index_to_attributes)
@@ -293,6 +294,7 @@ async def SADamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict
       tempPowerBoostAdv = 0
       tempPowerBoostAst = 0
       tempMemBoost = 0
+      powerCoefficientTemp = powerCoefficientTemp *1.96
       for index_to_attributes in skill.index_to:
         tempPower += adventurer.stats.get(index_to_attributes)
         tempPowerBoostAdv += adventurer.statsBoostAdv.get(index_to_attributes)
