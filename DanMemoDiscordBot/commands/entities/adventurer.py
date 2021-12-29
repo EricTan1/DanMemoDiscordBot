@@ -1,10 +1,27 @@
 from commands.utils import getElements, getDamageBuffs, getStats,checkBuffExistsReplace
 from commands.entities.skills import AdventurerCounter
+import json
 
 class Adventurer():
     def __str__(self) -> str:
-       # return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
-        return "**{}**\n{}".format(self.name,self.boostCheckAlliesAdv)
+        ret = "**{}**:\n".format(self.name)
+        with open('database/terms/human_readable.json', 'r') as f:
+            human_readable_dict = json.load(f)
+        # return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
+        # loop through all buffs/debuffs
+        for buffsdebuffs in self.boostCheckAlliesAdv:
+            if(human_readable_dict.get(buffsdebuffs.get("attribute"))!= None):
+                #duration
+                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs.get("modifier"))*100,human_readable_dict.get(buffsdebuffs.get("attribute")), buffsdebuffs.get("duration"))
+            else:
+                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs.get("modifier"))*100,buffsdebuffs.get("attribute"), buffsdebuffs.get("duration"))
+        return ret
+    
+    # 
+    #if(self.human_readable_dict.get(temp_target)!= None):
+    #            temp_target=self.human_readable_dict.get(temp_target)
+
+
     def __init__(self, 
     stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}, 
     counterBoost=0, 

@@ -360,7 +360,11 @@ async def run(client, ctx):
                     await active_advs[active_adv].add_damage(temp_damage)
             
             if sa_counter > 1:
-                total_damage += await CombineSA(active_advs,enemy,character_sa_list)
+                temp_damage = await CombineSA(active_advs,enemy,character_sa_list)
+                total_damage += temp_damage
+                temp_list_logs = turn_logs.get("sa")
+                temp_list_logs.append("Combined SA damage for {:,}".format(int(temp_damage)))
+                turn_logs["sa"] = temp_list_logs
             # RB boss turn
             await enemy.turnOrder(turn,active_advs, 0)
             

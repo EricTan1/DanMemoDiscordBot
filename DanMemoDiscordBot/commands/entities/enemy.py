@@ -1,14 +1,27 @@
 from commands.utils import getElements, getDamageDebuffs,checkBuffExistsReplace
 from commands.entities.skills import AdventurerCounter
 from commands.calculatorUtil import counters,counter
+import json
 
 import asyncio
 
 class Enemy():
     
     def __str__(self) -> str:
+        ret = ""
+        with open('database/terms/human_readable.json', 'r') as f:
+            human_readable_dict = json.load(f)
+        # return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
+        # loop through all buffs/debuffs
+        for buffsdebuffs in self.boostCheckEnemyAdv:
+            if(human_readable_dict.get(buffsdebuffs.get("attribute"))!= None):
+                #duration
+                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs.get("modifier"))*100,human_readable_dict.get(buffsdebuffs.get("attribute")), buffsdebuffs.get("duration"))
+            else:
+                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs.get("modifier"))*100,buffsdebuffs.get("attribute"), buffsdebuffs.get("duration"))
+        return ret
+
         #return "elemental resist\nbase: {} adv: {} ast: {}\ntype resist\nbase: {} adv: {} ast: {}\ntarget resist\nadv: {} ast: {}".format(self.elementResistDownBase,self.elementResistDownAdv,self.elementResistDownAst,self.typeResistDownBase,self.typeResistDownAdv,self.typeResistDownAst, self.targetResistDownAdv,self.targetResistDownAst )
-        return "{}".format(self.boostCheckEnemyAdv)
     def __init__(self, elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
     typeResistDownBase={"physical":0, "magic":0}, 
     stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}):
@@ -268,7 +281,7 @@ class Ottarl(Enemy):
     
     async def OttarlEndDebuff(self, adv_list):
         for adv in adv_list:
-            await adv.set_boostCheckAlliesAdv(False,"endurance",-30,4)
+            await adv.set_boostCheckAlliesAdv(False,"endurance",-0.3,4)
 
     async def turnOrder(self, turnOrder:int, adv_list:list, speed:int):
         ''' turnorder: 0-14
