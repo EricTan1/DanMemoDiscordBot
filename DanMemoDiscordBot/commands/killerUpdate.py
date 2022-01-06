@@ -35,18 +35,16 @@ async def run(dbConfig, ctx):
                 file_list.append(file_name)
             except:
                 # Do something smarter for missing images?
-                file_list.append("./images/units/gac_dummy/hex.png")
+                print("Image for '{} [{}]' missing".format(names[1],names[0]) )
+                #file_list.append("./images/units/gac_dummy/hex.png")
         killer_images.append(file_list)
-    #for killer_type in killer_images:
-    #    for unit in killer_type:
-    #        print("Path1: " + str(unit))
     
     mostKillers = get_most_killers(killer_images)
 
     base_im = Image.open("./infographic/killer_base.png", "r")
     width, height = base_im.size
 
-    one_side_padding = ceil(mostKillers/2) * (hexScaledLength + betweenPaddingX) + 2* framePaddingX
+    one_side_padding = (mostKillers+1) * (hexScaledLength + betweenPaddingX)//2 + 2* framePaddingX
     new_width = width + 2 * one_side_padding
 
     edited_im = Image.new(base_im.mode, (new_width, height), (35, 35, 35))
@@ -61,11 +59,11 @@ async def run(dbConfig, ctx):
     for row in killer_images:
         unitNum = 0
         for unit in row:
-            #print("Path2: " + str(unit))
-            unit_im = Image.open(unit, "r").convert("RGBA")
-            unit_im = unit_im.resize((hexScaledLength, hexScaledLength))
-            pos = get_hex_pos(rowNum, unitNum, new_width)
-            edited_im.paste(unit_im, pos, unit_im)
+            with Image.open(unit, "r") as unit_im:
+                unit_im = unit_im.convert("RGBA")
+                unit_im = unit_im.resize((hexScaledLength, hexScaledLength))
+                pos = get_hex_pos(rowNum, unitNum, new_width)
+                edited_im.paste(unit_im, pos, unit_im)
             unitNum += 1
         rowNum += 1
 
