@@ -1,9 +1,5 @@
-import discord
-import asyncio
-import aiohttp
 from PIL import Image, ImageDraw
 from database.DBcontroller import DBcontroller
-from math import ceil
 
 # sizes in pixels
 rowHeight = 141
@@ -16,81 +12,89 @@ betweenPaddingY = -20
 numRows = 12
 lineWidth = 5
 
+killers = [ "aqua killer", "dragon killer", "giant killer", "material killer",
+            "ox slayer", "spirit killer", "beast killer", "fantasma killer",
+            "insect killer", "ogre killer", "plant killer", "worm killer"]
 
-async def run(dbConfig, ctx):
+
+async def run(dbConfig):
     db = DBcontroller(dbConfig)
-    killers = ["aqua killer", "dragon killer", "giant killer", "material killer", "ox slayer", "spirit killer", "beast killer", "fantasma killer", "insect killer", "ogre killer", "plant killer", "worm killer"]
-    killer_images = []
-    for enemy_type in killers:
-        skills = db.skillSearch(enemy_type,{})
-        file_list = []
+    killerDict = getKillerDict(db)
+
+    mostKillers = getMostKillers(killerDict)
+
+    baseIm = Image.open("./infographic/killer_base.png", "r")
+    width, height = baseIm.size
+
+    oneSidePadding = (mostKillers+1) * (hexScaledLength + betweenPaddingX)//2 + 2* framePaddingX
+    newWidth = width + 2 * oneSidePadding
+
+    editedIm = Image.new(baseIm.mode, (newWidth, height), (35, 35, 35))
+    editedIm.paste(baseIm, ((newWidth - width) // 2, 0))
+
+    drawer = ImageDraw.Draw(editedIm)
+    for i in range(1, numRows // 2):
+        yPos = i*rowHeight - lineWidth//2
+        drawer.line((0, yPos, newWidth, yPos), fill = (10, 10, 10), width = lineWidth)
+
+    rowNum = 0
+    for key in killerDict:
+        unitNum = 0
+        for unit in killerDict[key]:
+            with Image.open(unit, "r") as unitIm:
+                unitIm = unitIm.convert("RGBA")
+                unitIm = unitIm.resize((hexScaledLength, hexScaledLength))
+                pos = getHexPos(rowNum, unitNum, newWidth)
+                editedIm.paste(unitIm, pos, unitIm)
+            unitNum += 1
+        rowNum += 1
+
+    editedIm.save("./infographic/killer.png", quality = 95)
+
+def getKillerDict(db):
+    killerImages = dict()
+    for enemyType in killers:
+        skills = db.skillSearch(enemyType,{})
+        fileList = []
         for skill in skills:
             skillinfo=db.assembleAdventurerDevelopment(skill[2:])
             adventurerid = skillinfo[4]
             names = db.assembleAdventurerCharacterName(adventurerid)
             try:
-                file_name = "./images/units/"+"{} [{}]".format(names[1],names[0]).strip()+"/hex.png"
-                f = open(file_name,"r")
-                f.close()
-                file_list.append(file_name)
+                fileName = "./images/units/"+"{} [{}]".format(names[1],names[0]).strip()+"/hex.png"
+                file = open(fileName,"r")
+                file.close()
+                fileList.append(fileName)
             except:
                 # Do something smarter for missing images?
                 print("Image for '{} [{}]' missing".format(names[1],names[0]) )
                 #file_list.append("./images/units/gac_dummy/hex.png")
-        killer_images.append(file_list)
-    
-    mostKillers = get_most_killers(killer_images)
 
-    base_im = Image.open("./infographic/killer_base.png", "r")
-    width, height = base_im.size
+        killerImages[enemyType] = fileList
 
-    one_side_padding = (mostKillers+1) * (hexScaledLength + betweenPaddingX)//2 + 2* framePaddingX
-    new_width = width + 2 * one_side_padding
+    return killerImages
 
-    edited_im = Image.new(base_im.mode, (new_width, height), (35, 35, 35))
-    edited_im.paste(base_im, ((new_width - width) // 2, 0))
-
-    drawer = ImageDraw.Draw(edited_im)
-    for i in range(1, numRows // 2):
-        yPos = i*rowHeight - lineWidth//2
-        drawer.line((0, yPos, new_width, yPos), fill = (10, 10, 10), width = lineWidth)
-
-    rowNum = 0
-    for row in killer_images:
-        unitNum = 0
-        for unit in row:
-            with Image.open(unit, "r") as unit_im:
-                unit_im = unit_im.convert("RGBA")
-                unit_im = unit_im.resize((hexScaledLength, hexScaledLength))
-                pos = get_hex_pos(rowNum, unitNum, new_width)
-                edited_im.paste(unit_im, pos, unit_im)
-            unitNum += 1
-        rowNum += 1
-
-    edited_im.save("./infographic/killer.png", quality = 95)
-
-def get_most_killers(killer_lists):
+def getMostKillers(killerDict):
     mostKillers = 0
-    for killer_type in killer_lists:
-        if len(killer_type) > mostKillers:
-            mostKillers = len(killer_type)
+    for key in killerDict:
+        if len(killerDict[key]) > mostKillers:
+            mostKillers = len(killerDict[key])
     return mostKillers
 
-def get_hex_pos(rowNum, unitNum, fullWidth):
-    in_row_widths = (unitNum // 2) * hexScaledLength
-    total_between_paddings = ((unitNum // 2) - 1 ) * betweenPaddingX
-    in_row_x = in_row_widths + total_between_paddings + framePaddingX
-    in_row_y = framePaddingY
+def getHexPos(rowNum, unitNum, fullWidth):
+    inRowWidths = (unitNum // 2) * hexScaledLength
+    totalBetweenPaddings = ((unitNum // 2) - 1 ) * betweenPaddingX
+    inRowX = inRowWidths + totalBetweenPaddings + framePaddingX
+    inRowY = framePaddingY
     if unitNum % 2 == 1:
-        in_row_x += hexScaledLength // 2 
-        in_row_y += hexScaledLength + betweenPaddingY
-
+        inRowX += hexScaledLength // 2
+        inRowY += hexScaledLength + betweenPaddingY
 
     adjustedRowNum = (rowNum % (numRows // 2))
-    row_top = adjustedRowNum * rowHeight
+    rowTop = adjustedRowNum * rowHeight
 
-    y = row_top + in_row_y
+    y = rowTop + inRowY
 
-    x = in_row_x if rowNum < numRows // 2 else fullWidth - in_row_x - hexScaledLength
+    x = inRowX if rowNum < numRows // 2 else fullWidth - inRowX - hexScaledLength
 
     return (x,y)
