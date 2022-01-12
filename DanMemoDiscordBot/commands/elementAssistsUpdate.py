@@ -69,7 +69,6 @@ async def run(dbConfig):
         for side in [0, 1]:
             efType = effectTypes[side][1]
             modifiers = list(assistDict[el][efType].keys())
-            print(el + efType + " has keys: " + str(modifiers))
             modifiers = sorted(modifiers, key = abs)
             for innerRowNum in range(len(modifiers)):
                 mod = modifiers[innerRowNum]
