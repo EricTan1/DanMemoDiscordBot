@@ -489,6 +489,8 @@ async def run(client, ctx):
             if(turn+1 == 5):
                 memboost["water_attack"] = 0
                 memboost["wind_attack"] = 0
+                memboost["thunder_attack"] = 0
+                memboost["dark_attack"] = 0
             if(turn+1 == 7):
                 memboost["strength"] = 0
                 memboost["magic"] = 0
