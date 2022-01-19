@@ -180,18 +180,18 @@ class Finn(Enemy):
         for adv in adv_list:
             await adv.set_statsBoostAdv("strength", max(adv.statsBoostAdv.get("strength"),1.5))
             await adv.set_statsBoostAdv("magic", max(adv.statsBoostAdv.get("magic"),1.5))
-            await adv.set_boostCheckAlliesAdv(True,"strength",150,turns)
-            await adv.set_boostCheckAlliesAdv(True,"magic",150,turns)
+            await adv.set_boostCheckAlliesAdv(True,"strength",1.5,turns)
+            await adv.set_boostCheckAlliesAdv(True,"magic",1.5,turns)
         # str/mag buff
-        await self.set_boostCheckEnemyAdv(True,"strength",150,turns)
-        await self.set_boostCheckEnemyAdv(True,"magic",150,turns)
+        await self.set_boostCheckEnemyAdv(True,"strength",1.5,turns)
+        await self.set_boostCheckEnemyAdv(True,"magic",1.5,turns)
 
     async def FinnSelfEleBuff(self, element):
-        await self.set_boostCheckEnemyAdv(True,"{}_attack".format(element),30,4)
+        await self.set_boostCheckEnemyAdv(True,"{}_attack".format(element),-0.3,4)
 
     async def FinnFoesEleDebuff(self, adv_list, element):
         for adv in adv_list:
-            await adv.set_boostCheckAlliesAdv(False,"{}_resist".format(element),-30,4)
+            await adv.set_boostCheckAlliesAdv(False,"{}_resist".format(element),-0.3,4)
 
     async def turnOrder(self, turnOrder:int, adv_list:list, speed:int):
         if(turnOrder in [2,6] and speed ==2):
@@ -224,7 +224,7 @@ class Finn(Enemy):
 
 class Riveria(Enemy):
     async def RiveriaPowerUp(self):
-        await self.set_boostCheckEnemyAdv(True,"magic",30,4)
+        await self.set_boostCheckEnemyAdv(True,"magic",0.30,4)
 
     # debuff remove from list boostCheckEnemyAdv
     async def RiveriaClear(self, adv_list):
@@ -236,7 +236,7 @@ class Riveria(Enemy):
 
     async def RiveriaDebuff(self, adv_list, element):
         for adv in adv_list:
-            await adv.set_boostCheckAlliesAdv(False,"{}_resist".format(element),-30,4)
+            await adv.set_boostCheckAlliesAdv(False,"{}_resist".format(element),-0.30,4)
 
     async def turnOrder(self, turnOrder:int, adv_list:list, speed:int):
         # debuff 1,2,4,5,7,8,9,10,11,12,13
