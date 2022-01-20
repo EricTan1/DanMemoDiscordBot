@@ -22,9 +22,7 @@ import commands.popularity as command_popularity
 import commands.addUpdateUnit as command_addUpdateUnit
 import commands.saCalculator as command_saCalculator
 import commands.killer as command_killer
-import commands.killerUpdate as command_killerUpdate
 import commands.elementAssists as command_elementAssists
-import commands.elementAssistsUpdate as command_elementAssistsUpdate
 import commands.getJson as command_getJson
 import commands.init as command_init
 import commands.recordbuster.recordBusterCalc as command_rbCalc
@@ -155,19 +153,11 @@ class Infographic(commands.Cog):
     #killers
     @commands.command(aliases=["slayer","slayers","killers"])
     async def killer(self, ctx):
-        await command_killer.run(ctx)
-
-    @commands.command(aliases=["ku"])
-    async def killerUpdate(self, ctx):
-        await command_killerUpdate.run(dbConfig)
+        await command_killer.run(ctx, dbConfig)
 
     @commands.command(aliases=["ea"])
     async def elementAssists(self, ctx):
-        await command_elementAssists.run(ctx)
-
-    @commands.command(aliases=["eau"])
-    async def elementAssistsUpdate(self, ctx):
-        await command_elementAssistsUpdate.run(dbConfig)
+        await command_elementAssists.run(ctx, dbConfig)
 
     @commands.command(aliases=["recordbuster","rbguide"])
     async def rb(self, ctx, character):
