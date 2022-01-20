@@ -81,7 +81,13 @@ F
 **KILLER**
 Alias: killers, slayer, slayers
 Usage: !$killer
-gives a nice infographic about all the slayer/killer related units in the game
+Gives a nice infographic about all the slayer/killer related units in the game
+
+F
+**ELEMENTAL ASSISTS**
+Alias: elementassists, ea
+Usage: !$ea
+Gives a nice infographic about all elemental damage buffing/elemental resist debuffing assists in the game
 
 F
 **GACHA MODE**
