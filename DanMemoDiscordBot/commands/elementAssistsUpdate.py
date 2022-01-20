@@ -16,7 +16,8 @@ textColor = (255,255,255)
 strokeColor = (0,0,0)
 strokeWidth = 4
 
-fontType = "NotoSans-Regular.ttf"
+fontPath = "./infographic/NotoSans-Regular.ttf"
+#fontType = "NotoSans-Regular.ttf"
 fontSize = 25
 
 framePaddingX = 130
@@ -106,7 +107,7 @@ def drawModifier(drawer, modifier, side, centerX, rowOffset, innerRowNum):
     else:
         text = "-" + text + "\n Res."
 
-    font = ImageFont.truetype(fontType, fontSize)
+    font = ImageFont.truetype(fontPath, fontSize)
     tw, th = drawer.textsize(text, font=font, stroke_width=strokeWidth)
 
     xPos = centerX
