@@ -131,3 +131,4 @@ dmypy.json
 # gitignore for danmemo
 gspread.json
 DanMemoDiscordBot/infographic/killer.png
+DanMemoDiscordBot/infographic/elementAssists.png
