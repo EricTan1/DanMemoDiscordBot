@@ -14,8 +14,6 @@ elementFiles = {"Light": "element_06.png", "Dark": "element_07.png", "Fire": "el
 
 effectTypes = [("Foes", "Resist"), ("Allies", "Attack")]
 
-#backgroundColor = (40,40,40)
-
 # Font Definition
 fontPath = "./infographic/NotoSans-Regular.ttf"
 fontSize = 25
