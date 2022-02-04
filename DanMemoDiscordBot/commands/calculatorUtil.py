@@ -68,6 +68,9 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict,s
       tempTypeResistDownBase = enemy.typeResistDownBase.get("physical")
       tempTypeResistDownAdv = enemy.typeResistDownAdv.get("physical")
       tempTypeResistDownAst = enemy.typeResistDownAst.get("physical")
+      # check enemy buffs p resist
+
+      tempTypeResistBuff = await enemy.get_buff_mod("physical_resist")
 
 
     else:
@@ -79,6 +82,8 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict,s
       tempTypeResistDownBase = enemy.typeResistDownBase.get("magic")
       tempTypeResistDownAdv = enemy.typeResistDownAdv.get("magic")
       tempTypeResistDownAst = enemy.typeResistDownAst.get("magic")
+      # check enemy buffs m resist
+      tempTypeResistBuff = await enemy.get_buff_mod("magic_resist")
 
     if(len(skill.index_to) != 0):
       tempPower = 0
@@ -126,7 +131,7 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict,s
     tempDamage = ((max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end.get("endurance"),0))*\
                 (1-(1-skill.noType)*tempElementResistDownBase-(1-skill.noType)*tempElementResistDownAdv\
                   -(1-skill.noType)*tempElementResistDownAst-tempTypeResistDownBase\
-                  -tempTypeResistDownAdv-tempTypeResistDownAst)*\
+                  -tempTypeResistDownAdv-tempTypeResistDownAst-tempTypeResistBuff)*\
                 (1+(1-skill.noType)*tempElementDamageBoostAdv+(1-skill.noType)*tempElementDamageBoostAst)*\
                 (1+adventurer.critPenBoost + 0.06)*\
                 (1-temptargetResistDownAdv-temptargetResistDownAst)*\
@@ -166,6 +171,8 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
     tempTypeResistDownBase = enemy.typeResistDownBase.get("physical")
     tempTypeResistDownAdv = enemy.typeResistDownAdv.get("physical")
     tempTypeResistDownAst = enemy.typeResistDownAst.get("physical")
+
+    tempTypeResistBuff = await enemy.get_buff_mod("physical_resist")
   else:
     powerCoefficientTemp = 0.75
     tempPower = adventurer.stats.get("magic")
@@ -176,6 +183,8 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
     tempTypeResistDownBase = enemy.typeResistDownBase.get("magic")
     tempTypeResistDownAdv = enemy.typeResistDownAdv.get("magic")
     tempTypeResistDownAst = enemy.typeResistDownAst.get("magic")
+
+    tempTypeResistBuff = await enemy.get_buff_mod("magic_resist")
 
   if(counter.element != "" and counter.noType !=1):
     # elementResistDownBase
@@ -212,7 +221,7 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
   tempDamage = ((max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end.get("endurance"),0))*\
                (1-(1-counter.noType)*tempElementResistDownBase-(1-counter.noType)*tempElementResistDownAdv\
                 -(1-counter.noType)*tempElementResistDownAst-tempTypeResistDownBase\
-                -tempTypeResistDownAdv-tempTypeResistDownAst)*\
+                -tempTypeResistDownAdv-tempTypeResistDownAst-tempTypeResistBuff)*\
                (1+(1-counter.noType)*tempElementDamageBoostAdv+(1-counter.noType)*tempElementDamageBoostAst)*\
                (1+adventurer.critPenBoost+adventurer.counterBoost + 0.06)*\
                (1-temptargetResistDownAdv-temptargetResistDownAst)*\
@@ -278,6 +287,7 @@ async def SADamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict
       tempTypeResistDownAdv = enemy.typeResistDownAdv.get("physical")
       tempTypeResistDownAst = enemy.typeResistDownAst.get("physical")
 
+      tempTypeResistBuff = await enemy.get_buff_mod("physical_resist")
 
     else:
       tempPower = adventurer.stats.get("magic")
@@ -288,6 +298,8 @@ async def SADamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict
       tempTypeResistDownBase = enemy.typeResistDownBase.get("magic")
       tempTypeResistDownAdv = enemy.typeResistDownAdv.get("magic")
       tempTypeResistDownAst = enemy.typeResistDownAst.get("magic")
+
+      tempTypeResistBuff = await enemy.get_buff_mod("magic_resist")
 
     if(len(skill.index_to) != 0):
       tempPower = 0
@@ -338,7 +350,7 @@ async def SADamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict
     tempDamage = (max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end.get("endurance"),0))*\
                 (1-tempElementResistDownBase-tempElementResistDownAdv\
                   -tempElementResistDownAst-tempTypeResistDownBase\
-                  -tempTypeResistDownAdv-tempTypeResistDownAst)*\
+                  -tempTypeResistDownAdv-tempTypeResistDownAst-tempTypeResistBuff)*\
                 (1+tempElementDamageBoostAdv+tempElementDamageBoostAst)*\
                 (1+adventurer.critPenBoost+ 0.06)*\
                 (1-temptargetResistDownAdv-temptargetResistDownAst)*\

@@ -7,7 +7,7 @@ import numpy as np
 from commands.entities.adventurer import Adventurer
 from commands.entities.assist import Assist
 
-from commands.entities.enemy import Enemy, Revis, Finn, Ottarl, Riveria
+from commands.entities.enemy import Enemy, Revis, Finn, Ottarl, Riveria, Gareth
 from commands.entities.skills import AdventurerSkill,AdventurerCounter
 
 import configparser
@@ -84,6 +84,10 @@ async def run(client, ctx):
             stats=boss_stats)
         elif(boss.lower() == "riveria"):
             enemy = Riveria(elementResistDownBase=boss_elementResistDownBase,
+            typeResistDownBase=boss_type_resist, 
+            stats=boss_stats)
+        elif(boss.lower() == "gareth"):
+            enemy = Gareth(elementResistDownBase=boss_elementResistDownBase,
             typeResistDownBase=boss_type_resist, 
             stats=boss_stats)
         else:

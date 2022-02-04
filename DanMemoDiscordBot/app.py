@@ -40,7 +40,7 @@ _command_prefix = os.environ.get("COMMAND_PREFIX")
 #intents.members = True
 
 client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True)
-dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
+dbConfig = DBConfig(DatabaseEnvironment.LOCAL)
 cache = Cache(dbConfig)
 @client.event
 async def on_message(message):

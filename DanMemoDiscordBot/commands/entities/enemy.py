@@ -158,6 +158,15 @@ class Enemy():
         '''
         self.boostCheckEnemyAdv = [item for item in self.boostCheckEnemyAdv if item.get("isbuff") != isbuff and item.get("attribute") != attribute]
 
+    async def get_buff_mod(self, buffName:str):
+        ret = [item for item in self.boostCheckEnemyAdv if item.get("isbuff") ==True and item.get("attribute") == buffName]
+        if(len(ret) == 1):
+            return ret[0].get("modifier")
+        else:
+            # 0
+            return 0
+
+
 class Finn(Enemy):
     async def FinnClear(self, adv_list):
         #self
@@ -270,7 +279,84 @@ class Riveria(Enemy):
             ret+=await counter(adv_list, self,memboost,counterRate,logs)
             ret+=await counter(adv_list, self,memboost,counterRate,logs)
         return ret
+
+class Gareth(Enemy):
+
+    async def GarethSelfBuff(self):
+        await self.set_boostCheckEnemyAdv(True,"physical_resist",0.30,4)
+        await self.set_boostCheckEnemyAdv(True,"magic_resist",0.30,4)
+        await self.set_boostCheckEnemyAdv(True,"counter_rate",1.1,4)
+        print("BUFFING")
+
+        # need to set actual calcs
+
+
+    async def GarethDebuff(self,adv_list):
+        for adv in adv_list:
+            await adv.set_boostCheckAlliesAdv(False,"light_resist",-0.3,4)
+
+    async def GarethClearBuffs(self, adv_list:list):
+        # remove all buffs!
+        for adv in adv_list:
+            adv.elementDamageBoostAdv = {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
+            adv.statsBoostAdv = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}
+            await adv.clearBuffs()
+    
+    async def GarethClearDebuffs(self):
+        self.elementResistDownAdv= {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0}
+        self.typeResistDownAdv={"physical":0, "magic":0}
+        self.targetResistDownAdv={"st":0,"aoe":0}
+        await self.clearDebuffs()
+
+    async def clearDebuffs(self):
+        # take the list but all the buffs with True is removed (keep all  the isbuff==False)
+        self.boostCheckEnemyAdv = [item for item in self.boostCheckEnemyAdv if item.get("isbuff") == True]
+
+    async def turnOrder(self, turnOrder:int, adv_list:list, speed:int):
+        ''' speed : 0 - fast, 1- normal, 2- slow
+        '''
+        if(turnOrder+1 in [6] and speed ==2):
+            await self.GarethClearBuffs(adv_list)
+        if(turnOrder+1 in [10] and speed ==2):
+            await self.GarethClearDebuffs()
+        if(turnOrder+1 in [4,9] and speed ==2):
+            await self.GarethDebuff(adv_list)
+        if(turnOrder+1 in [3,9] and speed ==2):
+            await self.GarethSelfBuff()
+
         
+    async def turnOrderCounters(self, turnOrder:int, adv_list:list, memboost:dict, counterRate:float, speed:int,logs:dict):
+        ''' speed : 0 - fast, 1- normal, 2- slow
+        '''
+        ret = 0
+        if(turnOrder+1 in [1,15] and speed ==1):
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
+        if(turnOrder+1 in [2] and speed ==1):
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+        
+        if(turnOrder+1 in [6,7,11,12] and speed ==1):
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+            ret+=await counter(adv_list, self,memboost,counterRate,logs)
+        
+        if(turnOrder+1 in [3,5,8,10,13] and speed ==1):
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+
+        if(turnOrder+1 in [4,9] and speed ==1):
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+
+        if(turnOrder+1 in [14] and speed ==1):
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+            ret+=await counters(adv_list, self,memboost,counterRate,logs)
+
+        
+        return ret
+
+
+
 class Ottarl(Enemy):
     async def OttarlClear(self, adv_list:list):
         # remove all buffs!

@@ -28,7 +28,7 @@ debuff=physical
 debuff_modifier=-0.5
 
 [enemy]
-# ottarl, finn, riveria, revis
+# ottarl, finn, riveria, revis, gareth
 boss_name = revis
 elemental_resist = {"fire":0,"water":-0.8,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
 type_resist={"physical":0, "magic":0}
