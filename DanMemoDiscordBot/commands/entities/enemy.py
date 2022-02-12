@@ -206,7 +206,7 @@ class Finn(Enemy):
         if(turnOrder in [2,6] and speed ==2):
             await self.FinnStrMagBuff(adv_list,3)
         if(turnOrder in [3,6,9,12] and speed ==0):
-            await self.FinnSelfEleBuff(adv_list, "light")
+            await self.FinnSelfEleBuff("light")
         if(turnOrder in [10] and speed ==2):
             await self.FinnStrMagBuff(adv_list,5)
         if(turnOrder in [2,5,8,11] and speed ==0):
