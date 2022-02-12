@@ -155,6 +155,8 @@
 	"per_each_target_physical_resist_debuff": "per each Target's P.Resist Reduction Skill",
 	"per_each_self_magic_resist_buff": "per each [Self] M.Resist Buff Skill",
 	"per_each_target_magic_resist_debuff": "per each Target's M.Resist Reduction Skill",
+	"per_each_self_single_damage_resist_buff": "per each [Self] Dmg. Reduction Skill (Attack Type: Single Target)",
+	"per_each_self_all_damage_resist_buff": "per each [Self] Dmg. Reduction Skill (Attack Type: All Targets)",
 	"per_each_target_single_damage_resist_debuff": "per each Target's skill effect that increases Dmg. received (Attack Type: Single Target)",
 	"per_each_target_all_damage_resist_debuff": "per each Target's skill effect that increases Dmg. received (Attack Type: All Targets)",
 	"per_each_target_light_resist_debuff": "per each Target's Light Resist Reduction Skill",
