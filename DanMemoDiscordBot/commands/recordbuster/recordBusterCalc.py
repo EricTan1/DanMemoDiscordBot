@@ -512,6 +512,19 @@ async def run(client, ctx):
                         # assist
                         await interpretSkillAssistEffects(assist_list[len(active_advs)+sac_counter].skills,unit_list[len(active_advs)+sac_counter],enemy,active_advs)
                         sac_counter+=1
+                # sac second time same turn
+                for active_adv in range(0, len(active_advs)):
+                    # sac
+                    if(active_advs[active_adv].turnOrder[turn+1] == -1 and sac_counter < 2):
+                        temp_list_logs = turn_logs.get("sacs")
+                        temp_list_logs.append("{} leaving. {} entering".format(active_advs[active_adv].name,unit_list[len(active_advs)+sac_counter].name))
+                        turn_logs["sacs"] = temp_list_logs
+
+                        active_advs[active_adv] = unit_list[len(active_advs)+sac_counter]
+                        
+                        # assist
+                        await interpretSkillAssistEffects(assist_list[len(active_advs)+sac_counter].skills,unit_list[len(active_advs)+sac_counter],enemy,active_advs)
+                        sac_counter+=1
         #print('Current total damage is {}'.format(total_damage))
         # 6/8.5/10
         #print('Current total score is {}'.format(total_damage*8.5*2))
