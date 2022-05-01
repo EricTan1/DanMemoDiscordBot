@@ -130,7 +130,7 @@ async def run(client, ctx):
                     for ast_skills in ast_skill_matches:
                         ast_skill_effects_matches = [x for x in ast_skill_effects if x.assistskillid == ast_skills.assistsskillid]
                         
-                        if("++" in ast_skills.skillname):
+                        if("++" in ast_skills.skillname and not ("instant effect" in ast_skills.skillname)):
                             if(is_mlb):
                                 assist_list.append(Assist(ast_skill_effects_matches,"[{}] {}".format(current_assist.unit_label,current_assist.character_name)))
                         elif(not is_mlb):
