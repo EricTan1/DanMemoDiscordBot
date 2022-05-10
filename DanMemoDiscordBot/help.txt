@@ -80,8 +80,8 @@ Trades a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-on
 F
 **KILLER**
 Alias: killers, slayer, slayers
-Usage: !$killer
-Gives a nice infographic about all the slayer/killer related units in the game
+Usage: !$killer <optional: monster type>
+Gives a nice infographic of all the slayer/killer related units in the game. Can also filter to show only units for one monster type.
 
 F
 **ELEMENTAL ASSISTS**

@@ -152,8 +152,8 @@ class Infographic(commands.Cog):
     #cp?
     #killers
     @commands.command(aliases=["slayer","slayers","killers"])
-    async def killer(self, ctx):
-        await command_killer.run(ctx, dbConfig)
+    async def killer(self, ctx, *args):
+        await command_killer.run(ctx, dbConfig, *args)
 
     @commands.command(aliases=["ea"])
     async def elementAssists(self, ctx):
