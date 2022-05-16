@@ -12,7 +12,7 @@ pylint = "pylint"
 
 [packages]
 "discord.py" = "*"
-numpy = "==1.20.1"
+numpy = "==1.21.0"
 gspread = "==3.7.0"
 Pillow = "==8.3.2"
 mysql-connector-python = "==8.0.19"
