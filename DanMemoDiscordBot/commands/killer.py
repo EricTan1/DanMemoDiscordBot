@@ -1,6 +1,7 @@
 import discord
 from PIL import Image, ImageDraw
 from database.DBcontroller import DBcontroller
+from commands.utils import Status
 
 # Spacings and sizes in pixels
 rowHeight = 141
@@ -11,6 +12,7 @@ framePaddingY = 5
 betweenPaddingX = -5
 betweenPaddingY = -20
 numRows = 12
+numRowsPerColumn = numRows // 2
 lineWidth = 5
 
 # List of killers
@@ -18,14 +20,46 @@ killers = [ "aqua killer", "dragon killer", "giant killer", "material killer",
             "ox slayer", "spirit killer", "beast killer", "fantasma killer",
             "insect killer", "ogre killer", "plant killer", "worm killer"]
 
-async def run(ctx, dbConfig):
+async def run(ctx, dbConfig, *args):
     generateInfographic(dbConfig)
 
-    temp_embed = discord.Embed()
-    temp_embed.color = 3066993
-    temp_embed.set_image(url="attachment://slayer.png")
-    await ctx.send(embed=temp_embed, file=discord.File("./infographic/killer.png",filename="slayer.png"))
+    embed = discord.Embed()
+    embed.set_image(url="attachment://slayer.png")
+    color = 3066993
+    title = ""
+    description = ""
+    file = discord.File("./infographic/killer.png",filename="slayer.png")
+    if args != ():
+        killerName = args[0].lower()
+        fullKillerName = ""
+        if killerName == "ox":
+            fullKillerName = f"{killerName} slayer"
+        else:
+            fullKillerName = f"{killerName} killer"
+        if fullKillerName in killers:
+            graphic = Image.open("./infographic/killer.png", "r")
+            width, height = graphic.size
+            killerNumber = killers.index(fullKillerName)
+            columnNumber = killerNumber // numRowsPerColumn
+            rowNumber = killerNumber % numRowsPerColumn
 
+            leftBorder = width // 2 * columnNumber
+            rightBorder = leftBorder + width // 2
+            topBorder = height // numRowsPerColumn * rowNumber
+            bottomBorder = topBorder + height // numRowsPerColumn
+
+            croppedGraphic = graphic.crop((leftBorder, topBorder, rightBorder, bottomBorder))
+            croppedGraphic.save("./infographic/killer.png", quality = 95)
+        else:
+            color = Status.KO.value
+            title = "Unknown killer type!"
+            description = "Please enter one of\n- aqua\n- dragon\n- giant\n- material\n- ox\n- spirit\n- beast\n- fantasma\n- insect\n- ogre\n- plant\n- worm"
+            file = None
+
+    embed.color = color
+    embed.title = title
+    embed.description = description
+    await ctx.send(embed=embed, file=file)
 
 def generateInfographic(dbConfig):
     db = DBcontroller(dbConfig)
