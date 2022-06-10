@@ -496,8 +496,10 @@ async def run(client, ctx):
                 memboost["thunder_attack"] = 0
                 memboost["dark_attack"] = 0
             if(turn+1 == 7):
-                memboost["strength"] = 0
+                #memboost["strength"] = 0
                 memboost["magic"] = 0
+            if(turn+1 == 15):
+                memboost["strength"] = 0
             # sacs
             if(turn +1 < 15 and sac_counter < 2):
                 for active_adv in range(0, len(active_advs)):
