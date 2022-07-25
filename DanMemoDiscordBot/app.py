@@ -75,12 +75,12 @@ async def sacalc(ctx):
 @client.command(aliases=["rbc"])
 async def rbcalc(ctx):
     # imanity server only and ex-imanity role
-    if(await hasAccess(ctx.message.author,[708002106245775410,698143969166622720],[708008774140690473,825721805489700876,699277609816555580,708302206780309544,913489903671738440,685466436923162634,685472735996018699,619478476713361409,933110903484858409]) or ctx.message.author.guild.id == 685046495988154373):
-        try:
-            await command_rbCalc.run(client,ctx)
-        except:
-            tb = traceback.format_exc()
-            await ctx.send("ERROR:\n```{}```".format(tb))
+    # if(await hasAccess(ctx.message.author,[708002106245775410,698143969166622720],[708008774140690473,825721805489700876,699277609816555580,708302206780309544,913489903671738440,685466436923162634,685472735996018699,619478476713361409,933110903484858409]) or ctx.message.author.guild.id == 685046495988154373):
+    try:
+        await command_rbCalc.run(client,ctx)
+    except:
+        tb = traceback.format_exc()
+        await ctx.send("ERROR:\n```{}```".format(tb))
 
 @client.command(aliases=["cs"])
 async def characterSearch(ctx, *search):
