@@ -97,7 +97,7 @@ async def run(client, ctx):
             stats=boss_stats)
 
         critRate = 1
-        penRate =1
+        penRate = 1
         ##############################
         # Init Assists
         ##############################
@@ -200,7 +200,7 @@ async def run(client, ctx):
                                     temp_list_agi.append("none")
                                     current_skills_agi_mod[adv_skills.skilltype] = temp_list_agi
                         temp_list = current_skills.get(adv_skills.skilltype)
-                        temp_list.append(adv_skill_effects_matches)
+                        temp_list.append((adv_skills.skillname, adv_skill_effects_matches))
                         current_skills[adv_skills.skilltype] = temp_list
                     #unit_skills.append(current_skills)
                     # development skills that boosts crit/pen dmg and counter damage
@@ -244,7 +244,7 @@ async def run(client, ctx):
                                     if(element in curr_adv_dev_skill.development.lower()):
                                         tempCounter_element = element
                                 # check if it has other effects and record it yukina etc
-                                tempCounter_skillEffects = adv_dev_effects_matches
+                                tempCounter_skillEffects = ("counter", adv_dev_effects_matches)
                             if("attacking" in dev_attribute_name.lower()):
                                 for element in getElements():
                                     if(element in curr_adv_dev_skill.development.lower()):
@@ -320,9 +320,6 @@ async def run(client, ctx):
             turn_logs = {"sa":[], "combat_skills":[], "counters":[], "sacs":[]}
             logs.append(turn_logs)
 
-            if(turn+1 == 14):
-                print("lol")
-                
             # assist skills first turn!!
             if(turn == 0):
                 for assistCount in range(0,4):
@@ -456,7 +453,7 @@ async def run(client, ctx):
 
                 # additionals here
                 if(perform_additional):
-                    temp_adv_effects_list = await removed_sorted_skill[3].get_additionals()
+                    temp_adv_effects_list = await removed_sorted_skill[3].get_current_additional()
                     temp_adv_skill = await interpretSkillAdventurerAttack(temp_adv_effects_list,removed_sorted_skill[3],enemy)
                     # damage
                     temp_damage = await DamageFunction(temp_adv_skill,removed_sorted_skill[3],enemy,memboost,skillRatio)

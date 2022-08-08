@@ -3,6 +3,7 @@
 # In [Enemy] type the Record Buster boss' name, and edit his resist under elemental_resist and type_resist
 # For units, enter the title for the adventurer and assist, EX. Glowing Pride, Key Strategist. If the assist is mlb add it before their title, EX. mlb Key Strategist.
 # Under each [Unit] tab, edit their agility, endurance, dexterity, strength and magic stats. IMPORTANT: Strength and Magic stats are their M.Attack and P.Attack values, not their actual stats. 
+# If the unit has a weapon equipped that increases elemental damage (such as [Gifted Sword] Lazar Diarmaid), enter the bonus under the respective value as decimal, e.g. 0.1 for 10%
 # Under [Skillflow] Enter the skillflow of the units. 1 = Skill 1, 2 = Skill 2, 3 = Skill 3, 4 = Special Arts. -1 = The turn sac units die on. EX: (Sacing a unit, then Weine sac) Weine's skillflow would be 0,1,2,4,-1 As she dies after her Special Arts on turn 4.
 ##
 ##IMPORTANT NOTES:
@@ -37,37 +38,37 @@ stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agilit
 [unit1]
 adventurer_title = test
 assist_title = test
-stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0}
+stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0,"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
 enable_counter = true
 
 [unit2]
 adventurer_title = test
 assist_title = test
-stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0}
+stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0,"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
 enable_counter = true
 
 [unit3]
 adventurer_title = test
 assist_title = test
-stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0}
+stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0,"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
 enable_counter = true
 
 [unit4]
 adventurer_title = test
 assist_title = test
-stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0}
+stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0,"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
 enable_counter = true
 
 [unit5]
 adventurer_title = test
 assist_title = test
-stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0}
+stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0,"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
 enable_counter = true
 
 [unit6]
 adventurer_title = test
 assist_title = test
-stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0}
+stats={"hp":0,"mp":0,"strength":0, "magic":0,"endurance":0,"dexterity":0,"agility":0,"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
 enable_counter = true
 
 [skillFlow]
