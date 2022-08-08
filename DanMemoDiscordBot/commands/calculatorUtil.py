@@ -1,4 +1,5 @@
 
+from typing import Tuple
 #from commands.entities.adventurer import Adventurer
 
 #from commands.entities.enemy import Enemy
@@ -540,7 +541,7 @@ async def interpretExtraBoost(skillEffect, adventurer, enemy):
     print(extra_boosts_modifier_value)
     return extra_boosts_modifier_value
 
-async def interpretSkillAdventurerAttack(skillEffectsWithName: tuple[str, list], adventurer, enemy):
+async def interpretSkillAdventurerAttack(skillEffectsWithName: Tuple[str, list], adventurer, enemy):
   ''' (list of skillEffects, Adventurer, Enemy) -> AdventurerSkill or None
     None if there are no damage related effects
     AdventurerSkill if there is a damage related effect
@@ -591,7 +592,7 @@ async def interpretSkillAdventurerAttack(skillEffectsWithName: tuple[str, list],
   else:
     return None
 
-async def interpretSkillAdventurerEffects(skillEffectsWithName: tuple[str, list], adventurer, enemy, adv_list:list):
+async def interpretSkillAdventurerEffects(skillEffectsWithName: Tuple[str, list], adventurer, enemy, adv_list:list):
   ''' (list of skilleffects, Adventurer, Enemy, list of Adventurer)
   '''
 
