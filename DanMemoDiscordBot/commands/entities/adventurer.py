@@ -1,3 +1,4 @@
+from typing import Tuple
 from commands.utils import getElements, getDamageBuffs, getStats,checkBuffExistsReplace
 from commands.entities.skills import AdventurerCounter
 import json
@@ -85,15 +86,15 @@ class Adventurer():
 
 
     # main loop need to check skill [1,4]
-    async def get_combatSkill(self, index:int) -> tuple[str, list]:
+    async def get_combatSkill(self, index:int) -> Tuple[str, list]:
         ''' index = 1-3
         '''
         return self.current_skills.get("combat")[index-1]
     
-    async def get_specialSkill(self) -> tuple[str, list]:
+    async def get_specialSkill(self) -> Tuple[str, list]:
         return self.current_skills.get("special")[0]
 
-    async def get_additionals(self) -> tuple[str, list]:
+    async def get_additionals(self) -> Tuple[str, list]:
         return self.current_skills.get("additionals")
 
     async def get_current_additional(self):
@@ -153,7 +154,7 @@ class Adventurer():
         # - the current additional action is already empty, or
         # - the same additional is added, meaning it'll just be refreshed
         # - the new addtional comes from the SA, overriding any non-SA additionals
-        if(self.additionalCount == 0 or origin_name == self.additionalName or origin_name == await self.get_specialSkill[0]):
+        if(self.additionalCount == 0 or origin_name == self.additionalName or origin_name == (await self.get_specialSkill())[0]):
             self.additionalCount = additional_count
             self.additionalName = origin_name
         # else: SA additional is active and the newly activated is non-SA, which must not override so nothing happens
