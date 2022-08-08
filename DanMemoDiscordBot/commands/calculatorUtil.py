@@ -531,13 +531,19 @@ async def interpretExtraBoost(skillEffect, adventurer, enemy):
     print(extra_boosts_modifier_value)
     return extra_boosts_modifier_value
 
-async def interpretSkillAdventurerAttack(skillEffects, adventurer, enemy):
+async def interpretSkillAdventurerAttack(skillEffectsWithName: tuple[str, list], adventurer, enemy):
   ''' (list of skillEffects, Adventurer, Enemy) -> AdventurerSkill or None
     None if there are no damage related effects
     AdventurerSkill if there is a damage related effect
   '''
   # for index_to maybe list  {"modifier": "End. & Mag.", "target": "skill", "attribute": "indexed_to","speed": "None" }
   
+  # test if skill effects empty
+  if(skillEffectsWithName):
+    _, skillEffects = skillEffectsWithName
+  else:
+    skillEffects = []
+
   damage_skill = [x for x in skillEffects if x.attribute.lower().strip()=="damage" or ((x.element!=None or x.element!="") and (x.type=="physical_attack" or x.type=="magic_attack"))]
   if(len(damage_skill) > 0):
     damage_skill = damage_skill[0]
@@ -576,9 +582,16 @@ async def interpretSkillAdventurerAttack(skillEffects, adventurer, enemy):
   else:
     return None
 
-async def interpretSkillAdventurerEffects(skillEffects, adventurer, enemy, adv_list:list):
+async def interpretSkillAdventurerEffects(skillEffectsWithName: tuple[str, list], adventurer, enemy, adv_list:list):
   ''' (list of skilleffects, Adventurer, Enemy, list of Adventurer)
   '''
+
+  # test if skill effects empty
+  if(skillEffectsWithName):
+    skillName, skillEffects = skillEffectsWithName
+  else:
+    skillEffects = []
+
   # go through the effects
   for skillEffect in skillEffects:
     curr_attribute = skillEffect.attribute
@@ -687,7 +700,7 @@ async def interpretSkillAdventurerEffects(skillEffects, adventurer, enemy, adv_l
       # additional refresh
       if(curr_attribute == "additional_action"):
         if(skillEffect.target.strip() == "self"):
-          await adventurer.set_additionalCount(int(skillEffect.duration))
+          await adventurer.set_additionals(int(skillEffect.duration), skillName)
       # removal skills
       elif("removal_no_assist" in curr_attribute):
         is_buff = not("debuff" in curr_attribute)

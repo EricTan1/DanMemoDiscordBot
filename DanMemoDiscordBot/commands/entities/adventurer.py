@@ -59,6 +59,7 @@ class Adventurer():
         self.statsBoostAdv={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}
         self.statsBoostAst={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}
         # additionals count
+        self.additionalName=""
         self.additionalCount=0
         # adv damage
         self.current_damage = 0
@@ -84,16 +85,25 @@ class Adventurer():
 
 
     # main loop need to check skill [1,4]
-    async def get_combatSkill(self, index:int):
+    async def get_combatSkill(self, index:int) -> tuple[str, list]:
         ''' index = 1-3
         '''
         return self.current_skills.get("combat")[index-1]
     
-    async def get_specialSkill(self):
+    async def get_specialSkill(self) -> tuple[str, list]:
         return self.current_skills.get("special")[0]
 
-    async def get_additionals(self):
-        return self.current_skills.get("additionals")[0]
+    async def get_additionals(self) -> tuple[str, list]:
+        return self.current_skills.get("additionals")
+
+    async def get_current_additional(self):
+        additionals = await self.get_additionals()
+        for aa in additionals:
+            if(aa[0] == self.additionalName):
+                return aa
+        # if no additional with matching name was found, we assume the unit has only one AA and it wasn't named
+        return additionals[0]
+
 
     async def set_statsBoostAdv(self, stat:str, modifier:float):
         self.statsBoostAdv[stat.lower()] = modifier
@@ -138,8 +148,15 @@ class Adventurer():
 
     
 
-    async def set_additionalCount(self,additionalCount:int):
-        self.additionalCount = additionalCount
+    async def set_additionals(self,additional_count: int, origin_name: str):
+        # only change/refresh if
+        # - the current additional action is already empty, or
+        # - the same additional is added, meaning it'll just be refreshed
+        # - the new addtional comes from the SA, overriding any non-SA additionals
+        if(self.additionalCount == 0 or origin_name == self.additionalName or origin_name == await self.get_specialSkill[0]):
+            self.additionalCount = additional_count
+            self.additionalName = origin_name
+        # else: SA additional is active and the newly activated is non-SA, which must not override so nothing happens
 
     async def clearBuffs(self):
         # take the list but all the buffs with True is removed (keep all  the isbuff==False)
