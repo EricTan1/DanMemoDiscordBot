@@ -107,6 +107,9 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict,s
       tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv.get(skill.element)
       if(memboost.get("{}_attack".format(skill.element)) != None):
         tempElementDamageBoostAdv+=memboost.get("{}_attack".format(skill.element))
+      # elemental damage boost from weapon
+      if(adventurer.stats.get(skill.element) != None):
+        tempElementDamageBoostAdv += adventurer.stats.get(skill.element)
       # elementDamageBoostAst[location]
       tempElementDamageBoostAst = adventurer.elementDamageBoostAst.get(skill.element)
     else:
@@ -197,6 +200,9 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
     tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv.get(counter.element)
     if(memboost.get("{}_attack".format(counter.element)) != None):
         tempElementDamageBoostAdv+=memboost.get("{}_attack".format(counter.element))
+    # elemental damage boost from weapon
+    if(adventurer.stats.get(counter.element) != None):
+      tempElementDamageBoostAdv += adventurer.stats.get(counter.element)
     # elementDamageBoostAst[location]
     tempElementDamageBoostAst = adventurer.elementDamageBoostAst.get(counter.element)
   else:
@@ -324,6 +330,9 @@ async def SADamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict
       tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv.get(skill.element)
       if(memboost.get("{}_attack".format(skill.element)) != None):
         tempElementDamageBoostAdv+=memboost.get("{}_attack".format(skill.element))
+      # elemental damage boost from weapon
+      if(adventurer.stats.get(skill.element) != None):
+        tempElementDamageBoostAdv += adventurer.stats.get(skill.element)
       # elementDamageBoostAst[location]
       tempElementDamageBoostAst = adventurer.elementDamageBoostAst.get(skill.element)
     else:
