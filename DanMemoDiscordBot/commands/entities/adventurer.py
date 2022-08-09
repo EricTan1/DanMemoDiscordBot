@@ -202,12 +202,14 @@ class Adventurer():
             is_assist: is this an assist buff or not
             position : the active unit position in the party
         '''
+        temp_length = len(self.boostCheckAlliesAdv)
         self.boostCheckAlliesAdv = [item for item in self.boostCheckAlliesAdv if not(item.get("isbuff") == isbuff and item.get("attribute") == attribute)]
         # remove from actual thing
-
-        if attribute in getDamageBuffs():
-            curr_element = attribute.replace("_attack","")
-            if (curr_element in getElements()):
-                self.elementDamageBoostAdv[curr_element] = 0
-            else:
-                self.statsBoostAdv[attribute] = 0
+        # if something is actually changed then remove o/w ignore
+        if(temp_length!= len(self.boostCheckAlliesAdv)):
+            if attribute in getDamageBuffs():
+                curr_element = attribute.replace("_attack","")
+                if (curr_element in getElements()):
+                    self.elementDamageBoostAdv[curr_element] = 0
+                else:
+                    self.statsBoostAdv[attribute] = 0
