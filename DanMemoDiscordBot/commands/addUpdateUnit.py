@@ -2,8 +2,7 @@ import json
 import os
 
 import sys
-from database.DBcontroller import DBcontroller
-from database.DBcontroller import DatabaseEnvironment, DBConfig
+from database.DBcontroller import DBcontroller, DatabaseEnvironment, DBConfig, EDITORS
 
 from database.entities.Adventurer import Adventurer, AdventurerDevelopmentSkillEffects, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
 from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier, Speed
@@ -316,8 +315,7 @@ if __name__ == "__main__":
 
 async def run(dbConfig, client, ctx, *search):
     # permission checking
-    if(ctx.message.author.id == 175045433662504961 or ctx.message.author.id == 271030697219588096 or ctx.message.author.id == 204693066500538368 or
-    ctx.message.author.id == 226786914294824960 or ctx.message.author.id == 531944688366649345 or ctx.message.author.id == 630794201700892702 or ctx.message.author.id ==171619343946350592):
+    if(ctx.message.author.id in EDITORS):
         db = DBcontroller(dbConfig)
         ic = InsertCharacter(db)
         # loop through all attachments and get their value
