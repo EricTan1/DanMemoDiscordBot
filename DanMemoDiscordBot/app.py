@@ -37,6 +37,7 @@ from commands.utils import createGSpreadJSON, GUILD_ID
 
 
 TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
+ENV = os.environ.get("ENV")
 
 _command_prefix = os.environ.get("COMMAND_PREFIX")
 # INTENTS
@@ -46,8 +47,13 @@ _command_prefix = os.environ.get("COMMAND_PREFIX")
 client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True)
 slash_client = interactions.Client(token=TOKEN)
 slash_client.load("interactions.ext.files")
-setup(slash_client)
-dbConfig = DBConfig(DatabaseEnvironment.LOCAL)
+setup(slash_client) # loads wait_for extension
+
+if ENV == "dev":
+    dbConfig = DBConfig(DatabaseEnvironment.LOCAL)
+else:
+    dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
+
 cache = Cache(dbConfig)
 @client.event
 async def on_message(message):
