@@ -7,7 +7,7 @@ from commands.entities.skills import AdventurerSkill,AdventurerCounter
 import numpy as np
 from commands.utils import getElements, getAilment
 
-async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict,skillRatio):
+async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict,skillRatio) -> int:
   ''' (AdventurerSkill, Adventurer, Enemy, dict, int) -> float
   memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
   '''

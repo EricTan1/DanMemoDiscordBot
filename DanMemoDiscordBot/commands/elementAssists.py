@@ -1,4 +1,4 @@
-import discord
+import interactions
 from PIL import Image, ImageDraw, ImageFont
 from database.DBcontroller import DBcontroller
 
@@ -36,13 +36,16 @@ innerRowHeight = innerFramePaddingY * 2 + hexScaledLength
 lineWidth = 5
 textLineHeightFactor = 0.21/2   # /2 because the modifier text has 2 lines 
 
-async def run(ctx, dbConfig):
+async def run(ctx: interactions.CommandContext, dbConfig):
     generateInfographic(dbConfig)
 
-    temp_embed = discord.Embed()
+    temp_embed = interactions.Embed()
     temp_embed.color = 3066993
-    temp_embed.set_image(url="attachment://slayer.png")
-    await ctx.send(embed=temp_embed, file=discord.File("./infographic/elementAssists.png",filename="slayer.png"))
+
+    file = open("./infographic/elementAssists.png","rb")
+    ifile = interactions.File("ea.png", fp=file)
+    temp_embed.set_image(url="attachment://ea.png")
+    await ctx.send(embeds=temp_embed, files=ifile)
 
 
 def generateInfographic(dbConfig):

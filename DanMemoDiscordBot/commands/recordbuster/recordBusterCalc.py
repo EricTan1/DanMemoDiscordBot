@@ -1,5 +1,5 @@
-from discord.ext import commands
-import discord
+from typing import Optional
+import interactions
 from commands.utils import getElements, getDifficultyMultiplier
 from commands.cache import Cache
 from commands.calculatorUtil import CounterDamageFunction, DamageFunction,SADamageFunction,CombineSA,interpretSkillAdventurerAttack,interpretSkillAdventurerEffects,interpretSkillAssistEffects
@@ -15,16 +15,14 @@ import ast
 
 from commands.recordbuster.recordBusterCalcHandler import pageRBHandler
 
-async def run(client, ctx):
-    logs=[]
-    # user sets
-    # read file
-    message = ctx.message
-    if(len(message.attachments) == 0):
-        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the description !$rbc", file=discord.File("RBConfig.txt"))
+async def run(client: interactions.Client, ctx: interactions.CommandContext, config: Optional[interactions.Attachment]):
+    if(not config):
+        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the description !$rbc", files=interactions.File("RBConfig.txt"))
     else:
         # if template attached start to verify it
-        contents = await message.attachments[0].read()
+        # attachment object only contains the URL, so have to download it first
+        async with client._http._req._session.get(config.url) as request:
+            contents: bytes = await request.content.read()
         contents_decode = contents.decode("utf-8")
         config = configparser.ConfigParser()
         config.read_string(contents_decode)
@@ -207,8 +205,8 @@ async def run(client, ctx):
                     # counter damage
                     adv_dev_matches = [x for x in ad_dev_effects if x.adventurerid == curr_unit.unit_id]
                     adv_dev_effects_matches = []
-                    tempCounterBoost = 0
-                    tempCritPenBoost= 0
+                    tempCounterBoost = 0.0
+                    tempCritPenBoost= 0.0
                     tempElementAttackCounter = "None"
 
 
@@ -233,7 +231,7 @@ async def run(client, ctx):
                             try:
                                 dev_modifier_percent = int(curr_adv_dev_skill_effects.modifier.strip())/100
                             except:
-                                dev_modifier_percent=0
+                                dev_modifier_percent=0.0
                             # elemental counters and normal attacks check all?
                             # Water Manifestation: H || element manifestation:letter
                             #if("manifestation" in curr_adv_dev_skill.development.lower()):
@@ -314,6 +312,7 @@ async def run(client, ctx):
         active_advs= [unit_list[0],unit_list[1],unit_list[2],unit_list[3]] # always length 4 current active adv
         sac_counter = 0
         total_damage = 0
+        logs=[]
         for turn in range(0, 15):
             # logging init
             # enemy, unit{0-3}, turn
@@ -528,8 +527,3 @@ async def run(client, ctx):
         # 6/8.5/10
         #print('Current total score is {}'.format(total_damage*8.5*2))
         await pageRBHandler(client, ctx, logs, total_damage, total_damage*getDifficultyMultiplier(difficulty)*2, unit_list, assist_list)
-
-
-
-
-
