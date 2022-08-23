@@ -1,4 +1,5 @@
 from typing import Optional
+from interactions.ext.files import CommandContext
 from PIL import Image
 import io
 from enum import Enum
@@ -250,12 +251,12 @@ def get_emoji(name: str) -> interactions.Emoji:
     raise Exception("Unknown emoji id:",name)
 
 
-def mention_author(ctx):
-    return ctx.message.author.mention
+def mention_author(ctx: CommandContext) -> str:
+    return ctx.author.mention
 
 
-def get_author(ctx):
-    return str(ctx.message.author)
+def get_author(ctx: CommandContext) -> str:
+    return str(ctx.author)
 
 
 async def imageHorizontalConcat(client, file_list, discord_file_list):

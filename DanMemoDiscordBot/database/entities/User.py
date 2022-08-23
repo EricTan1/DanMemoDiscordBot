@@ -1,9 +1,5 @@
-import json
-import datetime
-
-import database.DBcontroller 
-from database.entities.BaseConstants import Base
-from commands.utils import dict_to_sns, sns_to_dict
+import database.DBcontroller
+from commands.utils import sns_to_dict
 
 class User():
     '''
@@ -36,10 +32,7 @@ class User():
         return json.loads(dataJson)'''
 
     @staticmethod
-    def get_user(db_config, author, authorUniqueId):
-        discord_id = author
-        discord_unique_id = authorUniqueId
-
+    def get_user(db_config, discord_id: str, discord_unique_id: str) -> "User":
         db = database.DBcontroller.DBcontroller(db_config)
         user = db.get_user(discord_id,discord_unique_id)
         db.closeconnection()

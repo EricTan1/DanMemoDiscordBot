@@ -1,54 +1,55 @@
-import discord
+from typing import List
+import interactions
+from interactions.ext.files import CommandContext
 from PIL import Image
 import io
-import asyncio
-import time
 from numpy.random import choice
-from os.path import isfile, abspath, isdir
+from os.path import abspath, isdir
 import datetime
 from threading import Lock
 from collections import Counter
 
 from database.entities.User import User
-from commands.utils import Status, get_emoji, mention_author, GachaRates, GachaRatesEleventh, GachaRatesOnlyFourStars, getDefaultEmoji, GachaModes
+from commands.utils import Status, mention_author, GachaRates, GachaRatesEleventh, GachaRatesOnlyFourStars, getDefaultEmoji, GachaModes
 from commands.cache import Cache
-from database.DBcontroller import DBcontroller
+from database.DBcontroller import DBConfig
+
+MS_PER_FRAME = 500
+
+star_emoji = '\u2b50'
 
 lock = Lock()
 
-async def run(dbConfig, client, ctx, *args):
-    #acquired = lock.acquire(blocking=True, timeout=60)
+async def run(dbConfig: DBConfig, ctx: CommandContext):
     acquired = lock.acquire(blocking=False)
-    if acquired:
-        await ctx.message.add_reaction(getDefaultEmoji("white_check_mark"))
-    else:
-        await ctx.message.add_reaction(getDefaultEmoji("x"))
-        return
+    if not acquired:
+        return await try_again_later(ctx)
     try:
-        await engine(dbConfig,client,ctx,*args)
+        await engine(dbConfig,ctx)
     finally:
         if acquired:
             lock.release()
 
-async def engine(dbConfig, client, ctx, *args):
-    author = str(ctx.message.author)
-    authorUniqueId = str(ctx.message.author.id)
-    content = ctx.message.content
-    
-    print("\nReceived message from '"+author+"("+authorUniqueId+")' with content '"+content+"'")
+async def try_again_later(ctx: CommandContext):
+    embed = interactions.Embed()
+    embed.title = "Sorry, please try again later"
+    embed.color = Status.KO.value
+    await ctx.send(embeds=embed)
+
+async def engine(dbConfig: DBConfig, ctx: CommandContext):
+    author = str(ctx.author)
+    authorUniqueId = str(ctx.author.id)
 
     user = User.get_user(dbConfig, author, authorUniqueId)
 
-    currency_number = user.crepes
-    if currency_number is None:
-        currency_number = 0
+    if user.crepes is None:
+        user.crepes = 0
 
-    if currency_number == 0:
-        await no_gacha(user, currency_number, ctx)
+    if user.crepes == 0:
+        await no_gacha(ctx)
         return
 
-    currency_number -= 1
-    user.crepes = currency_number
+    user.crepes -= 1
 
     pulls = get_pulls(10, GachaRates)
     pulls.extend(get_pulls(1, GachaRatesEleventh))
@@ -56,41 +57,42 @@ async def engine(dbConfig, client, ctx, *args):
     user.add_units(pulls)
     user.update_stats()
     
-    user.update_user(dbConfig,datetime.datetime.now(),content)
+    user.update_user(dbConfig,datetime.datetime.now(),"!$gacha")
 
-    await pull_messages(ctx, currency_number, pulls, user.gacha_mode)
+    await pull_messages(ctx, user.crepes, pulls, user.gacha_mode)
 
-async def no_gacha(user, currency_number, ctx):
-    emoji = get_emoji("crepe")
-    emojiStr = emoji.toString(ctx)
-
+async def no_gacha(ctx: CommandContext):
     title = "Hold on! Who goes there?"
 
     description = "What do you think you are doing, " + mention_author(ctx) + "?"
     description += " Come back when you have something for me!"
 
-    if currency_number == 1:
-        footer = "There is " + str(currency_number) + " " + emoji.name + " left in your bento box!"
-    else:
-        footer = "There are " + str(currency_number) + " " + emoji.plural + " left in your bento box!"
+    footer = "There are 0 crepes left in your bento box!"
 
-    embed = discord.Embed()
+    embed = interactions.Embed()
     embed.color = Status.KO.value
     embed.title = title
     embed.description = description
     embed.set_footer(text=footer)
     embed.set_image(url="attachment://nope.png")
-    await ctx.send(embed=embed, file=discord.File("./images/gacha/nope.png"))
+    await ctx.send(embeds=embed, files=interactions.File("./images/gacha/nope.png"))
 
-def random_pulls(number,gacha_rates):
+def get_pulls(number: int, gacha_rates) -> list:
+    pulls_category = random_pulls(number,gacha_rates)
+    pulls = []
+    for category in pulls_category:
+        pulls.append(get_random_unit(category))
+    return pulls
+
+def random_pulls(number: int, gacha_rates) -> list:
     possibilities = [e.name for e in gacha_rates]
     probabilities = [e.value for e in gacha_rates]
     pulls = []
-    for i in range(number):
+    for _ in range(number):
         pulls.append(choice(possibilities,p=probabilities))
     return pulls
 
-def get_random_unit(gacha_category):
+def get_random_unit(gacha_category: GachaRates):
     cache = Cache()
     if gacha_category == GachaRates.ADVENTURER_2_STARS.name:
         stars = 2
@@ -117,86 +119,40 @@ def get_random_unit(gacha_category):
     unit = choice(units)
     return unit
 
-def get_pulls(number, gacha_rates):
-    pulls_category = random_pulls(number,gacha_rates)
-    pulls = []
-    for category in pulls_category:
-        pulls.append(get_random_unit(category))
-    return pulls
-
-async def pull_messages(ctx, currency_number, pulls, gacha_mode):
-    emoji = get_emoji("crepe")
-    emojiStr = emoji.toString(ctx)
-
-    #title = "Hold on! Who goes there?"
-    #description = "I guess I could let you pull if you share your " + emoji.name + " with me. But please, don't get addicted."
-    #description += "\n" + mention_author(ctx) + " has shared one " + emojiStr + " with Ais!"
-
+async def pull_messages(ctx: CommandContext, currency_number: int, pulls: list, gacha_mode: int):
     title = "Nom nom... Fuwa fuwa! ♡"
 
     description = "The crepe was really good, " + mention_author(ctx) + "! Please take this:" + "\n"
     for pull in pulls:
-        description += "🌟"*pull.stars + " [" + pull.unit_label + "] " + pull.character_name + "\n"
-
+        description += star_emoji*pull.stars + " [" + pull.unit_label + "] " + pull.character_name + "\n"
     if currency_number == 1:
-        footer = "There is " + str(currency_number) + " " + emoji.name + " left in your bento box!"
+        footer = "There is " + str(currency_number) + " crepe left in your bento box!"
     else:
-        footer = "There are " + str(currency_number) + " " + emoji.plural + " left in your bento box!"
+        footer = "There are " + str(currency_number) + " crepes left in your bento box!"
 
     if gacha_mode == GachaModes.IMG.value:
         img_path = "./images/gacha.png"
         create_image(img_path,pulls)
-        await ctx.send(file=discord.File(img_path))
+        await ctx.send(files=interactions.File(img_path))
     else:
-        #per_line = 5
         gif_path = "./images/gacha.gif"
-        ms_per_frame = 500
-        create_gif(gif_path,pulls,ms_per_frame)
-        await ctx.send(file=discord.File(gif_path))
+        create_gif(gif_path,pulls)
+        await ctx.send(files=interactions.File(gif_path))
 
-    embed = discord.Embed()
+    embed = interactions.Embed()
     embed.color = Status.OK.value
     embed.title = title
     embed.description = description
     embed.set_footer(text=footer)
     embed.set_image(url="attachment://yes.png")
-    await ctx.send(embed=embed, file=discord.File("./images/gacha/yes.png"))
+    await ctx.send(embeds=embed, files=interactions.File("./images/gacha/yes.png"))
 
 
-'''async def last_pull_message(ctx, pulls):
-    last_pull = pulls[-1]
-
-    title = "Nom nom... Fuwa fuwa! ♡"
-    last_pull_message = "The crepe was really good, " + mention_author(ctx) + "! Let me add this:"
-
-    last_pull_path = get_folder(last_pull)
-    last_pull_image = rarify(last_pull_path,4)
-
-    image_path = "pull11.png"
-    imgByteArr = io.BytesIO()
-    last_pull_image.save(imgByteArr, format='PNG')
-    imgByteArr.seek(0)
-
-    footer = ""
-    for pull in pulls:
-        footer += "[" + pull.unit_label + "] " + pull.character_name + " " + "🌟"*pull.stars + "\n"
-
-    embed = discord.Embed()
-    embed.color = Status.OK.value
-    embed.title = title
-    embed.description = last_pull_message
-    #embed.add_field(name="x", value=last_pull_message, inline=False)
-    embed.set_footer(text=footer)
-    #await ctx.send(embed=embed, file=discord.File(last_pull_file))
-    embed.set_image(url="attachment://"+image_path)
-    await ctx.send(embed=embed, file=discord.File(imgByteArr, filename=image_path))
-'''
-
-def create_image(img_path, pulls):
+def create_image(img_path: str, pulls: list):
     pulls_images = []
     for pull in pulls:
         path = get_folder(pull)
-        image = rarify(path,pull.stars)
+        image = rarify(path, pull.stars)
         pulls_images.append(image)
 
     full_imageBytes = concatenate_images_eleven_pulls(pulls_images)
@@ -205,11 +161,11 @@ def create_image(img_path, pulls):
     full_image.save(img_path, "PNG")
 
 
-def create_gif(gif_path, pulls, ms_per_frame):
+def create_gif(gif_path: str, pulls: list):
     pulls_images = []
     for pull in pulls:
         path = get_folder(pull)
-        image = rarify(path,pull.stars)
+        image = rarify(path, pull.stars)
         pulls_images.append(image)
 
     gif_images = []
@@ -222,13 +178,13 @@ def create_gif(gif_path, pulls, ms_per_frame):
 
         gif_images.append(full_image)
 
-    save_gif(gif_images, gif_path, ms_per_frame)
+    save_gif(gif_images, gif_path)
 
-def save_gif(images, path, ms_per_frame):
+def save_gif(images: List[Image.Image], path: str):
     print("Absolute path:",abspath(path))
-    images[0].save(path, save_all=True, append_images=images[1:], optimize=False, duration=ms_per_frame)#, transparency=0) #loop=1
+    images[0].save(path, save_all=True, append_images=images[1:], optimize=False, duration=MS_PER_FRAME)#, transparency=0) #loop=1
 
-def concatenate_images_eleven_pulls(images):
+def concatenate_images_eleven_pulls(images: List[Image.Image]) -> io.BytesIO:
     first_line = concatenate_images_horizontally(images[:6])
     second_line = concatenate_images_horizontally(images[6:])
 
@@ -240,7 +196,7 @@ def concatenate_images_eleven_pulls(images):
 
     images_lines = [convert_to_bytes(first_line),convert_to_bytes(resized_second_line)]
 
-    full_image = concatenate_images_vertically(images_lines,True)
+    full_image = concatenate_images_vertically(images_lines)
     return full_image
 
 def concatenate_images(images, per_line=5):
@@ -251,7 +207,7 @@ def concatenate_images(images, per_line=5):
         images_line = concatenate_images_horizontally(chunk,True)
         images_lines.append(images_line)
 
-    full_image = concatenate_images_vertically(images_lines,True)
+    full_image = concatenate_images_vertically(images_lines)
     return full_image
 
 def concatenate_images_horizontally(images,to_bytes=False):
@@ -275,7 +231,7 @@ def concatenate_images_horizontally(images,to_bytes=False):
     else:
         return white_bg
 
-def concatenate_images_vertically(image_paths,to_bytes=False):
+def concatenate_images_vertically(image_paths):
     images = [Image.open(x) for x in image_paths]
     widths, heights = zip(*(i.size for i in images))
     
@@ -289,10 +245,7 @@ def concatenate_images_vertically(image_paths,to_bytes=False):
         new_im.paste(im, (0,y_offset))
         y_offset += im.size[1]
 
-    if to_bytes:
-        return convert_to_bytes(new_im)
-    else:
-        return new_im
+    return convert_to_bytes(new_im)
 
 def convert_to_bytes(img):
     imgByteArr = io.BytesIO()
@@ -300,12 +253,10 @@ def convert_to_bytes(img):
     imgByteArr.seek(0)
     return imgByteArr
 
-def rarify(path, rarity):
+def rarify(path: str, rarity) -> Image.Image:
     background_path = "./images/hex/"+str(rarity)+".png"
     foreground_path = path + "hex.png"
     border_path = "./images/hex/border.png"
-
-    updated_path = path + "pull.png"
 
     background = Image.open(background_path).convert("RGBA")
     foreground = Image.open(foreground_path).convert("RGBA")
@@ -318,7 +269,7 @@ def rarify(path, rarity):
     
     return updated
 
-def get_folder(unit):
+def get_folder(unit) -> str:
     path = "./images/units/"+unit.character_name+" ["+unit.unit_label+"]/"
 
     if not isdir(path):

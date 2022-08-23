@@ -66,18 +66,6 @@ Usage: !$sa
 Please attach the notepad template with this command to calculate SA.
 
 F
-**BENTO**
-Alias: bento
-Usage: !$bento
-Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!
-
-F
-**GACHA**
-Alias: gacha, pull
-Usage: !$gacha
-Trades a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included
-
-F
 **KILLER**
 Alias: killers, slayer, slayers
 Usage: !$killer <optional: monster type>
@@ -88,6 +76,18 @@ F
 Alias: elementassists, ea
 Usage: !$ea
 Gives a nice infographic about all elemental damage buffing/elemental resist debuffing assists in the game
+
+F
+**BENTO**
+Alias: bento
+Usage: !$bento
+Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!
+
+F
+**GACHA**
+Alias: gacha, pull
+Usage: !$gacha
+Trades a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included
 
 F
 **GACHA MODE**

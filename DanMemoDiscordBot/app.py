@@ -1,4 +1,6 @@
 from typing import Optional
+from interactions.ext.files import CommandContext
+
 import discord
 from discord.ext import commands
 import interactions
@@ -41,10 +43,10 @@ if ENV == "dev":
     dbConfig = DBConfig(DatabaseEnvironment.LOCAL)
     # Scopes bot commands to the Dev server for testing
     # since unscoped (global) commands may take a couple hours to update
-    SCOPE = GUILD_ID
+    SCOPE: Optional[int] = GUILD_ID
 else:
     dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
-    SCOPE = interactions.MISSING
+    SCOPE = None
 
 _command_prefix = os.environ.get("COMMAND_PREFIX")
 
@@ -84,6 +86,7 @@ async def sacalc(ctx):
     await command_saCalculator.run(ctx)
     #await command_saCalculator.calculate()
 
+
 @client.command(aliases=["rbc"])
 async def rbcalc(ctx):
     # imanity server only and ex-imanity role
@@ -106,12 +109,13 @@ async def rbcalc(ctx):
         )
     ]
 )
-async def rbcalc(ctx: interactions.CommandContext, config: Optional[interactions.Attachment] = None):
+async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
     try:
         await command_rbCalc.run(slash_client,ctx,config)
     except:
         tb = traceback.format_exc()
         await ctx.send("ERROR:\n```{}```".format(tb))
+
 
 @client.command(aliases=["cs"])
 async def characterSearch(ctx, *search):
@@ -128,12 +132,14 @@ async def characterSearch(ctx, *search):
         )
     ]
 )
-async def characterSearch(ctx: interactions.CommandContext, keywords: str):
+async def characterSearch(ctx: CommandContext, keywords: str):
     await command_characterSearch.run(dbConfig,slash_client,ctx,keywords)
+
 
 @client.command(aliases=["ss"])
 async def skillSearch(ctx, *search):
     await command_skillSearch.run(dbConfig,client,ctx,*search)
+
 
 @client.command(aliases=["h","command","commands"])
 async def help(ctx,*args):
@@ -157,8 +163,9 @@ async def help(ctx,*args):
         )
     ]
 )
-async def help(ctx: interactions.CommandContext, sub_command: str):
+async def help(ctx: CommandContext, sub_command: str):
     await command_help.run(ctx, sub_command)
+
 
 @client.command()
 async def invite(ctx):
@@ -168,8 +175,9 @@ async def invite(ctx):
     name="invite",
     description="Prints the server invite link for the bot",
 )
-async def invite(ctx: interactions.CommandContext):
+async def invite(ctx: CommandContext):
     await command_invite.run(ctx)
+
 
 @client.command(aliases=["imanity","bestFamilia"])
 async def support(ctx):
@@ -179,8 +187,9 @@ async def support(ctx):
     name="support",
     description="Sends a link to our support server. Please contact Eric#5731 or Yon#7436",
 )
-async def support(ctx: interactions.CommandContext):
+async def support(ctx: CommandContext):
     await command_support.run(ctx)
+
 
 @client.command()
 async def popularity(ctx):
@@ -190,17 +199,56 @@ async def popularity(ctx):
 async def bento(ctx):
     await command_bento.run(dbConfig,ctx)
 
+@slash_client.command(
+    name="bento",
+    description="Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!",
+)
+async def bento(ctx: CommandContext):
+    await command_bento.run(dbConfig,ctx)
+
+
 @client.command(aliases=["pull","g"])
-async def gacha(ctx,*args):
-    await command_gacha.run(dbConfig,client,ctx,*args)
+async def gacha(ctx):
+    await command_gacha.run(dbConfig,ctx)
+
+@slash_client.command(
+    name="gacha",
+    description="Trade a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included",
+)
+async def gacha(ctx: CommandContext):
+    await command_gacha.run(dbConfig,ctx)
+
 
 @client.command(aliases=["gm"])
 async def gachamode(ctx,*args):
     await command_gachaMode.run(dbConfig,client,ctx,*args)
 
+@slash_client.command(
+    name="gacha-mode",
+    description="Changes the way your gacha pulls are shown",
+    options=[
+        interactions.Option(
+            name="image",
+            description="Send pull results as image",
+            type=interactions.OptionType.SUB_COMMAND,
+            required=False,
+        ),
+        interactions.Option(
+            name="gif",
+            description="Send pull results as GIF",
+            type=interactions.OptionType.SUB_COMMAND,
+            required=False,
+        )
+    ]
+)
+async def gachamode(ctx: CommandContext, sub_command: str):
+    await command_gachaMode.run(dbConfig,ctx,sub_command)
+
+
 @client.command(aliases=["p","inventory"])
 async def profile(ctx,*args):
     await command_profile.run(dbConfig,client,ctx,*args)
+
 
 @client.command(aliases=["top"])
 async def topUsers(ctx,*args):
@@ -212,6 +260,7 @@ async def dispatch(ctx, *search):
     print("work")
     await command_dispatch.run(dbConfig,client,ctx,*search)
 
+
 @client.command(aliases=["auu"])
 async def addUpdateUnit(ctx, *search):
     await command_addUpdateUnit.run(dbConfig,client,ctx,*search)
@@ -219,10 +268,12 @@ async def addUpdateUnit(ctx, *search):
     cache = Cache(dbConfig)
     cache.refreshcache(dbConfig)
 
+
 @client.command(aliases=["gj"])
 async def getJson(ctx):
     await command_getJson.run(client,ctx)
-    
+
+
 @client.command()
 async def init(ctx):
     await command_init.run(ctx)
@@ -230,10 +281,11 @@ async def init(ctx):
 # commands that just bring up pictures
 class Infographic(commands.Cog):
     #cp?
-    #killers
+
     @commands.command(aliases=["slayer","slayers","killers"])
     async def killer(self, ctx, *args):
         await command_killer.run(ctx, dbConfig, *args)
+
 
     @commands.command(aliases=["ea"])
     async def elementAssists(self, ctx):
@@ -243,8 +295,9 @@ class Infographic(commands.Cog):
         name="elemental-assists",
         description="Posts an infographic of all elemental damage buffing/elemental resist debuffing assists in the game",
     )
-    async def elementAssists(ctx: interactions.CommandContext):
+    async def elementAssists(ctx: CommandContext):
         await command_elementAssists.run(ctx, dbConfig)
+
 
     @commands.command(aliases=["recordbuster","rbguide"])
     async def rb(self, ctx, character):

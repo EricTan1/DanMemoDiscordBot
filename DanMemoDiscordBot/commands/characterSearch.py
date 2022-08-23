@@ -3,6 +3,7 @@ import os
 import interactions
 from interactions.ext.wait_for import WaitForClient
 from interactions.ext.files import CommandContext, ComponentContext
+from database.DBcontroller import DBConfig
 from PIL import Image
 import io
 
@@ -65,7 +66,7 @@ hero_ascend_add_button = interactions.Button(
 )
 
 
-async def run(dbConfig, client: WaitForClient, ctx: CommandContext, search_words: str):
+async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, search_words: str):
     """ Character Search
     <CommandPrefix> <Search>
     
