@@ -1,11 +1,16 @@
+from typing import Optional
 from PIL import Image
 import io
 from enum import Enum
 from types import SimpleNamespace
 import json
 import os
+import interactions
 
-def getDifficultyMultiplier(difficulty:int):
+# timeout before an interactable goes inactive
+TIMEOUT = 120
+
+def getDifficultyMultiplier(difficulty:int) -> Optional[float]:
     difficulty_dict = {5:6,6:8.5,7:10}
     return difficulty_dict.get(difficulty)
 
@@ -211,10 +216,6 @@ class CustomEmoji:
         self.plural = plural
         self.id_discord = id_discord
 
-    def toString(self,ctx):
-        return str(ctx.bot.get_emoji(self.id_discord))
-
-
 emojis = {  CustomEmoji("potato1","small potato","small potatoes",698248273387061439),
             CustomEmoji("potato2","medium potato","medium potatoes",698248273500307503),
             CustomEmoji("potato3","big potato","big potatoes",698248273613291590),
@@ -242,11 +243,11 @@ emojis = {  CustomEmoji("potato1","small potato","small potatoes",69824827338706
             CustomEmoji("ad_filter","ad_filter","ad_filter",707300588458737746)}
 
 
-def get_emoji(id_inner):
+def get_emoji(name: str) -> interactions.Emoji:
     for emoji in emojis:
-        if emoji.id_inner == id_inner:
-            return emoji
-    raise Exception("Unknown emoji id:",id_inner)
+        if emoji.name == name:
+            return interactions.Emoji(name=emoji.name, id=emoji.id_discord)
+    raise Exception("Unknown emoji id:",name)
 
 
 def mention_author(ctx):
