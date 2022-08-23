@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import mysql.connector
 import inspect
 import os
@@ -490,7 +492,7 @@ class DBcontroller:
 
         return (title_name, title, skill ,stats_dict)
 
-    def assembleAssistSkill(self, skillid):
+    def assembleAssistSkill(self, skillid) -> Tuple[str, str, str]:
         ret =""
         skillname = ""
         skilltype = ""

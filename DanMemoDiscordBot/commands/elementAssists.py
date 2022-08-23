@@ -1,6 +1,8 @@
+from typing import List, Tuple, Dict
 import interactions
+from interactions.ext.files import CommandContext
 from PIL import Image, ImageDraw, ImageFont
-from database.DBcontroller import DBcontroller
+from database.DBcontroller import DBcontroller, DBConfig
 
 # Elements, names, color codes and icon file names
 elements = ["Light", "Dark", "Fire", "Water", "Thunder", "Earth", "Wind"]
@@ -12,7 +14,7 @@ colorDimming = (80,80,80) # Substracted from elementColors to get the background
 elementFiles = {"Light": "element_06.png", "Dark": "element_07.png", "Fire": "element_01.png", "Water": "element_04.png",
                 "Thunder": "element_05.png", "Earth": "element_02.png", "Wind": "element_03.png"}
 
-effectTypes = [("Foes", "Resist"), ("Allies", "Attack")]
+effectTypes: List[Tuple[str,str]] = [("Foes", "Resist"), ("Allies", "Attack")]
 
 # Font Definition
 fontPath = "./infographic/NotoSans-Regular.ttf"
@@ -36,7 +38,7 @@ innerRowHeight = innerFramePaddingY * 2 + hexScaledLength
 lineWidth = 5
 textLineHeightFactor = 0.21/2   # /2 because the modifier text has 2 lines 
 
-async def run(ctx: interactions.CommandContext, dbConfig):
+async def run(ctx: CommandContext, dbConfig: DBConfig):
     generateInfographic(dbConfig)
 
     temp_embed = interactions.Embed()
@@ -48,7 +50,7 @@ async def run(ctx: interactions.CommandContext, dbConfig):
     await ctx.send(embeds=temp_embed, files=ifile)
 
 
-def generateInfographic(dbConfig):
+def generateInfographic(dbConfig: DBConfig):
     db = DBcontroller(dbConfig)
     assistDict = getElementAssistDict(db)
 
@@ -98,7 +100,7 @@ def generateInfographic(dbConfig):
     im.save("./infographic/elementAssists.png", quality = 95)
 
 # Pastes the element's icon at the top of the corresponding section
-def pasteElement(image, rowNum, rowOffset, centerX):
+def pasteElement(image: Image.Image, rowNum: int, rowOffset: int, centerX: int):
     elementPath = "./images/elements/" + elementFiles[elements[rowNum]]
     with Image.open(elementPath, "r") as elIm:
         elIm = elIm.convert("RGBA")
@@ -109,7 +111,7 @@ def pasteElement(image, rowNum, rowOffset, centerX):
         image.paste(elIm, (xPos, yPos), elIm)
 
 # Draws the modifier onto the image at the start of the row
-def drawModifier(drawer, modifier, side, centerX, rowOffset, innerRowNum):
+def drawModifier(drawer: ImageDraw.ImageDraw, modifier: int, side: int, centerX: int, rowOffset: int, innerRowNum: int):
     text = str(modifier) + "%"
     if side == 1:
         text = "+" + text + "\n Dmg."
@@ -129,7 +131,7 @@ def drawModifier(drawer, modifier, side, centerX, rowOffset, innerRowNum):
     drawer.text((xPos, yPos), text, fill=textColor, font=font, stroke_fill=strokeColor, stroke_width=strokeWidth)
 
 # Computes the position for insertion of an assist image
-def getHexPos(rowOffset, side, centerX, innerRowNum, unitNum):
+def getHexPos(rowOffset: int, side: int, centerX: int, innerRowNum: int, unitNum: int) -> Tuple[int,int]:
     inRowWidths = unitNum * hexScaledLength
     totalBetweenPaddings = (unitNum - 1) * betweenPaddingX
     inRowX = inRowWidths + totalBetweenPaddings + framePaddingX
@@ -140,7 +142,7 @@ def getHexPos(rowOffset, side, centerX, innerRowNum, unitNum):
     return (x,y)
 
 # returns the number of assists in the largest subdict
-def getWidthFactor(assistDict):
+def getWidthFactor(assistDict: Dict[str, Dict[str, Dict[int, str]]]) -> int:
     max = -1
     for el in elements:
         for ef in effectTypes:
@@ -150,7 +152,7 @@ def getWidthFactor(assistDict):
     return max
 
 # Sums up the amount of different modifiers per element
-def getRowHeights(assistDict):
+def getRowHeights(assistDict: Dict[str, Dict[str, Dict[int, str]]]) -> List[int]:
     heightFactors = []
     for el in elements:
         inRowHeights = []
@@ -167,7 +169,7 @@ def getRowHeights(assistDict):
 #   with each one having a key for each modifier,
 #   under which lies a list paths to assist images
 #   who have that effect type for that element and that modifier
-def getElementAssistDict(db):
+def getElementAssistDict(db: DBcontroller) -> Dict[str, Dict[str, Dict[int, str]]]:
     assistImages = dict()
     for elem in elements:
 
@@ -204,7 +206,7 @@ def getElementAssistDict(db):
     return assistImages
 
 # Parses the modifier for the specified elemental damage buff / elemental resist debuff from the skill description
-def getModifier(elem, target, type, effect):
+def getModifier(elem: str, target: str, type: str, effect: str) -> int:
     rightDelimiter = elem + " " + type
     positions = findAll(rightDelimiter, effect)
     foundPos = -1
@@ -222,13 +224,13 @@ def getModifier(elem, target, type, effect):
         return 0
 
 # Parses the target of a skill effect from the skill description
-def getEffectTarget(effect, startPos):
+def getEffectTarget(effect: str, startPos: int) -> str:
     leftPos = effect.rfind('[', 0, startPos)
     rightPos = effect.rfind(']', leftPos, startPos)
     return effect[leftPos+1:rightPos]
 
 # Returns starting positions of all effects in a skill description that match query
-def findAll(query, effect):
+def findAll(query: str, effect: str) -> List[int]:
     indexes = []
     max = -1
     while True:
