@@ -1,4 +1,3 @@
-import asyncio
 from typing import Optional
 import discord
 from discord.ext import commands
@@ -38,13 +37,6 @@ GUILD_ID = 698143969166622720 # ID of Sword Oratoria server
 TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
 ENV = os.environ.get("ENV")
 
-_command_prefix = os.environ.get("COMMAND_PREFIX")
-
-client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True)
-slash_client = interactions.Client(token=TOKEN)
-slash_client.load("interactions.ext.files")
-setup(slash_client) # loads wait_for extension
-
 if ENV == "dev":
     dbConfig = DBConfig(DatabaseEnvironment.LOCAL)
     # Scopes bot commands to the Dev server for testing
@@ -53,6 +45,13 @@ if ENV == "dev":
 else:
     dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
     SCOPE = interactions.MISSING
+
+_command_prefix = os.environ.get("COMMAND_PREFIX")
+
+client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True, intents=None)
+slash_client = interactions.Client(token=TOKEN, default_scope=SCOPE)
+slash_client.load("interactions.ext.files")
+setup(slash_client) # loads wait_for extension
 
 cache = Cache(dbConfig)
 @client.event
@@ -98,7 +97,6 @@ async def rbcalc(ctx):
 @slash_client.command(
     name="rbcalc",
     description="Record Buster Score Calculator",
-    scope=SCOPE,
     options=[
         interactions.Option(
             name="config",
@@ -122,7 +120,6 @@ async def characterSearch(ctx, *search):
 @slash_client.command(
     name="character-search",
     description="Search DanMemo units by name and title",
-    scope=SCOPE,
     options=[
         interactions.Option(
             name="keywords",
@@ -145,7 +142,6 @@ async def help(ctx,*args):
 @slash_client.command(
     name="help",
     description="Instructions on using the bot",
-    scope=SCOPE,
     options=[
         interactions.Option(
             name="user",
@@ -171,7 +167,6 @@ async def invite(ctx):
 @slash_client.command(
     name="invite",
     description="Prints the server invite link for the bot",
-    scope=SCOPE,
 )
 async def invite(ctx: interactions.CommandContext):
     await command_invite.run(ctx)
@@ -183,7 +178,6 @@ async def support(ctx):
 @slash_client.command(
     name="support",
     description="Sends a link to our support server. Please contact Eric#5731 or Yon#7436",
-    scope=SCOPE,
 )
 async def support(ctx: interactions.CommandContext):
     await command_support.run(ctx)
@@ -248,7 +242,6 @@ class Infographic(commands.Cog):
     @slash_client.command(
         name="elemental-assists",
         description="Posts an infographic of all elemental damage buffing/elemental resist debuffing assists in the game",
-        scope=SCOPE,
     )
     async def elementAssists(ctx: interactions.CommandContext):
         await command_elementAssists.run(ctx, dbConfig)
