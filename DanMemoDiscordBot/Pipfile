@@ -17,6 +17,7 @@ Pillow = "==8.3.2"
 mysql-connector-python = "==8.0.19"
 discord-py-interactions = "*"
 interactions-files = "*"
+interactions-wait-for = "*"
 
 [dev-packages]
 pylint = ">=2.7.1"

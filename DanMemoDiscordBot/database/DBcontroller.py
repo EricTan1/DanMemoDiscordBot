@@ -164,7 +164,7 @@ class DBcontroller:
             ret_list.append(row[0])
         return ret_list    
     
-    def characterSearch(self,search, filter_dict):
+    def characterSearch(self,search):
         print("searching")
         ret_dict =dict()
         for words in self.human_input_character_dict:
@@ -207,7 +207,7 @@ class DBcontroller:
                 ret_list.append(ret_dict.get(keys)+[keys])
         return ret_list
     
-    def skillSearch(self,search, filter_dict):
+    def skillSearch(self,search):
         from commands.cache import Cache
         cache = Cache()
         #units = cache.get_all_assists()

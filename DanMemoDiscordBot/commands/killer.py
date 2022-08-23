@@ -99,7 +99,7 @@ def generateInfographic(dbConfig):
 def getKillerDict(db):
     killerImages = dict()
     for enemyType in killers:
-        skills = db.skillSearch(enemyType,{})
+        skills = db.skillSearch(enemyType)
         fileList = []
         for skill in skills:
             skillinfo=db.assembleAdventurerDevelopment(skill[2:])

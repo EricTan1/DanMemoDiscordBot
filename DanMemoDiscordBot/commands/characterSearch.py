@@ -1,44 +1,98 @@
-import discord
 import asyncio
-import json
-import sys
 import os
-import aiohttp
-from discord.ext import commands
+import interactions
+from interactions.ext.wait_for import WaitForClient
+from interactions.ext.files import CommandContext, ComponentContext
 from PIL import Image
 import io
-from urllib.parse import urlparse
-import itertools
 
-from commands.utils import get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status, HeroAscensionStatsD, HeroAscensionStatsH, getDefaultEmoji
+from typing import Optional, Tuple, List
+
+from commands.utils import TIMEOUT, get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status, HeroAscensionStatsD, HeroAscensionStatsH
 from database.DBcontroller import DBcontroller
-from database.entities.Adventurer import Adventurer, AdventurerSkill, AdventurerSkillEffects, AdventurerDevelopment, AdventurerStats
-from database.entities.BaseConstants import Element, Target, Type, Attribute, Modifier
 
-async def run(dbConfig, client, ctx, *search):
+
+# emojis
+arrow_left = '\u2b05'
+arrow_right = '\u27a1'
+rewind = '\u23ee'
+forward = '\u23ed'
+limitbreak_sub_emoji = get_emoji("square_off")
+limitbreak_add_emoji = get_emoji("square_on")
+hero_ascend_sub_emoji = get_emoji("star_off")
+hero_ascend_add_emoji = get_emoji("star_on")
+
+# buttons
+previous_page = interactions.Button(
+    style=interactions.ButtonStyle.PRIMARY,
+    label=arrow_left,
+    custom_id="previous_page"
+)
+next_page = interactions.Button(
+    style=interactions.ButtonStyle.PRIMARY,
+    label=arrow_right,
+    custom_id="next_page"
+)
+to_start = interactions.Button(
+    style=interactions.ButtonStyle.PRIMARY,
+    label=rewind,
+    custom_id="to_start"
+)
+to_end = interactions.Button(
+    style=interactions.ButtonStyle.PRIMARY,
+    label=forward,
+    custom_id="to_end"
+)
+limitbreak_sub_button = interactions.Button(
+    style=interactions.ButtonStyle.PRIMARY,
+    emoji=limitbreak_sub_emoji,
+    custom_id="limitbreak_sub"
+)
+limitbreak_add_button = interactions.Button(
+    style=interactions.ButtonStyle.PRIMARY,
+    emoji=limitbreak_add_emoji,
+    custom_id="limitbreak_add"
+)
+hero_ascend_sub_button = interactions.Button(
+    style=interactions.ButtonStyle.PRIMARY,
+    emoji=hero_ascend_sub_emoji,
+    custom_id="hero_ascend_sub"
+)
+hero_ascend_add_button = interactions.Button(
+    style=interactions.ButtonStyle.PRIMARY,
+    emoji=hero_ascend_add_emoji,
+    custom_id="hero_ascend_add"
+)
+
+
+async def run(dbConfig, client: WaitForClient, ctx: CommandContext, search_words: str):
     """ Character Search
     <CommandPrefix> <Search>
     
     Arguments:
         dbConfig {[DBcontroller.dbConfig]} -- Database config usually local/environmental variables
-        client {[discord.Client]} -- the discord bot object
-        ctx {[discord.context]} -- command message context
+        client {[interactions.ext.wait_for.WaitForClient]} -- the discord bot object
+        ctx {[interactions.ext.files.CommandContext]} -- command message context
     """
+
+    search = search_words.split()
     my_search = " "
     for words in search:
         my_search = my_search + words + " "
 
     db = DBcontroller(dbConfig)
-    my_list = db.characterSearch(my_search.replace("[","").replace("]",""),{})
+    my_list = db.characterSearch(my_search.replace("[","").replace("]",""))
     print(my_list)
-    # exactly 1 result then display
     if len(my_list) == 0:
-        message = "Sorry there are no results"
+        temp_embed = interactions.Embed()
+        temp_embed.title = "There are no results"
+        temp_embed.color = Status.KO.value
+        await ctx.send(embeds=temp_embed)
     elif len(my_list) == 1:
-        await singleAdventurer(client, ctx, db,my_list[0])
+        await singleAdventurer(client, ctx, db,my_list[0][3])
     else:
         page_list=[]
-        temp_page = []
+        temp_page: List[list] = []
         page_list.append(temp_page)
         total_results = 0
         for Adventurersid in my_list:
@@ -54,125 +108,135 @@ async def run(dbConfig, client, ctx, *search):
         await pageUnitsHandler(client,ctx,page_list,db,total_results,search)
     db.closeconnection()
 
-async def pageUnitsHandler(client, ctx, page_list,db,total_results,search):
+async def pageUnitsHandler(client: WaitForClient, ctx: CommandContext, page_list: List[List[list]], db: DBcontroller, total_results: int, search: List[str]):
     """This handles the message scrolling of the character search and all the other
     page logic for multiple results
 
     Arguments:
-        client {discord.client} -- the discord bot object
-        ctx {discord.context} -- command message context
-        page_list {list of list} -- list of pages, Pages are lists with adventurers. Adventurers are tuples with (id,title,adventurername) 
+        client {interactions.ext.wait_for.WaitForClient} -- the discord bot object
+        ctx {interactions.ext.files.CommandContext} -- command message context
+        page_list {list of list} -- list of pages, Pages are lists with adventurers. Adventurers are tuples with (some number,title,adventurername,id)
         db {DBController.DBController} -- Database connector object
         total_results {int} -- total number of results from the query
-        search {string} -- the search query
+        search {list[str]} -- list of words in the search query
     """
+
     # set up
     current_page = 0
-    temp_embed = discord.Embed()
-    temp_embed.description = "React on the numbers to display the corresponding units!"
+    temp_embed = interactions.Embed()
+    temp_embed.description = "Selet a unit via the dropdown menu, or switch pages with the buttons"
     temp_embed.color = Status.OK.value
     temp_embed.title = "{} results for {}".format(str(total_results),search)
-    if(len(page_list) == 0):
-        page_list.append([["","No relevant characters to display","End of List"]])
     temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
-    emoji1 = '\u2b05'
-    emoji2 = '\u27a1'
-    emoji_list = ["zero","one","two","three","four","five","six","seven","eight","nine"]
-    emoji_react = getDefaultEmoji(emoji_list)
-    def clearSetField(temp_embed:discord.Embed, field_list):
-        temp_embed.clear_fields()
-        count = 0
-        for skills in field_list:
-            temp_embed.add_field(value="[{}] {}".format(skills[1],skills[2]), name=emoji_react[count],inline=False)
-            count = count +1
-        return temp_embed
     
-    temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
+    temp_embed = clearSetField(temp_embed, page_list[current_page])
     temp_embed.set_image(url="attachment://temp.png")
-    icons = get_units_image(page_list)
-    msg = await ctx.send(embed=temp_embed, file=discord.File(icons, filename="temp.png"))
-    
-    await msg.add_reaction(emoji1)
-    await msg.add_reaction(emoji2)
-    for emoji in emoji_react:
-        await msg.add_reaction(emoji)
-    def check(payload):
-        return ((str(payload.emoji) in emoji_react) or (str(payload.emoji) == emoji1) or (str(payload.emoji) == emoji2)) and payload.user_id !=client.user.id and payload.message_id == msg.id
-    def wait_for_reaction(event_name):
-        return client.wait_for(event_name,check=check)
+    iconsIm = get_units_image(page_list)
+    ifile = make_ifile(iconsIm)
+
+    components = build_components(page_list, current_page)
+    msg = await ctx.send(embeds=temp_embed, files=ifile, components=components)
+
     while True:
-        pending_tasks = [wait_for_reaction("raw_reaction_add"), wait_for_reaction("raw_reaction_remove")]
-        done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
+        # for some reason open files (BytesIO objects) get closed after every loop execution
+        # thus we keep the Image.Image object in memory instead, recreating the 
+        ifile = make_ifile(iconsIm)
+        try:
+            component_ctx: ComponentContext = await client.wait_for_component(
+                components=components, messages=msg, timeout=TIMEOUT,
+            )
 
-        timeout = len(done_tasks) == 0
-
-        if not timeout:
-            task = done_tasks.pop()
-
-            reaction = await task
-
-        for remaining in itertools.chain(done_tasks, pending_tasks):
-            remaining.cancel()
-
-        if timeout:
-            temp_embed.color = Status.KO.value
-            await msg.edit(embed=temp_embed)
-            break
-
-        # left
-        if str(reaction.emoji) == emoji1:
-            if(current_page > 0):
-                current_page = current_page -1
-            else:
-                current_page = len(page_list)-1
-            temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
-            temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
-            await msg.edit(embed=temp_embed)
-        # right
-        if str(reaction.emoji) == emoji2:
-            if( current_page+1 < len(page_list)):
-                current_page = current_page +1
-            else:
-                current_page = 0
-            temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
-            temp_embed = clearSetField(temp_embed, field_list=page_list[current_page])
-            await msg.edit(embed=temp_embed)
-        if((str(reaction.emoji) in emoji_react)):
-            print("test")
-            if(len(page_list[current_page]) > emoji_react.index(str(reaction.emoji))):
+            if(component_ctx.custom_id == "previous_page"):
+                if(current_page > 0):
+                    current_page = current_page -1
+                else:
+                    current_page = len(page_list)-1
+                temp_embed = clearSetField(temp_embed, page_list[current_page])
+            elif(component_ctx.custom_id == "next_page"):
+                if( current_page+1 < len(page_list)):
+                    current_page = current_page +1
+                else:
+                    current_page = 0
+                temp_embed = clearSetField(temp_embed, page_list[current_page])
+            elif(component_ctx.custom_id == "unit_select"):
                 await msg.delete()
-                await singleAdventurer(client, ctx, db,page_list[current_page][emoji_react.index(str(reaction.emoji))])
-       
+                await singleAdventurer(client, ctx, db, component_ctx.data.values[0])
+                break
 
-async def singleAdventurer(client, ctx, db,assistadventurerid):
+            temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+            components = build_components(page_list, current_page)
+            # it shouldn't be necessary to pass the files again on edit
+            # but for some reason it doesn't work otherwise
+            await component_ctx.edit(files=ifile, embeds=temp_embed, components=components)
+
+        except asyncio.TimeoutError:
+            temp_embed.color = Status.KO.value
+            return await ctx.edit(files=ifile, embeds=temp_embed, components=[])
+
+
+def build_components(page_list: List[list], current_page: int) -> List[interactions.ActionRow]:
+    select_menu = interactions.SelectMenu(
+        placeholder="Choose a unit",
+        custom_id="unit_select",
+        options=[
+            interactions.SelectOption(
+                label=f"{unit[1]} - {unit[2]}",
+                value=unit[3],
+            )
+            for unit in page_list[current_page]
+        ]
+    )
+    select_row = interactions.ActionRow(components=[select_menu])
+    interactions.ActionRow(components=[to_start, previous_page, next_page, to_end])
+    components = [select_row]
+    if len(page_list) > 1:
+        arrow_row = interactions.ActionRow(components=[to_start, previous_page, next_page, to_end])
+        components.append(arrow_row)
+
+    return components
+
+def make_ifile(file: Image.Image) -> interactions.File:
+    imgByteArr = io.BytesIO()
+    file.save(imgByteArr, format='PNG')
+    imgByteArr.seek(0)
+    ifile = interactions.File(fp=imgByteArr, filename="temp.png")
+    return ifile
+
+def clearSetField(temp_embed: interactions.Embed, units: List[list]) -> interactions.Embed:
+    temp_embed.clear_fields()
+    value = ""
+    for i, unit in enumerate(units):
+        value += f"{i+1}. [{unit[1]}] {unit[2]}\n"
+    temp_embed.add_field(name="Units", value=value)
+    return temp_embed
+
+
+async def singleAdventurer(client: WaitForClient, ctx: CommandContext, db: DBcontroller, assistadventurerid):
     """This handles the logic of choosing of the character search and setting up
     for a single result search
 
     Arguments:
-        client {discord.client} -- the discord bot object
-        ctx {discord.context} -- command message context
+        client {interactions.ext.wait_for.WaitForClient} -- the discord bot object
+        ctx {interactions.ext.files.CommandContext} -- command message context
         db {DBController.DBController} -- Database connector object
         assistadventurerid {int} -- the assist/adventurer id of the wanted search
     """
-    is_embed = False
-    is_files = False
-    temp_embed = discord.Embed()
-    dev_embed = discord.Embed()
+
+    temp_embed = interactions.Embed()
+    dev_embed = interactions.Embed()
     temp_embed.color = Status.OK.value
     dev_embed.color = Status.OK.value
-    if "Ad" in (assistadventurerid)[3]:
-        info = db.assembleAdventurer(((assistadventurerid)[3])[2:])
-        #print(info)
+    if "Ad" in assistadventurerid:
+        info = db.assembleAdventurer(assistadventurerid[2:])
         for adventurerdev in info[4]:
             dev_embed.add_field(name=adventurerdev[0], value=adventurerdev[1], inline=False)
         is_adv = True
     else:
-        info = db.assembleAssist(((assistadventurerid)[3])[2:])
-        #print(info)
+        info = db.assembleAssist(assistadventurerid[2:])
         is_adv = False
-    print(info)
-    temp_embed.add_field(name="Stats", value=await assembleStats(info[3],0,"",0), inline=True)
-    temp_embed.add_field(name="Abilities", value=await assembleAbilities(info[3],0,"",0), inline=True)
+    stats, abilities = assembleStats(info[3],0,"",0)
+    temp_embed.add_field(name="Stats", value=stats, inline=True)
+    temp_embed.add_field(name="Abilities", value=abilities, inline=True)
     temp_embed.title = info[1]
     dev_embed.title = info[1]
     for skills in info[2]:
@@ -180,286 +244,150 @@ async def singleAdventurer(client, ctx, db,assistadventurerid):
             temp_embed.add_field(name=skills[0], value="placeholder", inline=False)                
         else:
             temp_embed.add_field(name=skills[0], value=skills[1], inline=False)
-            
+
+
+    file_list = []
     try:
         # images
-        file_list = []
-        # file_list.append(discord.File("./lottery/"+info[0], filename="hex.png"))
         character_name = info[1].split("]")[1][1:].split("\n")[0]
         character_title = info[1].split("[")[1].split("]")[0]
         folder_name = character_name + " [" + character_title + "]"
         print(folder_name)
         print("./images/units/"+ folder_name + "/hex.png")
-        file_list.append(discord.File("./images/units/"+ folder_name + "/hex.png"))
-        #file_list.append(discord.File("./lottery/"+info[0], filename="texture.png"))        
-        file_list.append(discord.File("./images/units/"+ folder_name + "/all_rectangle.png"))
+        file_list.append(interactions.File("./images/units/"+ folder_name + "/hex.png"))
+        file_list.append(interactions.File("./images/units/"+ folder_name + "/all_rectangle.png"))
         temp_embed.set_thumbnail(url="attachment://hex.png")
         dev_embed.set_thumbnail(url="attachment://hex.png")
         temp_embed.set_image(url="attachment://all_rectangle.png")
         dev_embed.set_image(url="attachment://all_rectangle.png")
-        is_files = True
     except:
         pass
     
-    is_embed = True
-    #try:
-    if(is_embed and is_files):
-        if(is_adv):
-            await pageAdHandler(client, ctx, temp_embed,file_list, dev_embed,info[3], info[6], info[5])
-        else:
-            await pageASHandler(client, ctx,temp_embed,file_list,info[3])
-    elif(is_embed):
-        if(is_adv):
-            await pageAdHandler(client, ctx, temp_embed,None, dev_embed,info[3], info[6], info[5])
-        else:
-            await pageASHandler(client, ctx,temp_embed,None,info[3])    
+    if(is_adv):
+        await pageHandler(client, ctx, file_list, info[3], temp_embed, dev_embed, info[6], info[5])
+    else:
+        await pageHandler(client, ctx, file_list, info[3], temp_embed)
 
-async def pageAdHandler(client, ctx, temp_embed:discord.Embed, file_list, dev_embed, stats_dict, unit_type,ascended):
-    """This handles the logic of the page handling for the single result adventurer
+async def pageHandler(
+    client: WaitForClient,
+    ctx: CommandContext,
+    file_list: list,
+    stats_dict: dict,
+    temp_embed: interactions.Embed,
+    dev_embed: Optional[interactions.Embed] = None,
+    unit_type: Optional[str] = "",
+    ascended: Optional[bool] = None
+):
+    """This handles the logic of the page handling for the single result unit
 
     Arguments:
-        client {discord.client} -- the discord bot object
-        ctx {discord.context} -- command message context
-        temp_embed {discord.embed} -- adventurer stats/skills page
+        client {interactions.ext.wait_for.WaitForClient} -- the discord bot object
+        ctx {interactions.ext.files.CommandContext} -- command message context
+        temp_embed {interactions.embed} -- adventurer stats/skills page
         file_list {list of pictures} -- images to be displayed for pages
-        dev_embed {discord.embed} -- the adventurer development page
+        dev_embed {interactions.embed} -- the adventurer development page
         stats_dict {dict} -- the stats of the current unit
         unit_type {string} -- balance,physical,magical for stats calculation
         ascended {bool} -- adventurer has hero ascension or not
     """
+
+    def updateStats():
+        temp_embed.description = str(limitbreak_add_emoji) * current_limitbreak + str(limitbreak_sub_emoji) * (MAXLB-current_limitbreak)
+        if(ascended):
+            temp_embed.description = temp_embed.description + "    " + hero_ascend_add_emoji * current_ha + hero_ascend_sub_emoji*(MAXHA-current_ha)
+
+        stats, abilities = assembleStats(stats_dict,current_limitbreak,unit_type,current_ha)
+
+        # have to remove and insert again, since set_field_at doesn't work
+        # a fix is waiting for release: https://github.com/interactions-py/library/pull/1033
+        temp_embed.remove_field(0)
+        temp_embed.insert_field_at(0,name="Stats", value=stats, inline=True)
+        temp_embed.remove_field(1)
+        temp_embed.insert_field_at(1,name="Abilities", value=abilities, inline=True)
+
+
     MAXLB = 5
     MAXHA = 6
     current_page = 0
-    current_limitbreak = 0
-    current_ha = 0
-    page_list = [temp_embed, dev_embed]
-    temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list))) 
-
-    emoji1 = '\u2b05'
-    emoji2 = '\u27a1'
-    limit_break_add = get_emoji("square_on").toString(ctx)
-    limit_break_sub = get_emoji("square_off").toString(ctx)
-    hero_ascend_add = get_emoji("star_on").toString(ctx)
-    hero_ascend_sub = get_emoji("star_off").toString(ctx)
-    async def updateStats():
-        temp_embed.description = limit_break_add * current_limitbreak + limit_break_sub*(MAXLB-current_limitbreak)
-        if(ascended):
-            temp_embed.description = temp_embed.description + "    " + hero_ascend_add * current_ha + hero_ascend_sub*(MAXHA-current_ha)
-        # Stats 
-        temp_embed.set_field_at(0,name="Stats", value=await assembleStats(stats_dict,current_limitbreak,unit_type,current_ha), inline=True)
-        # Abilities
-        temp_embed.set_field_at(1,name="Abilities", value=await assembleAbilities(stats_dict,current_limitbreak,unit_type,current_ha), inline=True)
-    await updateStats()
-    if(file_list != None):
-        msg = await ctx.send(files=file_list,embed=page_list[current_page])
-    else:
-        msg = await ctx.send(embed=page_list[current_page])
-    await msg.add_reaction(emoji1)
-    await msg.add_reaction(emoji2)
-    await msg.add_reaction(limit_break_sub)
-    await msg.add_reaction(limit_break_add)
-    if(ascended):
-        await msg.add_reaction(hero_ascend_sub)
-        await msg.add_reaction(hero_ascend_add)
-
-    # set_field_at(index, *, name, value, inline=True)
-    def check(payload):
-        
-        return (str(payload.emoji) == emoji2 
-                or str(payload.emoji) == emoji1 
-                or str(payload.emoji) == hero_ascend_add
-                or str(payload.emoji) == hero_ascend_sub
-                or str(payload.emoji) == limit_break_add
-                or str(payload.emoji) == limit_break_sub) and payload.user_id !=client.user.id and payload.message_id == msg.id
-    
-    def wait_for_reaction(event_name):
-        return client.wait_for(event_name,check=check)
-
-
-    while True:
-        pending_tasks = [wait_for_reaction("raw_reaction_add"), wait_for_reaction("raw_reaction_remove")]
-        done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
-
-        timeout = len(done_tasks) == 0
-
-        if not timeout:
-            task = done_tasks.pop()
-
-            reaction = await task
-
-        for remaining in itertools.chain(done_tasks, pending_tasks):
-            remaining.cancel()
-
-        if timeout:
-            page_list[current_page].color = Status.KO.value
-            await msg.edit(embed=page_list[current_page])
-            break
-
-        # left
-        if str(reaction.emoji) == emoji1:
-            if(current_page > 0):
-                current_page = current_page -1
-            else:
-                current_page = len(page_list)-1
-        # right
-        if str(reaction.emoji) == emoji2:
-            if( current_page+1 < len(page_list)):
-                current_page = current_page +1
-            else:
-                current_page = 0
-        if str(reaction.emoji) == limit_break_sub:
-            if(current_limitbreak > 0):
-                current_limitbreak = current_limitbreak -1
-            else:
-                current_limitbreak = MAXLB
-            await updateStats()
-        if str(reaction.emoji) == limit_break_add:
-            if(current_limitbreak < MAXLB):
-                current_limitbreak = current_limitbreak +1
-            else:
-                current_limitbreak = 0
-            await updateStats()
-        if str(reaction.emoji) == hero_ascend_sub and ascended:
-            if(current_ha > 0):
-                current_ha = current_ha -1
-            else:
-                current_ha = MAXHA
-            await updateStats()
-        if str(reaction.emoji) == hero_ascend_add and ascended:
-            if(current_ha < MAXHA):
-                current_ha = current_ha +1
-            else:
-                current_ha = 0
-            await updateStats()
-        page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))            
-        await msg.edit(embed=page_list[current_page])    
-
-
-async def pageASHandler(client, ctx, temp_embed:discord.Embed, file_list, stats_dict):
-    """This handles the logic of the page handling for the single result assist
-
-    Arguments:
-        client {discord.client} -- the discord bot object
-        ctx {discord.context} -- command message context
-        temp_embed {discord.embed} -- assist stats/skills page
-        file_list {list of pictures} -- images to be displayed for pages
-        stats_dict {dict} -- the stats of the current unit
-    """
-    MAXLB = 5
-    current_page = 0
-    current_limitbreak = 0
+    current_limitbreak = 5
     current_ha = 0
     page_list = [temp_embed]
+    if dev_embed:
+        page_list.append(dev_embed)
     temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list))) 
 
-    limit_break_add = get_emoji("square_on").toString(ctx)
-    limit_break_sub = get_emoji("square_off").toString(ctx)
-    async def updateStats():
-        temp_embed.description = limit_break_add * current_limitbreak + limit_break_sub*(MAXLB-current_limitbreak)
-        # Stats 
-        temp_embed.set_field_at(0,name="Stats", value=await assembleStats(stats_dict,current_limitbreak,"",current_ha), inline=True)
-        # Abilities
-        temp_embed.set_field_at(1,name="Abilities", value=await assembleAbilities(stats_dict,current_limitbreak,"",current_ha), inline=True)
-    await updateStats()
-    msg = await ctx.send(files=file_list,embed=page_list[current_page])
-    await msg.add_reaction(limit_break_sub)
-    await msg.add_reaction(limit_break_add)
-    # set_field_at(index, *, name, value, inline=True)
-    def check(payload):
-        return (str(payload.emoji) == limit_break_add
-                or str(payload.emoji) == limit_break_sub) and payload.user_id !=client.user.id and payload.message_id == msg.id
-    def wait_for_reaction(event_name):
-        return client.wait_for(event_name,check=check)
+    updateStats()
+    stats_buttons = [limitbreak_sub_button, limitbreak_add_button]
+    if(ascended):
+        stats_buttons += [hero_ascend_sub_button, hero_ascend_add_button]
+    stats_button_row = interactions.ActionRow(components=stats_buttons)
+    components = [stats_button_row]
+    if(len(page_list) > 1):
+        arrow_row = interactions.ActionRow(components=[previous_page, next_page])
+        components = [arrow_row] + components
+    msg = await ctx.send(files=file_list,embeds=page_list[current_page], components=components)
+
+    buttons = [previous_page, next_page, limitbreak_sub_button, limitbreak_add_button]
+
     while True:
-        pending_tasks = [wait_for_reaction("raw_reaction_add"), wait_for_reaction("raw_reaction_remove")]
-        done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
+        # files seem to be automatically closed, have to reopen them on every loop execution
+        refresh_files(file_list)
+        try:
+            component_ctx: ComponentContext = await client.wait_for_component(
+                components=buttons,
+                messages=msg,
+                timeout=TIMEOUT,
+            )
 
-        timeout = len(done_tasks) == 0
+            if(component_ctx.custom_id == "previous_page"):
+                if(current_page > 0):
+                    current_page = current_page -1
+                else:
+                    current_page = len(page_list)-1
+            elif(component_ctx.custom_id == "next_page"):
+                if( current_page+1 < len(page_list)):
+                    current_page = current_page +1
+                else:
+                    current_page = 0
+            elif(component_ctx.custom_id == "limitbreak_sub"):
+                if(current_limitbreak > 0):
+                    current_limitbreak = current_limitbreak -1
+                else:
+                    current_limitbreak = MAXLB
+                updateStats()
+            elif(component_ctx.custom_id == "limitbreak_add"):
+                if(current_limitbreak < MAXLB):
+                    current_limitbreak = current_limitbreak +1
+                else:
+                    current_limitbreak = 0
+                updateStats()
+            elif(component_ctx.custom_id == "hero_ascend_sub"):
+                if(current_ha > 0):
+                    current_ha = current_ha -1
+                else:
+                    current_ha = MAXHA
+                updateStats()
+            elif(component_ctx.custom_id == "hero_ascend_add"):
+                if(current_ha < MAXHA):
+                    current_ha = current_ha +1
+                else:
+                    current_ha = 0
+                updateStats()
 
-        if not timeout:
-            task = done_tasks.pop()
+            page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+            # it shouldn't be necessary to pass the files again on edit
+            # but for some reason it doesn't work otherwise
+            await component_ctx.edit(files=file_list,embeds=page_list[current_page])
 
-            reaction = await task
-
-        for remaining in itertools.chain(done_tasks, pending_tasks):
-            remaining.cancel()
-
-        if timeout:
+        except asyncio.TimeoutError:
             page_list[current_page].color = Status.KO.value
-            await msg.edit(embed=page_list[current_page])
-            break
+            return await msg.edit(files=file_list, embeds=page_list[current_page], components=[])
 
-        if str(reaction.emoji) == limit_break_sub:
-            if(current_limitbreak > 0):
-                current_limitbreak = current_limitbreak -1
-            else:
-                current_limitbreak = MAXLB
-            await updateStats()
-        if str(reaction.emoji) == limit_break_add:
-            if(current_limitbreak < MAXLB):
-                current_limitbreak = current_limitbreak +1
-            else:
-                current_limitbreak = 0
-            await updateStats()
-        page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
-        await msg.edit(embed=page_list[current_page])    
+def refresh_files(file_list: List[interactions.File]):
+    for file in file_list:
+        file._fp = open(file._fp.name, "rb")
 
-
-
-async def assembleStats(stats_dict : dict, limitbreak:int,unit_type:str,heroascend:int):
-    """ Calculates stats based on limit break and hero ascension (if avaliable)
-
-    Arguments:
-        stats_dict {dict} -- the stats dictionary
-        limitbreak {int} -- the limit break of a unit, 0 = no LB, 5 = MLB
-        unit_type {str} -- balance, physical, magical
-        heroascend {int} -- the hero ascension #, 0 = no HA and 6 = MHA
-
-    Returns:
-        dict -- the stats dictionary
-    """
-    if (unit_type.lower() == "physical_type"):
-        temp_hp = str(int(stats_dict.get("hp")[limitbreak]) + HeroAscensionStatsP.HP.value[heroascend])
-        temp_mp = str(int(stats_dict.get("mp")[limitbreak]) + HeroAscensionStatsP.MP.value[heroascend])
-        temp_pat = str(int(stats_dict.get("physical_attack")[limitbreak]) + HeroAscensionStatsP.PAT.value[heroascend])
-        temp_mat = str(int(stats_dict.get("magic_attack")[limitbreak]) + HeroAscensionStatsP.MAT.value[heroascend])
-        temp_def = str(int(stats_dict.get("defense")[limitbreak]) + HeroAscensionStatsP.DEF.value[heroascend])
-    elif (unit_type.lower() == "magic_type"):
-        temp_hp = str(int(stats_dict.get("hp")[limitbreak]) + HeroAscensionStatsM.HP.value[heroascend])
-        temp_mp = str(int(stats_dict.get("mp")[limitbreak]) + HeroAscensionStatsM.MP.value[heroascend])
-        temp_pat = str(int(stats_dict.get("physical_attack")[limitbreak]) + HeroAscensionStatsM.PAT.value[heroascend])
-        temp_mat = str(int(stats_dict.get("magic_attack")[limitbreak]) + HeroAscensionStatsM.MAT.value[heroascend])
-        temp_def = str(int(stats_dict.get("defense")[limitbreak]) + HeroAscensionStatsM.DEF.value[heroascend])
-    # healer
-    elif(unit_type.lower() == "healer_type"):
-        temp_hp = str(int(stats_dict.get("hp")[limitbreak]) + HeroAscensionStatsH.HP.value[heroascend])
-        temp_mp = str(int(stats_dict.get("mp")[limitbreak]) + HeroAscensionStatsH.MP.value[heroascend])
-        temp_pat = str(int(stats_dict.get("physical_attack")[limitbreak]) + HeroAscensionStatsH.PAT.value[heroascend])
-        temp_mat = str(int(stats_dict.get("magic_attack")[limitbreak]) + HeroAscensionStatsH.MAT.value[heroascend])
-        temp_def = str(int(stats_dict.get("defense")[limitbreak]) + HeroAscensionStatsH.DEF.value[heroascend])
-    # defense
-    elif(unit_type.lower() == "defense_type"):
-        temp_hp = str(int(stats_dict.get("hp")[limitbreak]) + HeroAscensionStatsD.HP.value[heroascend])
-        temp_mp = str(int(stats_dict.get("mp")[limitbreak]) + HeroAscensionStatsD.MP.value[heroascend])
-        temp_pat = str(int(stats_dict.get("physical_attack")[limitbreak]) + HeroAscensionStatsD.PAT.value[heroascend])
-        temp_mat = str(int(stats_dict.get("magic_attack")[limitbreak]) + HeroAscensionStatsD.MAT.value[heroascend])
-        temp_def = str(int(stats_dict.get("defense")[limitbreak]) + HeroAscensionStatsD.DEF.value[heroascend])
-    # balance
-    else:
-        temp_hp = str(int(stats_dict.get("hp")[limitbreak]) + HeroAscensionStatsB.HP.value[heroascend])
-        temp_mp = str(int(stats_dict.get("mp")[limitbreak]) + HeroAscensionStatsB.MP.value[heroascend])
-        temp_pat = str(int(stats_dict.get("physical_attack")[limitbreak]) + HeroAscensionStatsB.PAT.value[heroascend])
-        temp_mat = str(int(stats_dict.get("magic_attack")[limitbreak]) + HeroAscensionStatsB.MAT.value[heroascend])
-        temp_def = str(int(stats_dict.get("defense")[limitbreak]) + HeroAscensionStatsB.DEF.value[heroascend])
-
-    ret = ""
-    ret = ret + "{} : {}\n".format("HP",temp_hp)
-    ret = ret + "{} : {}\n".format("MP",temp_mp)
-    ret = ret + "{} : {}\n".format("P.AT",temp_pat)
-    ret = ret + "{} : {}\n".format("M.AT",temp_mat)
-    ret = ret + "{} : {}\n".format("DEF",temp_def)
-    return ret
-async def assembleAbilities(stats_dict : dict,limitbreak:int,unit_type:str,heroascend:int):
+def assembleStats(stats_dict: dict, limitbreak: int, unit_type: str, heroascend: int) -> Tuple[str, str]:
     """ Calculates Abilities based on limit break and hero ascension (if avaliable)
 
     Arguments:
@@ -469,49 +397,48 @@ async def assembleAbilities(stats_dict : dict,limitbreak:int,unit_type:str,heroa
         heroascend {int} -- the hero ascension #, 0 = no HA and 6 = MHA
 
     Returns:
-        dict -- the stats dictionary
+        str -- the stats string
     """
+
     if (unit_type.lower() == "physical_type"):
-        temp_str = str(int(stats_dict.get("strength")[limitbreak]) + HeroAscensionStatsP.STR.value[heroascend])
-        temp_end = str(int(stats_dict.get("endurance")[limitbreak]) + HeroAscensionStatsP.END.value[heroascend])
-        temp_dex = str(int(stats_dict.get("dexterity")[limitbreak]) + HeroAscensionStatsP.DEX.value[heroascend])
-        temp_agi = str(int(stats_dict.get("agility")[limitbreak]) + HeroAscensionStatsP.AGI.value[heroascend])
-        temp_mag = str(int(stats_dict.get("magic")[limitbreak]) + HeroAscensionStatsP.MAG.value[heroascend])
+        ascension_stats = HeroAscensionStatsP
     elif (unit_type.lower() == "magic_type"):
-        temp_str = str(int(stats_dict.get("strength")[limitbreak]) + HeroAscensionStatsM.STR.value[heroascend])
-        temp_end = str(int(stats_dict.get("endurance")[limitbreak]) + HeroAscensionStatsM.END.value[heroascend])
-        temp_dex = str(int(stats_dict.get("dexterity")[limitbreak]) + HeroAscensionStatsM.DEX.value[heroascend])
-        temp_agi = str(int(stats_dict.get("agility")[limitbreak]) + HeroAscensionStatsM.AGI.value[heroascend])
-        temp_mag = str(int(stats_dict.get("magic")[limitbreak]) + HeroAscensionStatsM.MAG.value[heroascend])
+        ascension_stats = HeroAscensionStatsM
     elif (unit_type.lower() == "healer_type"):
-        temp_str = str(int(stats_dict.get("strength")[limitbreak]) + HeroAscensionStatsH.STR.value[heroascend])
-        temp_end = str(int(stats_dict.get("endurance")[limitbreak]) + HeroAscensionStatsH.END.value[heroascend])
-        temp_dex = str(int(stats_dict.get("dexterity")[limitbreak]) + HeroAscensionStatsH.DEX.value[heroascend])
-        temp_agi = str(int(stats_dict.get("agility")[limitbreak]) + HeroAscensionStatsH.AGI.value[heroascend])
-        temp_mag = str(int(stats_dict.get("magic")[limitbreak]) + HeroAscensionStatsH.MAG.value[heroascend])
+        ascension_stats = HeroAscensionStatsH
     elif (unit_type.lower() == "defense_type"):
-        temp_str = str(int(stats_dict.get("strength")[limitbreak]) + HeroAscensionStatsD.STR.value[heroascend])
-        temp_end = str(int(stats_dict.get("endurance")[limitbreak]) + HeroAscensionStatsD.END.value[heroascend])
-        temp_dex = str(int(stats_dict.get("dexterity")[limitbreak]) + HeroAscensionStatsD.DEX.value[heroascend])
-        temp_agi = str(int(stats_dict.get("agility")[limitbreak]) + HeroAscensionStatsD.AGI.value[heroascend])
-        temp_mag = str(int(stats_dict.get("magic")[limitbreak]) + HeroAscensionStatsD.MAG.value[heroascend])
+        ascension_stats = HeroAscensionStatsD
     else:
-        temp_str = str(int(stats_dict.get("strength")[limitbreak]) + HeroAscensionStatsB.STR.value[heroascend])
-        temp_end = str(int(stats_dict.get("endurance")[limitbreak]) + HeroAscensionStatsB.END.value[heroascend])
-        temp_dex = str(int(stats_dict.get("dexterity")[limitbreak]) + HeroAscensionStatsB.DEX.value[heroascend])
-        temp_agi = str(int(stats_dict.get("agility")[limitbreak]) + HeroAscensionStatsB.AGI.value[heroascend])
-        temp_mag = str(int(stats_dict.get("magic")[limitbreak]) + HeroAscensionStatsB.MAG.value[heroascend])
+        ascension_stats = HeroAscensionStatsB
 
-    ret = ""
-    ret = ret + "{} : {}\n".format("Str.",temp_str)
-    ret = ret + "{} : {}\n".format("End.",temp_end)
-    ret = ret + "{} : {}\n".format("Dex.",temp_dex)
-    ret = ret + "{} : {}\n".format("Agi.",temp_agi)
-    ret = ret + "{} : {}\n".format("Mag.",temp_mag)
-    return ret
+    temp_hp = int(stats_dict["hp"][limitbreak]) + ascension_stats.HP.value[heroascend]
+    temp_mp = int(stats_dict["mp"][limitbreak]) + ascension_stats.MP.value[heroascend]
+    temp_pat = int(stats_dict["physical_attack"][limitbreak]) + ascension_stats.PAT.value[heroascend]
+    temp_mat = int(stats_dict["magic_attack"][limitbreak]) + ascension_stats.MAT.value[heroascend]
+    temp_def = int(stats_dict["defense"][limitbreak]) + ascension_stats.DEF.value[heroascend]
+
+    res1 = f"HP : {temp_hp}\n"
+    res1 += f"MP : {temp_mp}\n"
+    res1 += f"P.AT : {temp_pat}\n"
+    res1 += f"M.AT : {temp_mat}\n"
+    res1 += f"DEF : {temp_def}\n"
+
+    temp_str = int(stats_dict["strength"][limitbreak]) + ascension_stats.STR.value[heroascend]
+    temp_end = int(stats_dict["endurance"][limitbreak]) + ascension_stats.END.value[heroascend]
+    temp_dex = int(stats_dict["dexterity"][limitbreak]) + ascension_stats.DEX.value[heroascend]
+    temp_agi = int(stats_dict["agility"][limitbreak]) + ascension_stats.AGI.value[heroascend]
+    temp_mag = int(stats_dict["magic"][limitbreak]) + ascension_stats.MAG.value[heroascend]
+
+    res2 = f"Str. : {temp_str}\n"
+    res2 += f"End. : {temp_end}\n"
+    res2 += f"Dex. : {temp_dex}\n"
+    res2 += f"Agi. : {temp_agi}\n"
+    res2 += f"Mag. : {temp_mag}\n"
+
+    return (res1, res2)
 
 
-def get_units_image(page_list):
+def get_units_image(page_list) -> Image.Image:
     images = []
     for page in page_list:
         for unit in page:
@@ -527,18 +454,18 @@ def get_units_image(page_list):
     full_image = concatenate_images(images, per_line=5, white_background=False)
     return full_image
 
-def concatenate_images(images, per_line=4, white_background=False):
+def concatenate_images(images, per_line=4, white_background=False) -> Image.Image:
     chunks = [images[x:x+per_line] for x in range(0, len(images), per_line)]
 
     images_lines = []
     for chunk in chunks:
-        images_line = concatenate_images_horizontally(chunk,True,white_background)
+        images_line = concatenate_images_horizontally(chunk,white_background)
         images_lines.append(images_line)
 
-    full_image = concatenate_images_vertically(images_lines,True)
+    full_image = concatenate_images_vertically(images_lines)
     return full_image
 
-def concatenate_images_horizontally(images,to_bytes=False,white_background=False):
+def concatenate_images_horizontally(images,white_background=False) -> io.BytesIO:
     widths, heights = zip(*(i.size for i in images))
     
     total_width = sum(widths)
@@ -557,12 +484,9 @@ def concatenate_images_horizontally(images,to_bytes=False,white_background=False
     else:
         image = new_im
 
-    if to_bytes:
-        return convert_to_bytes(image)
-    else:
-        return image
+    return convert_to_bytes(image)
 
-def concatenate_images_vertically(image_paths,to_bytes=False):
+def concatenate_images_vertically(image_paths) -> Image.Image:
     images = [Image.open(x) for x in image_paths]
     widths, heights = zip(*(i.size for i in images))
     
@@ -576,12 +500,9 @@ def concatenate_images_vertically(image_paths,to_bytes=False):
         new_im.paste(im, (0,y_offset))
         y_offset += im.size[1]
 
-    if to_bytes:
-        return convert_to_bytes(new_im)
-    else:
-        return new_im
+    return new_im
 
-def convert_to_bytes(img):
+def convert_to_bytes(img: Image.Image) -> io.BytesIO:
     imgByteArr = io.BytesIO()
     img.save(imgByteArr, format='PNG')
     imgByteArr.seek(0)

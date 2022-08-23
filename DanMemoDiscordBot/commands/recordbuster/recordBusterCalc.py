@@ -1,5 +1,6 @@
 from typing import Optional
 import interactions
+from interactions.ext.wait_for import WaitForClient
 from commands.utils import getElements, getDifficultyMultiplier
 from commands.cache import Cache
 from commands.calculatorUtil import CounterDamageFunction, DamageFunction,SADamageFunction,CombineSA,interpretSkillAdventurerAttack,interpretSkillAdventurerEffects,interpretSkillAssistEffects
@@ -15,9 +16,9 @@ import ast
 
 from commands.recordbuster.recordBusterCalcHandler import pageRBHandler
 
-async def run(client: interactions.Client, ctx: interactions.CommandContext, config: Optional[interactions.Attachment]):
+async def run(client: WaitForClient, ctx: interactions.CommandContext, config: Optional[interactions.Attachment]):
     if(not config):
-        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the description !$rbc", files=interactions.File("RBConfig.txt"))
+        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it via the /rbcalc command", files=interactions.File("RBConfig.txt"))
     else:
         # if template attached start to verify it
         # attachment object only contains the URL, so have to download it first

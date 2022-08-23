@@ -33,7 +33,7 @@ async def run(dbConfig, client, ctx, *search):
         my_search= my_search + words + " "
     db = DBcontroller(dbConfig)
     
-    skilleffects_id_list = db.skillSearch(my_search,{})
+    skilleffects_id_list = db.skillSearch(my_search)
     print(skilleffects_id_list)
     message =""
     # image concat breaks if 0 results

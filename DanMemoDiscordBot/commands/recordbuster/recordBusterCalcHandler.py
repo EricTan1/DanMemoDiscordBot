@@ -1,8 +1,9 @@
 
-from typing import List, Union
+from typing import List
 import asyncio
 import interactions
-from commands.utils import getDefaultEmoji, Status
+from interactions.ext.wait_for import WaitForClient
+from commands.utils import TIMEOUT, getDefaultEmoji, Status
 from commands.entities.adventurer import Adventurer
 from commands.entities.assist import Assist
 
@@ -59,7 +60,7 @@ row1 = interactions.ActionRow(components=buttons[:4])
 row2 = interactions.ActionRow(components=buttons[4:])
 
 
-async def pageRBHandler(client: interactions.Client, ctx: interactions.CommandContext, logs: List[dict], total_damage: int, total_score: float, unit_list: List[Adventurer], assist_list: List[Assist]):
+async def pageRBHandler(client: WaitForClient, ctx: interactions.CommandContext, logs: List[dict], total_damage: int, total_score: float, unit_list: List[Adventurer], assist_list: List[Assist]):
     """This handles the logic of the page handling for the single result adventurer
 
     Arguments:
@@ -107,7 +108,7 @@ async def pageRBHandler(client: interactions.Client, ctx: interactions.CommandCo
         field_list_temp.append(("Turn {}\n".format(turn_logs+1),temp_value))
         
         if(logs_per_page_counter == logs_per_page or turn_logs ==len(logs)-1):
-            temp_embed = discord.Embed()
+            temp_embed = interactions.Embed()
             temp_embed.color = Status.OK.value
             page_list.append(temp_embed)
             temp_embed.title = "Buffs/Debuffs Check for Turn {}".format(turn_logs+1)
@@ -183,6 +184,8 @@ async def pageRBHandler(client: interactions.Client, ctx: interactions.CommandCo
             else:
                 logs_per_page_counter+=1
         return page_list
+
+
     page_list = await updateStats(page_list)
     # set footer for first page
     page_list[current_page].description="react {} or {} to change pages\n{} to toggle sa/combat skills\n{} to toggle counters\n{}\
@@ -194,9 +197,7 @@ async def pageRBHandler(client: interactions.Client, ctx: interactions.CommandCo
     while True:
         try:
             component_ctx: interactions.ComponentContext = await client.wait_for_component(
-                components=buttons,
-                messages=msg,
-                timeout=120
+                components=buttons, messages=msg, timeout=TIMEOUT
             )
 
             if(component_ctx.custom_id == "previous_page"):
@@ -228,7 +229,7 @@ async def pageRBHandler(client: interactions.Client, ctx: interactions.CommandCo
                 to toggle buffs/debuffs".format(arrow_left,arrow_right,attacks_toggle,counters_toggle,info_toggle)
             page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
     
-            await ctx.edit(embeds=page_list[current_page])
+            await component_ctx.edit(embeds=page_list[current_page])
 
         except asyncio.TimeoutError:
             page_list[current_page].color = Status.KO.value

@@ -176,7 +176,7 @@ def getElementAssistDict(db):
         assistImages[elem][effectTypes[1][1]] = dict()
         for efType in effectTypes:
             query = elem + " " + efType[0] + " " + efType[1]
-            results = db.skillSearch(query,{})
+            results = db.skillSearch(query)
 
             fileList = dict()
             for skill in results:
