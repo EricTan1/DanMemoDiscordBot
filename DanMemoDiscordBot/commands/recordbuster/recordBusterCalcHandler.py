@@ -3,6 +3,7 @@ from typing import List
 import asyncio
 import interactions
 from interactions.ext.wait_for import WaitForClient
+from interactions.ext.files import CommandContext
 from commands.utils import TIMEOUT, getDefaultEmoji, Status
 from commands.entities.adventurer import Adventurer
 from commands.entities.assist import Assist
@@ -60,7 +61,7 @@ row1 = interactions.ActionRow(components=buttons[:4])
 row2 = interactions.ActionRow(components=buttons[4:])
 
 
-async def pageRBHandler(client: WaitForClient, ctx: interactions.CommandContext, logs: List[dict], total_damage: int, total_score: float, unit_list: List[Adventurer], assist_list: List[Assist]):
+async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[dict], total_damage: int, total_score: float, unit_list: List[Adventurer], assist_list: List[Assist]):
     """This handles the logic of the page handling for the single result adventurer
 
     Arguments:

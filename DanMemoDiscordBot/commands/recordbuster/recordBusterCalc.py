@@ -1,6 +1,7 @@
 from typing import Optional
 import interactions
 from interactions.ext.wait_for import WaitForClient
+from interactions.ext.files import CommandContext
 from commands.utils import getElements, getDifficultyMultiplier
 from commands.cache import Cache
 from commands.calculatorUtil import CounterDamageFunction, DamageFunction,SADamageFunction,CombineSA,interpretSkillAdventurerAttack,interpretSkillAdventurerEffects,interpretSkillAssistEffects
@@ -16,7 +17,7 @@ import ast
 
 from commands.recordbuster.recordBusterCalcHandler import pageRBHandler
 
-async def run(client: WaitForClient, ctx: interactions.CommandContext, config: Optional[interactions.Attachment]):
+async def run(client: WaitForClient, ctx: CommandContext, config: Optional[interactions.Attachment]):
     if(not config):
         await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it via the /rbcalc command", files=interactions.File("RBConfig.txt"))
     else:
@@ -140,7 +141,7 @@ async def run(client: WaitForClient, ctx: interactions.CommandContext, config: O
                     #assist_list.append(Assist([],""))
             # no assist
             else:
-                raise ValueError('no assist found at all'.format(temp_ast_title))
+                raise ValueError('no assist found at all')
                 #assist_list.append(Assist([],""))
 
 
