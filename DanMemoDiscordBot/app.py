@@ -271,7 +271,16 @@ async def addUpdateUnit(ctx, *search):
 
 @client.command(aliases=["gj"])
 async def getJson(ctx):
-    await command_getJson.run(client,ctx)
+    await command_getJson.run(ctx)
+
+@slash_client.command(
+    name="get-json",
+    description="Get the unit database in JSON format",
+    scope=GUILD_ID, # so the command is only visible & available on the dev server
+    default_scope=False,
+)
+async def getJson(ctx: CommandContext):
+    await command_getJson.run(ctx)
 
 
 @client.command()

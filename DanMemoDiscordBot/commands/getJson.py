@@ -1,19 +1,16 @@
+import interactions
+from interactions.ext.files import CommandContext
+from typing import List
 import json
 import os
 import zipfile
 
-import sys
 from database.DBcontroller import EDITORS
-
 from commands.cache import Cache
 
-from datetime import datetime
-import discord
 
-
-
-async def run(client, ctx):
-    if(ctx.message.author.id in EDITORS):
+async def run(ctx: CommandContext):
+    if(ctx.author.id in EDITORS):
         cache = Cache()
         #SELECT a.adventurerid, a.characterid, a.typeid, a.alias, a.title, a.stars, a.limited, a.ascended,c.name, c.iscollab, t.name
         # unit_id, character_id, type_id, alias, unit_label, stars, is_limited, is_ascended, character_name, is_collab, type_name
@@ -59,32 +56,7 @@ async def run(client, ctx):
 
             for curr_skills in ad_skills_temp:
                 ad_skills_effect_temp = [skills for skills in ad_skill_effects if curr_skills.adventurerskillid == skills.adventurerskillid]
-                curr_effects_list = []
-
-                for curr_effects in ad_skills_effect_temp:
-                    curr_effects_dict = dict()
-                    #duration, element, modifier, type, target, attribute, speed
-                    if(curr_effects.duration != "" and curr_effects.duration != None):
-                        curr_effects_dict["duration"] = curr_effects.duration
-
-                    if(curr_effects.element != "" and curr_effects.element != None):
-                        curr_effects_dict["element"] = curr_effects.element
-
-                    if(curr_effects.modifier != "" and curr_effects.modifier != None):
-                        curr_effects_dict["modifier"] = curr_effects.modifier
-
-                    if(curr_effects.type != "" and curr_effects.type != None):
-                        curr_effects_dict["type"] = curr_effects.type
-
-                    if(curr_effects.target != "" and curr_effects.target != None):
-                        curr_effects_dict["target"] = curr_effects.target
-
-                    if(curr_effects.attribute != "" and curr_effects.attribute != None):
-                        curr_effects_dict["attribute"] = curr_effects.attribute
-
-                    if(curr_effects.speed != "" and curr_effects.speed != None and curr_effects.speed.strip().lower() != "none"):
-                        curr_effects_dict["speed"] = curr_effects.speed
-                    curr_effects_list.append(curr_effects_dict)
+                curr_effects_list = set_skill_effects(ad_skills_effect_temp, has_speed=True)
 
                 #special
                 if(curr_skills.skilltype =="special"):
@@ -108,31 +80,7 @@ async def run(client, ctx):
 
             for curr_adv_dev in ad_dev_effects_temp:
                 ad_dev_skills_effect_temp = [skills for skills in ad_dev_skill_effects if curr_adv_dev.adventurerdevelopmentid == skills.adventurerdevelopmentid]
-                curr_effects_list = []
-                for curr_effects in ad_dev_skills_effect_temp:
-                    curr_effects_dict = dict()
-                    #duration, element, modifier, type, target, attribute, speed
-                    if(curr_effects.duration != "" and curr_effects.duration != None):
-                        curr_effects_dict["duration"] = curr_effects.duration
-
-                    if(curr_effects.element != "" and curr_effects.element != None):
-                        curr_effects_dict["element"] = curr_effects.element
-
-                    if(curr_effects.modifier != "" and curr_effects.modifier != None):
-                        curr_effects_dict["modifier"] = curr_effects.modifier
-
-                    if(curr_effects.type != "" and curr_effects.type != None):
-                        curr_effects_dict["type"] = curr_effects.type
-
-                    if(curr_effects.target != "" and curr_effects.target != None and curr_effects.target.strip().lower() != "None"):
-                        curr_effects_dict["target"] = curr_effects.target
-
-                    if(curr_effects.attribute != "" and curr_effects.attribute != None):
-                        curr_effects_dict["attribute"] = curr_effects.attribute
-
-                    if(curr_effects.speed != "" and curr_effects.speed != None and curr_effects.speed.strip().lower() != "None"):
-                        curr_effects_dict["speed"] = curr_effects.speed
-                    curr_effects_list.append(curr_effects_dict)
+                curr_effects_list = set_skill_effects(ad_dev_skills_effect_temp, has_speed=True)
                 curr_adv_dev_dict = dict()
                 curr_adv_dev_dict["name"]=curr_adv_dev.development
                 curr_adv_dev_dict["effects"]=curr_effects_list
@@ -140,6 +88,9 @@ async def run(client, ctx):
 
             with open('./testJsonAdv/{} - {}.json'.format(current_adv.unit_label, current_adv.character_name), 'w') as fp:
                 json.dump(current_adv_json, fp,indent=4)
+
+
+
 
         # loop through all assists
         #unit_id, character_id, alias, unit_label, stars, is_limited, character_name, is_collab = row
@@ -150,10 +101,6 @@ async def run(client, ctx):
         as_skill_effects=cache.get_all_assists_skills_effects()
         #assiststatsid, assistid,attributeid, attriname, value= row
         as_stats = cache.get_all_assists_stats()
-
-
-
-
 
         for current_as in as_list:
             current_as_json = dict()
@@ -180,30 +127,7 @@ async def run(client, ctx):
 
             for curr_skills in as_skills_temp:
                 as_skills_effect_temp = [skills for skills in as_skill_effects if curr_skills.assistsskillid == skills.assistskillid]
-                curr_effects_list = []
-
-                for curr_effects in as_skills_effect_temp:
-                    curr_effects_dict = dict()
-                    #duration, element, modifier, type, target, attribute, speed
-                    if(curr_effects.duration != "" and curr_effects.duration != None):
-                        curr_effects_dict["duration"] = curr_effects.duration
-
-                    if(curr_effects.modifier != "" and curr_effects.modifier != None):
-                        curr_effects_dict["modifier"] = curr_effects.modifier
-
-                    if(curr_effects.target != "" and curr_effects.target != None):
-                        curr_effects_dict["target"] = curr_effects.target
-
-                    if(curr_effects.attribute != "" and curr_effects.attribute != None):
-                        curr_effects_dict["attribute"] = curr_effects.attribute
-                    
-                    if(curr_effects.element != "" and curr_effects.element != None):
-                        curr_effects_dict["element"] = curr_effects.element
-
-                    if(curr_effects.type != "" and curr_effects.type != None):
-                        curr_effects_dict["type"] = curr_effects.type
-                    
-                    curr_effects_list.append(curr_effects_dict)
+                curr_effects_list = set_skill_effects(as_skills_effect_temp, has_speed=False)
 
                 if(curr_skills.skilltype =="regular"):
                     curr_combat_effect = dict()
@@ -229,10 +153,41 @@ async def run(client, ctx):
         zipdir('testJsonAs/', zipf2)
         zipf2.close()
 
-        await ctx.send("Here is the current database in JSON format", files=[discord.File("./AdventurerJson.zip"),discord.File("./AssistJson.zip")])
-        
+        await ctx.send("Here's the current database in JSON format", files=[interactions.File("./AdventurerJson.zip"),interactions.File("./AssistJson.zip")])
 
-def zipdir(path, ziph):
+def set_skill_effects(effects: list, has_speed: bool) -> List[dict]:
+    curr_effects_list = []
+
+    for curr_effects in effects:
+        curr_effects_dict = dict()
+        #duration, element, modifier, type, target, attribute, optional speed
+        if(curr_effects.duration):
+            curr_effects_dict["duration"] = curr_effects.duration
+
+        if(curr_effects.modifier):
+            curr_effects_dict["modifier"] = curr_effects.modifier
+
+        if(curr_effects.target and curr_effects.target.strip().lower() != "none"):
+            curr_effects_dict["target"] = curr_effects.target
+
+        if(curr_effects.attribute):
+            curr_effects_dict["attribute"] = curr_effects.attribute
+
+        if(curr_effects.element):
+            curr_effects_dict["element"] = curr_effects.element
+
+        if(curr_effects.type):
+            curr_effects_dict["type"] = curr_effects.type
+
+        if(has_speed and curr_effects.speed and curr_effects.speed.strip().lower() != "none"):
+            curr_effects_dict["speed"] = curr_effects.speed
+        
+        curr_effects_list.append(curr_effects_dict)
+
+    return curr_effects_list
+
+
+def zipdir(path: str, ziph: zipfile.ZipFile):
     # ziph is zipfile handle
     for root, dirs, files in os.walk(path):
         for file in files:
