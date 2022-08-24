@@ -195,6 +195,7 @@ async def support(ctx: CommandContext):
 async def popularity(ctx):
     await command_popularity.run(client,ctx)
 
+
 @client.command(aliases=["daily","b"])
 async def bento(ctx):
     await command_bento.run(dbConfig,ctx)
@@ -221,7 +222,7 @@ async def gacha(ctx: CommandContext):
 
 @client.command(aliases=["gm"])
 async def gachamode(ctx,*args):
-    await command_gachaMode.run(dbConfig,client,ctx,*args)
+    await command_gachaMode.run(dbConfig,ctx,*args)
 
 @slash_client.command(
     name="gacha-mode",
@@ -263,7 +264,40 @@ async def dispatch(ctx, *search):
 
 @client.command(aliases=["auu"])
 async def addUpdateUnit(ctx, *search):
-    await command_addUpdateUnit.run(dbConfig,client,ctx,*search)
+    await command_addUpdateUnit.run(dbConfig,ctx,*search)
+    # refresh the cache
+    cache = Cache(dbConfig)
+    cache.refreshcache(dbConfig)
+
+unit_attachment = interactions.Option(
+    name="unit_file",
+    description="File containing the unit data in JSON format",
+    type=interactions.OptionType.ATTACHMENT,
+    required=True,
+)
+
+@slash_client.command(
+    name="add-update-unit",
+    description="Adds a unit or overwrites an existing one",
+    scope=GUILD_ID, # so the command is only visible & available on the dev server
+    default_scope=False,
+    options=[
+        interactions.Option(
+            name="adventurer",
+            description="Add an adventurer unit",
+            type=interactions.OptionType.SUB_COMMAND,
+            options=[unit_attachment]
+        ),
+        interactions.Option(
+            name="assist",
+            description="Add an assist unit",
+            type=interactions.OptionType.SUB_COMMAND,
+            options=[unit_attachment]
+        )
+    ]
+)
+async def addUpdateUnit(ctx: CommandContext, sub_command: str, unit_file: interactions.Attachment):
+    await command_addUpdateUnit.run(dbConfig, slash_client, ctx, sub_command, unit_file)
     # refresh the cache
     cache = Cache(dbConfig)
     cache.refreshcache(dbConfig)

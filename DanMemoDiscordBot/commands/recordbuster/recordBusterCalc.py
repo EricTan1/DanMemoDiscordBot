@@ -24,7 +24,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
         # if template attached start to verify it
         # attachment object only contains the URL, so have to download it first
         async with client._http._req._session.get(config.url) as request:
-            contents: bytes = await request.content.read()
+            contents = await request.content.read()
         contents_decode = contents.decode("utf-8")
         config = configparser.ConfigParser()
         config.read_string(contents_decode)

@@ -47,10 +47,7 @@ class InsertCharacter:
         adventurerid = self.getInsertAdventurerID(characterid,
                                              typeid,
                                              int(adventureComplete._limited),
-                                             adventureComplete.ascended,
                                              adventureComplete._stars,
-                                             None,
-                                             None,
                                              adventureComplete._title)
         # stats
         stat_list = {"hp","mp","physical_attack","magic_attack","defense","strength","endurance","dexterity","agility","magic"}
@@ -138,8 +135,6 @@ class InsertCharacter:
         assistid = self.getInsertAssistID(characterid,
                                      int(assistComplete._limited),
                                      assistComplete._stars,
-                                     None,
-                                     None,
                                      assistComplete._title)
         # stats
         stat_list = {"hp","mp","physical_attack","magic_attack","defense","strength","endurance","dexterity","agility","magic"}
@@ -203,7 +198,7 @@ class InsertCharacter:
             ret = (ret_list[0])[0]
         return ret
     
-    def getInsertAdventurerID(self, characterid, typeid, limited, ascended, stars, splashuri, iconuri, title):
+    def getInsertAdventurerID(self, characterid, typeid, limited, stars, title):
         ret = -1
         ret_list = self._db.getDataColumn("adventurer","title", title)
         # check if character in, if it is then get id else insert
@@ -216,7 +211,7 @@ class InsertCharacter:
         return ret
     
     
-    def getInsertAssistID(self, characterid,limited,stars, splashuri, iconuri, title):
+    def getInsertAssistID(self, characterid, limited: int, stars, title):
         ret = -1
         ret_list = self._db.getDataColumn("assist","title", title)
         # check if character in, if it is then get id else insert
