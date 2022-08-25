@@ -1,5 +1,5 @@
 
-from typing import Tuple
+from typing import Tuple, Optional
 #from commands.entities.adventurer import Adventurer
 
 #from commands.entities.enemy import Enemy
@@ -7,7 +7,7 @@ from commands.entities.skills import AdventurerSkill,AdventurerCounter
 import numpy as np
 from commands.utils import getElements, getAilment
 
-async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict,skillRatio) -> int:
+async def DamageFunction(skill: Optional[AdventurerSkill], adventurer, enemy, memboost:dict, skillRatio) -> int:
   ''' (AdventurerSkill, Adventurer, Enemy, dict, int) -> float
   memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
   '''
@@ -145,7 +145,7 @@ async def DamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict,s
     return np.floor(tempDamage).item()
   else:
     return 0
-async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memboost:dict, counterRate:int, extra_boost:int):
+async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memboost:dict, counterRate:float, extra_boost:int):
   ''' (AdventurerSkill, Adventurer, Enemy, dict) -> float
   memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
   '''
@@ -238,7 +238,8 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
   #if(tempDamage > 0):
     #print("{} counter damage for {}".format(adventurer.name,tempDamage))
   return np.floor(tempDamage).item()
-async def SADamageFunction(skill:AdventurerSkill,adventurer,enemy, memboost:dict, combo:int,ultRatio:int):
+
+async def SADamageFunction(skill: AdventurerSkill, adventurer, enemy, memboost: dict, combo: int, ultRatio: float):
   ''' combo = int 1-4
       ultRatio = 0.96 - 1.04
   '''

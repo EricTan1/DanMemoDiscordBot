@@ -1,8 +1,9 @@
+from typing import Optional
 from database.entities.BaseConstants import Base
 
 class Assist(Base):
     def __init__(self, assistid, characterid:int, title:str,limited:bool,
-                 stars:int, alias:str):
+                 stars:int, alias: Optional[str]):
         ''' (Assist, int, int, int, bool, int, str or None, str or
              None) -> Assist
              stars : the base stars of a unit (1/2/3/4)

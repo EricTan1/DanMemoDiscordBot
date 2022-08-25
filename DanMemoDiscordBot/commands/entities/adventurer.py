@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Dict
 from commands.utils import getElements, getDamageBuffs, getStats,checkBuffExistsReplace
 from commands.entities.skills import AdventurerCounter
 import json
@@ -24,11 +24,11 @@ class Adventurer():
 
 
     def __init__(self, 
-    stats = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}, 
+    stats: Dict[str, int] = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}, 
     counterBoost=0, 
     critPenBoost=0, 
     current_skills={"combat": [], "special":[], "additionals": []},
-    current_skills_agi_mod= {"combat": [], "special":[], "additionals": []},
+    current_skills_agi_mod: Dict[str, any] = {"combat": [], "special":[], "additionals": []},
     turnOrder = [0]*15,
     adventurerCounter = AdventurerCounter(target="foe",extraBoost="",noType=0,type="physical",element = ""),
     adventurerAttack = AdventurerCounter(target="foe",extraBoost="",noType=0,type="physical",element = ""),

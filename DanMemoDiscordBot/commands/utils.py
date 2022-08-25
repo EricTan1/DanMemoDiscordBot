@@ -11,9 +11,9 @@ import interactions
 # timeout before an interactable goes inactive
 TIMEOUT = 120
 
-def getDifficultyMultiplier(difficulty:int) -> Optional[float]:
+def getDifficultyMultiplier(difficulty:int) -> float:
     difficulty_dict = {5:6,6:8.5,7:10}
-    return difficulty_dict.get(difficulty)
+    return difficulty_dict[difficulty]
 
 class Status(Enum):
     """ the color codes for discord.embeds for showing message activity
