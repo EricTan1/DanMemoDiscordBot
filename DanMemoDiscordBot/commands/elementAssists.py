@@ -142,7 +142,7 @@ def getHexPos(rowOffset: int, side: int, centerX: int, innerRowNum: int, unitNum
     return (x,y)
 
 # returns the number of assists in the largest subdict
-def getWidthFactor(assistDict: Dict[str, Dict[str, Dict[int, str]]]) -> int:
+def getWidthFactor(assistDict: Dict[str, Dict[str, Dict[int, List[str]]]] ) -> int:
     max = -1
     for el in elements:
         for ef in effectTypes:
@@ -152,7 +152,7 @@ def getWidthFactor(assistDict: Dict[str, Dict[str, Dict[int, str]]]) -> int:
     return max
 
 # Sums up the amount of different modifiers per element
-def getRowHeights(assistDict: Dict[str, Dict[str, Dict[int, str]]]) -> List[int]:
+def getRowHeights(assistDict: Dict[str, Dict[str, Dict[int, List[str]]]] ) -> List[int]:
     heightFactors = []
     for el in elements:
         inRowHeights = []
@@ -167,10 +167,10 @@ def getRowHeights(assistDict: Dict[str, Dict[str, Dict[int, str]]]) -> List[int]
 # Returns a dict of the form { Element: { EffectType: { Modifier: [image filepaths] }}}
 #   So each element subdict has two subdicts "Attack" and "Resist",
 #   with each one having a key for each modifier,
-#   under which lies a list paths to assist images
+#   under which lies a list of paths to assist images
 #   who have that effect type for that element and that modifier
-def getElementAssistDict(db: DBcontroller) -> Dict[str, Dict[str, Dict[int, str]]]:
-    assistImages = dict()
+def getElementAssistDict(db: DBcontroller) -> Dict[str, Dict[str, Dict[int, List[str]]]]:
+    assistImages: Dict[str, Dict[str, Dict[int, List[str]]]] = dict()
     for elem in elements:
 
         assistImages[elem] = dict()
@@ -180,7 +180,6 @@ def getElementAssistDict(db: DBcontroller) -> Dict[str, Dict[str, Dict[int, str]
             query = elem + " " + efType[0] + " " + efType[1]
             results = db.skillSearch(query)
 
-            fileList = dict()
             for skill in results:
                 if "As" in skill:
                     skillinfo = db.assembleAssistSkill(skill[2:])

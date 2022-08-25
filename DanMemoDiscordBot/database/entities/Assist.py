@@ -2,8 +2,8 @@ from typing import Optional
 from database.entities.BaseConstants import Base
 
 class Assist(Base):
-    def __init__(self, assistid, characterid:int, title:str,limited:bool,
-                 stars:int, alias: Optional[str]):
+    def __init__(self, assistid, characterid: int, title: str, limited: int,
+                 stars: int, alias: Optional[str]):
         ''' (Assist, int, int, int, bool, int, str or None, str or
              None) -> Assist
              stars : the base stars of a unit (1/2/3/4)
@@ -20,7 +20,7 @@ class Assist(Base):
         return self.title
 
 class AssistSkill(Base):
-    def __init__(self, assistskillid, assistid:int, skillname:str,skilltype:str):
+    def __init__(self, assistskillid, assistid: int, skillname: str, skilltype: str):
         ''' (AssistSkill, int, int, int, int, str) -> AssistSkill
         skillname: the name of the skill of the assist
         '''

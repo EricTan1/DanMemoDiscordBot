@@ -45,14 +45,14 @@ async def run(ctx: CommandContext):
             current_adv_json["stats"] = dict()
             ad_stats_temp = [stats for stats in adv_stats if current_adv.unit_id == stats.adventurerid]
             for curr_stats in ad_stats_temp:
-                current_adv_json.get("stats")[curr_stats.attriname] = eval(curr_stats.value)
+                current_adv_json["stats"][curr_stats.attriname] = eval(curr_stats.value)
 
             #skills
             ad_skills_temp = [skills for skills in ad_skill if current_adv.unit_id == skills.adventurerid]
             current_adv_json["skills"] = dict()
-            current_adv_json.get("skills")["special"] = dict()
-            current_adv_json.get("skills")["combat"] = []
-            current_adv_json.get("skills")["additionals"] = []
+            current_adv_json["skills"]["special"] = dict()
+            current_adv_json["skills"]["combat"] = []
+            current_adv_json["skills"]["additionals"] = []
 
             for curr_skills in ad_skills_temp:
                 ad_skills_effect_temp = [skills for skills in ad_skill_effects if curr_skills.adventurerskillid == skills.adventurerskillid]
@@ -60,21 +60,21 @@ async def run(ctx: CommandContext):
 
                 #special
                 if(curr_skills.skilltype =="special"):
-                    current_adv_json.get("skills").get("special")["name"]=curr_skills.skillname
-                    current_adv_json.get("skills").get("special")["effects"]=curr_effects_list
+                    current_adv_json["skills"]["special"]["name"]=curr_skills.skillname
+                    current_adv_json["skills"]["special"]["effects"]=curr_effects_list
                 #combat
                 elif(curr_skills.skilltype =="combat"):
                     curr_combat_effect = dict()
                     curr_combat_effect["name"]=curr_skills.skillname
                     curr_combat_effect["effects"]=curr_effects_list
-                    current_adv_json.get("skills").get("combat").append(curr_combat_effect)
+                    current_adv_json["skills"]["combat"].append(curr_combat_effect)
                 elif(curr_skills.skilltype == "additionals"):
                     curr_combat_effect = dict()
                     curr_combat_effect["name"]=curr_skills.skillname
                     curr_combat_effect["effects"]=curr_effects_list
-                    current_adv_json.get("skills").get("additionals").append(curr_combat_effect)
+                    current_adv_json["skills"]["additionals"].append(curr_combat_effect)
             #development
-            current_adv_json.get("skills")["development"] = []
+            current_adv_json["skills"]["development"] = []
             ad_dev_effects_temp = [dev for dev in ad_dev_skills if current_adv.unit_id == dev.adventurerid]
             # 1 unit
 
@@ -84,7 +84,7 @@ async def run(ctx: CommandContext):
                 curr_adv_dev_dict = dict()
                 curr_adv_dev_dict["name"]=curr_adv_dev.development
                 curr_adv_dev_dict["effects"]=curr_effects_list
-                current_adv_json.get("skills").get("development").append(curr_adv_dev_dict)
+                current_adv_json["skills"]["development"].append(curr_adv_dev_dict)
 
             with open('./testJsonAdv/{} - {}.json'.format(current_adv.unit_label, current_adv.character_name), 'w') as fp:
                 json.dump(current_adv_json, fp,indent=4)
@@ -117,13 +117,13 @@ async def run(ctx: CommandContext):
             current_as_json["stats"] = dict()
             ad_stats_temp = [stats for stats in as_stats if current_as.unit_id == stats.assistid]
             for curr_stats in ad_stats_temp:
-                current_as_json.get("stats")[curr_stats.attriname] = eval(curr_stats.value)
+                current_as_json["stats"][curr_stats.attriname] = eval(curr_stats.value)
 
             #skills
             as_skills_temp = [skills for skills in as_skill if current_as.unit_id == skills.assistsid]
             current_as_json["skills"] = dict()
-            current_as_json.get("skills")["regular"] = []
-            current_as_json.get("skills")["instant_effect"] = []
+            current_as_json["skills"]["regular"] = []
+            current_as_json["skills"]["instant_effect"] = []
 
             for curr_skills in as_skills_temp:
                 as_skills_effect_temp = [skills for skills in as_skill_effects if curr_skills.assistsskillid == skills.assistskillid]
@@ -133,13 +133,13 @@ async def run(ctx: CommandContext):
                     curr_combat_effect = dict()
                     curr_combat_effect["name"]=curr_skills.skillname
                     curr_combat_effect["effects"]=curr_effects_list
-                    current_as_json.get("skills").get("regular").append(curr_combat_effect)
+                    current_as_json["skills"]["regular"].append(curr_combat_effect)
                 # instant_effect
                 elif(curr_skills.skilltype =="instant_effect"):
                     curr_combat_effect = dict()
                     curr_combat_effect["name"]=curr_skills.skillname
                     curr_combat_effect["effects"]=curr_effects_list
-                    current_as_json.get("skills").get("instant_effect").append(curr_combat_effect)
+                    current_as_json["skills"]["instant_effect"].append(curr_combat_effect)
     
             with open('./testJsonAs/{} - {}.json'.format(current_as.unit_label, current_as.character_name), 'w') as fp:
                 json.dump(current_as_json, fp,indent=4)

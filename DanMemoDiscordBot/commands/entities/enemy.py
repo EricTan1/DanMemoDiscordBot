@@ -1,9 +1,7 @@
 from commands.utils import getElements, getDamageDebuffs,checkBuffExistsReplace
-from commands.entities.skills import AdventurerCounter
 from commands.calculatorUtil import counters,counter
 import json
-
-import asyncio
+from typing import Dict, List, Any
 
 class Enemy():
     
@@ -16,31 +14,31 @@ class Enemy():
         for buffsdebuffs in self.boostCheckEnemyAdv:
             if(human_readable_dict.get(buffsdebuffs.get("attribute"))!= None):
                 #duration
-                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs.get("modifier"))*100,human_readable_dict.get(buffsdebuffs.get("attribute")), buffsdebuffs.get("duration"))
+                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs["modifier"])*100,human_readable_dict.get(buffsdebuffs.get("attribute")), buffsdebuffs.get("duration"))
             else:
-                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs.get("modifier"))*100,buffsdebuffs.get("attribute"), buffsdebuffs.get("duration"))
+                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs["modifier"])*100,buffsdebuffs.get("attribute"), buffsdebuffs.get("duration"))
         return ret
 
         #return "elemental resist\nbase: {} adv: {} ast: {}\ntype resist\nbase: {} adv: {} ast: {}\ntarget resist\nadv: {} ast: {}".format(self.elementResistDownBase,self.elementResistDownAdv,self.elementResistDownAst,self.typeResistDownBase,self.typeResistDownAdv,self.typeResistDownAst, self.targetResistDownAdv,self.targetResistDownAst )
-    def __init__(self, elementResistDownBase={"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0},
-    typeResistDownBase={"physical":0, "magic":0}, 
-    stats={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}):
+    def __init__(self, elementResistDownBase: Dict[str, float] ={"fire":0.0,"water":0.0,"thunder":0.0,"earth":0.0,"wind":0.0,"light":0.0,"dark":0.0,"none":0.0},
+    typeResistDownBase: Dict[str, float] ={"physical":0.0, "magic":0.0},
+    stats: Dict[str, int]={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}):
 
         self.elementResistDownBase = elementResistDownBase
         self.typeResistDownBase = typeResistDownBase
-        self.stats= stats
+        self.stats = stats
 
         # elemental resist down
-        self.elementResistDownAdv= {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0}
-        self.elementResistDownAst= {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0,"none":0}
+        self.elementResistDownAdv = {"fire":0.0,"water":0.0,"thunder":0.0,"earth":0.0,"wind":0.0,"light":0.0,"dark":0.0,"none":0.0}
+        self.elementResistDownAst = {"fire":0.0,"water":0.0,"thunder":0.0,"earth":0.0,"wind":0.0,"light":0.0,"dark":0.0,"none":0.0}
         
         # physical/magical resist
-        self.typeResistDownAdv={"physical":0, "magic":0}
-        self.typeResistDownAst={"physical":0, "magic":0}
+        self.typeResistDownAdv = {"physical":0.0, "magic":0.0}
+        self.typeResistDownAst = {"physical":0.0, "magic":0.0}
 
         # target resist down
-        self.targetResistDownAdv={"st":0,"aoe":0}
-        self.targetResistDownAst={"st":0,"aoe":0}
+        self.targetResistDownAdv = {"st":0.0,"aoe":0.0}
+        self.targetResistDownAst = {"st":0.0,"aoe":0.0}
 
         # buffs and debuffs
         # append buffs to dict and remove once wiped
@@ -48,36 +46,36 @@ class Enemy():
         # {isbuff,Attribute,Modifier,duration}
         # each list object
         #{"isbuff":False,"attribute":"strength","modifier":-45,"duration":1}
-        self.boostCheckEnemyAdv=[]
-        self.boostCheckEnemyAst=[]
+        self.boostCheckEnemyAdv: List[Dict[str, Any]] = []
+        self.boostCheckEnemyAst: List[Dict[str, Any]] = []
 
 
 
-    async def set_elementResistDownAdv(self, element:str, modifier:float):
+    def set_elementResistDownAdv(self, element:str, modifier:float):
         if(element.lower() in getElements()):
             self.elementResistDownAdv[element.lower()] = modifier
 
-    async def set_elementResistDownAst(self, element:str, modifier:float):
+    def set_elementResistDownAst(self, element:str, modifier:float):
         if(element.lower() in getElements()):
             self.elementResistDownAst[element.lower()] = modifier
 
-    async def set_typeResistDownAdv(self, type:str, modifier:float):
+    def set_typeResistDownAdv(self, type:str, modifier:float):
         self.typeResistDownAdv[type.lower()] = modifier
 
-    async def set_typeResistDownAst(self, type:str, modifier:float):
+    def set_typeResistDownAst(self, type:str, modifier:float):
         self.typeResistDownAst[type.lower()] = modifier
 
 
-    async def set_targetResistDownAdv(self, target:str, modifier:float):
+    def set_targetResistDownAdv(self, target:str, modifier:float):
         self.targetResistDownAdv[target.lower()] = modifier
 
 
-    async def set_targetResistDownAst(self, target:str, modifier:float):
+    def set_targetResistDownAst(self, target:str, modifier:float):
         self.targetResistDownAst[target.lower()] = modifier
 
 
 
-    async def set_boostCheckEnemyAst(self,isbuff:bool,attribute:str,modifier:int,duration:int):
+    def set_boostCheckEnemyAst(self,isbuff:bool,attribute:str,modifier: float,duration:int):
         ''' (bool, str, int or float, int, bool) -> None
             target: self, allies, foes, foe
             attribute: strength, magic, st, aoe
@@ -86,8 +84,8 @@ class Enemy():
             is_assist: is this an assist buff or not
         '''
         tempAppend = {"isbuff":isbuff,"attribute": attribute,"modifier": modifier,"duration": duration}
-        await checkBuffExistsReplace(self.boostCheckEnemyAst, tempAppend)
-    async def set_boostCheckEnemyAdv(self,isbuff:bool,attribute:str,modifier:int,duration:int):
+        checkBuffExistsReplace(self.boostCheckEnemyAst, tempAppend)
+    def set_boostCheckEnemyAdv(self,isbuff:bool,attribute:str,modifier: float,duration:int):
         ''' (bool, str, int or float, int, bool) -> None
             target: self, allies, foes, foe
             attribute: strength, magic, st, aoe
@@ -100,7 +98,7 @@ class Enemy():
         except:
             pass
         tempAppend = {"isbuff":isbuff,"attribute": attribute,"modifier": modifier,"duration": duration}
-        await checkBuffExistsReplace(self.boostCheckEnemyAdv, tempAppend)
+        checkBuffExistsReplace(self.boostCheckEnemyAdv, tempAppend)
     
     async def clearBuffs(self):
         # take the list but all the buffs with True is removed (keep all  the isbuff==False)
@@ -189,18 +187,18 @@ class Finn(Enemy):
         for adv in adv_list:
             await adv.set_statsBoostAdv("strength", max(adv.statsBoostAdv.get("strength"),1.5))
             await adv.set_statsBoostAdv("magic", max(adv.statsBoostAdv.get("magic"),1.5))
-            await adv.set_boostCheckAlliesAdv(True,"strength",1.5,turns)
-            await adv.set_boostCheckAlliesAdv(True,"magic",1.5,turns)
+            adv.set_boostCheckAlliesAdv(True,"strength",1.5,turns)
+            adv.set_boostCheckAlliesAdv(True,"magic",1.5,turns)
         # str/mag buff
-        await self.set_boostCheckEnemyAdv(True,"strength",1.5,turns)
-        await self.set_boostCheckEnemyAdv(True,"magic",1.5,turns)
+        self.set_boostCheckEnemyAdv(True,"strength",1.5,turns)
+        self.set_boostCheckEnemyAdv(True,"magic",1.5,turns)
 
     async def FinnSelfEleBuff(self, element):
-        await self.set_boostCheckEnemyAdv(True,"{}_attack".format(element),-0.3,4)
+        self.set_boostCheckEnemyAdv(True,"{}_attack".format(element),-0.3,4)
 
     async def FinnFoesEleDebuff(self, adv_list, element):
         for adv in adv_list:
-            await adv.set_boostCheckAlliesAdv(False,"{}_resist".format(element),-0.3,4)
+            adv.set_boostCheckAlliesAdv(False,"{}_resist".format(element),-0.3,4)
 
     async def turnOrder(self, turnOrder:int, adv_list:list, speed:int):
         if(turnOrder in [2,6] and speed ==2):
@@ -233,7 +231,7 @@ class Finn(Enemy):
 
 class Riveria(Enemy):
     async def RiveriaPowerUp(self):
-        await self.set_boostCheckEnemyAdv(True,"magic",0.30,4)
+        self.set_boostCheckEnemyAdv(True,"magic",0.30,4)
 
     # debuff remove from list boostCheckEnemyAdv
     async def RiveriaClear(self, adv_list):
@@ -245,7 +243,7 @@ class Riveria(Enemy):
 
     async def RiveriaDebuff(self, adv_list, element):
         for adv in adv_list:
-            await adv.set_boostCheckAlliesAdv(False,"{}_resist".format(element),-0.30,4)
+            adv.set_boostCheckAlliesAdv(False,"{}_resist".format(element),-0.30,4)
 
     async def turnOrder(self, turnOrder:int, adv_list:list, speed:int):
         # debuff 1,2,4,5,7,8,9,10,11,12,13
@@ -283,9 +281,9 @@ class Riveria(Enemy):
 class Gareth(Enemy):
 
     async def GarethSelfBuff(self):
-        await self.set_boostCheckEnemyAdv(True,"physical_resist",0.30,4)
-        await self.set_boostCheckEnemyAdv(True,"magic_resist",0.30,4)
-        await self.set_boostCheckEnemyAdv(True,"counter_rate",1.1,4)
+        self.set_boostCheckEnemyAdv(True,"physical_resist",0.30,4)
+        self.set_boostCheckEnemyAdv(True,"magic_resist",0.30,4)
+        self.set_boostCheckEnemyAdv(True,"counter_rate",1.1,4)
         print("BUFFING")
 
         # need to set actual calcs
@@ -293,7 +291,7 @@ class Gareth(Enemy):
 
     async def GarethDebuff(self,adv_list):
         for adv in adv_list:
-            await adv.set_boostCheckAlliesAdv(False,"light_resist",-0.3,4)
+            adv.set_boostCheckAlliesAdv(False,"light_resist",-0.3,4)
 
     async def GarethClearBuffs(self, adv_list:list):
         # remove all buffs!
@@ -367,7 +365,7 @@ class Ottarl(Enemy):
     
     async def OttarlEndDebuff(self, adv_list):
         for adv in adv_list:
-            await adv.set_boostCheckAlliesAdv(False,"endurance",-0.3,4)
+            adv.set_boostCheckAlliesAdv(False,"endurance",-0.3,4)
 
     async def turnOrder(self, turnOrder:int, adv_list:list, speed:int):
         ''' turnorder: 0-14
@@ -402,19 +400,19 @@ class Ottarl(Enemy):
 
 class Revis(Enemy):
     async def RevisBuff(self):
-        await self.set_boostCheckEnemyAdv(True,"strength",0.2,4)
+        self.set_boostCheckEnemyAdv(True,"strength",0.2,4)
 
     async def RevisAdd(self, type, type_mod):
         # type = physical/magic
 
         # debuffs own physical resists, take into account later magic resist debuffs
-        await self.set_typeResistDownAdv(type,min(self.typeResistDownAdv.get(type), type_mod))
-        await self.set_boostCheckEnemyAdv(True,"strength",0.2,4)
-        await self.set_boostCheckEnemyAdv(False,"{}_resist".format(type),type_mod,4)
+        self.set_typeResistDownAdv(type,min(self.typeResistDownAdv.get(type), type_mod))
+        self.set_boostCheckEnemyAdv(True,"strength",0.2,4)
+        self.set_boostCheckEnemyAdv(False,"{}_resist".format(type),type_mod,4)
     
     async def RevisInitial(self,type,type_mod):
-        await self.set_typeResistDownAdv(type,min(self.typeResistDownAdv.get(type), type_mod))
-        await self.set_boostCheckEnemyAdv(False,"{}_resist".format(type),type_mod,4)
+        self.set_typeResistDownAdv(type,min(self.typeResistDownAdv.get(type), type_mod))
+        self.set_boostCheckEnemyAdv(False,"{}_resist".format(type),type_mod,4)
 
 
     async def RevisClear(self):

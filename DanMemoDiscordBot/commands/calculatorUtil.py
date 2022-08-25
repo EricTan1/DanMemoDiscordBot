@@ -1,17 +1,20 @@
 
-from typing import Tuple, Optional
-#from commands.entities.adventurer import Adventurer
+from typing import Tuple, Optional, Dict, Union, cast, TYPE_CHECKING
 
-#from commands.entities.enemy import Enemy
 from commands.entities.skills import AdventurerSkill,AdventurerCounter
 import numpy as np
 from commands.utils import getElements, getAilment
 
-async def DamageFunction(skill: Optional[AdventurerSkill], adventurer, enemy, memboost:dict, skillRatio) -> int:
+if TYPE_CHECKING:
+  from commands.entities.adventurer import Adventurer
+  from commands.entities.enemy import Enemy
+
+async def DamageFunction(optSkill: Optional[AdventurerSkill], adventurer, enemy: "Enemy", memboost: Dict[str, Union[int, float]], skillRatio) -> int:
   ''' (AdventurerSkill, Adventurer, Enemy, dict, int) -> float
   memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
   '''
-  if(skill != None):
+  if(optSkill != None):
+    skill = cast(AdventurerSkill, optSkill)
     # lowercase everything
     target = skill.target.lower()
     tempBoost = skill.tempBoost.lower()
@@ -96,7 +99,7 @@ async def DamageFunction(skill: Optional[AdventurerSkill], adventurer, enemy, me
         tempPower += adventurer.stats.get(index_to_attributes)
         tempPowerBoostAdv += adventurer.statsBoostAdv.get(index_to_attributes)
         tempPowerBoostAst += adventurer.statsBoostAst.get(index_to_attributes)
-        tempMemBoost += memboost.get(index_to_attributes)
+        tempMemBoost += memboost[index_to_attributes]
     if(skill.element != "" and skill.noType !=1):
       # elementResistDownBase
       tempElementResistDownBase = enemy.elementResistDownBase.get(skill.element)
@@ -124,12 +127,12 @@ async def DamageFunction(skill: Optional[AdventurerSkill], adventurer, enemy, me
     # targetResistDownAdv[targetTemp]
     # targetResistDownAst[targetTemp]
     if target == 'foe':
-      temptargetResistDownAdv = enemy.targetResistDownAdv.get("st")
-      temptargetResistDownAst = enemy.targetResistDownAst.get("st")
+      temptargetResistDownAdv = enemy.targetResistDownAdv["st"]
+      temptargetResistDownAst = enemy.targetResistDownAst["st"]
     # foes
     else:
-      temptargetResistDownAdv = enemy.targetResistDownAdv.get("aoe")
-      temptargetResistDownAst = enemy.targetResistDownAst.get("aoe")
+      temptargetResistDownAdv = enemy.targetResistDownAdv["aoe"]
+      temptargetResistDownAst = enemy.targetResistDownAst["aoe"]
     temp_enemy_end = enemy.stats
 
     tempDamage = ((max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end.get("endurance"),0))*\
@@ -145,7 +148,8 @@ async def DamageFunction(skill: Optional[AdventurerSkill], adventurer, enemy, me
     return np.floor(tempDamage).item()
   else:
     return 0
-async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memboost:dict, counterRate:float, extra_boost:int):
+
+async def CounterDamageFunction(counter: AdventurerCounter, adventurer, enemy: "Enemy", memboost: dict, counterRate: float, extra_boost: int):
   ''' (AdventurerSkill, Adventurer, Enemy, dict) -> float
   memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
   '''
@@ -198,31 +202,31 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
     # elementResistDownAst
     tempElementResistDownAst = enemy.elementResistDownAst.get(counter.element)
     # elementDamageBoostAdv[location]
-    tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv.get(counter.element)
+    tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv[counter.element]
     if(memboost.get("{}_attack".format(counter.element)) != None):
-        tempElementDamageBoostAdv+=memboost.get("{}_attack".format(counter.element))
+        tempElementDamageBoostAdv+=memboost["{}_attack".format(counter.element)]
     # elemental damage boost from weapon
     if(adventurer.stats.get(counter.element) != None):
-      tempElementDamageBoostAdv += adventurer.stats.get(counter.element)
+      tempElementDamageBoostAdv += adventurer.stats[counter.element]
     # elementDamageBoostAst[location]
-    tempElementDamageBoostAst = adventurer.elementDamageBoostAst.get(counter.element)
+    tempElementDamageBoostAst = adventurer.elementDamageBoostAst[counter.element]
   else:
     tempElementResistDownBase=0
     tempElementResistDownAdv=0
     tempElementResistDownAst=0
-    tempElementDamageBoostAdv=0
-    tempElementDamageBoostAst=0
+    tempElementDamageBoostAdv=0.0
+    tempElementDamageBoostAst=0.0
 
   # critPenBoost[location] # dev skills
   # targetResistDownAdv[targetTemp]
   # targetResistDownAst[targetTemp]
   if target == 'foe':
-    temptargetResistDownAdv = enemy.targetResistDownAdv.get("st")
-    temptargetResistDownAst = enemy.targetResistDownAst.get("st")
+    temptargetResistDownAdv = enemy.targetResistDownAdv["st"]
+    temptargetResistDownAst = enemy.targetResistDownAst["st"]
   # foes
   else:
-    temptargetResistDownAdv = enemy.targetResistDownAdv.get("aoe")
-    temptargetResistDownAst = enemy.targetResistDownAst.get("aoe")
+    temptargetResistDownAdv = enemy.targetResistDownAdv["aoe"]
+    temptargetResistDownAst = enemy.targetResistDownAst["aoe"]
   temp_enemy_end = enemy.stats
 
   tempDamage = ((max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end.get("endurance"),0))*\
@@ -239,16 +243,17 @@ async def CounterDamageFunction(counter:AdventurerCounter,adventurer,enemy, memb
     #print("{} counter damage for {}".format(adventurer.name,tempDamage))
   return np.floor(tempDamage).item()
 
-async def SADamageFunction(skill: AdventurerSkill, adventurer, enemy, memboost: dict, combo: int, ultRatio: float):
+async def SADamageFunction(optSkill: Optional[AdventurerSkill], adventurer: "Adventurer", enemy: "Enemy", memboost: Dict[str, Union[int, float]], combo: int, ultRatio: float) -> int:
   ''' combo = int 1-4
       ultRatio = 0.96 - 1.04
   '''
-  if(skill != None):
+  if(optSkill != None):
+    skill = cast(AdventurerSkill, optSkill)
     # lowercase everything
     target = skill.target.lower()
     tempBoost = skill.tempBoost.lower()
     powerCoefficient = skill.powerCoefficient.lower()
-    powerCoefficientTemp = 1
+    powerCoefficientTemp = 1.0
     if tempBoost == 'none':
       tempBoostTemp = 1.0
     elif 'normal' in tempBoost:   
@@ -286,79 +291,79 @@ async def SADamageFunction(skill: AdventurerSkill, adventurer, enemy, memboost: 
     # typeResistDownAdv[location]
     # typeResistDownAst[location]
     if("physical" in skill.type):
-      tempPower = adventurer.stats.get("strength")
-      tempPowerBoostAdv = adventurer.statsBoostAdv.get("strength")
-      tempPowerBoostAst = adventurer.statsBoostAst.get("strength")
-      tempMemBoost = memboost.get("strength")
+      tempPower = adventurer.stats["strength"]
+      tempPowerBoostAdv = adventurer.statsBoostAdv["strength"]
+      tempPowerBoostAst = adventurer.statsBoostAst["strength"]
+      tempMemBoost = memboost["strength"]
 
-      tempTypeResistDownBase = enemy.typeResistDownBase.get("physical")
-      tempTypeResistDownAdv = enemy.typeResistDownAdv.get("physical")
-      tempTypeResistDownAst = enemy.typeResistDownAst.get("physical")
+      tempTypeResistDownBase = enemy.typeResistDownBase["physical"]
+      tempTypeResistDownAdv = enemy.typeResistDownAdv["physical"]
+      tempTypeResistDownAst = enemy.typeResistDownAst["physical"]
 
       tempTypeResistBuff = await enemy.get_buff_mod("physical_resist")
 
     else:
-      tempPower = adventurer.stats.get("magic")
-      tempPowerBoostAdv = adventurer.statsBoostAdv.get("magic")
-      tempPowerBoostAst = adventurer.statsBoostAst.get("magic")
-      tempMemBoost = memboost.get("magic")
+      tempPower = adventurer.stats["magic"]
+      tempPowerBoostAdv = adventurer.statsBoostAdv["magic"]
+      tempPowerBoostAst = adventurer.statsBoostAst["magic"]
+      tempMemBoost = memboost["magic"]
 
-      tempTypeResistDownBase = enemy.typeResistDownBase.get("magic")
-      tempTypeResistDownAdv = enemy.typeResistDownAdv.get("magic")
-      tempTypeResistDownAst = enemy.typeResistDownAst.get("magic")
+      tempTypeResistDownBase = enemy.typeResistDownBase["magic"]
+      tempTypeResistDownAdv = enemy.typeResistDownAdv["magic"]
+      tempTypeResistDownAst = enemy.typeResistDownAst["magic"]
 
       tempTypeResistBuff = await enemy.get_buff_mod("magic_resist")
 
     if(len(skill.index_to) != 0):
       tempPower = 0
-      tempPowerBoostAdv = 0
-      tempPowerBoostAst = 0
+      tempPowerBoostAdv = 0.0
+      tempPowerBoostAst = 0.0
       tempMemBoost = 0
       powerCoefficientTemp = powerCoefficientTemp *1.96
       for index_to_attributes in skill.index_to:
-        tempPower += adventurer.stats.get(index_to_attributes)
-        tempPowerBoostAdv += adventurer.statsBoostAdv.get(index_to_attributes)
-        tempPowerBoostAst += adventurer.statsBoostAst.get(index_to_attributes)
-        tempMemBoost += memboost.get(index_to_attributes)
+        tempPower += adventurer.stats[index_to_attributes]
+        tempPowerBoostAdv += adventurer.statsBoostAdv[index_to_attributes]
+        tempPowerBoostAst += adventurer.statsBoostAst[index_to_attributes]
+        tempMemBoost += memboost[index_to_attributes]
     if(skill.element != "" and skill.noType !=1):
       # elementResistDownBase
-      tempElementResistDownBase = enemy.elementResistDownBase.get(skill.element)
+      tempElementResistDownBase = enemy.elementResistDownBase[skill.element]
       # elementResistDownAdv
-      tempElementResistDownAdv = enemy.elementResistDownAdv.get(skill.element)
+      tempElementResistDownAdv = enemy.elementResistDownAdv[skill.element]
       # elementResistDownAst
-      tempElementResistDownAst = enemy.elementResistDownAst.get(skill.element)
+      tempElementResistDownAst = enemy.elementResistDownAst[skill.element]
       # elementDamageBoostAdv[location]
       
-      tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv.get(skill.element)
+      tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv[skill.element]
       if(memboost.get("{}_attack".format(skill.element)) != None):
-        tempElementDamageBoostAdv+=memboost.get("{}_attack".format(skill.element))
+        tempElementDamageBoostAdv+=memboost["{}_attack".format(skill.element)]
       # elemental damage boost from weapon
       if(adventurer.stats.get(skill.element) != None):
-        tempElementDamageBoostAdv += adventurer.stats.get(skill.element)
+        tempElementDamageBoostAdv += cast(float, adventurer.stats[skill.element])
       # elementDamageBoostAst[location]
-      tempElementDamageBoostAst = adventurer.elementDamageBoostAst.get(skill.element)
+      tempElementDamageBoostAst = adventurer.elementDamageBoostAst[skill.element]
     else:
-      tempElementResistDownBase=0
-      tempElementResistDownAdv=0
-      tempElementResistDownAst=0
-      tempElementDamageBoostAdv=0
-      tempElementDamageBoostAst=0
+      tempElementResistDownBase=0.0
+      tempElementResistDownAdv=0.0
+      tempElementResistDownAst=0.0
+      tempElementDamageBoostAdv=0.0
+      tempElementDamageBoostAst=0.0
 
     # critPenBoost[location] # dev skills
     # targetResistDownAdv[targetTemp]
     # targetResistDownAst[targetTemp]
     if target == 'foe':
-      temptargetResistDownAdv = enemy.targetResistDownAdv.get("st")
-      temptargetResistDownAst = enemy.targetResistDownAst.get("st")
+      temptargetResistDownAdv = enemy.targetResistDownAdv["st"]
+      temptargetResistDownAst = enemy.targetResistDownAst["st"]
     # foes
     else:
-      temptargetResistDownAdv = enemy.targetResistDownAdv.get("aoe")
-      temptargetResistDownAst = enemy.targetResistDownAst.get("aoe")
+      temptargetResistDownAdv = enemy.targetResistDownAdv["aoe"]
+      temptargetResistDownAst = enemy.targetResistDownAst["aoe"]
 
     temp_enemy_end = enemy.stats
 
 
-    tempDamage = (max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end.get("endurance"),0))*\
+    tempDamage = (max(2*tempPower*tempBoostTemp*(1+tempPowerBoostAdv+tempPowerBoostAst+tempMemBoost)-temp_enemy_end["endurance"], 0))*\
                 (1-tempElementResistDownBase-tempElementResistDownAdv\
                   -tempElementResistDownAst-tempTypeResistDownBase\
                   -tempTypeResistDownAdv-tempTypeResistDownAst-tempTypeResistBuff)*\
@@ -372,30 +377,30 @@ async def SADamageFunction(skill: AdventurerSkill, adventurer, enemy, memboost: 
   else:
     return 0
 
-async def CombineSA(adventurerList:list,enemy, character_list:list):
+async def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list):
   ''' (list of Adventurer, Enemy, list of boolean) -> int
   characterlist : [Char1,Char2,Char3,Char4]
     char1,char2,char3,char4 : 0 or 1
   '''
-  tempDamage = 0
+  tempDamage = 0.0
   for character in range(0,4):
-    isPhysical=adventurerList[character].stats.get("magic") <= adventurerList[character].stats.get("strength")
+    isPhysical=adventurerList[character].stats["magic"] <= adventurerList[character].stats["strength"]
     
-    tempPower = max(adventurerList[character].stats.get("strength"),adventurerList[character].stats.get("magic"))
+    tempPower = max(adventurerList[character].stats["strength"],adventurerList[character].stats["magic"])
     
     if(isPhysical):
       temp_type = "physical"
-      tempPowerBoostAdv =adventurerList[character].statsBoostAdv.get("strength")
-      tempPowerBoostAst =adventurerList[character].statsBoostAst.get("strength")
+      tempPowerBoostAdv = adventurerList[character].statsBoostAdv["strength"]
+      tempPowerBoostAst = adventurerList[character].statsBoostAst["strength"]
     else:
       temp_type = "magic"
-      tempPowerBoostAdv =adventurerList[character].statsBoostAdv.get("magic")
-      tempPowerBoostAst =adventurerList[character].statsBoostAst.get("magic")
+      tempPowerBoostAdv = adventurerList[character].statsBoostAdv["magic"]
+      tempPowerBoostAst = adventurerList[character].statsBoostAst["magic"]
     tempDamage= tempDamage + (character_list[character]*(1.16*tempPower*(1+tempPowerBoostAdv+tempPowerBoostAst)))
 
-  tempDamage = (max(tempDamage-enemy.stats.get("endurance"),0))*\
-                (1-enemy.typeResistDownAdv.get(temp_type)-enemy.typeResistDownAst.get(temp_type))*\
-                (1-enemy.targetResistDownAdv.get("aoe")-enemy.targetResistDownAst.get("aoe"))*\
+  tempDamage = (max(tempDamage-enemy.stats["endurance"],0))*\
+                (1-enemy.typeResistDownAdv[temp_type]-enemy.typeResistDownAst[temp_type])*\
+                (1-enemy.targetResistDownAdv["aoe"]-enemy.targetResistDownAst["aoe"])*\
                 3.7*1.5
   print('Combine SA damage is {}'.format(np.floor(tempDamage).item()))
   #totalDamage = totalDamage + np.floor(tempDamage).item()
@@ -484,7 +489,7 @@ def Counters(notIn=[0,0,0,0]):
 
  """
 
-async def interpretExtraBoost(skillEffect, adventurer, enemy):
+async def interpretExtraBoost(skillEffect, adventurer, enemy: "Enemy"):
     ''' (adventurerSkillEffect) -> float
     takes in a skill effect with attribute exists of "per_each" then parse it and return the extra boosts multiplier
 
@@ -504,7 +509,7 @@ async def interpretExtraBoost(skillEffect, adventurer, enemy):
         # each list object
         #{"isbuff":False,"attribute":"strength","modifier":-45,"duration":1}
     '''
-    extra_boosts_modifier_value = 0
+    extra_boosts_modifier_value = 0.0
     temp_list = skillEffect.attribute.split("_")
     # per each
     temp_list = temp_list[2:]
@@ -542,7 +547,7 @@ async def interpretExtraBoost(skillEffect, adventurer, enemy):
     print(extra_boosts_modifier_value)
     return extra_boosts_modifier_value
 
-async def interpretSkillAdventurerAttack(skillEffectsWithName: Tuple[str, list], adventurer, enemy):
+async def interpretSkillAdventurerAttack(skillEffectsWithName: Tuple[str, list], adventurer, enemy: "Enemy") -> Optional[AdventurerSkill]:
   ''' (list of skillEffects, Adventurer, Enemy) -> AdventurerSkill or None
     None if there are no damage related effects
     AdventurerSkill if there is a damage related effect
@@ -555,9 +560,9 @@ async def interpretSkillAdventurerAttack(skillEffectsWithName: Tuple[str, list],
   else:
     skillEffects = []
 
-  damage_skill = [x for x in skillEffects if x.attribute.lower().strip()=="damage" or ((x.element!=None or x.element!="") and (x.type=="physical_attack" or x.type=="magic_attack"))]
-  if(len(damage_skill) > 0):
-    damage_skill = damage_skill[0]
+  damage_skills = [x for x in skillEffects if x.attribute.lower().strip()=="damage" or ((x.element!=None or x.element!="") and (x.type=="physical_attack" or x.type=="magic_attack"))]
+  if(len(damage_skills) > 0):
+    damage_skill = damage_skills[0]
     # do the damage first if attribute == element and modifier== high/medium etc, type = attack
     index_to_effects = [x for x in skillEffects if x.attribute.lower().strip()=="indexed_to"]
     index_to_modifier=set()
@@ -588,12 +593,12 @@ async def interpretSkillAdventurerAttack(skillEffectsWithName: Tuple[str, list],
           temp_extra_boosts = await interpretExtraBoost(extra_boosts, adventurer, enemy)
           extra_boosts_value = extra_boosts_value + temp_extra_boosts
     #SELECT ase.AdventurerSkillEffectsid, ase.AdventurerSkillid, ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name
-    ret = AdventurerSkill(target=damage_skill.target,tempBoost=temp_boost_mod,powerCoefficient=damage_skill.modifier,extraBoost=extra_boosts_value,noType=0,type=damage_skill.type,element=damage_skill.element,index_to=index_to_modifier)
+    ret = AdventurerSkill(damage_skill.target,temp_boost_mod,damage_skill.modifier,extra_boosts_value,0,damage_skill.type,damage_skill.element,index_to_modifier)
     return ret
   else:
     return None
 
-async def interpretSkillAdventurerEffects(skillEffectsWithName: Tuple[str, list], adventurer, enemy, adv_list:list):
+async def interpretSkillAdventurerEffects(skillEffectsWithName: Tuple[str, list], adventurer, enemy: "Enemy", adv_list:list):
   ''' (list of skilleffects, Adventurer, Enemy, list of Adventurer)
   '''
 
@@ -616,75 +621,75 @@ async def interpretSkillAdventurerEffects(skillEffectsWithName: Tuple[str, list]
       # st/aoe resist down
       if(curr_attribute=="all_damage_resist"):
         if(skillEffect.target.strip() == "self"):
-          await adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+          adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "allies"):
           for curr_adv in adv_list:
-            await curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          temp_min = min(enemy.targetResistDownAdv.get("aoe"), curr_modifier)
+          temp_min = min(enemy.targetResistDownAdv["aoe"], curr_modifier)
           enemy.targetResistDownAdv["aoe"] = temp_min
-          await enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
+          enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
       elif(curr_attribute=="single_damage_resist"):
         if(skillEffect.target.strip() == "self"):
-          await adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+          adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "allies"):
           for curr_adv in adv_list:
-            await curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          temp_min = min(enemy.targetResistDownAdv.get("st"), curr_modifier)
+          temp_min = min(enemy.targetResistDownAdv["st"], curr_modifier)
           enemy.targetResistDownAdv["st"] = temp_min
-          await enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
+          enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
       # physical/magic resist down
       elif(curr_attribute=="physical_resist"):
         if(skillEffect.target.strip() == "self"):
-          await adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+          adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "allies"):
           for curr_adv in adv_list:
-            await curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          temp_min = min(enemy.typeResistDownAdv.get("physical"), curr_modifier)
+          temp_min = min(enemy.typeResistDownAdv["physical"], curr_modifier)
           enemy.typeResistDownAdv["physical"] = temp_min
-          await enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
+          enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
       elif(curr_attribute=="magic_resist"):
         if(skillEffect.target.strip() == "self"):
-          await adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+          adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "allies"):
           for curr_adv in adv_list:
-            await curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          temp_min = min(enemy.typeResistDownAdv.get("magic"), curr_modifier)
+          temp_min = min(enemy.typeResistDownAdv["magic"], curr_modifier)
           enemy.typeResistDownAdv["magic"] = temp_min
-          await enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
+          enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
       # STAT buffs including str/mag buffs
       elif(curr_attribute in ["strength","magic","endurance","dexterity","agility"]):
         if(skillEffect.target.strip() == "self"):
-          temp_max = max(adventurer.statsBoostAdv.get(curr_attribute.strip()), curr_modifier)
+          temp_max = max(adventurer.statsBoostAdv[curr_attribute.strip()], curr_modifier)
           adventurer.statsBoostAdv[curr_attribute.strip()] = temp_max
-          await adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+          adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "allies"):
           for curr_adv in adv_list:
-            temp_max = max(curr_adv.statsBoostAdv.get(curr_attribute.strip()), curr_modifier)
+            temp_max = max(curr_adv.statsBoostAdv[curr_attribute.strip()], curr_modifier)
             curr_adv.statsBoostAdv[curr_attribute.strip()] = temp_max
-            await curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          await enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
+          enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
       # element Resist & elemental buffs Down
       for curr_element in getElements():
         if(curr_element in curr_attribute and "attack" in curr_attribute):
           if(skillEffect.target.strip() == "self"):
-              temp_max = max(adventurer.elementDamageBoostAdv.get(curr_element), curr_modifier)
+              temp_max = max(adventurer.elementDamageBoostAdv[curr_element], curr_modifier)
               adventurer.elementDamageBoostAdv[curr_element] = temp_max
-              await adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+              adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
           elif(skillEffect.target.strip() == "allies"):
             for curr_adv in adv_list:
-              temp_max = max(curr_adv.elementDamageBoostAdv.get(curr_element), curr_modifier)
+              temp_max = max(curr_adv.elementDamageBoostAdv[curr_element], curr_modifier)
               curr_adv.elementDamageBoostAdv[curr_element] = temp_max
-              await curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+              curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(curr_element in curr_attribute and "resist" in curr_attribute):
           if(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-            temp_min = min(enemy.elementResistDownAdv.get(curr_element), curr_modifier)
+            temp_min = min(enemy.elementResistDownAdv[curr_element], curr_modifier)
             enemy.elementResistDownAdv[curr_element] = temp_min
-            await enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
+            enemy.set_boostCheckEnemyAdv(False,curr_attribute,curr_modifier,skillEffect.duration)
       # removal status_debuffs / status_buffs 
       if("status" in curr_attribute and "debuff" in curr_attribute and skillEffect.duration != None):
         temp_duration = int(skillEffect.duration)
@@ -740,16 +745,16 @@ async def interpretSkillAdventurerEffects(skillEffectsWithName: Tuple[str, list]
         if(isinstance(curr_modifier,NumberTypes) and curr_attribute != None and curr_attribute != "none" and not curr_attribute in getAilment()):
           if(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
             #boostCheckEnemyAppend
-            await enemy.set_boostCheckEnemyAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            enemy.set_boostCheckEnemyAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
           # ally exists for a heal but doesn't matter here because its a heal. but maybe in the future??
           if(skillEffect.target.strip() == "allies"):
             #boostCheckAllyAppend
             for curr_adv in adv_list:
-              await curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+              curr_adv.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
           if(skillEffect.target.strip() == "self"):
-            await adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            adventurer.set_boostCheckAlliesAdv(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
 
-async def interpretSkillAssistEffects(skillEffects, adventurer, enemy, adv_list:list):
+async def interpretSkillAssistEffects(skillEffects, adventurer: "Adventurer", enemy: "Enemy", adv_list:list):
   ''' (list of skilleffects, Adventurer, Enemy, list of Adventurer)
   '''
   # go through the effects
@@ -765,75 +770,75 @@ async def interpretSkillAssistEffects(skillEffects, adventurer, enemy, adv_list:
       # st/aoe resist down
       if(curr_attribute=="all_damage_resist"):
         if(skillEffect.target.strip() == "self"):
-          await adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+          adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "allies"):
           for curr_adv in adv_list:
-            await curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          temp_min = min(enemy.targetResistDownAst.get("aoe"), curr_modifier)
+          temp_min = min(enemy.targetResistDownAst["aoe"], curr_modifier)
           enemy.targetResistDownAst["aoe"] = temp_min
-          await enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
+          enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
       elif(curr_attribute=="single_damage_resist"):
         if(skillEffect.target.strip() == "self"):
-          await adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+          adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "allies"):
           for curr_adv in adv_list:
-            await curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          temp_min = min(enemy.targetResistDownAst.get("st"), curr_modifier)
+          temp_min = min(enemy.targetResistDownAst["st"], curr_modifier)
           enemy.targetResistDownAst["st"] = temp_min
-          await enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
+          enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
       # physical/magic resist down
       elif(curr_attribute=="physical_resist"):
         if(skillEffect.target.strip() == "self"):
-          await adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+          adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "allies"):
           for curr_adv in adv_list:
-            await curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          temp_min = min(enemy.typeResistDownAst.get("physical"), curr_modifier)
+          temp_min = min(enemy.typeResistDownAst["physical"], curr_modifier)
           enemy.typeResistDownAst["physical"] = temp_min
-          await enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
+          enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
       elif(curr_attribute=="magic_resist"):
         if(skillEffect.target.strip() == "self"):
-          await adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+          adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "allies"):
           for curr_adv in adv_list:
-            await curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          temp_min = min(enemy.typeResistDownAst.get("magic"), curr_modifier)
+          temp_min = min(enemy.typeResistDownAst["magic"], curr_modifier)
           enemy.typeResistDownAst["magic"] = temp_min
-          await enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
+          enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
       # STATS || str/mag buffs
       elif(curr_attribute in ["strength","magic","endurance","dexterity","agility"]):
         if(skillEffect.target.strip() == "self"):
-          temp_max = max(adventurer.statsBoostAst.get(curr_attribute.strip()), curr_modifier)
+          temp_max = max(adventurer.statsBoostAst[curr_attribute.strip()], curr_modifier)
           adventurer.statsBoostAst[curr_attribute.strip()] = temp_max
-          await adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+          adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "allies"):
           for curr_adv in adv_list:
             temp_max = max(curr_adv.statsBoostAst.get(curr_attribute.strip()), curr_modifier)
             curr_adv.statsBoostAst[curr_attribute.strip()] = temp_max
-            await curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-          await enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
+          enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
       # element Resist & elemental buffs Down
       for curr_element in getElements():
         if(curr_element in curr_attribute and "attack" in curr_attribute):
           if(skillEffect.target.strip() == "self"):
-              temp_max = max(adventurer.elementDamageBoostAst.get(curr_element), curr_modifier)
+              temp_max = max(adventurer.elementDamageBoostAst[curr_element], curr_modifier)
               adventurer.elementDamageBoostAst[curr_element] = temp_max
-              await adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+              adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
           elif(skillEffect.target.strip() == "allies"):
             for curr_adv in adv_list:
-              temp_max = max(curr_adv.elementDamageBoostAst.get(curr_element), curr_modifier)
+              temp_max = max(curr_adv.elementDamageBoostAst[curr_element], curr_modifier)
               curr_adv.elementDamageBoostAst[curr_element] = temp_max
-              await curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+              curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
         elif(curr_element in curr_attribute and "resist" in curr_attribute):
           if(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
-            temp_min = min(enemy.elementResistDownAst.get(curr_element), curr_modifier)
+            temp_min = min(enemy.elementResistDownAst[curr_element], curr_modifier)
             enemy.elementResistDownAst[curr_element] = temp_min
-            await enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
+            enemy.set_boostCheckEnemyAst(False,curr_attribute,curr_modifier,skillEffect.duration)
       
       if("status" in curr_attribute and "debuff" in curr_attribute):
         temp_duration = int(skillEffect.duration)
@@ -859,16 +864,16 @@ async def interpretSkillAssistEffects(skillEffects, adventurer, enemy, adv_list:
         if(isinstance(curr_modifier,NumberTypes) and curr_attribute != None and curr_attribute != "none" and not curr_attribute in getAilment()):
           if(skillEffect.target.strip() == "foe" or skillEffect.target.strip() == "foes"):
             #boostCheckEnemyAppend
-            await enemy.set_boostCheckEnemyAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            enemy.set_boostCheckEnemyAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
           # ally exists for a heal but doesn't matter here because its a heal. but maybe in the future??
           if(skillEffect.target.strip() == "allies"):
             #boostCheckAllyAppend
             for curr_adv in adv_list:
-              await curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+              curr_adv.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
           if(skillEffect.target.strip() == "self"):
-            await adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
+            adventurer.set_boostCheckAlliesAst(curr_modifier>=0,curr_attribute,curr_modifier,skillEffect.duration)
 
-async def counter(adv_list, enemy, memboost:dict, counterRate:float,logs:dict):
+async def counter(adv_list, enemy: "Enemy", memboost: dict, counterRate: float, logs: dict):
   ret = 0
   # take the avg
   # loop through and take the avg
@@ -886,14 +891,14 @@ async def counter(adv_list, enemy, memboost:dict, counterRate:float,logs:dict):
     # interpret the effects of counters
     await interpretSkillAdventurerEffects(adv.counterEffects,adv,enemy,adv_list)
 
-  temp_list_logs = logs.get("counters")
+  temp_list_logs = logs["counters"]
   temp_list_logs.append("average single counter damage for {:,}".format(int(ret)))
   logs["counters"] = temp_list_logs
 
   
   return ret
     
-async def counters(adv_list, enemy, memboost:dict, counterRate:float, logs:dict):
+async def counters(adv_list, enemy: "Enemy", memboost: dict, counterRate: float, logs: dict):
   ret = 0
   # take the avg
   # loop through and take the avg
@@ -907,7 +912,7 @@ async def counters(adv_list, enemy, memboost:dict, counterRate:float, logs:dict)
       temp_extra_boost += temp_extra_boost_value
     temp_counter_damage = await CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate,extra_boost=temp_extra_boost)
     await adv.add_damage(temp_counter_damage)
-    temp_list_logs = logs.get("counters")
+    temp_list_logs = logs["counters"]
     temp_list_logs.append("{} counter damage for {:,}".format(adv.name,int(temp_counter_damage)))
     logs["counters"] = temp_list_logs
     ret += temp_counter_damage

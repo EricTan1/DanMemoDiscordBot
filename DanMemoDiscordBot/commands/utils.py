@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List
 from interactions.ext.files import CommandContext
 from PIL import Image
 import io
@@ -64,23 +64,34 @@ class TopCategories(Enum):
     WHALES = 0
     GOURMETS = 1
 
+class HeroAscensionStats():
+    STR: List[int] = []
+    END: List[int] = []
+    DEX: List[int] = []
+    AGI: List[int] = []
+    MAG: List[int] = []
+    HP: List[int] = []
+    MP: List[int] = []
+    PAT: List[int] = []
+    MAT: List[int] = []
+    DEF: List[int] = []
 
-class HeroAscensionStatsP(Enum):
+class HeroAscensionStatsP(HeroAscensionStats):
     """ HA stats for physical units
     """
-    STR=[0,36,72,108,173,238,350]
-    END=[0,21,42,63,94,125,180]
-    DEX=[0,8,16,32,38,52,75]
-    AGI=[0,9,18,27,42,57,83]
-    MAG=[0,5,10,15,24,33,50]
-    HP=[0,125,250,375,600,825,1175]
-    MP=[0,7,14,21,34,47,70]
-    PAT=[0,36,72,108,173,238,350]
-    MAT=[0,5,10,15,24,33,50]
-    DEF=[0,21,42,63,94,125,180]
+    STR = [0,36,72,108,173,238,350]
+    END = [0,21,42,63,94,125,180]
+    DEX = [0,8,16,32,38,52,75]
+    AGI = [0,9,18,27,42,57,83]
+    MAG = [0,5,10,15,24,33,50]
+    HP = [0,125,250,375,600,825,1175]
+    MP = [0,7,14,21,34,47,70]
+    PAT = [0,36,72,108,173,238,350]
+    MAT = [0,5,10,15,24,33,50]
+    DEF = [0,21,42,63,94,125,180]
 
 
-class HeroAscensionStatsM(Enum):
+class HeroAscensionStatsM(HeroAscensionStats):
     """ HA stats for magical units
     """
     STR = [0,6,12,18,28,38,51]
@@ -95,7 +106,7 @@ class HeroAscensionStatsM(Enum):
     DEF = [0,19,38,57,86,115,161]
 
 
-class HeroAscensionStatsB(Enum):
+class HeroAscensionStatsB(HeroAscensionStats):
     """ HA stats for balance units
     """
     STR = [0,15,30,45,70,95,137]
@@ -110,7 +121,7 @@ class HeroAscensionStatsB(Enum):
     DEF = [0,19,38,57,86,115,168]
 
 
-class HeroAscensionStatsD(Enum):
+class HeroAscensionStatsD(HeroAscensionStats):
     """ HA stats for defensive units
     """
     STR = [0,31,62,93,153,213,325]
@@ -125,7 +136,7 @@ class HeroAscensionStatsD(Enum):
     DEF = [0,19,38,57,86,115,168]
 
 
-class HeroAscensionStatsH(Enum):
+class HeroAscensionStatsH(HeroAscensionStats):
     """ HA stats for healing units
     """
     STR = [0,15,30,45,70,95,137]
@@ -350,7 +361,7 @@ async def hasAccess(currentuser,guildid:list, roleid:list):
                 ret=True
     return ret
 
-async def checkBuffExistsReplace(buffDebuffList:list, buffDebuff:dict):
+def checkBuffExistsReplace(buffDebuffList:list, buffDebuff:dict):
   ''' (list, dict) -> None
     Check the buffs/debuffs in the list and replace if attribute and target is the same and 
     if the modifier is equal or greater than the one in the list

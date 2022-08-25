@@ -1,5 +1,5 @@
-from typing import Tuple, Dict
-from commands.utils import getElements, getDamageBuffs, getStats,checkBuffExistsReplace
+from typing import Tuple, Dict, List, Union, Any
+from commands.utils import getElements, getDamageBuffs, checkBuffExistsReplace
 from commands.entities.skills import AdventurerCounter
 import json
 
@@ -13,9 +13,9 @@ class Adventurer():
         for buffsdebuffs in self.boostCheckAlliesAdv:
             if(human_readable_dict.get(buffsdebuffs.get("attribute"))!= None):
                 #duration
-                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs.get("modifier"))*100,human_readable_dict.get(buffsdebuffs.get("attribute")), buffsdebuffs.get("duration"))
+                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs["modifier"])*100,human_readable_dict.get(buffsdebuffs.get("attribute")), buffsdebuffs.get("duration"))
             else:
-                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs.get("modifier"))*100,buffsdebuffs.get("attribute"), buffsdebuffs.get("duration"))
+                ret+="{:.0f}% {} for {} turns\n".format(float(buffsdebuffs["modifier"])*100,buffsdebuffs.get("attribute"), buffsdebuffs.get("duration"))
         return ret
     
     # 
@@ -24,11 +24,11 @@ class Adventurer():
 
 
     def __init__(self, 
-    stats: Dict[str, int] = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}, 
+    stats: Dict[str, Union[int, float]] = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0,"fire":0.0,"water":0.0,"thunder":0.0,"earth":0.0,"wind":0.0,"light":0.0,"dark":0.0},
     counterBoost=0, 
     critPenBoost=0, 
     current_skills={"combat": [], "special":[], "additionals": []},
-    current_skills_agi_mod: Dict[str, any] = {"combat": [], "special":[], "additionals": []},
+    current_skills_agi_mod: Dict[str, List[str]] = {"combat": [], "special":[], "additionals": []},
     turnOrder = [0]*15,
     adventurerCounter = AdventurerCounter(target="foe",extraBoost="",noType=0,type="physical",element = ""),
     adventurerAttack = AdventurerCounter(target="foe",extraBoost="",noType=0,type="physical",element = ""),
@@ -54,11 +54,11 @@ class Adventurer():
         self.adventurerCounter = adventurerCounter
         self.adventurerAttack= adventurerAttack
         # element attack
-        self.elementDamageBoostAdv = {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
-        self.elementDamageBoostAst = {"fire":0,"water":0,"thunder":0,"earth":0,"wind":0,"light":0,"dark":0}
+        self.elementDamageBoostAdv = {"fire":0.0,"water":0.0,"thunder":0.0,"earth":0.0,"wind":0.0,"light":0.0,"dark":0.0}
+        self.elementDamageBoostAst = {"fire":0.0,"water":0.0,"thunder":0.0,"earth":0.0,"wind":0.0,"light":0.0,"dark":0.0}
         # str/mag boosts
-        self.statsBoostAdv={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}
-        self.statsBoostAst={"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0}
+        self.statsBoostAdv={"hp":0.0,"mp":0.0,"strength":0.0, "magic":0.0,"agility":0.0,"endurance":0.0,"dexterity":0.0}
+        self.statsBoostAst={"hp":0.0,"mp":0.0,"strength":0.0, "magic":0.0,"agility":0.0,"endurance":0.0,"dexterity":0.0}
         # additionals count
         self.additionalName=""
         self.additionalCount=0
@@ -72,14 +72,14 @@ class Adventurer():
         # {isbuff,Attribute,Modifier,duration}
         # each list object
         #{"isbuff":False,"attribute":"strength","modifier":-45,"duration":1}
-        self.boostCheckAlliesAdv=[]
-        self.boostCheckAlliesAst=[]
+        self.boostCheckAlliesAdv: List[Dict[str, Any]] = []
+        self.boostCheckAlliesAst: List[Dict[str, Any]] = []
         self.name=name
         
-    async def get_combatSkill_agi(self, index:int):
+    async def get_combatSkill_agi(self, index: int) -> str:
         ''' index = 1-3
         '''
-        return self.current_skills_agi_mod.get("combat")[index-1]
+        return self.current_skills_agi_mod["combat"][index-1]
 
     async def add_damage(self, damage:int):
         self.current_damage += damage
@@ -119,7 +119,7 @@ class Adventurer():
         if(element.lower() in getElements()):
             self.elementDamageBoostAst[element.lower()] = modifier
     
-    async def set_boostCheckAlliesAdv(self,isbuff:bool,attribute:str,modifier:int,duration:int):
+    def set_boostCheckAlliesAdv(self,isbuff:bool,attribute:str,modifier:float,duration:int):
         ''' (bool, str, int or float, int, bool, int) -> None
             target: self, allies, foes, foe
             attribute: strength, magic, st, aoe
@@ -133,9 +133,9 @@ class Adventurer():
         except:
             pass
         tempAppend = {"isbuff":isbuff,"attribute": attribute,"modifier": modifier,"duration": duration}
-        await checkBuffExistsReplace(self.boostCheckAlliesAdv, tempAppend)
+        checkBuffExistsReplace(self.boostCheckAlliesAdv, tempAppend)
     
-    async def set_boostCheckAlliesAst(self,isbuff:bool,attribute:str,modifier:int,duration:int):
+    def set_boostCheckAlliesAst(self,isbuff:bool,attribute:str,modifier: float,duration:int):
         ''' (bool, str, int or float, int, bool, int) -> None
             target: self, allies, foes, foe
             attribute: strength, magic, st, aoe
@@ -145,7 +145,7 @@ class Adventurer():
             position : the active unit position in the party
         '''
         tempAppend = {"isbuff":isbuff,"attribute": attribute,"modifier": modifier,"duration": duration}
-        await checkBuffExistsReplace(self.boostCheckAlliesAst, tempAppend)
+        checkBuffExistsReplace(self.boostCheckAlliesAst, tempAppend)
 
     
 

@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import Optional, cast
 from interactions.ext.files import CommandContext
+from interactions.ext.wait_for import WaitForClient
 
 import discord
 from discord.ext import commands
@@ -36,7 +37,7 @@ from commands.utils import createGSpreadJSON
 
 
 GUILD_ID = 698143969166622720 # ID of Sword Oratoria server
-TOKEN = os.environ.get("DISCORD_TOKEN_DANMEMO")
+TOKEN = os.environ["DISCORD_TOKEN_DANMEMO"]
 ENV = os.environ.get("ENV")
 
 if ENV == "dev":
@@ -51,9 +52,9 @@ else:
 _command_prefix = os.environ.get("COMMAND_PREFIX")
 
 client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True, intents=None)
-slash_client = interactions.Client(token=TOKEN, default_scope=SCOPE)
-slash_client.load("interactions.ext.files")
-setup(slash_client) # loads wait_for extension
+slash_client_pre = interactions.Client(token=TOKEN, default_scope=SCOPE)
+slash_client_pre.load("interactions.ext.files")
+slash_client: WaitForClient = setup(cast(WaitForClient, slash_client_pre)) # loads wait_for extension
 
 cache = Cache(dbConfig)
 @client.event
@@ -109,7 +110,7 @@ async def rbcalc(ctx):
         )
     ]
 )
-async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
+async def slash_rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
     try:
         await command_rbCalc.run(slash_client,ctx,config)
     except:
@@ -132,7 +133,7 @@ async def characterSearch(ctx, *search):
         )
     ]
 )
-async def characterSearch(ctx: CommandContext, keywords: str):
+async def slash_characterSearch(ctx: CommandContext, keywords: str):
     await command_characterSearch.run(dbConfig,slash_client,ctx,keywords)
 
 
@@ -163,7 +164,7 @@ async def help(ctx,*args):
         )
     ]
 )
-async def help(ctx: CommandContext, sub_command: str):
+async def slash_help(ctx: CommandContext, sub_command: str):
     await command_help.run(ctx, sub_command)
 
 
@@ -175,7 +176,7 @@ async def invite(ctx):
     name="invite",
     description="Prints the server invite link for the bot",
 )
-async def invite(ctx: CommandContext):
+async def slash_invite(ctx: CommandContext):
     await command_invite.run(ctx)
 
 
@@ -187,7 +188,7 @@ async def support(ctx):
     name="support",
     description="Sends a link to our support server. Please contact Eric#5731 or Yon#7436",
 )
-async def support(ctx: CommandContext):
+async def slash_support(ctx: CommandContext):
     await command_support.run(ctx)
 
 
@@ -204,7 +205,7 @@ async def bento(ctx):
     name="bento",
     description="Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!",
 )
-async def bento(ctx: CommandContext):
+async def slash_bento(ctx: CommandContext):
     await command_bento.run(dbConfig,ctx)
 
 
@@ -216,7 +217,7 @@ async def gacha(ctx):
     name="gacha",
     description="Trade a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included",
 )
-async def gacha(ctx: CommandContext):
+async def slash_gacha(ctx: CommandContext):
     await command_gacha.run(dbConfig,ctx)
 
 
@@ -242,7 +243,7 @@ async def gachamode(ctx,*args):
         )
     ]
 )
-async def gachamode(ctx: CommandContext, sub_command: str):
+async def slash_gachamode(ctx: CommandContext, sub_command: str):
     await command_gachaMode.run(dbConfig,ctx,sub_command)
 
 
@@ -296,7 +297,7 @@ unit_attachment = interactions.Option(
         )
     ]
 )
-async def addUpdateUnit(ctx: CommandContext, sub_command: str, unit_file: interactions.Attachment):
+async def slash_addUpdateUnit(ctx: CommandContext, sub_command: str, unit_file: interactions.Attachment):
     await command_addUpdateUnit.run(dbConfig, slash_client, ctx, sub_command, unit_file)
     # refresh the cache
     cache = Cache(dbConfig)
@@ -313,7 +314,7 @@ async def getJson(ctx):
     scope=GUILD_ID, # so the command is only visible & available on the dev server
     default_scope=False,
 )
-async def getJson(ctx: CommandContext):
+async def slash_getJson(ctx: CommandContext):
     await command_getJson.run(ctx)
 
 
@@ -338,7 +339,7 @@ class Infographic(commands.Cog):
         name="elemental-assists",
         description="Posts an infographic of all elemental damage buffing/elemental resist debuffing assists in the game",
     )
-    async def elementAssists(ctx: CommandContext):
+    async def slash_elementAssists(ctx: CommandContext):
         await command_elementAssists.run(ctx, dbConfig)
 
 

@@ -1,8 +1,9 @@
+from typing import Optional
 from database.entities.BaseConstants import Base
 
 class Adventurer(Base):
-    def __init__(self, adventurerid, characterid:int, typeid:int, title:str,limited:bool, ascended:bool,
-                 stars:int, alias:str):
+    def __init__(self, adventurerid, characterid: int, typeid: int, title: str, limited: bool, ascended: bool,
+                 stars: int, alias: Optional[str]):
         ''' (Adventurer, int, int, int, bool, bool, int, str or None, str or
              None) -> Adventurer
              stars : the base stars of a unit (1/2/3/4)

@@ -7,9 +7,9 @@ from database.DBcontroller import DBConfig
 from PIL import Image
 import io
 
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, Type, cast
 
-from commands.utils import TIMEOUT, get_emoji,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status, HeroAscensionStatsD, HeroAscensionStatsH
+from commands.utils import TIMEOUT, get_emoji,HeroAscensionStats,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM,Status, HeroAscensionStatsD, HeroAscensionStatsH
 from database.DBcontroller import DBcontroller
 
 
@@ -386,7 +386,7 @@ async def pageHandler(
 
 def refresh_files(file_list: List[interactions.File]):
     for file in file_list:
-        file._fp = open(file._fp.name, "rb")
+        file._fp = open(cast(io.BufferedReader, file._fp).name, "rb")
 
 def assembleStats(stats_dict: dict, limitbreak: int, unit_type: str, heroascend: int) -> Tuple[str, str]:
     """ Calculates Abilities based on limit break and hero ascension (if avaliable)
@@ -402,7 +402,7 @@ def assembleStats(stats_dict: dict, limitbreak: int, unit_type: str, heroascend:
     """
 
     if (unit_type.lower() == "physical_type"):
-        ascension_stats = HeroAscensionStatsP
+        ascension_stats: Type[HeroAscensionStats] = HeroAscensionStatsP
     elif (unit_type.lower() == "magic_type"):
         ascension_stats = HeroAscensionStatsM
     elif (unit_type.lower() == "healer_type"):
@@ -412,11 +412,11 @@ def assembleStats(stats_dict: dict, limitbreak: int, unit_type: str, heroascend:
     else:
         ascension_stats = HeroAscensionStatsB
 
-    temp_hp = int(stats_dict["hp"][limitbreak]) + ascension_stats.HP.value[heroascend]
-    temp_mp = int(stats_dict["mp"][limitbreak]) + ascension_stats.MP.value[heroascend]
-    temp_pat = int(stats_dict["physical_attack"][limitbreak]) + ascension_stats.PAT.value[heroascend]
-    temp_mat = int(stats_dict["magic_attack"][limitbreak]) + ascension_stats.MAT.value[heroascend]
-    temp_def = int(stats_dict["defense"][limitbreak]) + ascension_stats.DEF.value[heroascend]
+    temp_hp = int(stats_dict["hp"][limitbreak]) + ascension_stats.HP[heroascend]
+    temp_mp = int(stats_dict["mp"][limitbreak]) + ascension_stats.MP[heroascend]
+    temp_pat = int(stats_dict["physical_attack"][limitbreak]) + ascension_stats.PAT[heroascend]
+    temp_mat = int(stats_dict["magic_attack"][limitbreak]) + ascension_stats.MAT[heroascend]
+    temp_def = int(stats_dict["defense"][limitbreak]) + ascension_stats.DEF[heroascend]
 
     res1 = f"HP : {temp_hp}\n"
     res1 += f"MP : {temp_mp}\n"
@@ -424,11 +424,11 @@ def assembleStats(stats_dict: dict, limitbreak: int, unit_type: str, heroascend:
     res1 += f"M.AT : {temp_mat}\n"
     res1 += f"DEF : {temp_def}\n"
 
-    temp_str = int(stats_dict["strength"][limitbreak]) + ascension_stats.STR.value[heroascend]
-    temp_end = int(stats_dict["endurance"][limitbreak]) + ascension_stats.END.value[heroascend]
-    temp_dex = int(stats_dict["dexterity"][limitbreak]) + ascension_stats.DEX.value[heroascend]
-    temp_agi = int(stats_dict["agility"][limitbreak]) + ascension_stats.AGI.value[heroascend]
-    temp_mag = int(stats_dict["magic"][limitbreak]) + ascension_stats.MAG.value[heroascend]
+    temp_str = int(stats_dict["strength"][limitbreak]) + ascension_stats.STR[heroascend]
+    temp_end = int(stats_dict["endurance"][limitbreak]) + ascension_stats.END[heroascend]
+    temp_dex = int(stats_dict["dexterity"][limitbreak]) + ascension_stats.DEX[heroascend]
+    temp_agi = int(stats_dict["agility"][limitbreak]) + ascension_stats.AGI[heroascend]
+    temp_mag = int(stats_dict["magic"][limitbreak]) + ascension_stats.MAG[heroascend]
 
     res2 = f"Str. : {temp_str}\n"
     res2 += f"End. : {temp_end}\n"

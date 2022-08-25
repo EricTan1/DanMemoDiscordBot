@@ -47,7 +47,7 @@ class InsertCharacter:
         typeid = self.getBaseConstants(Type(None, adventureComplete._type),False)
         adventurerid = self.getInsertAdventurerID(characterid,
                                              typeid,
-                                             int(adventureComplete._limited),
+                                             adventureComplete._limited,
                                              adventureComplete._stars,
                                              adventureComplete._title)
         # stats
@@ -248,19 +248,19 @@ class InsertCharacter:
             ret = (ret_list[0])[0]
         return ret
     
-    def getInsertAdventurerID(self, characterid: int, typeid: int, limited: int, stars: int, title: str) -> int:
+    def getInsertAdventurerID(self, characterid: int, typeid: int, limited: bool, stars: int, title: str) -> int:
         ret = -1
         ret_list = self._db.getDataColumn("adventurer","title", title)
         # check if character in, if it is then get id else insert
         if(len(ret_list) == 0):
-            ret = self._db.insertData(Adventurer(None, characterid, typeid,title,limited, False,
+            ret = self._db.insertData(Adventurer(None, characterid, typeid, title, limited, False,
                      stars, None))
         else:
             # id is always first column
             ret = (ret_list[0])[0]
             # delete so we can insert the chara again
             if(self._db.deleteById("adventurer","adventurerid", ret)):
-                ret = self._db.insertData(Adventurer(None, characterid, typeid,title,limited, False,
+                ret = self._db.insertData(Adventurer(None, characterid, typeid, title, limited, False,
                      stars, None))
         return ret
     

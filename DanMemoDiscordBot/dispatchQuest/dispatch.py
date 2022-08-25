@@ -1,4 +1,4 @@
-from DBcontroller import DBcontroller
+from database.DBcontroller import DBcontroller
 import os
 class Dispatch():
     def __init__(self, dispatchid, typename:str, stage, name:str,char1id:str, char2id:str,

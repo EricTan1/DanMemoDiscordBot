@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List, Dict, Any, Tuple, Union, cast
 import interactions
 from interactions.ext.wait_for import WaitForClient
 from interactions.ext.files import CommandContext
@@ -17,13 +17,13 @@ import ast
 
 from commands.recordbuster.recordBusterCalcHandler import pageRBHandler
 
-async def run(client: WaitForClient, ctx: CommandContext, config: Optional[interactions.Attachment]):
-    if(not config):
+async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[interactions.Attachment]):
+    if(not config_file):
         await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it via the /rbcalc command", files=interactions.File("RBConfig.txt"))
     else:
         # if template attached start to verify it
         # attachment object only contains the URL, so have to download it first
-        async with client._http._req._session.get(config.url) as request:
+        async with client._http._req._session.get(config_file.url) as request:
             contents = await request.content.read()
         contents_decode = contents.decode("utf-8")
         config = configparser.ConfigParser()
@@ -31,7 +31,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
         #test2 =ast.literal_eval(test)
         #general settings
         #counterRate=config.getfloat("DEFAULT", "counterRate")
-        memboost=ast.literal_eval(config.get("DEFAULT", "memoria_boost"))
+        memboost: Dict[str, Union[int, float]] = ast.literal_eval(config.get("DEFAULT", "memoria_boost"))
         ultRatio=config.getfloat("DEFAULT", "sa_rng")
         difficulty =config.getint("DEFAULT", "difficulty")
         # counter_RNG
@@ -71,7 +71,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
         # Init boss
         ##############################
         if(boss.lower() == "revis"):
-            enemy = Revis(elementResistDownBase=boss_elementResistDownBase,
+            enemy: Enemy = Revis(elementResistDownBase=boss_elementResistDownBase,
             typeResistDownBase=boss_type_resist, 
             stats=boss_stats,debuff_type=revis_type_debuff,debuff_mod=revis_type_mod)
         elif(boss.lower() == "finn"):
@@ -96,8 +96,6 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
             typeResistDownBase=boss_type_resist, 
             stats=boss_stats)
 
-        critRate = 1
-        penRate = 1
         ##############################
         # Init Assists
         ##############################
@@ -163,7 +161,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
         ad_dev_skill_effects = cache.get_all_adventurers_developments_skills_effects()
 
         # all the units
-        unit_list=[]
+        unit_list = []
 
         # organize skills into an actual list from order 1-4 (s1,s2,s3,sa)
         for unitsCounter in range(0,len(unit_titles)):
@@ -174,7 +172,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
                     curr_unit = adv_matches[0]
                     current_skills = {"combat": [], "special":[], "additionals": []}
                     
-                    current_skills_agi_mod = {"combat": [], "special":[], "additionals": []}
+                    current_skills_agi_mod: Dict[str, List[str]] = {"combat": [], "special":[], "additionals": []}
                     # get all skills related to the adventurer
                     adv_skill_matches = [x for x in ad_skill if x.adventurerid == curr_unit.unit_id]
 
@@ -184,22 +182,22 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
 
                         adv_skill_effects_agi_matches = [x for x in adv_skill_effects_matches if x.speed.lower() == "fast"]
                         if(len(adv_skill_effects_agi_matches)>0):
-                            temp_list_agi = current_skills_agi_mod.get(adv_skills.skilltype)
+                            temp_list_agi = current_skills_agi_mod[adv_skills.skilltype]
                             temp_list_agi.append("fast")
                             current_skills_agi_mod[adv_skills.skilltype] = temp_list_agi
                         else:
                             adv_skill_effects_agi_matches = [x for x in adv_skill_effects_matches if x.speed.lower() == "slow"]
                             if(len(adv_skill_effects_agi_matches)>0):
-                                temp_list_agi = current_skills_agi_mod.get(adv_skills.skilltype)
+                                temp_list_agi = current_skills_agi_mod[adv_skills.skilltype]
                                 temp_list_agi.append("slow")
                                 current_skills_agi_mod[adv_skills.skilltype] = temp_list_agi
                             else:
                                 adv_skill_effects_agi_matches = [x for x in adv_skill_effects_matches if x.speed.lower() == "none"]
                                 if(len(adv_skill_effects_agi_matches)>0):
-                                    temp_list_agi = current_skills_agi_mod.get(adv_skills.skilltype)
+                                    temp_list_agi = current_skills_agi_mod[adv_skills.skilltype]
                                     temp_list_agi.append("none")
                                     current_skills_agi_mod[adv_skills.skilltype] = temp_list_agi
-                        temp_list = current_skills.get(adv_skills.skilltype)
+                        temp_list = current_skills[adv_skills.skilltype]
                         temp_list.append((adv_skills.skillname, adv_skill_effects_matches))
                         current_skills[adv_skills.skilltype] = temp_list
                     #unit_skills.append(current_skills)
@@ -209,16 +207,15 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
                     adv_dev_effects_matches = []
                     tempCounterBoost = 0.0
                     tempCritPenBoost= 0.0
-                    tempElementAttackCounter = "None"
 
 
                     # tempCounter
                     tempCounter_extraBoost=None
-                    tempCounter_skillEffects = []
+                    tempCounter_skillEffects: Optional[Tuple[str,list]] = None
                     tempCounter_element = ""
                     #tempAttack
                     tempAttack_element = ""
-                    is_physical = unit_stats_list[unitsCounter].get("strength")>=unit_stats_list[unitsCounter].get("magic")
+                    is_physical = unit_stats_list[unitsCounter]["strength"] >= unit_stats_list[unitsCounter]["magic"]
                     if(is_physical):
                         tempCounterAttack_type = "physical"
                     else:
@@ -311,14 +308,14 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
         # Main Loop
         ########################
         # unit_list 0-5 aka 6 advs in order
-        active_advs= [unit_list[0],unit_list[1],unit_list[2],unit_list[3]] # always length 4 current active adv
+        active_advs: List[Adventurer] = [unit_list[0],unit_list[1],unit_list[2],unit_list[3]] # always length 4 current active adv
         sac_counter = 0
         total_damage = 0
         logs=[]
         for turn in range(0, 15):
             # logging init
             # enemy, unit{0-3}, turn
-            turn_logs = {"sa":[], "combat_skills":[], "counters":[], "sacs":[]}
+            turn_logs: Dict[str, Any] = {"sa":[], "combat_skills":[], "counters":[], "sacs":[]}
             logs.append(turn_logs)
 
             # assist skills first turn!!
@@ -338,35 +335,35 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
             # SAs SA damage function, combine SA
             character_sa_list = []
             sa_counter = 0
-            for active_adv in range(0, len(active_advs)):
-                if(active_advs[active_adv].turnOrder[turn] == 4):
+            for active_adv in active_advs:
+                if(active_adv.turnOrder[turn] == 4):
                     character_sa_list.append(1)
                     sa_counter+=1
                 else:
                     character_sa_list.append(0)
             # do the sa
-            for active_adv in range(0, len(active_advs)):
-                if(active_advs[active_adv].turnOrder[turn] == 4):
-                    temp_adv_effects_list = await active_advs[active_adv].get_specialSkill()
-                    temp_adv_skill = await interpretSkillAdventurerAttack(temp_adv_effects_list,active_advs[active_adv],enemy)
-                    temp_damage = await SADamageFunction(temp_adv_skill,active_advs[active_adv],enemy,memboost,sa_counter,ultRatio)
+            for active_adv in active_advs:
+                if(active_adv.turnOrder[turn] == 4):
+                    temp_adv_effects_list = await active_adv.get_specialSkill()
+                    temp_adv_skill = await interpretSkillAdventurerAttack(temp_adv_effects_list,active_adv,enemy)
+                    temp_damage = await SADamageFunction(temp_adv_skill,active_adv,enemy,memboost,sa_counter,ultRatio)
 
 
                     #print("{} SA damage for {}".format(active_advs[active_adv].name,int(temp_damage)))
-                    temp_list_logs = turn_logs.get("sa")
-                    temp_list_logs.append("{} SA damage for {:,}".format(active_advs[active_adv].name,int(temp_damage)))
-                    turn_logs["sa"] = temp_list_logs
+                    temp_list_logs_sa = turn_logs["sa"]
+                    temp_list_logs_sa.append("{} SA damage for {:,}".format(active_adv.name,int(temp_damage)))
+                    turn_logs["sa"] = temp_list_logs_sa
 
-                    await interpretSkillAdventurerEffects(temp_adv_effects_list,active_advs[active_adv],enemy,active_advs)
+                    await interpretSkillAdventurerEffects(temp_adv_effects_list,active_adv,enemy,active_advs)
                     total_damage += temp_damage
-                    await active_advs[active_adv].add_damage(temp_damage)
+                    await active_adv.add_damage(temp_damage)
             
             if sa_counter > 1:
                 temp_damage = await CombineSA(active_advs,enemy,character_sa_list)
                 total_damage += temp_damage
-                temp_list_logs = turn_logs.get("sa")
-                temp_list_logs.append("Combined SA damage for {:,}".format(int(temp_damage)))
-                turn_logs["sa"] = temp_list_logs
+                temp_list_logs_sas = turn_logs["sa"]
+                temp_list_logs_sas.append("Combined SA damage for {:,}".format(int(temp_damage)))
+                turn_logs["sa"] = temp_list_logs_sas
             # RB boss turn
             await enemy.turnOrder(turn,active_advs, 0)
             
@@ -375,9 +372,9 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
             # combat skills
             # agi calculation
             # list of (temp_agi,current_speed,temp_adv_skill,active_adv)
-            skills_priority_list = []
+            skills_priority_list: List[Tuple[float, str, Union[Optional[AdventurerSkill], AdventurerCounter], Adventurer, Tuple[str, list]]] = []
             for active_adv in active_advs:
-                temp_agi = active_adv.stats.get("agility") * (1 + active_adv.statsBoostAdv.get("agility") + active_adv.statsBoostAst.get("agility"))
+                temp_agi: float = active_adv.stats["agility"] * (1.0 + active_adv.statsBoostAdv["agility"] + active_adv.statsBoostAst["agility"])
                 # combat
                 current_sf= active_adv.turnOrder[turn]
                 if(current_sf in [0,1,2,3]):
@@ -386,7 +383,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
                     else:
                         current_speed= "none"
 
-                    is_physical = active_adv.stats.get("strength")>=active_adv.stats.get("magic")
+                    adv_is_physical: bool = active_adv.stats["strength"] >= active_adv.stats["magic"]
                     # fast skills and agi war
                     if(current_sf in [1,2,3]):
                         temp_adv_effects_list = await active_adv.get_combatSkill(current_sf)
@@ -394,37 +391,34 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
                         # buff skills
                         if(temp_adv_skill == None):
                             if(current_speed== "fast"):
-                                temp_agi = temp_agi * 5.35
+                                temp_agi *= 5.35
                             elif(current_speed =="slow"):
-                                temp_agi = temp_agi * 0.1
+                                temp_agi *= 0.1
                             else:
-                                temp_agi = temp_agi*1.75
+                                temp_agi *= 1.75
                         # damage skills
                         else:
                             if(current_speed== "fast"):
-                                temp_agi = temp_agi*3
+                                temp_agi *= 3.0
                             elif(current_speed =="slow"):
-                                temp_agi = temp_agi * 0.01
+                                temp_agi *= 0.01
                             else:
-                                if(not is_physical):
-                                    temp_agi = temp_agi *0.5
+                                if(not adv_is_physical):
+                                    temp_agi *= 0.5
                         skills_priority_list.append((temp_agi,current_speed,temp_adv_skill,active_adv,temp_adv_effects_list))
                     # auto attack
                     elif(current_sf == 0):
-                        if(is_physical):
-                            temp_type = "physical"
-                        else:
-                            temp_agi = temp_agi *0.5
-                            temp_type= "magic"
+                        if(not adv_is_physical):
+                            temp_agi *= 0.5
                         
                         temp_adv_skill = active_adv.adventurerAttack
-                        skills_priority_list.append((temp_agi,current_speed,temp_adv_skill,active_adv,[]))
+                        skills_priority_list.append((temp_agi,current_speed,temp_adv_skill,active_adv,("", [])))
 
             sorted_skills_priority_list = sorted(skills_priority_list, key=lambda x: x[0], reverse=True)
             is_fast =True
             is_enemy_attacked = False
             # sort the list by first element in tuple
-            for sorted_skills_counter in range(0,len(sorted_skills_priority_list)):
+            for _ in range(0,len(sorted_skills_priority_list)):
                 removed_sorted_skill = sorted_skills_priority_list.pop(0)
                 if(removed_sorted_skill[1] != "fast"):
                     is_fast = False
@@ -435,13 +429,14 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
                     is_enemy_attacked = True
                 
                 if(isinstance(removed_sorted_skill[2],AdventurerSkill) or removed_sorted_skill[2] == None):
-                    temp_damage = await DamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost,skillRatio)
+                    cast_skill = cast(Optional[AdventurerSkill], removed_sorted_skill[2])
+                    temp_damage = await DamageFunction(cast_skill,removed_sorted_skill[3],enemy,memboost,skillRatio)
                 elif(isinstance(removed_sorted_skill[2],AdventurerCounter)):
                     # no extra boosts for auto attacks
                     temp_damage = await CounterDamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost,counterRate,1)
-                temp_list_logs = turn_logs.get("combat_skills")
-                temp_list_logs.append("{} skill {} damage for {:,}".format(removed_sorted_skill[3].name,removed_sorted_skill[3].turnOrder[turn],int(temp_damage)))
-                turn_logs["combat_skills"] = temp_list_logs
+                temp_list_logs_combat = turn_logs["combat_skills"]
+                temp_list_logs_combat.append("{} skill {} damage for {:,}".format(removed_sorted_skill[3].name,removed_sorted_skill[3].turnOrder[turn],int(temp_damage)))
+                turn_logs["combat_skills"] = temp_list_logs_combat
 
                 # check if additional count == 0 so you dont attack this turn
                 perform_additional = False
@@ -461,9 +456,9 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
                     # effects
                     await interpretSkillAdventurerEffects(temp_adv_effects_list,removed_sorted_skill[3],enemy,active_advs)
                     # logging and adding damage
-                    temp_list_logs = turn_logs.get("combat_skills")
-                    temp_list_logs.append("{} additional damage for {:,}".format(removed_sorted_skill[3].name,int(temp_damage)))
-                    turn_logs["combat_skills"] = temp_list_logs
+                    temp_list_logs_additional = turn_logs["combat_skills"]
+                    temp_list_logs_additional.append("{} additional damage for {:,}".format(removed_sorted_skill[3].name,int(temp_damage)))
+                    turn_logs["combat_skills"] = temp_list_logs_additional
                     # damage adding
                     total_damage += temp_damage
                     await removed_sorted_skill[3].add_damage(temp_damage)
@@ -500,27 +495,27 @@ async def run(client: WaitForClient, ctx: CommandContext, config: Optional[inter
                 memboost["strength"] = 0
             # sacs
             if(turn +1 < 15 and sac_counter < 2):
-                for active_adv in range(0, len(active_advs)):
+                for i, active_adv in enumerate(active_advs):
                     # sac
-                    if(active_advs[active_adv].turnOrder[turn+1] == -1 and sac_counter < 2):
-                        temp_list_logs = turn_logs.get("sacs")
-                        temp_list_logs.append("{} leaving. {} entering".format(active_advs[active_adv].name,unit_list[len(active_advs)+sac_counter].name))
-                        turn_logs["sacs"] = temp_list_logs
+                    if(active_adv.turnOrder[turn+1] == -1 and sac_counter < 2):
+                        temp_list_logs_sac = turn_logs["sacs"]
+                        temp_list_logs_sac.append("{} leaving. {} entering".format(active_adv.name,unit_list[len(active_advs)+sac_counter].name))
+                        turn_logs["sacs"] = temp_list_logs_sac
 
-                        active_advs[active_adv] = unit_list[len(active_advs)+sac_counter]
+                        active_advs[i] = unit_list[len(active_advs)+sac_counter]
                         
                         # assist
                         await interpretSkillAssistEffects(assist_list[len(active_advs)+sac_counter].skills,unit_list[len(active_advs)+sac_counter],enemy,active_advs)
                         sac_counter+=1
                 # sac second time same turn
-                for active_adv in range(0, len(active_advs)):
+                for i, active_adv in enumerate(active_advs):
                     # sac
-                    if(active_advs[active_adv].turnOrder[turn+1] == -1 and sac_counter < 2):
-                        temp_list_logs = turn_logs.get("sacs")
-                        temp_list_logs.append("{} leaving. {} entering".format(active_advs[active_adv].name,unit_list[len(active_advs)+sac_counter].name))
-                        turn_logs["sacs"] = temp_list_logs
+                    if(active_adv.turnOrder[turn+1] == -1 and sac_counter < 2):
+                        temp_list_logs_sac = turn_logs["sacs"]
+                        temp_list_logs_sac.append("{} leaving. {} entering".format(active_adv.name,unit_list[len(active_advs)+sac_counter].name))
+                        turn_logs["sacs"] = temp_list_logs_sac
 
-                        active_advs[active_adv] = unit_list[len(active_advs)+sac_counter]
+                        active_advs[i] = unit_list[len(active_advs)+sac_counter]
                         
                         # assist
                         await interpretSkillAssistEffects(assist_list[len(active_advs)+sac_counter].skills,unit_list[len(active_advs)+sac_counter],enemy,active_advs)
