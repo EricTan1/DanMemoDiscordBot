@@ -87,16 +87,6 @@ async def sacalc(ctx):
     #await command_saCalculator.calculate()
 
 
-@client.command(aliases=["rbc"])
-async def rbcalc(ctx):
-    # imanity server only and ex-imanity role
-    # if(await hasAccess(ctx.message.author,[708002106245775410,698143969166622720],[708008774140690473,825721805489700876,699277609816555580,708302206780309544,913489903671738440,685466436923162634,685472735996018699,619478476713361409,933110903484858409]) or ctx.message.author.guild.id == 685046495988154373):
-    try:
-        await command_rbCalc.run(client,ctx,ctx.message.attachments)
-    except:
-        tb = traceback.format_exc()
-        await ctx.send("ERROR:\n```{}```".format(tb))
-
 @slash_client.command(
     name="rbcalc",
     description="Record Buster Score Calculator",
@@ -110,16 +100,14 @@ async def rbcalc(ctx):
     ]
 )
 async def slash_rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
+    # imanity server only and ex-imanity role
+    # if(await hasAccess(ctx.message.author,EDITORS) or ctx.message.author.guild.id == 685046495988154373):
     try:
         await command_rbCalc.run(slash_client,ctx,config)
     except:
         tb = traceback.format_exc()
         await ctx.send("ERROR:\n```{}```".format(tb))
 
-
-@client.command(aliases=["cs"])
-async def characterSearch(ctx, *search):
-    await command_characterSearch.run(dbConfig,client,ctx,*search)
 
 @slash_client.command(
     name="character-search",
@@ -137,10 +125,6 @@ async def slash_characterSearch(ctx: CommandContext, keywords: str):
     await command_commonSearch.run(dbConfig,slash_client,ctx,keywords,is_character_search=True)
 
 
-@client.command(aliases=["ss"])
-async def skillSearch(ctx, *search):
-    await command_skillSearch.run(dbConfig,client,ctx,*search)
-
 @slash_client.command(
     name="skill-search",
     description="Search DanMemo units by skills",
@@ -156,10 +140,6 @@ async def skillSearch(ctx, *search):
 async def slash_skillSearch(ctx: CommandContext, keywords: str):
     await command_commonSearch.run(dbConfig,slash_client,ctx,keywords,is_character_search=False)
 
-
-@client.command(aliases=["h","command","commands"])
-async def help(ctx,*args):
-    await command_help.run(ctx,*args)
 
 @slash_client.command(
     name="help",
@@ -183,10 +163,6 @@ async def slash_help(ctx: CommandContext, sub_command: str):
     await command_help.run(ctx, sub_command)
 
 
-@client.command()
-async def invite(ctx):
-    await command_invite.run(ctx)
-
 @slash_client.command(
     name="invite",
     description="Prints the server invite link for the bot",
@@ -194,10 +170,6 @@ async def invite(ctx):
 async def slash_invite(ctx: CommandContext):
     await command_invite.run(ctx)
 
-
-@client.command(aliases=["imanity","bestFamilia"])
-async def support(ctx):
-    await command_support.run(ctx)
 
 @slash_client.command(
     name="support",
@@ -212,10 +184,6 @@ async def popularity(ctx):
     await command_popularity.run(client,ctx)
 
 
-@client.command(aliases=["daily","b"])
-async def bento(ctx):
-    await command_bento.run(dbConfig,ctx)
-
 @slash_client.command(
     name="bento",
     description="Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!",
@@ -224,10 +192,6 @@ async def slash_bento(ctx: CommandContext):
     await command_bento.run(dbConfig,ctx)
 
 
-@client.command(aliases=["pull","g"])
-async def gacha(ctx):
-    await command_gacha.run(dbConfig,ctx)
-
 @slash_client.command(
     name="gacha",
     description="Trade a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included",
@@ -235,10 +199,6 @@ async def gacha(ctx):
 async def slash_gacha(ctx: CommandContext):
     await command_gacha.run(dbConfig,ctx)
 
-
-@client.command(aliases=["gm"])
-async def gachamode(ctx,*args):
-    await command_gachaMode.run(dbConfig,ctx,*args)
 
 @slash_client.command(
     name="gacha-mode",
@@ -278,13 +238,6 @@ async def dispatch(ctx, *search):
     await command_dispatch.run(dbConfig,client,ctx,*search)
 
 
-@client.command(aliases=["auu"])
-async def addUpdateUnit(ctx, *search):
-    await command_addUpdateUnit.run(dbConfig,ctx,*search)
-    # refresh the cache
-    cache = Cache(dbConfig)
-    cache.refreshcache(dbConfig)
-
 unit_attachment = interactions.Option(
     name="unit_file",
     description="File containing the unit data in JSON format",
@@ -319,10 +272,6 @@ async def slash_addUpdateUnit(ctx: CommandContext, sub_command: str, unit_file: 
     cache.refreshcache(dbConfig)
 
 
-@client.command(aliases=["gj"])
-async def getJson(ctx):
-    await command_getJson.run(ctx)
-
 @slash_client.command(
     name="get-json",
     description="Get the unit database in JSON format",
@@ -345,10 +294,6 @@ class Infographic(commands.Cog):
     async def killer(self, ctx, *args):
         await command_killer.run(ctx, dbConfig, *args)
 
-
-    @commands.command(aliases=["ea"])
-    async def elementAssists(self, ctx):
-        await command_elementAssists.run(ctx, dbConfig)
 
     @slash_client.command(
         name="elemental-assists",
