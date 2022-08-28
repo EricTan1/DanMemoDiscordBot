@@ -1,6 +1,7 @@
 from typing import Tuple
-
 import mysql.connector
+from mysql.connector import MySQLConnection
+from mysql.connector.connection import MySQLCursor, MySQLCursorPrepared
 import inspect
 import os
 import json
@@ -45,15 +46,15 @@ class DBcontroller:
         '''
         print("Created connection")
         self.database = config.database
-        self._connection = mysql.connector.connect(
+        self._connection: MySQLConnection = mysql.connector.connect(
             host = config.hostname,
             user = config.username,
             password = config.password,
             port = config.port,
             database = config.database)
         #print(self.connection)
-        self._mycursor = self._connection.cursor()
-        self._mycursorprepared = self._connection.cursor(prepared=True)        
+        self._mycursor: MySQLCursor = self._connection.cursor()
+        self._mycursorprepared: MySQLCursorPrepared = self._connection.cursor(prepared=True)
         
         with open('database/terms/human_readable.json', 'r') as f:
             self.human_readable_dict = json.load(f)
@@ -619,7 +620,7 @@ class DBcontroller:
                 ret=ret + "[{}] {} {} {} {} {} \n".format(temp_target,temp_speed,temp_modifier,temp_element,temp_type,temp_attribute)
         return (skillname,ret)
     
-    def assembleAdventurerDevelopment(self, adventurerDevelopmentid):
+    def assembleAdventurerDevelopment(self, adventurerDevelopmentid) -> Tuple[str, str, str, str, int]:
         self._mycursor.execute("SELECT ad.name,adv.title,c.name,adv.adventurerid FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.adventurer as adv on adv.adventurerid = ad.adventurerid LEFT JOIN danmemo.character as c on adv.characterid= c.characterid WHERE ad.adventurerdevelopmentid = {}".replace("danmemo", self.database).format(adventurerDevelopmentid))
         effects_sql = "SELECT ta.name AS target, m.value AS modifier,  a.name AS attribute, adse.duration, ty.name AS type, e.name AS element, s.name AS speed\
                             FROM {}.adventurerdevelopmentskilleffects AS adse\
@@ -693,7 +694,7 @@ class DBcontroller:
                 else:
                     ret=ret + "{} {} {} {} {} \n".format(temp_speed,temp_modifier,temp_element,temp_type,temp_attribute)
         
-        return (skillname,ret,adtitle, adname, adid)
+        return (skillname, ret, adtitle, adname, adid)
         
     def assembleAdventurerDevelopmentFromAdId(self, adventurerid):
         self._mycursor.execute("SELECT ad.name, ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.adventurer as adv on adv.adventurerid = ad.adventurerid LEFT JOIN danmemo.character as c on adv.characterid= c.characterid WHERE adv.adventurerid = {}".replace("danmemo", self.database).format(adventurerid))
@@ -794,17 +795,17 @@ class DBcontroller:
         for row in self._mycursor:
             return row[0]    
 
-    def getAdventurerIdFromSkill(self, skillid):
+    def getAdventurerIdFromSkill(self, skillid: int) -> int:
             adventurer_base_sql = "SELECT adventurerid from danmemo.adventurerskill where adventurerskillid={}".replace("danmemo",self.database).format(skillid)
             self._mycursor.execute(adventurer_base_sql)
             for row in self._mycursor:
                     return row[0]
     
-    def getAssistIdFromSkill(self, skillid):
+    def getAssistIdFromSkill(self, skillid: int) -> int:
             assist_base_sql = "SELECT assistid from danmemo.assistskill where assistskillid={}".replace("danmemo",self.database).format(skillid)
             self._mycursor.execute(assist_base_sql)
             for row in self._mycursor:
-                    return row[0]    
+                    return row[0]
     
     def assembleAssistStats(self, assistid):
         ret_dict = dict()

@@ -5,8 +5,7 @@ import asyncio
 import itertools
 
 from database.entities.User import User
-from commands.utils import Status, get_emoji, get_author, mention_author, dict_to_sns, sns_to_dict
-from commands.cache import Cache
+from commands.utils import Status, get_emoji, get_author
 
 async def run(dbConfig, client, ctx, *args):
     author = str(ctx.message.author)

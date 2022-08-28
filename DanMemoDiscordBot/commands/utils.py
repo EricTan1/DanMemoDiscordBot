@@ -193,10 +193,6 @@ def dict_to_sns(d):
     return SimpleNamespace(**d)
 
 
-def sns_to_dict(sns):
-    return vars(sns)
-
-
 def getDefaultEmoji(emojiName):
     """ given a list of emoji names or just an emoji name return the
     unicode for that emoji
@@ -270,8 +266,14 @@ def get_author(ctx: CommandContext) -> str:
     return str(ctx.author)
 
 
-async def imageHorizontalConcat(client, file_list, discord_file_list):
-    images = [Image.open(x) for x in file_list]
+def imageToBytes(image: Image.Image) -> io.BytesIO:
+    byteImage = io.BytesIO()
+    image.save(byteImage, format='PNG')
+    byteImage.seek(0)
+    return byteImage
+
+def imageHorizontalConcat(paths: List[str]) -> io.BytesIO:
+    images = [Image.open(x) for x in paths]
     widths, heights = zip(*(i.size for i in images))
     
     total_width = sum(widths)
@@ -283,15 +285,11 @@ async def imageHorizontalConcat(client, file_list, discord_file_list):
     for im in images:
         new_im.paste(im, (x_offset,0))
         x_offset += im.size[0]
-    # convert to bytes
-    imgByteArr = io.BytesIO()
-    new_im.save(imgByteArr, format='PNG')
-    imgByteArr.seek(0)
-    discord_file_list.append(imgByteArr)
 
+    return imageToBytes(new_im)
 
-async def imageVerticalConcat(client, file_list):
-    images = [Image.open(x) for x in file_list]
+def imageVerticalConcat(img_list: List[io.BytesIO]) -> io.BytesIO:
+    images = [Image.open(x) for x in img_list]
     widths, heights = zip(*(i.size for i in images))
     
     total_width = max(widths)
@@ -303,11 +301,8 @@ async def imageVerticalConcat(client, file_list):
     for im in images:
         new_im.paste(im, (0,y_offset))
         y_offset += im.size[1]
-    # convert to bytes
-    imgByteArr = io.BytesIO()
-    new_im.save(imgByteArr, format='PNG')
-    imgByteArr.seek(0)
-    return imgByteArr
+
+    return imageToBytes(new_im)
 
 async def createGSpreadJSON():
     ''' Sets up json file from environmental variables for google sheets

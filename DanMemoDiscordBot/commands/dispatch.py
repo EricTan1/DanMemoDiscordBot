@@ -37,8 +37,9 @@ async def run(dbConfig, client, ctx, *search):
         else:
             #message = message + "{} - {} {}: {}, {}, {}, {}\n".format(ret[1],ret[2],ret[3],ret[4],ret[5],ret[6],ret[7])
             temp_embed.add_field(name="{} - {} {}:".format(ret[1],ret[2],ret[3]), value="{}, {}, {}, {}".format(ret[4],ret[5],ret[6],ret[7]), inline=False)
-        await imageHorizontalConcat(client,file_list,discord_file_list)
-    icons = await imageVerticalConcat(client,discord_file_list)
+        img = imageHorizontalConcat(file_list)
+        discord_file_list.append(img)
+    icons = imageVerticalConcat(discord_file_list)
     temp_embed.color = 3066993
     temp_embed.title = "{} results for {}".format(len(ret_list),search)
     #temp_embed.description = message

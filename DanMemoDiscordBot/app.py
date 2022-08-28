@@ -12,7 +12,7 @@ from database.DBcontroller import DatabaseEnvironment, DBConfig
 from commands.cache import Cache
 
 import commands.bento as command_bento
-import commands.characterSearch as command_characterSearch
+import commands.unitsearch.commonSearch as command_commonSearch
 import commands.dispatch as command_dispatch
 import commands.gacha as command_gacha
 import commands.gachaMode as command_gachaMode
@@ -20,7 +20,6 @@ import commands.help as command_help
 import commands.invite as command_invite
 import commands.profile as command_profile
 import commands.rb as command_rb
-import commands.skillSearch as command_skillSearch
 import commands.support as command_support
 import commands.topUsers as command_topUsers
 import commands.popularity as command_popularity
@@ -130,16 +129,32 @@ async def characterSearch(ctx, *search):
             name="keywords",
             description="Keywords to look for",
             type=interactions.OptionType.STRING,
+            required=True,
         )
     ]
 )
 async def slash_characterSearch(ctx: CommandContext, keywords: str):
-    await command_characterSearch.run(dbConfig,slash_client,ctx,keywords)
+    await command_commonSearch.run(dbConfig,slash_client,ctx,keywords,is_character_search=True)
 
 
 @client.command(aliases=["ss"])
 async def skillSearch(ctx, *search):
     await command_skillSearch.run(dbConfig,client,ctx,*search)
+
+@slash_client.command(
+    name="skill-search",
+    description="Search DanMemo units by skills",
+    options=[
+        interactions.Option(
+            name="keywords",
+            description="Keywords to look for",
+            type=interactions.OptionType.STRING,
+            required=True,
+        )
+    ]
+)
+async def slash_skillSearch(ctx: CommandContext, keywords: str):
+    await command_commonSearch.run(dbConfig,slash_client,ctx,keywords,is_character_search=False)
 
 
 @client.command(aliases=["h","command","commands"])

@@ -1,5 +1,4 @@
 import database.DBcontroller
-from commands.utils import sns_to_dict
 
 class User():
     '''
@@ -102,3 +101,6 @@ class User():
     @staticmethod
     def get_unit_key(unit):
         return "["+unit.unit_label+"] "+unit.character_name
+
+def sns_to_dict(sns):
+    return vars(sns)

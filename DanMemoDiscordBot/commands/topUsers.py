@@ -1,12 +1,9 @@
 import discord
-import operator
 import math
 import asyncio
 import itertools
 
-from database.entities.User import User
-from commands.utils import Status, get_emoji, get_author, mention_author, dict_to_sns, sns_to_dict, TopCategories
-from commands.cache import Cache
+from commands.utils import Status, TopCategories
 from database.DBcontroller import DBcontroller
 
 async def run(dbConfig, client, ctx, *args):
