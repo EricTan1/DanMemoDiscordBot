@@ -287,7 +287,7 @@ async def topUsers(ctx: CommandContext, sub_command: str):
         )
     ]
 )
-async def dispatch(ctx, keywords: str):
+async def dispatch(ctx: CommandContext, keywords: str):
     await command_dispatch.run(dbConfig,ctx,keywords)
 
 
@@ -361,9 +361,34 @@ class Infographic(commands.Cog):
         await command_elementAssists.run(ctx, dbConfig)
 
 
-    @commands.command(aliases=["recordbuster","rbguide"])
-    async def rb(self, ctx, character):
-        await command_rb.run(ctx,character)
+    @slash_client.command(
+        name="recordbuster",
+        description="Posts a guide for the given RB character",
+        options=[
+            interactions.Option(
+                name="finn",
+                description="RB guide for Finn",
+                type=interactions.OptionType.SUB_COMMAND,
+            ),
+            interactions.Option(
+                name="ottarl",
+                description="RB guide for Ottarl",
+                type=interactions.OptionType.SUB_COMMAND,
+            ),
+            interactions.Option(
+                name="revis",
+                description="RB guide for Revis",
+                type=interactions.OptionType.SUB_COMMAND,
+            ),
+            interactions.Option(
+                name="riveria",
+                description="RB guide for Riveria",
+                type=interactions.OptionType.SUB_COMMAND,
+            ),
+        ]
+    )
+    async def rb(ctx: CommandContext, sub_command: str):
+        await command_rb.run(slash_client, ctx, sub_command)
 
 
 
