@@ -325,8 +325,13 @@ async def getJson(ctx: CommandContext):
     await command_getJson.run(ctx)
 
 
-@client.command()
-async def init(ctx):
+@slash_client.command(
+    name="init",
+    description="No idea what this does tbh",
+    scope=GUILD_ID, # so the command is only visible & available on the dev server
+    default_scope=False,
+)
+async def init(ctx: CommandContext):
     await command_init.run(ctx)
 
 # commands that just bring up pictures

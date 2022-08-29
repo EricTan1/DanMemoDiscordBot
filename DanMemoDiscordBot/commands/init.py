@@ -1,13 +1,6 @@
-import discord
-import asyncio
-import json
-import sys
-import os
-import aiohttp
-from discord.ext import commands
-import gspread
+from interactions.ext.files import CommandContext
 
-async def run(ctx:commands.context):
+async def run(ctx: CommandContext):
     clan_list_name = []
     clan_list_id = []
     # loop for everyone in the list imanity discord server member list and check for role: 803388556180455424
@@ -30,6 +23,6 @@ async def run(ctx:commands.context):
         print(ids[0])
     print(clan_list_id)
 
-
-
     print(len(clan_list_name))
+
+    await ctx.send("Command executed successfully", ephemeral=True)
