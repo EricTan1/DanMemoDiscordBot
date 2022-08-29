@@ -191,7 +191,7 @@ def getElementAssistDict(db: DBcontroller) -> Dict[str, Dict[str, Dict[int, List
                         mod = abs(getModifier(elem, efType[0], efType[1], skillinfo[1]))
 
                         try:
-                            fileName = "./images/units/"+"{} [{}]".format(names[1],names[0]).strip()+"/hex.png"
+                            fileName = f"./images/units/{names[1]} [{names[0]}]/hex.png"
                             file = open(fileName,"r")
                             file.close()
                             if mod not in assistImages[elem][efType[1]]:
@@ -200,7 +200,7 @@ def getElementAssistDict(db: DBcontroller) -> Dict[str, Dict[str, Dict[int, List
                             assistImages[elem][efType[1]][mod].append(fileName)
                         except:
                             # Do something smarter for missing images?
-                            print("Image for '{} [{}]' missing".format(names[1],names[0]) )
+                            print(f"Image for '{names[1]} [{names[0]}]' missing")
 
     return assistImages
 

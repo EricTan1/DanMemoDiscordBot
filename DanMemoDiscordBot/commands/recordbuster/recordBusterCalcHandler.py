@@ -79,17 +79,17 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
     first_page.color = Status.OK.value
     first_page.title = "Summary of Record Buster"
     # all the advs being used
-    first_page.add_field(name="Adventurers",value="{}, {}, {}, {}, {}, {}".format(unit_list[0].name,unit_list[1].name,unit_list[2].name,unit_list[3].name,unit_list[4].name,unit_list[5].name),inline=False)
+    first_page.add_field(name="Adventurers",value=f"{unit_list[0].name}, {unit_list[1].name}, {unit_list[2].name}, {unit_list[3].name}, {unit_list[4].name}, {unit_list[5].name}",inline=False)
     # all the assists being used
-    first_page.add_field(name="Assists",value="{}, {}, {}, {}, {}, {}".format(assist_list[0].name,assist_list[1].name,assist_list[2].name,assist_list[3].name,assist_list[4].name,assist_list[5].name),inline=False)
+    first_page.add_field(name="Assists",value=f"{assist_list[0].name}, {assist_list[1].name}, {assist_list[2].name}, {assist_list[3].name}, {assist_list[4].name}, {assist_list[5].name}",inline=False)
     # damage per adv
     #current_damage
     for adv in unit_list:
-        first_page.add_field(name="{} total damage".format(adv.name),value="{:,}".format(int(adv.current_damage)),inline=False)
+        first_page.add_field(name=f"{adv.name} total damage",value=f"{adv.current_damage:,}",inline=False)
     # total damage
-    first_page.add_field(name="Total Damage",value="{:,}".format(int(total_damage)),inline=False)
+    first_page.add_field(name="Total Damage",value=f"{total_damage:,}",inline=False)
     # total score
-    first_page.add_field(name="Total Score",value="{:,}".format(int(total_score)),inline=False)
+    first_page.add_field(name="Total Score",value=f"{int(total_score):,}",inline=False)
     
     toggle_log_list={"attack":True, "counters":False,"info":False}
 
@@ -134,10 +134,10 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
                 temp_value = ""
                 # sa
                 for sa in logs[turn_logs].get("sa"):
-                    temp_value +="{}\n".format(sa)
+                    temp_value += f"{sa}\n"
                 # combatskills
                 for c_skill in logs[turn_logs].get("combat_skills"):
-                    temp_value +="{}\n".format(c_skill)
+                    temp_value += f"{c_skill}\n"
                 if(temp_value != ""):
                     field_list_temp.append(("**Skills**",temp_value))
 
@@ -145,7 +145,7 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
             if (toggle_log_list.get("counters")==True):
                 temp_value = ""
                 for counter_skill in logs[turn_logs].get("counters"):
-                    temp_value +="{}\n".format(counter_skill)
+                    temp_value += f"{counter_skill}\n"
                 if(temp_value != ""):
                     field_list_temp.append(("**Counters**",temp_value))
 
@@ -159,24 +159,24 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
                 # stats
                 for active_adv_count in range(0, 4):
                     #temp_value+="{}\n".format(logs[turn_logs].get("unit{}".format(active_adv_count)))
-                    if(len(logs[turn_logs].get("unit{}".format(active_adv_count))) != 0):
-                        field_list_temp.append(("\U0000200e", logs[turn_logs].get("unit{}".format(active_adv_count))))
+                    if(len(logs[turn_logs].get(f"unit{active_adv_count}")) != 0):
+                        field_list_temp.append(("\U0000200e", logs[turn_logs].get(f"unit{active_adv_count}")))
                     
                     #field_list_temp.append(("**Info**",temp_value))
 
             # sacs
             temp_value = ""
             for sacs in logs[turn_logs].get("sacs"):
-                temp_value +="{}\n".format(sacs)
+                temp_value += f"{sacs}\n"
             
             if(temp_value != ""):
                 field_list_temp.append(("**Sacs**",temp_value))
             
-            if(logs_per_page_counter == logs_per_page or turn_logs ==len(logs)-1):
+            if(logs_per_page_counter == logs_per_page or turn_logs == len(logs)-1):
                 temp_embed = interactions.Embed()
                 temp_embed.color = Status.OK.value
                 page_list.append(temp_embed)
-                temp_embed.title = "Damage for Turn {}".format(turn_logs+1)
+                temp_embed.title = f"Damage for Turn {turn_logs+1}"
                 temp_embed.description="react to change pages"
                 for fields in field_list_temp:
                     temp_embed.add_field(name=fields[0],value=fields[1],inline=False)
@@ -189,9 +189,10 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
 
     page_list = await updateStats(page_list)
     # set footer for first page
-    page_list[current_page].description="react {} or {} to change pages\n{} to toggle sa/combat skills\n{} to toggle counters\n{}\
-         to toggle buffs/debuffs".format(arrow_left,arrow_right,attacks_toggle,counters_toggle,info_toggle)
-    page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+    description = f"react {arrow_left} or {arrow_right} to change pages\n{attacks_toggle} to toggle sa/combat skills\n{counters_toggle} to toggle counters\n{info_toggle}\
+         to toggle buffs/debuffs"
+    page_list[current_page].description=description
+    page_list[current_page].set_footer(text=f"Page {current_page+1} of {len(page_list)}")
 
     msg = await ctx.send(embeds=page_list[current_page], components=[row1, row2])
 
@@ -225,10 +226,9 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
                 toggle_log_list["info"] = not toggle_log_list.get("info")
                 page_list = await updateStats(page_list)
 
-            page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
-            page_list[current_page].description="react {} or {} to change pages\n{} to toggle sa/combat skills\n{} to toggle counters\n{}\
-                to toggle buffs/debuffs".format(arrow_left,arrow_right,attacks_toggle,counters_toggle,info_toggle)
-            page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+            page_list[current_page].set_footer(text=f"Page {current_page+1} of {len(page_list)}")
+            page_list[current_page].description=description
+            page_list[current_page].set_footer(text=f"Page {current_page+1} of {len(page_list)}")
     
             await component_ctx.edit(embeds=page_list[current_page])
 

@@ -106,13 +106,13 @@ def getKillerDict(db):
             adventurerid = skillinfo[4]
             names = db.assembleAdventurerCharacterName(adventurerid)
             try:
-                fileName = "./images/units/"+"{} [{}]".format(names[1],names[0]).strip()+"/hex.png"
+                fileName = f"./images/units/{names[1]} [{names[0]}]/hex.png"
                 file = open(fileName,"r")
                 file.close()
                 fileList.append(fileName)
             except:
                 # Do something smarter for missing images?
-                print("Image for '{} [{}]' missing".format(names[1],names[0]) )
+                print(f"Image for '{names[1]} [{names[0]}]' missing")
 
         killerImages[enemyType] = fileList
 

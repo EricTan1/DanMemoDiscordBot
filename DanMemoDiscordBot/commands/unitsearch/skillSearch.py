@@ -40,7 +40,7 @@ def get_page_list(my_list: list, db: DBcontroller) -> Tuple[list, int]:
                 total_results -= 1
                 skillinfo = db.assembleAssistSkill(skillid[2:])
                 (pos1,pos2) = dup_dict_as[assistid]
-                skill = ("*{}*".format(skillinfo[0].strip()), skillinfo[1])
+                skill = (f"*{skillinfo[0].strip()}*", skillinfo[1])
                 rotating_list[pos1][pos2][1].append(skill)
             else:
                 skillinfo=db.assembleAssistSkill(skillid[2:])

@@ -86,7 +86,7 @@ async def run(ctx: CommandContext):
                 curr_adv_dev_dict["effects"]=curr_effects_list
                 current_adv_json["skills"]["development"].append(curr_adv_dev_dict)
 
-            with open('./testJsonAdv/{} - {}.json'.format(current_adv.unit_label, current_adv.character_name), 'w') as fp:
+            with open(f'./testJsonAdv/{current_adv.unit_label} - {current_adv.character_name}.json', 'w') as fp:
                 json.dump(current_adv_json, fp,indent=4)
 
 
@@ -141,7 +141,7 @@ async def run(ctx: CommandContext):
                     curr_combat_effect["effects"]=curr_effects_list
                     current_as_json["skills"]["instant_effect"].append(curr_combat_effect)
     
-            with open('./testJsonAs/{} - {}.json'.format(current_as.unit_label, current_as.character_name), 'w') as fp:
+            with open(f'./testJsonAs/{current_as.unit_label} - {current_as.character_name}.json', 'w') as fp:
                 json.dump(current_as_json, fp,indent=4)
         
         # ZIP THE FILES TO ATTACH FOR DISCORD

@@ -53,7 +53,7 @@ async def run(dbConfig, client, ctx, *args):
     else:
         footer_rank = "You are ranked #" + str(rank)
 
-    footer_page = "Page {} of {}".format(current_page+1, number_pages)
+    footer_page = f"Page {current_page+1} of {number_pages}"
     footer = footer_rank + "\n" + footer_page
 
     embed = discord.Embed()
@@ -104,7 +104,7 @@ async def run(dbConfig, client, ctx, *args):
         
         embed.description = build_description(lines, current_page, per_page)
         
-        footer_page = "Page {} of {}".format(current_page+1, number_pages)
+        footer_page = f"Page {current_page+1} of {number_pages}"
         footer = footer_rank + "\n" + footer_page
         embed.set_footer(text=footer)
         

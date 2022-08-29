@@ -194,11 +194,11 @@ class Finn(Enemy):
         self.set_boostCheckEnemyAdv(True,"magic",1.5,turns)
 
     async def FinnSelfEleBuff(self, element):
-        self.set_boostCheckEnemyAdv(True,"{}_attack".format(element),-0.3,4)
+        self.set_boostCheckEnemyAdv(True,f"{element}_attack",-0.3,4)
 
     async def FinnFoesEleDebuff(self, adv_list, element):
         for adv in adv_list:
-            adv.set_boostCheckAlliesAdv(False,"{}_resist".format(element),-0.3,4)
+            adv.set_boostCheckAlliesAdv(False,f"{element}_resist",-0.3,4)
 
     async def turnOrder(self, turnOrder:int, adv_list:list, speed:int):
         if(turnOrder in [2,6] and speed ==2):
@@ -243,7 +243,7 @@ class Riveria(Enemy):
 
     async def RiveriaDebuff(self, adv_list, element):
         for adv in adv_list:
-            adv.set_boostCheckAlliesAdv(False,"{}_resist".format(element),-0.30,4)
+            adv.set_boostCheckAlliesAdv(False,f"{element}_resist",-0.30,4)
 
     async def turnOrder(self, turnOrder:int, adv_list:list, speed:int):
         # debuff 1,2,4,5,7,8,9,10,11,12,13
@@ -408,11 +408,11 @@ class Revis(Enemy):
         # debuffs own physical resists, take into account later magic resist debuffs
         self.set_typeResistDownAdv(type,min(self.typeResistDownAdv.get(type), type_mod))
         self.set_boostCheckEnemyAdv(True,"strength",0.2,4)
-        self.set_boostCheckEnemyAdv(False,"{}_resist".format(type),type_mod,4)
+        self.set_boostCheckEnemyAdv(False,f"{type}_resist",type_mod,4)
     
     async def RevisInitial(self,type,type_mod):
         self.set_typeResistDownAdv(type,min(self.typeResistDownAdv.get(type), type_mod))
-        self.set_boostCheckEnemyAdv(False,"{}_resist".format(type),type_mod,4)
+        self.set_boostCheckEnemyAdv(False,f"{type}_resist",type_mod,4)
 
 
     async def RevisClear(self):

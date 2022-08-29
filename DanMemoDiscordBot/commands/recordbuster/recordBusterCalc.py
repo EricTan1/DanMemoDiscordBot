@@ -42,10 +42,10 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
         unit_stats_list=[]
         unit_enable_counter = []
         for x in range(0,6):
-            unit_titles.append(config.get("unit{}".format(x+1), "adventurer_title"))
-            ast_titles.append(config.get("unit{}".format(x+1), "assist_title"))
-            unit_stats_list.append(ast.literal_eval(config.get("unit{}".format(x+1), "stats")))
-            unit_enable_counter.append(config.getboolean("unit{}".format(x+1), "enable_counter"))
+            unit_titles.append(config.get(f"unit{x+1}", "adventurer_title"))
+            ast_titles.append(config.get(f"unit{x+1}", "assist_title"))
+            unit_stats_list.append(ast.literal_eval(config.get(f"unit{x+1}", "stats")))
+            unit_enable_counter.append(config.getboolean(f"unit{x+1}", "enable_counter"))
 
         #enemy
         boss = config.get("enemy", "boss_name")
@@ -57,7 +57,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
         sf_list = []
 
         for x in range(0,6):
-            sf_list.append(ast.literal_eval(config.get("skillFlow", "unit{}".format(x+1))))
+            sf_list.append(ast.literal_eval(config.get("skillFlow", f"unit{x+1}")))
         skillflow = np.array(sf_list)
 
         # revis config
@@ -128,12 +128,12 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
                         
                         if("++" in ast_skills.skillname and not ("instant effect" in ast_skills.skillname)):
                             if(is_mlb):
-                                assist_list.append(Assist(ast_skill_effects_matches,"[{}] {}".format(current_assist.unit_label,current_assist.character_name)))
+                                assist_list.append(Assist(ast_skill_effects_matches,f"[{current_assist.unit_label}] {current_assist.character_name}"))
                         elif(not is_mlb):
-                            assist_list.append(Assist(ast_skill_effects_matches,"[{}] {}".format(current_assist.unit_label,current_assist.character_name)))
+                            assist_list.append(Assist(ast_skill_effects_matches,f"[{current_assist.unit_label}] {current_assist.character_name}"))
                 # no assist
                 else:
-                    raise ValueError('Can not find assist {}'.format(temp_ast_title))
+                    raise ValueError(f'Can not find assist {temp_ast_title}')
                     #assist_list.append(Assist([],""))
             # no assist
             else:
@@ -297,11 +297,11 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
                                         turnOrder = skillflow[unitsCounter],
                                         adventurerCounter=tempCounter,
                                         adventurerAttack=tempAttack,
-                                        name="[{}] {}".format(unit_titles[unitsCounter],curr_unit.character_name),
+                                        name=f"[{unit_titles[unitsCounter]}] {curr_unit.character_name}",
                                         isCounter=unit_enable_counter[unitsCounter],
                                         counterEffects=tempCounter_skillEffects))
                 else:
-                    raise ValueError('Can not find adventurer {}'.format(unit_titles[unitsCounter].lower()))
+                    raise ValueError(f'Can not find adventurer {unit_titles[unitsCounter]}')
         ########################
         # Main Loop
         ########################
@@ -326,7 +326,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
             #print("Turn: {}".format(turn+1))
             turn_logs["enemy"]= str(enemy)
             for active_adv_log in range(0, len(active_advs)):
-                turn_logs["unit{}".format(active_adv_log)] = str(active_advs[active_adv_log])
+                turn_logs[f"unit{active_adv_log}"] = str(active_advs[active_adv_log])
 
             # SADamageFunction(skill:AdventurerSkill,adventurer:Adventurer,enemy:Enemy, memboost:dict, combo:int,ultRatio:int)
             # CombineSA(adventurerList:list,enemy:Enemy, character_list:list):
@@ -349,7 +349,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
 
                     #print("{} SA damage for {}".format(active_advs[active_adv].name,int(temp_damage)))
                     temp_list_logs_sa = turn_logs["sa"]
-                    temp_list_logs_sa.append("{} SA damage for {:,}".format(active_adv.name,int(temp_damage)))
+                    temp_list_logs_sa.append(f"{active_adv.name} SA damage for {temp_damage:,}")
                     turn_logs["sa"] = temp_list_logs_sa
 
                     await interpretSkillAdventurerEffects(temp_adv_effects_list,active_adv,enemy,active_advs)
@@ -360,7 +360,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
                 temp_damage = await CombineSA(active_advs,enemy,character_sa_list)
                 total_damage += temp_damage
                 temp_list_logs_sas = turn_logs["sa"]
-                temp_list_logs_sas.append("Combined SA damage for {:,}".format(int(temp_damage)))
+                temp_list_logs_sas.append(f"Combined SA damage for {int(temp_damage):,}")
                 turn_logs["sa"] = temp_list_logs_sas
             # RB boss turn
             await enemy.turnOrder(turn,active_advs, 0)
@@ -433,7 +433,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
                     # no extra boosts for auto attacks
                     temp_damage = await CounterDamageFunction(removed_sorted_skill[2],removed_sorted_skill[3],enemy,memboost,counterRate,1)
                 temp_list_logs_combat = turn_logs["combat_skills"]
-                temp_list_logs_combat.append("{} skill {} damage for {:,}".format(removed_sorted_skill[3].name,removed_sorted_skill[3].turnOrder[turn],int(temp_damage)))
+                temp_list_logs_combat.append(f"{removed_sorted_skill[3].name} skill {removed_sorted_skill[3].turnOrder[turn]} damage for {int(temp_damage):,}")
                 turn_logs["combat_skills"] = temp_list_logs_combat
 
                 # check if additional count == 0 so you dont attack this turn
@@ -455,7 +455,7 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
                     await interpretSkillAdventurerEffects(temp_adv_effects_list,removed_sorted_skill[3],enemy,active_advs)
                     # logging and adding damage
                     temp_list_logs_additional = turn_logs["combat_skills"]
-                    temp_list_logs_additional.append("{} additional damage for {:,}".format(removed_sorted_skill[3].name,int(temp_damage)))
+                    temp_list_logs_additional.append(f"{removed_sorted_skill[3].name} additional damage for {temp_damage:,}")
                     turn_logs["combat_skills"] = temp_list_logs_additional
                     # damage adding
                     total_damage += temp_damage
@@ -493,31 +493,21 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
                 memboost["strength"] = 0
             # sacs
             if(turn +1 < 15 and sac_counter < 2):
-                for i, active_adv in enumerate(active_advs):
-                    # sac
-                    if(active_adv.turnOrder[turn+1] == -1 and sac_counter < 2):
-                        temp_list_logs_sac = turn_logs["sacs"]
-                        temp_list_logs_sac.append("{} leaving. {} entering".format(active_adv.name,unit_list[len(active_advs)+sac_counter].name))
-                        turn_logs["sacs"] = temp_list_logs_sac
+                # twince for two sacs same turn
+                for _ in range(2):
+                    for i, active_adv in enumerate(active_advs):
+                        # sac
+                        if(active_adv.turnOrder[turn+1] == -1 and sac_counter < 2):
+                            num_of_sac = len(active_advs)+sac_counter
+                            temp_list_logs_sac = turn_logs["sacs"]
+                            temp_list_logs_sac.append(f"{active_adv.name} leaving. {unit_list[num_of_sac].name} entering")
+                            turn_logs["sacs"] = temp_list_logs_sac
 
-                        active_advs[i] = unit_list[len(active_advs)+sac_counter]
-                        
-                        # assist
-                        await interpretSkillAssistEffects(assist_list[len(active_advs)+sac_counter].skills,unit_list[len(active_advs)+sac_counter],enemy,active_advs)
-                        sac_counter+=1
-                # sac second time same turn
-                for i, active_adv in enumerate(active_advs):
-                    # sac
-                    if(active_adv.turnOrder[turn+1] == -1 and sac_counter < 2):
-                        temp_list_logs_sac = turn_logs["sacs"]
-                        temp_list_logs_sac.append("{} leaving. {} entering".format(active_adv.name,unit_list[len(active_advs)+sac_counter].name))
-                        turn_logs["sacs"] = temp_list_logs_sac
-
-                        active_advs[i] = unit_list[len(active_advs)+sac_counter]
-                        
-                        # assist
-                        await interpretSkillAssistEffects(assist_list[len(active_advs)+sac_counter].skills,unit_list[len(active_advs)+sac_counter],enemy,active_advs)
-                        sac_counter+=1
+                            active_advs[i] = unit_list[num_of_sac]
+                            
+                            # assist
+                            await interpretSkillAssistEffects(assist_list[num_of_sac].skills,unit_list[num_of_sac],enemy,active_advs)
+                            sac_counter+=1
         #print('Current total damage is {}'.format(total_damage))
         # 6/8.5/10
         #print('Current total score is {}'.format(total_damage*8.5*2))

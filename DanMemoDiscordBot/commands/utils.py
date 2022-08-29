@@ -12,7 +12,7 @@ import interactions
 TIMEOUT = 120
 
 def getDifficultyMultiplier(difficulty:int) -> float:
-    difficulty_dict = {5:6,6:8.5,7:10}
+    difficulty_dict = {5:6.0,6:8.5,7:10.0}
     return difficulty_dict[difficulty]
 
 class Status(Enum):
@@ -163,14 +163,14 @@ def getDamageBuffs():
     ret = []
     # elemental
     for elements in getElements():
-        ret.append("{}_attack".format(elements))
+        ret.append(f"{elements}_attack")
     # Stats
     ret = ret + getStats()
     return ret
 def getDamageDebuffs():
     ret=[]
     for elements in getElements():
-        ret.append("{}_resist".format(elements))
+        ret.append(f"{elements}_resist")
     ret.append("physical_resist")
     ret.append("magic_resist")
     ret.append("all_damage_resist")

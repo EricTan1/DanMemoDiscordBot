@@ -33,15 +33,15 @@ async def run(dbConfig, client, ctx, *search):
             except:
                 file_list.append("./lottery/gac_dummy/hex.png")
         if(ret[2]== None):
-            temp_embed.add_field(name="{} - {}:".format(ret[1],ret[3]), value="{}, {}, {}, {}".format(ret[4],ret[5],ret[6],ret[7]), inline=False)
+            temp_embed.add_field(name=f"{ret[1]} - {ret[3]}:", value=f"{ret[4]}, {ret[5]}, {ret[6]}, {ret[7]}", inline=False)
         else:
             #message = message + "{} - {} {}: {}, {}, {}, {}\n".format(ret[1],ret[2],ret[3],ret[4],ret[5],ret[6],ret[7])
-            temp_embed.add_field(name="{} - {} {}:".format(ret[1],ret[2],ret[3]), value="{}, {}, {}, {}".format(ret[4],ret[5],ret[6],ret[7]), inline=False)
+            temp_embed.add_field(name=f"{ret[1]} - {ret[2]} {ret[3]}:", value=f"{ret[4]}, {ret[5]}, {ret[6]}, {ret[7]}", inline=False)
         img = imageHorizontalConcat(file_list)
         discord_file_list.append(img)
     icons = imageVerticalConcat(discord_file_list)
     temp_embed.color = 3066993
-    temp_embed.title = "{} results for {}".format(len(ret_list),search)
+    temp_embed.title = f"{len(ret_list)} results for {search}"
     #temp_embed.description = message
     temp_embed.set_image(url="attachment://temp.png")
     try:

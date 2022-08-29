@@ -154,7 +154,7 @@ async def pageUnitsHandler(client: WaitForClient, ctx: CommandContext, page_list
             else:
                 temp_embed = search_module.clearSetField(temp_embed, current_page_list[current_page])
                 temp_embed.color = Status.OK.value
-                temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(current_page_list)))
+                temp_embed.set_footer(text=f"Page {current_page+1} of {len(current_page_list)}")
 
                 # for some reason open files (BytesIO objects) get closed after every loop execution
                 # thus we keep the Image.Image object in memory instead, recreating the object on every iteration

@@ -128,7 +128,7 @@ async def detailed_message(user, client, ctx, *args):
     description = build_description(currency_lines,units_lines,current_page,per_page)
 
     footer_number = "Total distinct number: " + str(len(units_lines))
-    footer_page = "Page {} of {}".format(current_page+1, number_pages)
+    footer_page = f"Page {current_page+1} of {number_pages}"
     footer = footer_number + "\n" + footer_page
 
     embed = discord.Embed()
@@ -178,7 +178,7 @@ async def detailed_message(user, client, ctx, *args):
         
         embed.description = build_description(currency_lines, units_lines, current_page, per_page)
         
-        footer_page = "Page {} of {}".format(current_page+1, number_pages)
+        footer_page = f"Page {current_page+1} of {number_pages}"
         footer = footer_number + "\n" + footer_page
         embed.set_footer(text=footer)
         

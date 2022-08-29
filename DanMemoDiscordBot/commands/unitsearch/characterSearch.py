@@ -140,7 +140,7 @@ async def pageHandler(
     page_list = [temp_embed]
     if dev_embed:
         page_list.append(dev_embed)
-    temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(page_list))) 
+    temp_embed.set_footer(text=f"Page {current_page+1} of {len(page_list)}")
 
     updateStats()
     stats_buttons = [limitbreak_sub_button, limitbreak_add_button]
@@ -200,7 +200,7 @@ async def pageHandler(
                     current_ha = 0
                 updateStats()
 
-            page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+            page_list[current_page].set_footer(text=f"Page {current_page+1} of {len(page_list)}")
             # it shouldn't be necessary to pass the files again on edit
             # but for some reason it doesn't work otherwise
             await component_ctx.edit(files=file_list,embeds=page_list[current_page])

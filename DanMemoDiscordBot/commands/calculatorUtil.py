@@ -109,8 +109,8 @@ async def DamageFunction(optSkill: Optional[AdventurerSkill], adventurer, enemy:
       tempElementResistDownAst = enemy.elementResistDownAst.get(skill.element)
       # elementDamageBoostAdv[location]
       tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv.get(skill.element)
-      if(memboost.get("{}_attack".format(skill.element)) != None):
-        tempElementDamageBoostAdv+=memboost.get("{}_attack".format(skill.element))
+      if(memboost.get(f"{skill.element}_attack") != None):
+        tempElementDamageBoostAdv+=memboost.get(f"{skill.element}_attack")
       # elemental damage boost from weapon
       if(adventurer.stats.get(skill.element) != None):
         tempElementDamageBoostAdv += adventurer.stats.get(skill.element)
@@ -203,8 +203,8 @@ async def CounterDamageFunction(counter: AdventurerCounter, adventurer, enemy: "
     tempElementResistDownAst = enemy.elementResistDownAst.get(counter.element)
     # elementDamageBoostAdv[location]
     tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv[counter.element]
-    if(memboost.get("{}_attack".format(counter.element)) != None):
-        tempElementDamageBoostAdv+=memboost["{}_attack".format(counter.element)]
+    if(memboost.get(f"{counter.element}_attack") != None):
+        tempElementDamageBoostAdv+=memboost[f"{counter.element}_attack"]
     # elemental damage boost from weapon
     if(adventurer.stats.get(counter.element) != None):
       tempElementDamageBoostAdv += adventurer.stats[counter.element]
@@ -335,8 +335,8 @@ async def SADamageFunction(optSkill: Optional[AdventurerSkill], adventurer: "Adv
       # elementDamageBoostAdv[location]
       
       tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv[skill.element]
-      if(memboost.get("{}_attack".format(skill.element)) != None):
-        tempElementDamageBoostAdv+=memboost["{}_attack".format(skill.element)]
+      if(memboost.get(f"{skill.element}_attack") != None):
+        tempElementDamageBoostAdv+=memboost[f"{skill.element}_attack"]
       # elemental damage boost from weapon
       if(adventurer.stats.get(skill.element) != None):
         tempElementDamageBoostAdv += cast(float, adventurer.stats[skill.element])
@@ -402,7 +402,7 @@ async def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list):
                 (1-enemy.typeResistDownAdv[temp_type]-enemy.typeResistDownAst[temp_type])*\
                 (1-enemy.targetResistDownAdv["aoe"]-enemy.targetResistDownAst["aoe"])*\
                 3.7*1.5
-  print('Combine SA damage is {}'.format(np.floor(tempDamage).item()))
+  print(f'Combine SA damage is {np.floor(tempDamage).item()}')
   #totalDamage = totalDamage + np.floor(tempDamage).item()
   return np.floor(tempDamage).item()
 
@@ -892,7 +892,7 @@ async def counter(adv_list, enemy: "Enemy", memboost: dict, counterRate: float, 
     await interpretSkillAdventurerEffects(adv.counterEffects,adv,enemy,adv_list)
 
   temp_list_logs = logs["counters"]
-  temp_list_logs.append("average single counter damage for {:,}".format(int(ret)))
+  temp_list_logs.append(f"average single counter damage for {int(ret):,}")
   logs["counters"] = temp_list_logs
 
   
@@ -913,7 +913,7 @@ async def counters(adv_list, enemy: "Enemy", memboost: dict, counterRate: float,
     temp_counter_damage = await CounterDamageFunction(counter=temp_adv_counter,adventurer=adv,enemy=enemy,memboost=memboost,counterRate=counterRate,extra_boost=temp_extra_boost)
     await adv.add_damage(temp_counter_damage)
     temp_list_logs = logs["counters"]
-    temp_list_logs.append("{} counter damage for {:,}".format(adv.name,int(temp_counter_damage)))
+    temp_list_logs.append(f"{adv.name} counter damage for {int(temp_counter_damage):,}")
     logs["counters"] = temp_list_logs
     ret += temp_counter_damage
     # interpret the effects of counters

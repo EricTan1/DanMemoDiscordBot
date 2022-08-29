@@ -5,7 +5,7 @@ import json
 
 class Adventurer():
     def __str__(self) -> str:
-        ret = "**{}**:\n".format(self.name)
+        ret = f"**{self.name}**:\n"
         with open('database/terms/human_readable.json', 'r') as f:
             human_readable_dict = json.load(f)
         # return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
