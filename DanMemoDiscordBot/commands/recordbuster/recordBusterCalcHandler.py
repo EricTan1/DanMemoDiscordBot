@@ -7,6 +7,7 @@ from interactions.ext.files import CommandContext
 from commands.utils import TIMEOUT, getDefaultEmoji, Status
 from commands.entities.adventurer import Adventurer
 from commands.entities.assist import Assist
+from commands.buttons import previous_page, next_page, to_start, to_end, toggle_combat, toggle_counters, toggle_effects
 
 # emoji strings
 arrow_left = '\u2b05'
@@ -16,43 +17,6 @@ forward = '\u23ed'
 attacks_toggle = getDefaultEmoji("crossed_swords")
 counters_toggle = getDefaultEmoji("shield")
 info_toggle = getDefaultEmoji("information_source")
-
-# buttons
-previous_page = interactions.Button(
-    style=interactions.ButtonStyle.PRIMARY,
-    label=arrow_left,
-    custom_id="previous_page"
-)
-next_page = interactions.Button(
-    style=interactions.ButtonStyle.PRIMARY,
-    label=arrow_right,
-    custom_id="next_page"
-)
-to_start = interactions.Button(
-    style=interactions.ButtonStyle.PRIMARY,
-    label=rewind,
-    custom_id="to_start"
-)
-to_end = interactions.Button(
-    style=interactions.ButtonStyle.PRIMARY,
-    label=forward,
-    custom_id="to_end"
-)
-toggle_combat = interactions.Button(
-    style=interactions.ButtonStyle.PRIMARY,
-    label=attacks_toggle,
-    custom_id="toggle_combat"
-)
-toggle_counters = interactions.Button(
-    style=interactions.ButtonStyle.PRIMARY,
-    label=counters_toggle,
-    custom_id="toggle_counters"
-)
-toggle_effects = interactions.Button(
-    style=interactions.ButtonStyle.PRIMARY,
-    label=info_toggle,
-    custom_id="toggle_effects"
-)
 
 buttons = [to_start, previous_page, next_page, to_end, toggle_combat, toggle_counters, toggle_effects]
 

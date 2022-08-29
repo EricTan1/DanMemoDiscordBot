@@ -1,19 +1,15 @@
-import discord
+import interactions
+from interactions.ext.files import CommandContext
+from interactions.ext.wait_for import WaitForClient
 from commands.utils import Status
 
-async def run(client,ctx):
-    author = str(ctx.message.author)
-    authorUniqueId = str(ctx.message.author.id)
-    content = ctx.message.content
-    
-    print("\nReceived message from '"+author+"("+authorUniqueId+")' with content '"+content+"'")
-
+async def run(client: WaitForClient, ctx: CommandContext):
     for guild in client.guilds:
         print(guild.name)
-    embed = discord.Embed()
-    embed.color = Status.KO.value
+    embed = interactions.Embed()
+    embed.color = Status.OK.value
     embed.title = "Popularity"
-    embed.description= "Ais is currently used in "+str(len(client.guilds))+" servers. Thank you for your support! ♡"
+    embed.description= f"Ais is currently used in {str(len(client.guilds))} servers. Thank you for your support! ♡"
     embed.set_image(url="attachment://texture.png")
-    await ctx.send(embed=embed, file=discord.File("./images/units/Ais (Girl) [Little Princess]/texture.png"))
+    await ctx.send(embeds=embed, files=interactions.File("./images/units/Ais (Girl) [Little Princess]/texture.png"))
 

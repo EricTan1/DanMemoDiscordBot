@@ -1,16 +1,15 @@
 from typing import Optional, cast
 from interactions.ext.files import CommandContext
 from interactions.ext.wait_for import WaitForClient
-
 import discord
 from discord.ext import commands
 import interactions
 from interactions.ext.wait_for import setup
 import os
+import traceback
 
 from database.DBcontroller import DatabaseEnvironment, DBConfig
 from commands.cache import Cache
-
 import commands.bento as command_bento
 import commands.unitsearch.commonSearch as command_commonSearch
 import commands.dispatch as command_dispatch
@@ -30,8 +29,6 @@ import commands.elementAssists as command_elementAssists
 import commands.getJson as command_getJson
 import commands.init as command_init
 import commands.recordbuster.recordBusterCalc as command_rbCalc
-import traceback
-
 from commands.utils import createGSpreadJSON
 
 
@@ -60,13 +57,12 @@ cache = Cache(dbConfig)
 async def on_message(message):
     await client.process_commands(message)
 
-@client.event
-async def on_ready():
+@slash_client.event
+async def on_start():
     ''' () -> None
     This function initializes the bot.
     '''
     print("test")
-    client.add_cog(Infographic(client))
     createGSpreadJSON()
     print("Bot is ready!")
 
@@ -189,9 +185,12 @@ async def support(ctx: CommandContext):
     await command_support.run(ctx)
 
 
-@client.command()
-async def popularity(ctx):
-    await command_popularity.run(client,ctx)
+@slash_client.command(
+    name="popularity",
+    description="Displays current Ais bot popularity",
+)
+async def popularity(ctx: CommandContext):
+    await command_popularity.run(slash_client,ctx)
 
 
 @slash_client.command(

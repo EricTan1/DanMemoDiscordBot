@@ -7,9 +7,13 @@ import io
 
 from typing import Optional, Tuple, List, Type, cast
 
-from commands.utils import TIMEOUT, Status, HeroAscensionStats,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM, HeroAscensionStatsD, HeroAscensionStatsH
-from commands.unitsearch.shared import limitbreak_sub_emoji, limitbreak_add_emoji, hero_ascend_sub_emoji, hero_ascend_add_emoji
-from commands.unitsearch.shared import previous_page, next_page, limitbreak_sub_button, limitbreak_add_button, hero_ascend_sub_button, hero_ascend_add_button
+from commands.utils import TIMEOUT, get_emoji, Status, HeroAscensionStats,HeroAscensionStatsP,HeroAscensionStatsB,HeroAscensionStatsM, HeroAscensionStatsD, HeroAscensionStatsH
+from commands.buttons import previous_page, next_page, limitbreak_sub_button, limitbreak_add_button, hero_ascend_sub_button, hero_ascend_add_button
+
+limitbreak_sub_emoji = get_emoji("square_off")
+limitbreak_add_emoji = get_emoji("square_on")
+hero_ascend_sub_emoji = get_emoji("star_off")
+hero_ascend_add_emoji = get_emoji("star_on")
 
 
 # --- interface functions used by commonSearch ---

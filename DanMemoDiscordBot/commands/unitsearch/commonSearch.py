@@ -11,7 +11,7 @@ import io
 from database.DBcontroller import DBcontroller, DBConfig
 from commands.utils import TIMEOUT, Status, imageVerticalConcat, imageHorizontalConcat, imageToBytes
 from commands.unitsearch import characterSearch, skillSearch
-from commands.unitsearch.shared import previous_page, next_page, to_start, to_end, filter_adventurer, filter_assist
+from commands.buttons import previous_page, next_page, to_start, to_end, filter_adventurer, filter_assist
 
 
 async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, search_words: str, is_character_search: bool):
