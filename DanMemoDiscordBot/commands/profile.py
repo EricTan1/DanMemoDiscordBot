@@ -1,11 +1,10 @@
 import interactions
 from interactions.ext.files import CommandContext, ComponentContext
 from interactions.ext.wait_for import WaitForClient
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 import operator
 import math
 import asyncio
-import itertools
 
 from database.DBcontroller import DBConfig
 from database.entities.User import User
@@ -20,7 +19,7 @@ adventurer_emoji = get_emoji("ad_filter")
 assist_emoji = get_emoji("as_filter")
 limitbreak_emojis = [get_emoji(f"limitbreak_{number}") for number in range(1,6)]
 
-async def run(dbConfig: DBConfig, client, ctx: CommandContext, sub_command: str):
+async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, sub_command: str):
     author = str(ctx.author)
     authorUniqueId = str(ctx.author.id)
     user = User.get_user(dbConfig, author, authorUniqueId)
@@ -114,9 +113,9 @@ async def run(dbConfig: DBConfig, client, ctx: CommandContext, sub_command: str)
             return await ctx.edit(embeds=embed, components=[])
 
 def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
-    sorted_categories = []
-    previous_category = None
-    previous_number = None
+    sorted_categories: List[Tuple[str, int]] = []
+    previous_category = ""
+    previous_number = 0
     for unit in units:
         category = star_emoji*unit["stars"]
         if unit["unit_type"] == "adventurer":

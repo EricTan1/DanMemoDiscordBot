@@ -141,7 +141,7 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
                 temp_embed.color = Status.OK.value
                 page_list.append(temp_embed)
                 temp_embed.title = f"Damage for Turn {turn_logs+1}"
-                temp_embed.description="react to change pages"
+                temp_embed.description="Press buttons to switch pages"
                 for fields in field_list_temp:
                     temp_embed.add_field(name=fields[0],value=fields[1],inline=False)
                 logs_per_page_counter=1
@@ -153,7 +153,7 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
 
     page_list = updateStats(page_list)
     # set footer for first page
-    description = f"react {arrow_left} or {arrow_right} to change pages\n{attacks_toggle} to toggle sa/combat skills\n{counters_toggle} to toggle counters\n{info_toggle}\
+    description = f"Press {arrow_left} or {arrow_right} to change pages\n{attacks_toggle} to toggle sa/combat skills\n{counters_toggle} to toggle counters\n{info_toggle}\
          to toggle buffs/debuffs"
     page_list[current_page].description=description
     page_list[current_page].set_footer(text=f"Page {current_page+1} of {len(page_list)}")

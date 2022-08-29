@@ -123,6 +123,7 @@ class DBcontroller:
             ret = "[{}] {}".format(row[0],row[1])
             print(row)
         return ret
+
     def deleteById(self, entityname, column, value):
         ''' (DBcontroller, Entity, str, ?) -> List of Entity
         returns the entity list based on the columns
@@ -140,16 +141,14 @@ class DBcontroller:
         ''' (DBcontroller, Entity, str, ?) -> List of Entity
         returns the entity list based on the columns
         '''
-        sql = 'SELECT * FROM {}.{} WHERE {}=%s'.format(self.database.lower(),
-                                                                                                     entityname.lower(),
-                                                                                                     column.lower())
-        
+        sql = 'SELECT * FROM {}.{} WHERE {}=%s'.format(self.database.lower(), entityname.lower(), column.lower())
+
         self._mycursor.execute(sql,(value,))
         ret_list =[]
         for row in self._mycursor: 
             ret_list.append(row)
         return ret_list
-    
+
     def getDataColumnList(self, entityname, column):
         ''' (DBcontroller, Entity, str, ?) -> List of Entity
         returns the entity list based on the columns
@@ -159,9 +158,9 @@ class DBcontroller:
         
         self._mycursor.execute(sql)
         ret_list =[]
-        for row in self._mycursor: 
+        for row in self._mycursor:
             ret_list.append(row[0])
-        return ret_list    
+        return ret_list
     
     def characterSearch(self,search):
         print("searching")
@@ -787,25 +786,21 @@ class DBcontroller:
 
     def getAdSkillIdFromEffect(self, adventurerskilleffectsid):
         self._mycursor.execute("SELECT AdventurerSkillid FROM danmemo.adventurerskilleffects WHERE AdventurerSkillEffectsid={}".replace("danmemo",self.database).format(adventurerskilleffectsid))
-        for row in self._mycursor:
-            return row[0]
+        return self._mycursor.fetchone()[0]
     
     def getAsSkillIdFromEffect(self, assistskilleffectsid):
         self._mycursor.execute("SELECT assistSkillid FROM danmemo.assistskilleffects WHERE assistSkillEffectsid={}".replace("danmemo",self.database).format(assistskilleffectsid))
-        for row in self._mycursor:
-            return row[0]    
+        return self._mycursor.fetchone()[0]
 
     def getAdventurerIdFromSkill(self, skillid: int) -> int:
-            adventurer_base_sql = "SELECT adventurerid from danmemo.adventurerskill where adventurerskillid={}".replace("danmemo",self.database).format(skillid)
-            self._mycursor.execute(adventurer_base_sql)
-            for row in self._mycursor:
-                    return row[0]
+        adventurer_base_sql = "SELECT adventurerid from danmemo.adventurerskill where adventurerskillid={}".replace("danmemo",self.database).format(skillid)
+        self._mycursor.execute(adventurer_base_sql)
+        return self._mycursor.fetchone()[0]
     
     def getAssistIdFromSkill(self, skillid: int) -> int:
-            assist_base_sql = "SELECT assistid from danmemo.assistskill where assistskillid={}".replace("danmemo",self.database).format(skillid)
-            self._mycursor.execute(assist_base_sql)
-            for row in self._mycursor:
-                    return row[0]
+        assist_base_sql = "SELECT assistid from danmemo.assistskill where assistskillid={}".replace("danmemo",self.database).format(skillid)
+        self._mycursor.execute(assist_base_sql)
+        return self._mycursor.fetchone()[0]
     
     def assembleAssistStats(self, assistid):
         ret_dict = dict()
@@ -832,10 +827,8 @@ class DBcontroller:
     def assembleAdventurerCharacterName(self, adventurerid):
         adventurer_base_sql = "SELECT title, c.name, limited, ascended,stars FROM danmemo.adventurer as a, danmemo.character as c where c.characterid=a.characterid and a.adventurerid={}".replace("danmemo",self.database).format(adventurerid)
         self._mycursor.execute(adventurer_base_sql)
-        for row in self._mycursor:
-            # TITLE CHARACTERNAME STARS
-            # CHECK IF TIME LIMITED
-            return (row[0],row[1])
+        first_row = self._mycursor.fetchone()
+        return (first_row[0],first_row[1])
         
     def assembleAssistCharacterName(self, assistid):
         ret = ""
@@ -844,11 +837,8 @@ class DBcontroller:
         # base assist assemble
         self._mycursor.execute(assist_base_sql)
         # free up the list cursor
-        for row in self._mycursor:
-            # TITLE CHARACTERNAME STARS
-            # CHECK IF TIME LIMITED
-            # title name
-            return (row[0],row[1])
+        first_row = self._mycursor.fetchone()
+        return (first_row[0],first_row[1])
         
     def dispatchSearch(self, search):
         search = search.split(" ")
@@ -929,10 +919,10 @@ class DBcontroller:
                                                             self.database,
                                                             unit_id, unit_id, sql)
         self._mycursor.execute(sql)
-        for row in self._mycursor:
-            unit_type, stars, unit_id, title, name = table, row[1], row[0], row[2], row[3]
-            print(unit_type, stars, unit_id, title, name)
-            return unit_type, stars, unit_id, title, name
+        first_row = self._mycursor.fetchone()
+        unit_type, stars, unit_id, title, name = table, first_row[1], first_row[0], first_row[2], first_row[3]
+        print(unit_type, stars, unit_id, title, name)
+        return unit_type, stars, unit_id, title, name
 
     def get_user(self, discord_id, discord_unique_id):
         sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, units_summary, gacha_mode, discord_unique_id, units_distinct_number, units_score FROM {}.user user WHERE user.discord_id = %s or user.discord_unique_id = %s"\

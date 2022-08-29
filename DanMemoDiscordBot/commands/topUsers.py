@@ -1,21 +1,19 @@
-import discord
+import interactions
+from interactions.ext.files import CommandContext, ComponentContext
+from interactions.ext.wait_for import WaitForClient
+from typing import List
 import math
 import asyncio
-import itertools
 
-from commands.utils import Status, TopCategories
-from database.DBcontroller import DBcontroller
+from commands.utils import TIMEOUT, Status, TopCategories
+from commands.buttons import previous_page, next_page, to_start, to_end
+from database.DBcontroller import DBConfig, DBcontroller
 
-async def run(dbConfig, client, ctx, *args):
-    author = str(ctx.message.author)
-    authorUniqueId = str(ctx.message.author.id)
-    content = ctx.message.content
-    
-    print("\nReceived message from '"+author+"("+authorUniqueId+")' with content '"+content+"'")
-
+async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, sub_command: str):
+    authorUniqueId = str(ctx.author.id)
     db = DBcontroller(dbConfig)
     
-    if "crepes" in args:
+    if sub_command == "gourmets":
         category = TopCategories.GOURMETS
         thumbnail = "Ais Wallenstein [Santa Princess]"
     else:
@@ -23,10 +21,8 @@ async def run(dbConfig, client, ctx, *args):
         thumbnail = "Syr Flover [Countess]"
 
     users = db.get_top_users(category)
-    
-    title = "Top "+category.name.lower().capitalize()
-        
-    rank = None
+
+    rank = -1
     lines = []
     for i in range(len(users)):
         user = users[i]
@@ -46,79 +42,65 @@ async def run(dbConfig, client, ctx, *args):
     if number_pages == 0:
         number_pages = 1
 
-    description = build_description(lines,current_page,per_page)
+    description = build_description(lines,current_page)
 
-    if rank is None:
+    if rank == -1:
         footer_rank = "You are not ranked yet"
     else:
         footer_rank = "You are ranked #" + str(rank)
 
-    footer_page = f"Page {current_page+1} of {number_pages}"
-    footer = footer_rank + "\n" + footer_page
+    footer_page = f"\n\nPage {current_page+1} of {number_pages}"
+    footer = footer_rank + footer_page
 
-    embed = discord.Embed()
+    embed = interactions.Embed()
     embed.color = Status.OK.value
-    #embed.set_thumbnail(url=ctx.message.author.avatar_url)
     embed.set_thumbnail(url="attachment://texture.png")
-    embed.title = title
+    embed.title = "Top "+category.name.lower().capitalize()
     embed.description = description
     embed.set_footer(text=footer)
-    msg = await ctx.send(embed=embed, file=discord.File("./images/units/"+thumbnail+"/texture.png"))
 
-    if number_pages == 1:
+    components = []
+    if number_pages > 1:
+        components = [to_start, previous_page, next_page, to_end]
+
+    ifile = interactions.File("./images/units/"+thumbnail+"/texture.png")
+    msg = await ctx.send(embeds=embed, components=components, files=ifile)
+
+    if not components:
         return
 
-    # update description with reactions
-    emoji_left_arrow = "\u2b05"
-    emoji_right_arrow = "\u27a1"
-    emojis = [emoji_left_arrow, emoji_right_arrow]
-    for emoji in emojis:
-        await msg.add_reaction(emoji)
-
     while True:
-        pending_tasks = [wait_for_reaction(client, msg.id, emojis, "reaction_add"),
-                        wait_for_reaction(client, msg.id, emojis, "reaction_remove")]
-        done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
+        ifile = interactions.File("./images/units/"+thumbnail+"/texture.png")
+        try:
+            component_ctx: ComponentContext = await client.wait_for_component(
+                components=components, messages=msg, timeout=TIMEOUT,
+            )
 
-        timeout = len(done_tasks) == 0
+            if(component_ctx.custom_id == "previous_page"):
+                current_page = (current_page -1) % number_pages
+            elif(component_ctx.custom_id == "next_page"):
+                current_page = (current_page +1) % number_pages
+            elif(component_ctx.custom_id == "to_start"):
+                current_page = 0
+            elif(component_ctx.custom_id == "to_end"):
+                current_page = number_pages-1
 
-        if not timeout:
-            task = done_tasks.pop()
+            embed.description = build_description(lines, current_page)
 
-            reaction, user = await task
+            footer_page = f"\n\nPage {current_page+1} of {number_pages}"
+            footer = footer_rank + footer_page
+            embed.set_footer(text=footer)
 
-        for remaining in itertools.chain(done_tasks, pending_tasks):
-            remaining.cancel()
+            await component_ctx.edit(embeds=embed, components=components, files=ifile)
 
-        if timeout:
+        except asyncio.TimeoutError:
             embed.color = Status.KO.value
-            await msg.edit(embed=embed)
-            break
+            ifile = interactions.File("./images/units/"+thumbnail+"/texture.png")
+            return await ctx.edit(embeds=embed, components=[], files=ifile)
 
-        emoji = str(reaction.emoji)
-
-        if emoji == emoji_left_arrow:
-            current_page = (current_page - 1) % number_pages
-        elif emoji == emoji_right_arrow:
-            current_page = (current_page + 1) % number_pages
-        
-        embed.description = build_description(lines, current_page, per_page)
-        
-        footer_page = f"Page {current_page+1} of {number_pages}"
-        footer = footer_rank + "\n" + footer_page
-        embed.set_footer(text=footer)
-        
-        await msg.edit(embed=embed)
-
-def build_description(lines, current_page, per_page):
+def build_description(lines: List[str], current_page: int, per_page=10):
     description = ""
     for i in range(len(lines)):
         if per_page*current_page <= i and i < per_page*(current_page+1):
             description += lines[i]
     return description
-
-def wait_for_reaction(client, msg_id, emojis, event_name):
-    def check(reaction, user):
-        return str(reaction.emoji) in emojis and user != client.user and reaction.message.id == msg_id
-
-    return client.wait_for(event_name,check=check)

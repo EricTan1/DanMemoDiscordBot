@@ -253,9 +253,26 @@ async def profile(ctx: CommandContext, sub_command: str):
     await command_profile.run(dbConfig,slash_client,ctx,sub_command)
 
 
-@client.command(aliases=["top"])
-async def topUsers(ctx,*args):
-    await command_topUsers.run(dbConfig,client,ctx,*args)
+@slash_client.command(
+    name="top-users",
+    description="Shows the biggest whales/gourmets, all servers combined",
+    options=[
+        interactions.Option(
+            name="whales",
+            description="Top players by total score of owned gacha units",
+            type=interactions.OptionType.SUB_COMMAND,
+            required=False,
+        ),
+        interactions.Option(
+            name="gourmets",
+            description="Top players by crepes owned",
+            type=interactions.OptionType.SUB_COMMAND,
+            required=False,
+        ),
+    ]
+)
+async def topUsers(ctx: CommandContext, sub_command: str):
+    await command_topUsers.run(dbConfig,slash_client,ctx,sub_command)
 
 
 @client.command(aliases=["dp","dispatchquest","dq"])
