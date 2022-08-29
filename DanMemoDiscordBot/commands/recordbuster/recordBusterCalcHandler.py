@@ -122,7 +122,7 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
 
 
     # whenever toggles
-    async def updateStats(page_list):
+    def updateStats(page_list):
         page_list = page_list[:1]
         logs_per_page = 1
         logs_per_page_counter=1
@@ -187,7 +187,7 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
         return page_list
 
 
-    page_list = await updateStats(page_list)
+    page_list = updateStats(page_list)
     # set footer for first page
     description = f"react {arrow_left} or {arrow_right} to change pages\n{attacks_toggle} to toggle sa/combat skills\n{counters_toggle} to toggle counters\n{info_toggle}\
          to toggle buffs/debuffs"
@@ -218,13 +218,13 @@ async def pageRBHandler(client: WaitForClient, ctx: CommandContext, logs: List[d
                 current_page = len(page_list)-1
             elif(component_ctx.custom_id == "toggle_combat"):
                 toggle_log_list["attack"] = not toggle_log_list.get("attack")
-                page_list = await updateStats(page_list)
+                page_list = updateStats(page_list)
             elif(component_ctx.custom_id == "toggle_counters"):
                 toggle_log_list["counters"] = not toggle_log_list.get("counters")
-                page_list = await updateStats(page_list)
+                page_list = updateStats(page_list)
             elif(component_ctx.custom_id == "toggle_effects"):
                 toggle_log_list["info"] = not toggle_log_list.get("info")
-                page_list = await updateStats(page_list)
+                page_list = updateStats(page_list)
 
             page_list[current_page].set_footer(text=f"Page {current_page+1} of {len(page_list)}")
             page_list[current_page].description=description

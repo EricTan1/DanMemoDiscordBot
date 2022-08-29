@@ -67,7 +67,7 @@ async def on_ready():
     '''
     print("test")
     client.add_cog(Infographic(client))
-    await createGSpreadJSON()
+    createGSpreadJSON()
     print("Bot is ready!")
 
 

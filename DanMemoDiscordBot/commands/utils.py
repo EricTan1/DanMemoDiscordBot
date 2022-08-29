@@ -304,7 +304,7 @@ def imageVerticalConcat(img_list: List[io.BytesIO]) -> io.BytesIO:
 
     return imageToBytes(new_im)
 
-async def createGSpreadJSON():
+def createGSpreadJSON():
     ''' Sets up json file from environmental variables for google sheets
     '''
     try:
@@ -316,27 +316,6 @@ async def createGSpreadJSON():
             json.dump(current_json, outfile, indent=4, sort_keys=True)
     except:
         pass
-
-async def calculateRowFWG(target:str):
-    row = 1
-    current_message = target.lower()
-    if("o" in current_message or "out" in current_message or "outside" in current_message):
-        current_message = current_message.replace("outside","").replace("out","").replace("o","")
-    elif("i" in current_message or "in" in current_message or "inside" in current_message):
-        current_message = current_message.replace("inside","").replace("in","").replace("i","")
-        row = row +15
-    else:
-        return -1
-    current_message = current_message.strip()
-    try:
-        current_message_number = int(current_message)
-        if(current_message_number <=15 and 1<=current_message_number):
-            row = row + current_message_number
-        else:
-            return -1
-    except:
-        return -1
-    return row
 
 def checkperms(ctx,guild_id,perm_list):
     current_user = ctx.message.author
