@@ -275,10 +275,20 @@ async def topUsers(ctx: CommandContext, sub_command: str):
     await command_topUsers.run(dbConfig,slash_client,ctx,sub_command)
 
 
-@client.command(aliases=["dp","dispatchquest","dq"])
-async def dispatch(ctx, *search):
-    print("work")
-    await command_dispatch.run(dbConfig,client,ctx,*search)
+@slash_client.command(
+    name="dispatch",
+    description="Displays all the special board dispatch quests related to the search",
+    options=[
+        interactions.Option(
+            name="keywords",
+            description="Keywords to look for",
+            type=interactions.OptionType.STRING,
+            required=True,
+        )
+    ]
+)
+async def dispatch(ctx, keywords: str):
+    await command_dispatch.run(dbConfig,ctx,keywords)
 
 
 unit_attachment = interactions.Option(

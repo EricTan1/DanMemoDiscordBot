@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Dict
 import mysql.connector
 from mysql.connector import MySQLConnection
 from mysql.connector.connection import MySQLCursor, MySQLCursorPrepared
@@ -839,34 +839,34 @@ class DBcontroller:
         # free up the list cursor
         first_row = self._mycursor.fetchone()
         return (first_row[0],first_row[1])
-        
-    def dispatchSearch(self, search):
-        search = search.split(" ")
-        ret_dict = dict()
+
+    def dispatchSearch(self, search_query: str):
+        search = search_query.split(" ")
+        ret_dict: Dict[int, list] = dict()
         for words in search:
             words = "%{}%".format(words)
             sql='SELECT dispatchid,typename,stage,name,char1id,char2id,char3id,char4id FROM danmemo.dispatch where typename like %s or stage like %s or name like %s;'.replace("danmemo",self.database)
             self._mycursorprepared.execute(sql,(words,words,words))
             for row in self._mycursorprepared: 
                 d_id = row[0]
-                #print("{} {} {} {} {} {} {}".format(row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
                 if(ret_dict.get(d_id) == None):
                     ret_dict[d_id] = [0,row[1],row[2],row[3],row[4],row[5],row[6],row[7]]
-                ret_dict[d_id] = [ret_dict.get(d_id)[0]+1,row[1],row[2],row[3],row[4],row[5],row[6],row[7]]
-        ret_list=[]
-        highest= None
+                ret_dict[d_id] = [ret_dict[d_id][0]+1,row[1],row[2],row[3],row[4],row[5],row[6],row[7]]
+
+        ret_list = []
+        highest = None
         for keys in ret_dict:
             if(highest==None):
-                highest = (ret_dict.get(keys))[0]
-                ret_list.append(ret_dict.get(keys))
-            elif(highest < (ret_dict.get(keys))[0]):
-                highest = (ret_dict.get(keys))[0]
-                ret_list = [ret_dict.get(keys)]
-            elif(highest == (ret_dict.get(keys))[0]):
-                ret_list.append(ret_dict.get(keys))
+                highest = (ret_dict[keys])[0]
+                ret_list.append(ret_dict[keys])
+            elif(highest < (ret_dict[keys])[0]):
+                highest = (ret_dict[keys])[0]
+                ret_list = [ret_dict[keys]]
+            elif(highest == (ret_dict[keys])[0]):
+                ret_list.append(ret_dict[keys])
         print(ret_list)
         return ret_list
-                
+
     def assembleAssistCharacterData(self, assistid):
         ret = ""
         assist_base_sql = "SELECT title, c.name, limited,stars FROM danmemo.assist as a, danmemo.character as c where c.characterid=a.characterid and a.assistid={}".replace("danmemo",self.database).format(assistid)
