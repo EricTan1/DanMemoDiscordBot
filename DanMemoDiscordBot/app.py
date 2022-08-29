@@ -231,9 +231,26 @@ async def gachamode(ctx: CommandContext, sub_command: str):
     await command_gachaMode.run(dbConfig,ctx,sub_command)
 
 
-@client.command(aliases=["p","inventory"])
-async def profile(ctx,*args):
-    await command_profile.run(dbConfig,client,ctx,*args)
+@slash_client.command(
+    name="profile",
+    description="Your personal stats and inventory",
+    options=[
+        interactions.Option(
+            name="detailed",
+            description="Detailed inventory listing",
+            type=interactions.OptionType.SUB_COMMAND,
+            required=False,
+        ),
+        interactions.Option(
+            name="summary",
+            description="Short summary of your inventory",
+            type=interactions.OptionType.SUB_COMMAND,
+            required=False,
+        ),
+    ]
+)
+async def profile(ctx: CommandContext, sub_command: str):
+    await command_profile.run(dbConfig,slash_client,ctx,sub_command)
 
 
 @client.command(aliases=["top"])

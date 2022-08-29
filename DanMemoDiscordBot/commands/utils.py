@@ -262,10 +262,6 @@ def mention_author(ctx: CommandContext) -> str:
     return ctx.author.mention
 
 
-def get_author(ctx: CommandContext) -> str:
-    return str(ctx.author)
-
-
 def imageToBytes(image: Image.Image) -> io.BytesIO:
     byteImage = io.BytesIO()
     image.save(byteImage, format='PNG')

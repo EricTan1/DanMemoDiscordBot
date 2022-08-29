@@ -170,38 +170,20 @@ async def pageHandler(
             )
 
             if(component_ctx.custom_id == "previous_page"):
-                if(current_page > 0):
-                    current_page = current_page -1
-                else:
-                    current_page = len(page_list)-1
+                current_page = (current_page -1) % len(page_list)
             elif(component_ctx.custom_id == "next_page"):
-                if( current_page+1 < len(page_list)):
-                    current_page = current_page +1
-                else:
-                    current_page = 0
+                current_page = (current_page +1) % len(page_list)
             elif(component_ctx.custom_id == "limitbreak_sub"):
-                if(current_limitbreak > 0):
-                    current_limitbreak = current_limitbreak -1
-                else:
-                    current_limitbreak = MAXLB
+                current_limitbreak = (current_limitbreak -1) % (MAXLB +1)
                 updateStats()
             elif(component_ctx.custom_id == "limitbreak_add"):
-                if(current_limitbreak < MAXLB):
-                    current_limitbreak = current_limitbreak +1
-                else:
-                    current_limitbreak = 0
+                current_limitbreak = (current_limitbreak +1) % (MAXLB +1)
                 updateStats()
             elif(component_ctx.custom_id == "hero_ascend_sub"):
-                if(current_ha > 0):
-                    current_ha = current_ha -1
-                else:
-                    current_ha = MAXHA
+                current_ha = (current_ha -1) % (MAXHA +1)
                 updateStats()
             elif(component_ctx.custom_id == "hero_ascend_add"):
-                if(current_ha < MAXHA):
-                    current_ha = current_ha +1
-                else:
-                    current_ha = 0
+                current_ha = (current_ha +1) % (MAXHA +1)
                 updateStats()
 
             page_list[current_page].set_footer(text=f"Page {current_page+1} of {len(page_list)}")

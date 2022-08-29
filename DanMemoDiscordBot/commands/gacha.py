@@ -10,7 +10,7 @@ from threading import Lock
 from collections import Counter
 
 from database.entities.User import User
-from commands.utils import Status, mention_author, GachaRates, GachaRatesEleventh, GachaRatesOnlyFourStars, getDefaultEmoji, GachaModes
+from commands.utils import Status, mention_author, GachaRates, GachaRatesEleventh, GachaModes
 from commands.cache import Cache
 from database.DBcontroller import DBConfig
 

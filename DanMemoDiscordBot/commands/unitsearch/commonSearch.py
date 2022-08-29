@@ -109,15 +109,9 @@ async def pageUnitsHandler(client: WaitForClient, ctx: CommandContext, page_list
             )
 
             if(component_ctx.custom_id == "previous_page"):
-                if(current_page > 0):
-                    current_page = current_page -1
-                else:
-                    current_page = len(current_page_list)-1
+                current_page = (current_page -1) % len(current_page_list)
             elif(component_ctx.custom_id == "next_page"):
-                if( current_page+1 < len(current_page_list)):
-                    current_page = current_page +1
-                else:
-                    current_page = 0
+                current_page = (current_page +1) % len(current_page_list)
             elif(component_ctx.custom_id == "to_start"):
                 current_page = 0
             elif(component_ctx.custom_id == "to_end"):
