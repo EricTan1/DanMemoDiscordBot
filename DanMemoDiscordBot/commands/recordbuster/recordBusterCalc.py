@@ -2,24 +2,22 @@ from typing import Optional, List, Dict, Any, Tuple, Union, cast
 import interactions
 from interactions.ext.wait_for import WaitForClient
 from interactions.ext.files import CommandContext
+import configparser
+import ast
+import numpy as np
+
 from commands.utils import getElements, getDifficultyMultiplier
 from commands.cache import Cache
 from commands.calculatorUtil import CounterDamageFunction, DamageFunction,SADamageFunction,CombineSA,interpretSkillAdventurerAttack,interpretSkillAdventurerEffects,interpretSkillAssistEffects
-import numpy as np
 from commands.entities.adventurer import Adventurer
 from commands.entities.assist import Assist
-
 from commands.entities.enemy import Enemy, Revis, Finn, Ottarl, Riveria, Gareth
 from commands.entities.skills import AdventurerSkill,AdventurerCounter
-
-import configparser
-import ast
-
 from commands.recordbuster.recordBusterCalcHandler import pageRBHandler
 
 async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[interactions.Attachment]):
     if(not config_file):
-        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it via the /rbcalc command", files=interactions.File("RBConfig.txt"))
+        await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it via the /recordbuster-calculator command", files=interactions.File("RBConfig.txt"))
     else:
         # if template attached start to verify it
         # attachment object only contains the URL, so have to download it first

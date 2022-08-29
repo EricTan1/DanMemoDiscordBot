@@ -81,14 +81,24 @@ async def close(ctx):
     # shut down the bot
     await client.close()
 
-@client.command(aliases=["sa","sacalculator"])
-async def sacalc(ctx):
-    await command_saCalculator.run(ctx)
-    #await command_saCalculator.calculate()
+@slash_client.command(
+    name="sa-calculator",
+    description="SA gauge Calculator",
+    options=[
+        interactions.Option(
+            name="config",
+            description="Config file for the calculator. If you do not provide one, the template will be offered for download",
+            type=interactions.OptionType.ATTACHMENT,
+            required=False
+        )
+    ]
+)
+async def sacalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
+    await command_saCalculator.run(slash_client, ctx, config)
 
 
 @slash_client.command(
-    name="rbcalc",
+    name="recordbuster-calculator",
     description="Record Buster Score Calculator",
     options=[
         interactions.Option(
@@ -99,14 +109,14 @@ async def sacalc(ctx):
         )
     ]
 )
-async def slash_rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
+async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
     # imanity server only and ex-imanity role
     # if(await hasAccess(ctx.message.author,EDITORS) or ctx.message.author.guild.id == 685046495988154373):
     try:
         await command_rbCalc.run(slash_client,ctx,config)
     except:
         tb = traceback.format_exc()
-        await ctx.send("ERROR:\n```{}```".format(tb))
+        await ctx.send(f"ERROR:\n```{tb}```")
 
 
 @slash_client.command(
@@ -121,7 +131,7 @@ async def slash_rbcalc(ctx: CommandContext, config: Optional[interactions.Attach
         )
     ]
 )
-async def slash_characterSearch(ctx: CommandContext, keywords: str):
+async def characterSearch(ctx: CommandContext, keywords: str):
     await command_commonSearch.run(dbConfig,slash_client,ctx,keywords,is_character_search=True)
 
 
@@ -137,7 +147,7 @@ async def slash_characterSearch(ctx: CommandContext, keywords: str):
         )
     ]
 )
-async def slash_skillSearch(ctx: CommandContext, keywords: str):
+async def skillSearch(ctx: CommandContext, keywords: str):
     await command_commonSearch.run(dbConfig,slash_client,ctx,keywords,is_character_search=False)
 
 
@@ -159,7 +169,7 @@ async def slash_skillSearch(ctx: CommandContext, keywords: str):
         )
     ]
 )
-async def slash_help(ctx: CommandContext, sub_command: str):
+async def help(ctx: CommandContext, sub_command: str):
     await command_help.run(ctx, sub_command)
 
 
@@ -167,7 +177,7 @@ async def slash_help(ctx: CommandContext, sub_command: str):
     name="invite",
     description="Prints the server invite link for the bot",
 )
-async def slash_invite(ctx: CommandContext):
+async def invite(ctx: CommandContext):
     await command_invite.run(ctx)
 
 
@@ -175,7 +185,7 @@ async def slash_invite(ctx: CommandContext):
     name="support",
     description="Sends a link to our support server. Please contact Eric#5731 or Yon#7436",
 )
-async def slash_support(ctx: CommandContext):
+async def support(ctx: CommandContext):
     await command_support.run(ctx)
 
 
@@ -188,7 +198,7 @@ async def popularity(ctx):
     name="bento",
     description="Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!",
 )
-async def slash_bento(ctx: CommandContext):
+async def bento(ctx: CommandContext):
     await command_bento.run(dbConfig,ctx)
 
 
@@ -196,7 +206,7 @@ async def slash_bento(ctx: CommandContext):
     name="gacha",
     description="Trade a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included",
 )
-async def slash_gacha(ctx: CommandContext):
+async def gacha(ctx: CommandContext):
     await command_gacha.run(dbConfig,ctx)
 
 
@@ -218,7 +228,7 @@ async def slash_gacha(ctx: CommandContext):
         )
     ]
 )
-async def slash_gachamode(ctx: CommandContext, sub_command: str):
+async def gachamode(ctx: CommandContext, sub_command: str):
     await command_gachaMode.run(dbConfig,ctx,sub_command)
 
 
@@ -265,7 +275,7 @@ unit_attachment = interactions.Option(
         )
     ]
 )
-async def slash_addUpdateUnit(ctx: CommandContext, sub_command: str, unit_file: interactions.Attachment):
+async def addUpdateUnit(ctx: CommandContext, sub_command: str, unit_file: interactions.Attachment):
     await command_addUpdateUnit.run(dbConfig, slash_client, ctx, sub_command, unit_file)
     # refresh the cache
     cache = Cache(dbConfig)
@@ -278,7 +288,7 @@ async def slash_addUpdateUnit(ctx: CommandContext, sub_command: str, unit_file: 
     scope=GUILD_ID, # so the command is only visible & available on the dev server
     default_scope=False,
 )
-async def slash_getJson(ctx: CommandContext):
+async def getJson(ctx: CommandContext):
     await command_getJson.run(ctx)
 
 
@@ -299,7 +309,7 @@ class Infographic(commands.Cog):
         name="elemental-assists",
         description="Posts an infographic of all elemental damage buffing/elemental resist debuffing assists in the game",
     )
-    async def slash_elementAssists(ctx: CommandContext):
+    async def elementAssists(ctx: CommandContext):
         await command_elementAssists.run(ctx, dbConfig)
 
 
