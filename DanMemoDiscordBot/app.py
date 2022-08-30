@@ -345,50 +345,61 @@ async def init(ctx: CommandContext):
     await command_init.run(ctx)
 
 # commands that just bring up pictures
-class Infographic(commands.Cog):
-    #cp?
-
-    @commands.command(aliases=["slayer","slayers","killers"])
-    async def killer(self, ctx, *args):
-        await command_killer.run(ctx, dbConfig, *args)
-
-
-    @slash_client.command(
-        name="elemental-assists",
-        description="Posts an infographic of all elemental damage buffing/elemental resist debuffing assists in the game",
+killer_subcommands = [
+    interactions.Option(
+        name=killer_type,
+        description=f"Shows {killer_type} killer units",
+        type=interactions.OptionType.SUB_COMMAND,
     )
-    async def elementAssists(ctx: CommandContext):
-        await command_elementAssists.run(ctx, dbConfig)
+    for killer_type in [
+        "all", "aqua", "dragon", "giant", "material", "ox", "spirit",
+        "beast", "fantasma", "insect", "ogre", "plant", "worm"
+    ]
+]
+@slash_client.command(
+    name="killers",
+    description="Posts infographic of all killer units in the game. Can also filter to one monster type.",
+    options=killer_subcommands
+)
+async def killer(ctx, sub_command: str):
+    await command_killer.run(ctx, dbConfig, sub_command)
+
+@slash_client.command(
+    name="elemental-assists",
+    description="Posts an infographic of all elemental damage buffing/elemental resist debuffing assists in the game",
+)
+async def elementAssists(ctx: CommandContext):
+    await command_elementAssists.run(ctx, dbConfig)
 
 
-    @slash_client.command(
-        name="recordbuster",
-        description="Posts a guide for the given RB character",
-        options=[
-            interactions.Option(
-                name="finn",
-                description="RB guide for Finn",
-                type=interactions.OptionType.SUB_COMMAND,
-            ),
-            interactions.Option(
-                name="ottarl",
-                description="RB guide for Ottarl",
-                type=interactions.OptionType.SUB_COMMAND,
-            ),
-            interactions.Option(
-                name="revis",
-                description="RB guide for Revis",
-                type=interactions.OptionType.SUB_COMMAND,
-            ),
-            interactions.Option(
-                name="riveria",
-                description="RB guide for Riveria",
-                type=interactions.OptionType.SUB_COMMAND,
-            ),
-        ]
-    )
-    async def rb(ctx: CommandContext, sub_command: str):
-        await command_rb.run(slash_client, ctx, sub_command)
+@slash_client.command(
+    name="recordbuster",
+    description="Posts a guide for the given RB character",
+    options=[
+        interactions.Option(
+            name="finn",
+            description="RB guide for Finn",
+            type=interactions.OptionType.SUB_COMMAND,
+        ),
+        interactions.Option(
+            name="ottarl",
+            description="RB guide for Ottarl",
+            type=interactions.OptionType.SUB_COMMAND,
+        ),
+        interactions.Option(
+            name="revis",
+            description="RB guide for Revis",
+            type=interactions.OptionType.SUB_COMMAND,
+        ),
+        interactions.Option(
+            name="riveria",
+            description="RB guide for Riveria",
+            type=interactions.OptionType.SUB_COMMAND,
+        ),
+    ]
+)
+async def rb(ctx: CommandContext, sub_command: str):
+    await command_rb.run(slash_client, ctx, sub_command)
 
 
 
