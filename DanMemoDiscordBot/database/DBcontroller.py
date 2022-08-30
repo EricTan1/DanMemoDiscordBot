@@ -1,16 +1,17 @@
-from typing import Tuple, Dict
+import inspect
+import json
+import os
+from enum import Enum
+from typing import Dict, Tuple
+from urllib.parse import urlparse
+
 import mysql.connector
 from mysql.connector import MySQLConnection
 from mysql.connector.connection import MySQLCursor, MySQLCursorPrepared
-import inspect
-import os
-import json
-from urllib.parse import urlparse
-from enum import Enum
 
 import database.entities.User
+from commands.utils import GachaRates, TopCategories, format_row_as_sns
 from database.entities.LogsCommand import LogsCommand
-from commands.utils import GachaRates, format_row_as_sns, TopCategories
 
 
 class DatabaseEnvironment(Enum):

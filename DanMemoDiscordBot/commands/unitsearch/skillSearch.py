@@ -1,5 +1,6 @@
+from typing import Dict, List, Tuple
+
 import interactions
-from typing import List, Tuple, Dict
 
 from database.DBcontroller import DBcontroller
 

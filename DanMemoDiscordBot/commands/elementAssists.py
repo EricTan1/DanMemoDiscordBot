@@ -1,8 +1,10 @@
-from typing import List, Tuple, Dict
+from typing import Dict, List, Tuple
+
 import interactions
 from interactions.ext.files import CommandContext
 from PIL import Image, ImageDraw, ImageFont
-from database.DBcontroller import DBcontroller, DBConfig
+
+from database.DBcontroller import DBConfig, DBcontroller
 
 # Elements, names, color codes and icon file names
 elements = ["Light", "Dark", "Fire", "Water", "Thunder", "Earth", "Wind"]

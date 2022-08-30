@@ -1,11 +1,11 @@
+from typing import Dict, List, Tuple
+
 import interactions
 from interactions.ext.files import CommandContext
 from PIL import Image, ImageDraw
-from typing import Dict, List, Tuple
 
-
-from database.DBcontroller import DBConfig, DBcontroller
 from commands.utils import Status
+from database.DBcontroller import DBConfig, DBcontroller
 
 # Spacings and sizes in pixels
 rowHeight = 141

@@ -1,8 +1,9 @@
 from types import SimpleNamespace
-from typing import Optional, List
+from typing import List, Optional
+
 import interactions
-from interactions.ext.wait_for import WaitForClient
 from interactions.ext.files import CommandContext
+from interactions.ext.wait_for import WaitForClient
 
 # WANT TO CONNECT THIS TO DB SO CAN BE ANY SA_GAUGE
 from commands.cache import Cache

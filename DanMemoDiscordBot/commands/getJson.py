@@ -1,12 +1,13 @@
-import interactions
-from interactions.ext.files import CommandContext
-from typing import List
 import json
 import os
 import zipfile
+from typing import List
 
-from database.DBcontroller import EDITORS
+import interactions
+from interactions.ext.files import CommandContext
+
 from commands.cache import Cache
+from database.DBcontroller import EDITORS
 
 
 async def run(ctx: CommandContext):

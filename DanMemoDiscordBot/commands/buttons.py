@@ -1,4 +1,5 @@
 import interactions
+
 from commands.utils import get_emoji, getDefaultEmoji
 
 # emojis

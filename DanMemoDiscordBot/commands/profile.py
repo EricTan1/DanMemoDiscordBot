@@ -1,15 +1,16 @@
+import asyncio
+import math
+import operator
+from typing import Any, Dict, List, Tuple
+
 import interactions
 from interactions.ext.files import CommandContext, ComponentContext
 from interactions.ext.wait_for import WaitForClient
-from typing import Any, Dict, List, Tuple
-import operator
-import math
-import asyncio
 
+from commands.buttons import next_page, previous_page, to_end, to_start
+from commands.utils import TIMEOUT, Status, get_emoji
 from database.DBcontroller import DBConfig
 from database.entities.User import User
-from commands.utils import TIMEOUT, Status, get_emoji
-from commands.buttons import previous_page, next_page, to_start, to_end
 
 arrow_left = "\u2b05"
 arrow_right = "\u27a1"

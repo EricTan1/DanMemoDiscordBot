@@ -1,8 +1,9 @@
-from typing import Tuple, Optional, Dict, Union, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union, cast
 
-from commands.entities.skills import AdventurerSkill, AdventurerCounter
 import numpy as np
-from commands.utils import getElements, getAilment
+
+from commands.entities.skills import AdventurerCounter, AdventurerSkill
+from commands.utils import getAilment, getElements
 
 if TYPE_CHECKING:
     from commands.entities.adventurer import Adventurer

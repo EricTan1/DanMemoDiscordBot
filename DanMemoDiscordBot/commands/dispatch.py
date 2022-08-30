@@ -1,9 +1,10 @@
-import interactions
-from interactions.ext.files import CommandContext
 import json
 
-from database.DBcontroller import DBConfig, DBcontroller
+import interactions
+from interactions.ext.files import CommandContext
+
 from commands.utils import Status, imageHorizontalConcat, imageVerticalConcat
+from database.DBcontroller import DBConfig, DBcontroller
 
 
 async def run(dbConfig: DBConfig, ctx: CommandContext, search_words: str):

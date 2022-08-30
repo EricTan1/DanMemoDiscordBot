@@ -1,12 +1,13 @@
-from typing import List
-from interactions.ext.files import CommandContext
-from PIL import Image
 import io
-from enum import Enum
-from types import SimpleNamespace
 import json
 import os
+from enum import Enum
+from types import SimpleNamespace
+from typing import List
+
 import interactions
+from interactions.ext.files import CommandContext
+from PIL import Image
 
 # timeout before an interactable goes inactive
 TIMEOUT = 120

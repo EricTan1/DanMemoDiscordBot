@@ -1,12 +1,13 @@
+import asyncio
+import math
+from typing import List
+
 import interactions
 from interactions.ext.files import CommandContext, ComponentContext
 from interactions.ext.wait_for import WaitForClient
-from typing import List
-import math
-import asyncio
 
+from commands.buttons import next_page, previous_page, to_end, to_start
 from commands.utils import TIMEOUT, Status, TopCategories
-from commands.buttons import previous_page, next_page, to_start, to_end
 from database.DBcontroller import DBConfig, DBcontroller
 
 
