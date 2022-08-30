@@ -76,7 +76,7 @@ async def run(
                                 stripped_line.split(",")
                             )
                             if len(positions[position]) != turns:
-                                errors += f"Unable to read turn order, make sure there are exactly {turns-1} commas you specify TURNS before the turn order\n"
+                                errors += f"Unable to read turn order, make sure there are exactly {turns-1} commas and you specify TURNS before the turn order\n"
                         except:
                             errors += "Make sure turn orders are numeric and it is either separated by commas or \|\|\n"
         # error handling
