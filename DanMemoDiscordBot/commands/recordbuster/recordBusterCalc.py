@@ -19,6 +19,8 @@ async def run(client: WaitForClient, ctx: CommandContext, config_file: Optional[
     if(not config_file):
         await ctx.send("For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it via the /recordbuster-calculator command", files=interactions.File("RBConfig.txt"))
     else:
+        # to tell Discord this command may take longer than the default 3s timeout
+        await ctx.defer()
         # if template attached start to verify it
         # attachment object only contains the URL, so have to download it first
         async with client._http._req._session.get(config_file.url) as request:

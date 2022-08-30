@@ -11,6 +11,9 @@ from commands.cache import Cache
 
 async def run(ctx: CommandContext):
     if(ctx.author.id in EDITORS):
+        # to tell Discord this command may take longer than the default 3s timeout
+        await ctx.defer()
+
         cache = Cache()
         #SELECT a.adventurerid, a.characterid, a.typeid, a.alias, a.title, a.stars, a.limited, a.ascended,c.name, c.iscollab, t.name
         # unit_id, character_id, type_id, alias, unit_label, stars, is_limited, is_ascended, character_name, is_collab, type_name

@@ -42,16 +42,14 @@ else:
     dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
     SCOPE = None
 
-_command_prefix = os.environ.get("COMMAND_PREFIX")
-
-slash_client_pre = interactions.Client(token=TOKEN, default_scope=SCOPE)
-slash_client_pre.load("interactions.ext.files")
-slash_client: WaitForClient = setup(cast(WaitForClient, slash_client_pre)) # loads wait_for extension
+client_pre = interactions.Client(token=TOKEN, default_scope=SCOPE)
+client_pre.load("interactions.ext.files")
+client: WaitForClient = setup(cast(WaitForClient, client_pre)) # loads wait_for extension
 
 cache = Cache(dbConfig)
 
 
-@slash_client.event
+@client.event
 async def on_start():
     ''' () -> None
     This function initializes the bot.
@@ -61,7 +59,7 @@ async def on_start():
     print("Bot is ready!")
 
 
-@slash_client.command(
+@client.command(
     name="sa-calculator",
     description="SA gauge Calculator",
     options=[
@@ -74,10 +72,10 @@ async def on_start():
     ]
 )
 async def sacalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
-    await command_saCalculator.run(slash_client, ctx, config)
+    await command_saCalculator.run(client, ctx, config)
 
 
-@slash_client.command(
+@client.command(
     name="recordbuster-calculator",
     description="Record Buster Score Calculator",
     options=[
@@ -93,13 +91,13 @@ async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] 
     # imanity server only and ex-imanity role
     # if(await hasAccess(ctx.message.author,EDITORS) or ctx.message.author.guild.id == 685046495988154373):
     try:
-        await command_rbCalc.run(slash_client,ctx,config)
+        await command_rbCalc.run(client,ctx,config)
     except:
         tb = traceback.format_exc()
         await ctx.send(f"ERROR:\n```{tb}```")
 
 
-@slash_client.command(
+@client.command(
     name="character-search",
     description="Search DanMemo units by name and title",
     options=[
@@ -112,10 +110,10 @@ async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] 
     ]
 )
 async def characterSearch(ctx: CommandContext, keywords: str):
-    await command_commonSearch.run(dbConfig,slash_client,ctx,keywords,is_character_search=True)
+    await command_commonSearch.run(dbConfig,client,ctx,keywords,is_character_search=True)
 
 
-@slash_client.command(
+@client.command(
     name="skill-search",
     description="Search DanMemo units by skills",
     options=[
@@ -128,10 +126,10 @@ async def characterSearch(ctx: CommandContext, keywords: str):
     ]
 )
 async def skillSearch(ctx: CommandContext, keywords: str):
-    await command_commonSearch.run(dbConfig,slash_client,ctx,keywords,is_character_search=False)
+    await command_commonSearch.run(dbConfig,client,ctx,keywords,is_character_search=False)
 
 
-@slash_client.command(
+@client.command(
     name="help",
     description="Instructions on using the bot",
     options=[
@@ -153,7 +151,7 @@ async def help(ctx: CommandContext, sub_command: str):
     await command_help.run(ctx, sub_command)
 
 
-@slash_client.command(
+@client.command(
     name="invite",
     description="Prints the server invite link for the bot",
 )
@@ -161,7 +159,7 @@ async def invite(ctx: CommandContext):
     await command_invite.run(ctx)
 
 
-@slash_client.command(
+@client.command(
     name="support",
     description="Sends a link to our support server. Please contact Eric#5731 or Yon#7436",
 )
@@ -169,15 +167,15 @@ async def support(ctx: CommandContext):
     await command_support.run(ctx)
 
 
-@slash_client.command(
+@client.command(
     name="popularity",
     description="Displays current Ais bot popularity",
 )
 async def popularity(ctx: CommandContext):
-    await command_popularity.run(slash_client,ctx)
+    await command_popularity.run(client,ctx)
 
 
-@slash_client.command(
+@client.command(
     name="bento",
     description="Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!",
 )
@@ -185,7 +183,7 @@ async def bento(ctx: CommandContext):
     await command_bento.run(dbConfig,ctx)
 
 
-@slash_client.command(
+@client.command(
     name="gacha",
     description="Trade a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included",
 )
@@ -193,7 +191,7 @@ async def gacha(ctx: CommandContext):
     await command_gacha.run(dbConfig,ctx)
 
 
-@slash_client.command(
+@client.command(
     name="gacha-mode",
     description="Changes the way your gacha pulls are shown",
     options=[
@@ -215,7 +213,7 @@ async def gachamode(ctx: CommandContext, sub_command: str):
     await command_gachaMode.run(dbConfig,ctx,sub_command)
 
 
-@slash_client.command(
+@client.command(
     name="profile",
     description="Your personal stats and inventory",
     options=[
@@ -234,10 +232,10 @@ async def gachamode(ctx: CommandContext, sub_command: str):
     ]
 )
 async def profile(ctx: CommandContext, sub_command: str):
-    await command_profile.run(dbConfig,slash_client,ctx,sub_command)
+    await command_profile.run(dbConfig,client,ctx,sub_command)
 
 
-@slash_client.command(
+@client.command(
     name="top-users",
     description="Shows the biggest whales/gourmets, all servers combined",
     options=[
@@ -256,10 +254,10 @@ async def profile(ctx: CommandContext, sub_command: str):
     ]
 )
 async def topUsers(ctx: CommandContext, sub_command: str):
-    await command_topUsers.run(dbConfig,slash_client,ctx,sub_command)
+    await command_topUsers.run(dbConfig,client,ctx,sub_command)
 
 
-@slash_client.command(
+@client.command(
     name="dispatch",
     description="Displays all the special board dispatch quests related to the search",
     options=[
@@ -282,7 +280,7 @@ unit_attachment = interactions.Option(
     required=True,
 )
 
-@slash_client.command(
+@client.command(
     name="add-update-unit",
     description="Adds a unit or overwrites an existing one",
     scope=GUILD_ID, # so the command is only visible & available on the dev server
@@ -303,13 +301,13 @@ unit_attachment = interactions.Option(
     ]
 )
 async def addUpdateUnit(ctx: CommandContext, sub_command: str, unit_file: interactions.Attachment):
-    await command_addUpdateUnit.run(dbConfig, slash_client, ctx, sub_command, unit_file)
+    await command_addUpdateUnit.run(dbConfig, client, ctx, sub_command, unit_file)
     # refresh the cache
     cache = Cache(dbConfig)
     cache.refreshcache(dbConfig)
 
 
-@slash_client.command(
+@client.command(
     name="get-json",
     description="Get the unit database in JSON format",
     scope=GUILD_ID, # so the command is only visible & available on the dev server
@@ -319,7 +317,7 @@ async def getJson(ctx: CommandContext):
     await command_getJson.run(ctx)
 
 
-@slash_client.command(
+@client.command(
     name="init",
     description="No idea what this does tbh",
     scope=GUILD_ID, # so the command is only visible & available on the dev server
@@ -340,7 +338,7 @@ killer_subcommands = [
         "beast", "fantasma", "insect", "ogre", "plant", "worm"
     ]
 ]
-@slash_client.command(
+@client.command(
     name="killers",
     description="Posts infographic of all killer units in the game. Can also filter to one monster type.",
     options=killer_subcommands
@@ -349,7 +347,7 @@ async def killer(ctx, sub_command: str):
     await command_killer.run(ctx, dbConfig, sub_command)
 
 
-@slash_client.command(
+@client.command(
     name="elemental-assists",
     description="Posts an infographic of all elemental damage buffing/elemental resist debuffing assists in the game",
 )
@@ -357,7 +355,7 @@ async def elementAssists(ctx: CommandContext):
     await command_elementAssists.run(ctx, dbConfig)
 
 
-@slash_client.command(
+@client.command(
     name="recordbuster",
     description="Posts a guide for the given RB character",
     options=[
@@ -384,10 +382,10 @@ async def elementAssists(ctx: CommandContext):
     ]
 )
 async def rb(ctx: CommandContext, sub_command: str):
-    await command_rb.run(slash_client, ctx, sub_command)
+    await command_rb.run(client, ctx, sub_command)
 
 
 
 if __name__ == "__main__":
     #client.run(TOKEN)
-    slash_client.start()
+    client.start()

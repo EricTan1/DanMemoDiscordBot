@@ -12,6 +12,9 @@ async def run(dbConfig: DBConfig, ctx: CommandContext, search_words: str):
         ctx {interactions.ext.files.CommandContext} -- context of the message
         search {string} -- the dispatch quest to search for
     """
+    # to tell Discord this command may take longer than the default 3s timeout
+    await ctx.defer()
+
     with open('./dispatchQuest/dispatch.json', 'r') as f:
         dispatch_dict = json.load(f)
     db = DBcontroller(dbConfig)
