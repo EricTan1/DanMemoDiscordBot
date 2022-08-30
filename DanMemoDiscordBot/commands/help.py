@@ -1,6 +1,7 @@
 import interactions
 from commands.utils import Status
 
+
 async def run(ctx: interactions.CommandContext, args: str = None):
     """direct message the help command to that user
 
@@ -13,10 +14,10 @@ async def run(ctx: interactions.CommandContext, args: str = None):
     temp_embed.title = "Commands List"
     with open("./help.txt") as fp:
         line = fp.readline()
-        #print(line.strip())
-        
+        # print(line.strip())
+
         while line:
-            #print(line.strip())
+            # print(line.strip())
             if line.strip() == "F":
                 line = fp.readline()
                 name = line
@@ -26,9 +27,11 @@ async def run(ctx: interactions.CommandContext, args: str = None):
                     value = value + line
                     line = fp.readline()
                 temp_embed.add_field(name=name, value=value, inline=False)
-            elif line.strip()=="E":
+            elif line.strip() == "E":
                 break
-        temp_embed.set_thumbnail(url="https://static.myfigurecollection.net/pics/figure/large/571996.jpg")
+        temp_embed.set_thumbnail(
+            url="https://static.myfigurecollection.net/pics/figure/large/571996.jpg"
+        )
 
     if args == "server":
         await ctx.send(embeds=temp_embed)

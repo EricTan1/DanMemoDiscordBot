@@ -6,6 +6,7 @@ from database.entities.User import User
 from commands.utils import Status, GachaModes
 from database.DBcontroller import DBConfig
 
+
 async def run(dbConfig: DBConfig, ctx: CommandContext, mode: str):
     author = str(ctx.author)
     authorUniqueId = str(ctx.author.id)
@@ -24,7 +25,7 @@ async def run(dbConfig: DBConfig, ctx: CommandContext, mode: str):
 
     user = User.get_user(dbConfig, author, authorUniqueId)
     user.gacha_mode = gacha_mode.value
-    user.update_user(dbConfig,datetime.datetime.now(),"!$gachamode")
+    user.update_user(dbConfig, datetime.datetime.now(), "!$gachamode")
 
     embed.title = f"Changed gacha mode to {mode}"
     embed.color = Status.OK.value

@@ -1,6 +1,7 @@
 import interactions
 from commands.utils import Status
 
+
 async def run(ctx: interactions.CommandContext):
     embed = interactions.Embed()
     embed.color = Status.KO.value

@@ -13,13 +13,16 @@ from commands.buttons import previous_page, next_page, to_start, to_end
 
 arrow_left = "\u2b05"
 arrow_right = "\u27a1"
-star_emoji = '\u2b50'
+star_emoji = "\u2b50"
 crepe_emoji = get_emoji("crepe")
 adventurer_emoji = get_emoji("ad_filter")
 assist_emoji = get_emoji("as_filter")
-limitbreak_emojis = [get_emoji(f"limitbreak_{number}") for number in range(1,6)]
+limitbreak_emojis = [get_emoji(f"limitbreak_{number}") for number in range(1, 6)]
 
-async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, sub_command: str):
+
+async def run(
+    dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, sub_command: str
+):
     author = str(ctx.author)
     authorUniqueId = str(ctx.author.id)
     user = User.get_user(dbConfig, author, authorUniqueId)
@@ -41,11 +44,11 @@ async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, su
             units.append(user.units[key])
     print(units)
 
-    units = sorted(units, key = operator.itemgetter("character_name"))
-    units = sorted(units, key = operator.itemgetter("unit_label"))
-    units = sorted(units, key = operator.itemgetter("number"), reverse=True)
-    units = sorted(units, key = operator.itemgetter("unit_type"))
-    units = sorted(units, key = operator.itemgetter("stars"), reverse=True)
+    units = sorted(units, key=operator.itemgetter("character_name"))
+    units = sorted(units, key=operator.itemgetter("unit_label"))
+    units = sorted(units, key=operator.itemgetter("number"), reverse=True)
+    units = sorted(units, key=operator.itemgetter("unit_type"))
+    units = sorted(units, key=operator.itemgetter("stars"), reverse=True)
 
     if is_summary:
         units_lines = get_summarized_unit_lines(units)
@@ -54,7 +57,7 @@ async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, su
 
     current_page = 0
     per_page = 20
-    number_pages = math.ceil(len(units_lines)/per_page)
+    number_pages = math.ceil(len(units_lines) / per_page)
     if number_pages == 0:
         number_pages = 1
 
@@ -63,7 +66,9 @@ async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, su
         for i in range(len(units_lines)):
             description += units_lines[i]
     else:
-        description = build_detailed_description(currency_line,units_lines,current_page)
+        description = build_detailed_description(
+            currency_line, units_lines, current_page
+        )
 
     upper_footer = f"Total distinct number: {user.units_distinct_number}"
     upper_footer += f"\nScore: {user.units_score}"
@@ -90,19 +95,23 @@ async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, su
     while True:
         try:
             component_ctx: ComponentContext = await client.wait_for_component(
-                components=components, messages=msg, timeout=TIMEOUT,
+                components=components,
+                messages=msg,
+                timeout=TIMEOUT,
             )
 
-            if(component_ctx.custom_id == "previous_page"):
-                current_page = (current_page -1) % number_pages
-            elif(component_ctx.custom_id == "next_page"):
-                current_page = (current_page +1) % number_pages
-            elif(component_ctx.custom_id == "to_start"):
+            if component_ctx.custom_id == "previous_page":
+                current_page = (current_page - 1) % number_pages
+            elif component_ctx.custom_id == "next_page":
+                current_page = (current_page + 1) % number_pages
+            elif component_ctx.custom_id == "to_start":
                 current_page = 0
-            elif(component_ctx.custom_id == "to_end"):
-                current_page = number_pages-1
+            elif component_ctx.custom_id == "to_end":
+                current_page = number_pages - 1
 
-            embed.description = build_detailed_description(currency_line, units_lines, current_page)
+            embed.description = build_detailed_description(
+                currency_line, units_lines, current_page
+            )
             footer = upper_footer + f"\n\nPage {current_page+1} of {number_pages}"
             embed.set_footer(text=footer)
 
@@ -112,27 +121,28 @@ async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, su
             embed.color = Status.KO.value
             return await ctx.edit(embeds=embed, components=[])
 
+
 def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
     sorted_categories: List[Tuple[str, int]] = []
     previous_category = ""
     previous_number = 0
     for unit in units:
-        category = star_emoji*unit["stars"]
+        category = star_emoji * unit["stars"]
         if unit["unit_type"] == "adventurer":
             category += f" {adventurer_emoji}"
         elif unit["unit_type"] == "assist":
             category += f" {assist_emoji}"
         if unit["number"] > 1:
-            number = min(unit["number"]-1,5)
+            number = min(unit["number"] - 1, 5)
             category += f" {limitbreak_emojis[number]}"
 
         if category == previous_category:
             previous_number += 1
-            sorted_categories[-1] = (category,previous_number)
+            sorted_categories[-1] = (category, previous_number)
         else:
             previous_category = category
             previous_number = 1
-            sorted_categories.append((category,previous_number))
+            sorted_categories.append((category, previous_number))
 
     units_lines = []
     for item in sorted_categories:
@@ -141,22 +151,28 @@ def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
 
     return units_lines
 
+
 def get_detailed_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
     units_lines = []
     for unit in units:
-        units_line = star_emoji*unit["stars"]
+        units_line = star_emoji * unit["stars"]
         if unit["unit_type"] == "adventurer":
             units_line += f" {adventurer_emoji}"
         elif unit["unit_type"] == "assist":
             units_line += f" {assist_emoji}"
-        units_line += f" [{unit['unit_label']}] {unit['character_name']}: {unit['number']}\n"
+        units_line += (
+            f" [{unit['unit_label']}] {unit['character_name']}: {unit['number']}\n"
+        )
         units_lines.append(units_line)
 
     return units_lines
 
-def build_detailed_description(currency_line: str, units_lines: List[str], current_page: int, per_page=20):
+
+def build_detailed_description(
+    currency_line: str, units_lines: List[str], current_page: int, per_page=20
+):
     description = currency_line
     for i in range(len(units_lines)):
-        if per_page*current_page <= i and i < per_page*(current_page+1):
+        if per_page * current_page <= i and i < per_page * (current_page + 1):
             description += units_lines[i]
     return description

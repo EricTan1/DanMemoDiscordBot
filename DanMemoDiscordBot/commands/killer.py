@@ -21,10 +21,20 @@ lineWidth = 5
 
 # List of killers
 killers = [
-    "aqua killer", "dragon killer", "giant killer", "material killer",
-    "ox slayer", "spirit killer", "beast killer", "fantasma killer",
-    "insect killer", "ogre killer", "plant killer", "worm killer"
+    "aqua killer",
+    "dragon killer",
+    "giant killer",
+    "material killer",
+    "ox slayer",
+    "spirit killer",
+    "beast killer",
+    "fantasma killer",
+    "insect killer",
+    "ogre killer",
+    "plant killer",
+    "worm killer",
 ]
+
 
 async def run(ctx: CommandContext, dbConfig: DBConfig, sub_command: str):
     # to tell Discord this command may take longer than the default 3s timeout
@@ -51,13 +61,16 @@ async def run(ctx: CommandContext, dbConfig: DBConfig, sub_command: str):
             topBorder = height // numRowsPerColumn * rowNumber
             bottomBorder = topBorder + height // numRowsPerColumn
 
-            croppedGraphic = graphic.crop((leftBorder, topBorder, rightBorder, bottomBorder))
-            croppedGraphic.save("./infographic/killer.png", quality = 95)
+            croppedGraphic = graphic.crop(
+                (leftBorder, topBorder, rightBorder, bottomBorder)
+            )
+            croppedGraphic.save("./infographic/killer.png", quality=95)
 
     embed = interactions.Embed()
     embed.set_image(url="attachment://killer.png")
     embed.color = Status.OK.value
     await ctx.send(embeds=embed, files=interactions.File("./infographic/killer.png"))
+
 
 def generateInfographic(dbConfig: DBConfig):
     db = DBcontroller(dbConfig)
@@ -68,7 +81,9 @@ def generateInfographic(dbConfig: DBConfig):
     baseIm = Image.open("./infographic/killer_base.png", "r")
     width, height = baseIm.size
 
-    oneSidePadding = (mostKillers+1) * (hexScaledLength + betweenPaddingX)//2 + 2* framePaddingX
+    oneSidePadding = (mostKillers + 1) * (
+        hexScaledLength + betweenPaddingX
+    ) // 2 + 2 * framePaddingX
     newWidth = width + 2 * oneSidePadding
 
     editedIm = Image.new(baseIm.mode, (newWidth, height), (35, 35, 35))
@@ -76,8 +91,8 @@ def generateInfographic(dbConfig: DBConfig):
 
     drawer = ImageDraw.Draw(editedIm)
     for i in range(1, numRows // 2):
-        yPos = i*rowHeight - lineWidth//2
-        drawer.line((0, yPos, newWidth, yPos), fill = (10, 10, 10), width = lineWidth)
+        yPos = i * rowHeight - lineWidth // 2
+        drawer.line((0, yPos, newWidth, yPos), fill=(10, 10, 10), width=lineWidth)
 
     rowNum = 0
     for key in killerDict:
@@ -91,7 +106,8 @@ def generateInfographic(dbConfig: DBConfig):
             unitNum += 1
         rowNum += 1
 
-    editedIm.save("./infographic/killer.png", quality = 95)
+    editedIm.save("./infographic/killer.png", quality=95)
+
 
 # Returns a dict of the form { Killertype: [image filepaths] }
 def getKillerDict(db: DBcontroller) -> Dict[str, List[str]]:
@@ -100,12 +116,12 @@ def getKillerDict(db: DBcontroller) -> Dict[str, List[str]]:
         skills = db.skillSearch(enemyType)
         fileList = []
         for skill in skills:
-            skillinfo=db.assembleAdventurerDevelopment(skill[2:])
+            skillinfo = db.assembleAdventurerDevelopment(skill[2:])
             adventurerid = skillinfo[4]
             names = db.assembleAdventurerCharacterName(adventurerid)
             try:
                 fileName = f"./images/units/{names[1]} [{names[0]}]/hex.png"
-                file = open(fileName,"r")
+                file = open(fileName, "r")
                 file.close()
                 fileList.append(fileName)
             except:
@@ -116,6 +132,7 @@ def getKillerDict(db: DBcontroller) -> Dict[str, List[str]]:
 
     return killerImages
 
+
 # Returns the number of units that have the killer type that has the most units
 def getMostKillers(killerDict: Dict[str, List[str]]) -> int:
     mostKillers = 0
@@ -124,21 +141,22 @@ def getMostKillers(killerDict: Dict[str, List[str]]) -> int:
             mostKillers = len(killerDict[key])
     return mostKillers
 
+
 # Computes the position for insertion of an adventurer image
 def getHexPos(rowNum: int, unitNum: int, fullWidth: int) -> Tuple[int, int]:
     inRowWidths = (unitNum // 2) * hexScaledLength
-    totalBetweenPaddings = ((unitNum // 2) - 1 ) * betweenPaddingX
+    totalBetweenPaddings = ((unitNum // 2) - 1) * betweenPaddingX
     inRowX = inRowWidths + totalBetweenPaddings + framePaddingX
     inRowY = framePaddingY
     if unitNum % 2 == 1:
         inRowX += hexScaledLength // 2
         inRowY += hexScaledLength + betweenPaddingY
 
-    adjustedRowNum = (rowNum % (numRows // 2))
+    adjustedRowNum = rowNum % (numRows // 2)
     rowTop = adjustedRowNum * rowHeight
 
     y = rowTop + inRowY
 
     x = inRowX if rowNum < numRows // 2 else fullWidth - inRowX - hexScaledLength
 
-    return (x,y)
+    return (x, y)

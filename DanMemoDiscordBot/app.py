@@ -29,7 +29,7 @@ import commands.recordbuster.recordBusterCalc as command_rbCalc
 from commands.utils import createGSpreadJSON
 
 
-GUILD_ID = 698143969166622720 # ID of Sword Oratoria server
+GUILD_ID = 698143969166622720  # ID of Sword Oratoria server
 TOKEN = os.environ["DISCORD_TOKEN_DANMEMO"]
 ENV = os.environ.get("ENV")
 
@@ -44,16 +44,18 @@ else:
 
 client_pre = interactions.Client(token=TOKEN, default_scope=SCOPE)
 client_pre.load("interactions.ext.files")
-client: WaitForClient = setup(cast(WaitForClient, client_pre)) # loads wait_for extension
+client: WaitForClient = setup(
+    cast(WaitForClient, client_pre)
+)  # loads wait_for extension
 
 cache = Cache(dbConfig)
 
 
 @client.event
 async def on_start():
-    ''' () -> None
+    """() -> None
     This function initializes the bot.
-    '''
+    """
     print("test")
     createGSpreadJSON()
     print("Bot is ready!")
@@ -67,9 +69,9 @@ async def on_start():
             name="config",
             description="Config file for the calculator. If you do not provide one, the template will be offered for download",
             type=interactions.OptionType.ATTACHMENT,
-            required=False
+            required=False,
         )
-    ]
+    ],
 )
 async def sacalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
     await command_saCalculator.run(client, ctx, config)
@@ -83,15 +85,15 @@ async def sacalc(ctx: CommandContext, config: Optional[interactions.Attachment] 
             name="config",
             description="Config file for the calculator. If you do not provide one, the template will be offered for download",
             type=interactions.OptionType.ATTACHMENT,
-            required=False
+            required=False,
         )
-    ]
+    ],
 )
 async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
     # imanity server only and ex-imanity role
     # if(await hasAccess(ctx.message.author,EDITORS) or ctx.message.author.guild.id == 685046495988154373):
     try:
-        await command_rbCalc.run(client,ctx,config)
+        await command_rbCalc.run(client, ctx, config)
     except:
         tb = traceback.format_exc()
         await ctx.send(f"ERROR:\n```{tb}```")
@@ -107,10 +109,12 @@ async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] 
             type=interactions.OptionType.STRING,
             required=True,
         )
-    ]
+    ],
 )
 async def characterSearch(ctx: CommandContext, keywords: str):
-    await command_commonSearch.run(dbConfig,client,ctx,keywords,is_character_search=True)
+    await command_commonSearch.run(
+        dbConfig, client, ctx, keywords, is_character_search=True
+    )
 
 
 @client.command(
@@ -123,10 +127,12 @@ async def characterSearch(ctx: CommandContext, keywords: str):
             type=interactions.OptionType.STRING,
             required=True,
         )
-    ]
+    ],
 )
 async def skillSearch(ctx: CommandContext, keywords: str):
-    await command_commonSearch.run(dbConfig,client,ctx,keywords,is_character_search=False)
+    await command_commonSearch.run(
+        dbConfig, client, ctx, keywords, is_character_search=False
+    )
 
 
 @client.command(
@@ -144,8 +150,8 @@ async def skillSearch(ctx: CommandContext, keywords: str):
             description="Send help to the server instead of sending a DM to the user",
             type=interactions.OptionType.SUB_COMMAND,
             required=False,
-        )
-    ]
+        ),
+    ],
 )
 async def help(ctx: CommandContext, sub_command: str):
     await command_help.run(ctx, sub_command)
@@ -172,7 +178,7 @@ async def support(ctx: CommandContext):
     description="Displays current Ais bot popularity",
 )
 async def popularity(ctx: CommandContext):
-    await command_popularity.run(client,ctx)
+    await command_popularity.run(client, ctx)
 
 
 @client.command(
@@ -180,7 +186,7 @@ async def popularity(ctx: CommandContext):
     description="Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!",
 )
 async def bento(ctx: CommandContext):
-    await command_bento.run(dbConfig,ctx)
+    await command_bento.run(dbConfig, ctx)
 
 
 @client.command(
@@ -188,7 +194,7 @@ async def bento(ctx: CommandContext):
     description="Trade a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included",
 )
 async def gacha(ctx: CommandContext):
-    await command_gacha.run(dbConfig,ctx)
+    await command_gacha.run(dbConfig, ctx)
 
 
 @client.command(
@@ -206,11 +212,11 @@ async def gacha(ctx: CommandContext):
             description="Send pull results as GIF",
             type=interactions.OptionType.SUB_COMMAND,
             required=False,
-        )
-    ]
+        ),
+    ],
 )
 async def gachamode(ctx: CommandContext, sub_command: str):
-    await command_gachaMode.run(dbConfig,ctx,sub_command)
+    await command_gachaMode.run(dbConfig, ctx, sub_command)
 
 
 @client.command(
@@ -229,10 +235,10 @@ async def gachamode(ctx: CommandContext, sub_command: str):
             type=interactions.OptionType.SUB_COMMAND,
             required=False,
         ),
-    ]
+    ],
 )
 async def profile(ctx: CommandContext, sub_command: str):
-    await command_profile.run(dbConfig,client,ctx,sub_command)
+    await command_profile.run(dbConfig, client, ctx, sub_command)
 
 
 @client.command(
@@ -251,10 +257,10 @@ async def profile(ctx: CommandContext, sub_command: str):
             type=interactions.OptionType.SUB_COMMAND,
             required=False,
         ),
-    ]
+    ],
 )
 async def topUsers(ctx: CommandContext, sub_command: str):
-    await command_topUsers.run(dbConfig,client,ctx,sub_command)
+    await command_topUsers.run(dbConfig, client, ctx, sub_command)
 
 
 @client.command(
@@ -267,10 +273,10 @@ async def topUsers(ctx: CommandContext, sub_command: str):
             type=interactions.OptionType.STRING,
             required=True,
         )
-    ]
+    ],
 )
 async def dispatch(ctx: CommandContext, keywords: str):
-    await command_dispatch.run(dbConfig,ctx,keywords)
+    await command_dispatch.run(dbConfig, ctx, keywords)
 
 
 unit_attachment = interactions.Option(
@@ -280,27 +286,30 @@ unit_attachment = interactions.Option(
     required=True,
 )
 
+
 @client.command(
     name="add-update-unit",
     description="Adds a unit or overwrites an existing one",
-    scope=GUILD_ID, # so the command is only visible & available on the dev server
+    scope=GUILD_ID,  # so the command is only visible & available on the dev server
     default_scope=False,
     options=[
         interactions.Option(
             name="adventurer",
             description="Add an adventurer unit",
             type=interactions.OptionType.SUB_COMMAND,
-            options=[unit_attachment]
+            options=[unit_attachment],
         ),
         interactions.Option(
             name="assist",
             description="Add an assist unit",
             type=interactions.OptionType.SUB_COMMAND,
-            options=[unit_attachment]
-        )
-    ]
+            options=[unit_attachment],
+        ),
+    ],
 )
-async def addUpdateUnit(ctx: CommandContext, sub_command: str, unit_file: interactions.Attachment):
+async def addUpdateUnit(
+    ctx: CommandContext, sub_command: str, unit_file: interactions.Attachment
+):
     await command_addUpdateUnit.run(dbConfig, client, ctx, sub_command, unit_file)
     # refresh the cache
     cache = Cache(dbConfig)
@@ -310,7 +319,7 @@ async def addUpdateUnit(ctx: CommandContext, sub_command: str, unit_file: intera
 @client.command(
     name="get-json",
     description="Get the unit database in JSON format",
-    scope=GUILD_ID, # so the command is only visible & available on the dev server
+    scope=GUILD_ID,  # so the command is only visible & available on the dev server
     default_scope=False,
 )
 async def getJson(ctx: CommandContext):
@@ -320,11 +329,12 @@ async def getJson(ctx: CommandContext):
 @client.command(
     name="init",
     description="No idea what this does tbh",
-    scope=GUILD_ID, # so the command is only visible & available on the dev server
+    scope=GUILD_ID,  # so the command is only visible & available on the dev server
     default_scope=False,
 )
 async def init(ctx: CommandContext):
     await command_init.run(ctx)
+
 
 # commands that just bring up pictures
 killer_subcommands = [
@@ -334,14 +344,27 @@ killer_subcommands = [
         type=interactions.OptionType.SUB_COMMAND,
     )
     for killer_type in [
-        "all", "aqua", "dragon", "giant", "material", "ox", "spirit",
-        "beast", "fantasma", "insect", "ogre", "plant", "worm"
+        "all",
+        "aqua",
+        "dragon",
+        "giant",
+        "material",
+        "ox",
+        "spirit",
+        "beast",
+        "fantasma",
+        "insect",
+        "ogre",
+        "plant",
+        "worm",
     ]
 ]
+
+
 @client.command(
     name="killers",
     description="Posts infographic of all killer units in the game. Can also filter to one monster type.",
-    options=killer_subcommands
+    options=killer_subcommands,
 )
 async def killer(ctx, sub_command: str):
     await command_killer.run(ctx, dbConfig, sub_command)
@@ -379,13 +402,11 @@ async def elementAssists(ctx: CommandContext):
             description="RB guide for Riveria",
             type=interactions.OptionType.SUB_COMMAND,
         ),
-    ]
+    ],
 )
 async def rb(ctx: CommandContext, sub_command: str):
     await command_rb.run(client, ctx, sub_command)
 
 
-
 if __name__ == "__main__":
-    #client.run(TOKEN)
     client.start()

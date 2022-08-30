@@ -1,5 +1,6 @@
 from interactions.ext.files import CommandContext
 
+
 async def run(ctx: CommandContext):
     clan_list_name = []
     clan_list_id = []
@@ -7,12 +8,12 @@ async def run(ctx: CommandContext):
     for member in ctx.guild.members:
         # record their names and player id
         for roles in member.roles:
-            if(roles.id == 708008774140690473):
-                if(member.nick == None):
-                    #clan_list.append([member.id,member.name])
+            if roles.id == 708008774140690473:
+                if member.nick == None:
+                    # clan_list.append([member.id,member.name])
                     clan_list_name.append([member.name])
                 else:
-                    #clan_list.append([member.id,member.nick])
+                    # clan_list.append([member.id,member.nick])
                     clan_list_name.append([member.nick])
                 clan_list_id.append([str(member.id)])
 

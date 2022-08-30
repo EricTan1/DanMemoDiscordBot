@@ -9,15 +9,34 @@ import os
 import io
 
 from database.DBcontroller import DBcontroller, DBConfig
-from commands.utils import TIMEOUT, Status, imageVerticalConcat, imageHorizontalConcat, imageToBytes
+from commands.utils import (
+    TIMEOUT,
+    Status,
+    imageVerticalConcat,
+    imageHorizontalConcat,
+    imageToBytes,
+)
 from commands.unitsearch import characterSearch, skillSearch
-from commands.buttons import previous_page, next_page, to_start, to_end, filter_adventurer, filter_assist
+from commands.buttons import (
+    previous_page,
+    next_page,
+    to_start,
+    to_end,
+    filter_adventurer,
+    filter_assist,
+)
 
 
-async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, search_words: str, is_character_search: bool):
-    """ Common base for skill and character Search
+async def run(
+    dbConfig: DBConfig,
+    client: WaitForClient,
+    ctx: CommandContext,
+    search_words: str,
+    is_character_search: bool,
+):
+    """Common base for skill and character Search
     <CommandPrefix> <Search>
-    
+
     Arguments:
         dbConfig {[DBcontroller.dbConfig]} -- Database config usually local/environmental variables
         client {[interactions.ext.wait_for.WaitForClient]} -- the discord bot object
@@ -35,8 +54,8 @@ async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, se
 
     db = DBcontroller(dbConfig)
 
-    if(is_character_search):
-        my_list = db.characterSearch(my_search.replace("[","").replace("]",""))
+    if is_character_search:
+        my_list = db.characterSearch(my_search.replace("[", "").replace("]", ""))
     else:
         my_list = db.skillSearch(my_search)
     print(my_list)
@@ -55,13 +74,24 @@ async def run(dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, se
         else:
             page_list, total_results = skillSearch.get_page_list(my_list, db)
 
-        if(len(page_list) != 0 and len(page_list[len(page_list)-1])==0):
-            page_list.pop(len(page_list)-1)
+        if len(page_list) != 0 and len(page_list[len(page_list) - 1]) == 0:
+            page_list.pop(len(page_list) - 1)
 
-        await pageUnitsHandler(client,ctx,page_list,db,total_results,search,is_character_search)
+        await pageUnitsHandler(
+            client, ctx, page_list, db, total_results, search, is_character_search
+        )
     db.closeconnection()
 
-async def pageUnitsHandler(client: WaitForClient, ctx: CommandContext, page_list: List[list], db: DBcontroller, total_results: int, search: List[str], is_character_search: bool):
+
+async def pageUnitsHandler(
+    client: WaitForClient,
+    ctx: CommandContext,
+    page_list: List[list],
+    db: DBcontroller,
+    total_results: int,
+    search: List[str],
+    is_character_search: bool,
+):
     """This handles the message scrolling of the character search and all the other
     page logic for multiple results
 
@@ -93,8 +123,10 @@ async def pageUnitsHandler(client: WaitForClient, ctx: CommandContext, page_list
         temp_embed.description += " or filter by unit type"
     temp_embed.set_footer(text=f"Page {current_page+1} of {len(current_page_list)}")
     temp_embed.set_image(url="attachment://temp.png")
-    
-    temp_embed = search_module.clearSetField(temp_embed, current_page_list[current_page])
+
+    temp_embed = search_module.clearSetField(
+        temp_embed, current_page_list[current_page]
+    )
     iconsIm = get_units_image(page_list, search_module.get_unit_image_path)
     ifile = make_ifile(iconsIm)
 
@@ -107,40 +139,62 @@ async def pageUnitsHandler(client: WaitForClient, ctx: CommandContext, page_list
     while True:
         try:
             component_ctx: ComponentContext = await client.wait_for_component(
-                components=components, messages=msg, timeout=TIMEOUT, # should not pass components but list of buttons
+                components=components,
+                messages=msg,
+                timeout=TIMEOUT,  # should not pass components but list of buttons
             )
 
-            if(component_ctx.custom_id == "previous_page"):
-                current_page = (current_page -1) % len(current_page_list)
-            elif(component_ctx.custom_id == "next_page"):
-                current_page = (current_page +1) % len(current_page_list)
-            elif(component_ctx.custom_id == "to_start"):
+            if component_ctx.custom_id == "previous_page":
+                current_page = (current_page - 1) % len(current_page_list)
+            elif component_ctx.custom_id == "next_page":
+                current_page = (current_page + 1) % len(current_page_list)
+            elif component_ctx.custom_id == "to_start":
                 current_page = 0
-            elif(component_ctx.custom_id == "to_end"):
-                current_page = len(current_page_list)-1
-            elif(component_ctx.custom_id == "filter_adventurer"):
-                current_page_list, filter, current_results = skillSearch.filterAddRemove(page_list, filter, "adventurer", total_results)
+            elif component_ctx.custom_id == "to_end":
+                current_page = len(current_page_list) - 1
+            elif component_ctx.custom_id == "filter_adventurer":
+                (
+                    current_page_list,
+                    filter,
+                    current_results,
+                ) = skillSearch.filterAddRemove(
+                    page_list, filter, "adventurer", total_results
+                )
                 current_page = 0
                 temp_embed.title = f"{current_results} results for {search}"
                 temp_embed.description = "Select a unit via the dropdown menu, switch pages with the buttons or filter by unit type\n"
                 temp_embed.description += f"**Current filter:** {filter}"
-                iconsIm = get_units_image(current_page_list, search_module.get_unit_image_path)
-            elif(component_ctx.custom_id == "filter_assist"):
-                current_page_list, filter, current_results = skillSearch.filterAddRemove(page_list, filter, "assist", total_results)
+                iconsIm = get_units_image(
+                    current_page_list, search_module.get_unit_image_path
+                )
+            elif component_ctx.custom_id == "filter_assist":
+                (
+                    current_page_list,
+                    filter,
+                    current_results,
+                ) = skillSearch.filterAddRemove(
+                    page_list, filter, "assist", total_results
+                )
                 current_page = 0
                 temp_embed.title = f"{current_results} results for {search}"
                 temp_embed.description = "Select a unit via the dropdown menu, switch pages with the buttons or filter by unit type\n"
                 temp_embed.description += f"**Current filter:** {filter}"
-                iconsIm = get_units_image(current_page_list, search_module.get_unit_image_path)
-            elif(component_ctx.custom_id == "unit_select"):
+                iconsIm = get_units_image(
+                    current_page_list, search_module.get_unit_image_path
+                )
+            elif component_ctx.custom_id == "unit_select":
                 await msg.delete()
-                return await characterSearch.singleUnit(client, ctx, db, component_ctx.data.values[0])
+                return await characterSearch.singleUnit(
+                    client, ctx, db, component_ctx.data.values[0]
+                )
 
-            components = build_components(current_page_list, current_page, is_character_search)
+            components = build_components(
+                current_page_list, current_page, is_character_search
+            )
 
             # If filter led to empty list
-            if(len(current_page_list) == 0):
-                #temp_embed = interactions.Embed()
+            if len(current_page_list) == 0:
+                # temp_embed = interactions.Embed()
                 temp_embed.clear_fields()
                 temp_embed.footer = None
                 temp_embed.title = "No relevant skills to display"
@@ -148,16 +202,22 @@ async def pageUnitsHandler(client: WaitForClient, ctx: CommandContext, page_list
                 temp_embed.color = Status.KO.value
                 await component_ctx.edit(embeds=temp_embed, components=components)
             else:
-                temp_embed = search_module.clearSetField(temp_embed, current_page_list[current_page])
+                temp_embed = search_module.clearSetField(
+                    temp_embed, current_page_list[current_page]
+                )
                 temp_embed.color = Status.OK.value
-                temp_embed.set_footer(text=f"Page {current_page+1} of {len(current_page_list)}")
+                temp_embed.set_footer(
+                    text=f"Page {current_page+1} of {len(current_page_list)}"
+                )
 
                 # for some reason open files (BytesIO objects) get closed after every loop execution
                 # thus we keep the Image.Image object in memory instead, recreating the object on every iteration
                 ifile = make_ifile(iconsIm)
                 # it shouldn't be necessary to pass the files again on edit
                 # but for some reason it doesn't work otherwise
-                await component_ctx.edit(files=ifile, embeds=temp_embed, components=components)
+                await component_ctx.edit(
+                    files=ifile, embeds=temp_embed, components=components
+                )
 
         except asyncio.TimeoutError:
             ifile = make_ifile(iconsIm)
@@ -165,7 +225,9 @@ async def pageUnitsHandler(client: WaitForClient, ctx: CommandContext, page_list
             return await ctx.edit(files=ifile, embeds=temp_embed, components=[])
 
 
-def build_components(page_list: List[list], current_page: int, is_character_search: bool) -> List[interactions.ActionRow]:
+def build_components(
+    page_list: List[list], current_page: int, is_character_search: bool
+) -> List[interactions.ActionRow]:
     components = []
 
     if is_character_search:
@@ -178,27 +240,35 @@ def build_components(page_list: List[list], current_page: int, is_character_sear
                     value=unit[3],
                 )
                 for unit in page_list[current_page]
-            ]
+            ],
         )
         select_row = interactions.ActionRow(components=[select_menu])
         components.append(select_row)
 
     if len(page_list) > 1:
-        arrow_row = interactions.ActionRow(components=[to_start, previous_page, next_page, to_end])
+        arrow_row = interactions.ActionRow(
+            components=[to_start, previous_page, next_page, to_end]
+        )
         components.append(arrow_row)
 
     if not is_character_search:
-        filter_row = interactions.ActionRow(components=[filter_adventurer, filter_assist])
+        filter_row = interactions.ActionRow(
+            components=[filter_adventurer, filter_assist]
+        )
         components.append(filter_row)
 
     return components
+
 
 def make_ifile(image: Image.Image) -> interactions.File:
     byteImage = imageToBytes(image)
     ifile = interactions.File(fp=byteImage, filename="temp.png")
     return ifile
 
-def get_units_image(page_list: List[list], path_getter: Callable[[tuple], str]) -> Image.Image:
+
+def get_units_image(
+    page_list: List[list], path_getter: Callable[[tuple], str]
+) -> Image.Image:
     if len(page_list) == 0:
         return
 
@@ -207,7 +277,7 @@ def get_units_image(page_list: List[list], path_getter: Callable[[tuple], str]) 
         for unit in page:
             path = path_getter(unit)
             if not os.path.isdir(path):
-                print("Could not find folder:",path)
+                print("Could not find folder:", path)
                 path = "./images/units/gac_dummy/"
             path += "hex.png"
 
@@ -216,9 +286,10 @@ def get_units_image(page_list: List[list], path_getter: Callable[[tuple], str]) 
     full_image = concatenate_images(paths)
     return Image.open(full_image)
 
+
 def concatenate_images(images: List[str]) -> io.BytesIO:
     per_line = 5
-    chunks = [images[x:x+per_line] for x in range(0, len(images), per_line)]
+    chunks = [images[x : x + per_line] for x in range(0, len(images), per_line)]
 
     images_lines = []
     for chunk in chunks:
