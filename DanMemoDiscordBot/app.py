@@ -1,10 +1,7 @@
 from typing import Optional, cast
 from interactions.ext.files import CommandContext
-from interactions.ext.wait_for import WaitForClient
-import discord
-from discord.ext import commands
+from interactions.ext.wait_for import WaitForClient, setup
 import interactions
-from interactions.ext.wait_for import setup
 import os
 import traceback
 
@@ -47,15 +44,12 @@ else:
 
 _command_prefix = os.environ.get("COMMAND_PREFIX")
 
-client = commands.Bot(command_prefix=_command_prefix, help_command=None, case_insensitive=True, intents=None)
 slash_client_pre = interactions.Client(token=TOKEN, default_scope=SCOPE)
 slash_client_pre.load("interactions.ext.files")
 slash_client: WaitForClient = setup(cast(WaitForClient, slash_client_pre)) # loads wait_for extension
 
 cache = Cache(dbConfig)
-@client.event
-async def on_message(message):
-    await client.process_commands(message)
+
 
 @slash_client.event
 async def on_start():
@@ -66,16 +60,6 @@ async def on_start():
     createGSpreadJSON()
     print("Bot is ready!")
 
-
-async def close(ctx):
-    # embeded message to show that the bot is shut down
-    temp_embed = discord.Embed()
-    temp_embed.color = 3066993
-    temp_embed.title = "Closed"
-    temp_embed.description = "Bot has been successfully closed"
-    await ctx.send(embeds=temp_embed)
-    # shut down the bot
-    await client.close()
 
 @slash_client.command(
     name="sa-calculator",
@@ -364,6 +348,7 @@ killer_subcommands = [
 async def killer(ctx, sub_command: str):
     await command_killer.run(ctx, dbConfig, sub_command)
 
+
 @slash_client.command(
     name="elemental-assists",
     description="Posts an infographic of all elemental damage buffing/elemental resist debuffing assists in the game",
@@ -400,7 +385,6 @@ async def elementAssists(ctx: CommandContext):
 )
 async def rb(ctx: CommandContext, sub_command: str):
     await command_rb.run(slash_client, ctx, sub_command)
-
 
 
 
