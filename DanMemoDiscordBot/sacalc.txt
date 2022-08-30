@@ -31,7 +31,7 @@ P6=0,0,1,1,1,1,1,1,1,1,1,1,1,1,1
 
 
 Notes
--To search units in ais bot use the command !$ss sa gauge (For all SA related units)
+-To search units in ais bot use the command '/skillsearch sa gauge' (For all SA related units)
 -For Turn order, the names of the units cannot be entered, they need to stay P3-P6, but you can enter in the attack order if you choose 
 -All calculations are under the assumption you are extending buffs properly
 -You need attachments enabled for the channel to use this command
