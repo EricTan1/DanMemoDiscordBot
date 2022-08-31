@@ -1,36 +1,43 @@
-import discord
-import operator
-import math
 import asyncio
-import itertools
+import math
+import operator
+from typing import Any, Dict, List, Tuple
 
+import interactions
+from interactions.ext.files import CommandContext, ComponentContext
+from interactions.ext.wait_for import WaitForClient
+
+from commands.buttons import next_page, previous_page, to_end, to_start
+from commands.utils import TIMEOUT, Status, get_emoji
+from database.DBcontroller import DBConfig
 from database.entities.User import User
-from commands.utils import Status, get_emoji, get_author, mention_author, dict_to_sns, sns_to_dict
-from commands.cache import Cache
 
-async def run(dbConfig, client, ctx, *args):
-    author = str(ctx.message.author)
-    authorUniqueId = str(ctx.message.author.id)
-    content = ctx.message.content
-    
-    print("\nReceived message from '"+author+"("+authorUniqueId+")' with content '"+content+"'")
+arrow_left = "\u2b05"
+arrow_right = "\u27a1"
+star_emoji = "\u2b50"
+crepe_emoji = get_emoji("crepe")
+adventurer_emoji = get_emoji("ad_filter")
+assist_emoji = get_emoji("as_filter")
+limitbreak_emojis = [get_emoji(f"limitbreak_{number}") for number in range(1, 6)]
 
+
+async def run(
+    dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, sub_command: str
+):
+    author = str(ctx.author)
+    authorUniqueId = str(ctx.author.id)
     user = User.get_user(dbConfig, author, authorUniqueId)
 
-    if "summary" in args:
-        await summary_message(user, client, ctx, *args)
+    if sub_command == "summary":
+        is_summary = True
     else:
-        await detailed_message(user, client, ctx, *args)
+        is_summary = False
 
-
-async def summary_message(user, client, ctx, *args):
     crepes = user.crepes
     if crepes is None:
         crepes = 0
 
-    currency_lines = []
-    currency_line = str(crepes)+" x "+get_emoji("crepe").toString(ctx)+"\n"
-    currency_lines.append(currency_line)
+    currency_line = f"{crepes} x {crepe_emoji}\n"
 
     units = []
     if user.units is not None:
@@ -38,166 +45,135 @@ async def summary_message(user, client, ctx, *args):
             units.append(user.units[key])
     print(units)
 
-    units = sorted(units, key = operator.itemgetter("number"), reverse=True)
-    units = sorted(units, key = operator.itemgetter("unit_type"))
-    units = sorted(units, key = operator.itemgetter("stars"), reverse=True)
+    units = sorted(units, key=operator.itemgetter("character_name"))
+    units = sorted(units, key=operator.itemgetter("unit_label"))
+    units = sorted(units, key=operator.itemgetter("number"), reverse=True)
+    units = sorted(units, key=operator.itemgetter("unit_type"))
+    units = sorted(units, key=operator.itemgetter("stars"), reverse=True)
 
-    sorted_categories = []
-    previous_category = None
-    previous_number = None
-    for unit in units:
-        category = "🌟"*unit["stars"]
-        if unit["unit_type"] == "adventurer":
-            category += " " + get_emoji("ad_filter").toString(ctx)
-        elif unit["unit_type"] == "assist":
-            category += " " + get_emoji("as_filter").toString(ctx)
-        if unit["number"] > 1:
-            number = min(unit["number"]-1,5)
-            category += " " + get_emoji("limitbreak_"+str(number)).toString(ctx)
-
-        if category == previous_category:
-            previous_number += 1
-            sorted_categories[-1] = (category,previous_number)
-        else:
-            previous_category = category
-            previous_number = 1
-            sorted_categories.append((category,previous_number))
-
-    title = get_author(ctx)+"'s summary profile"
-
-    units_lines = []
-    for item in sorted_categories:
-        units_line = item[0] + " x " + str(item[1]) + "\n"
-        units_lines.append(units_line)
-    
-    description = ""
-    for line in currency_lines:
-        description += line
-    for i in range(len(units_lines)):
-        description += units_lines[i]
-
-    footer = "Total distinct number: " + str(user.units_distinct_number) + "\n"
-    footer += "Score: " + str(user.units_score)
-
-    embed = discord.Embed()
-    embed.color = Status.OK.value
-    embed.set_thumbnail(url=ctx.message.author.avatar_url)
-    embed.title = title
-    embed.description = description
-    embed.set_footer(text=footer)
-    await ctx.send(embed=embed)
-
-
-async def detailed_message(user, client, ctx, *args):
-    crepes = user.crepes
-    if crepes is None:
-        crepes = 0
-
-    currency_lines = []
-    currency_line = str(crepes)+" x "+get_emoji("crepe").toString(ctx)+"\n"
-    currency_lines.append(currency_line)
-
-    units = []
-    if user.units is not None:
-        for key in user.units:
-            units.append(user.units[key])
-    print(units)
-
-    units = sorted(units, key = operator.itemgetter("character_name"))
-    units = sorted(units, key = operator.itemgetter("unit_label"))
-    units = sorted(units, key = operator.itemgetter("unit_type"))
-    units = sorted(units, key = operator.itemgetter("stars"), reverse=True)
-
-    units_lines = []
-    for unit in units:
-        units_line = "🌟"*unit["stars"]
-        if unit["unit_type"] == "adventurer":
-            units_line += " " + get_emoji("ad_filter").toString(ctx)
-        elif unit["unit_type"] == "assist":
-            units_line += " " + get_emoji("as_filter").toString(ctx)
-        units_line +=  " [" + unit["unit_label"] + "] " + unit["character_name"] + ": " + str(unit["number"])+"\n"
-        units_lines.append(units_line)
-
-    title = get_author(ctx)+"'s profile"
+    if is_summary:
+        units_lines = get_summarized_unit_lines(units)
+    else:
+        units_lines = get_detailed_unit_lines(units)
 
     current_page = 0
     per_page = 20
-    number_pages = math.ceil(len(units_lines)/per_page)
+    number_pages = math.ceil(len(units_lines) / per_page)
     if number_pages == 0:
         number_pages = 1
 
-    description = build_description(currency_lines,units_lines,current_page,per_page)
+    if is_summary:
+        description = currency_line
+        for i in range(len(units_lines)):
+            description += units_lines[i]
+    else:
+        description = build_detailed_description(
+            currency_line, units_lines, current_page
+        )
 
-    footer_number = "Total distinct number: " + str(len(units_lines))
-    footer_page = "Page {} of {}".format(current_page+1, number_pages)
-    footer = footer_number + "\n" + footer_page
+    upper_footer = f"Total distinct number: {user.units_distinct_number}"
+    upper_footer += f"\nScore: {user.units_score}"
+    if not is_summary:
+        footer = upper_footer + f"\n\nPage {current_page+1} of {number_pages}"
+    else:
+        footer = upper_footer
 
-    embed = discord.Embed()
+    embed = interactions.Embed()
     embed.color = Status.OK.value
-    embed.set_thumbnail(url=ctx.message.author.avatar_url)
-    embed.title = title
+    embed.set_thumbnail(url=ctx.author.get_avatar_url(await ctx.get_guild()))
+    embed.title = f"{ctx.author}'s summary profile"
     embed.description = description
     embed.set_footer(text=footer)
-    msg = await ctx.send(embed=embed)
 
-    if number_pages == 1:
+    components = []
+    if number_pages > 1 and not is_summary:
+        components = [to_start, previous_page, next_page, to_end]
+    msg = await ctx.send(embeds=embed, components=components)
+
+    if not components:
         return
 
-    # update description with reactions
-    emoji_left_arrow = "\u2b05"
-    emoji_right_arrow = "\u27a1"
-    emojis = [emoji_left_arrow, emoji_right_arrow]
-    for emoji in emojis:
-        await msg.add_reaction(emoji)
-
     while True:
-        pending_tasks = [wait_for_reaction(client, msg.id, emojis, "reaction_add"),
-                        wait_for_reaction(client, msg.id, emojis, "reaction_remove")]
-        done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
+        try:
+            component_ctx: ComponentContext = await client.wait_for_component(
+                components=components,
+                messages=msg,
+                timeout=TIMEOUT,
+            )
 
-        timeout = len(done_tasks) == 0
+            if component_ctx.custom_id == "previous_page":
+                current_page = (current_page - 1) % number_pages
+            elif component_ctx.custom_id == "next_page":
+                current_page = (current_page + 1) % number_pages
+            elif component_ctx.custom_id == "to_start":
+                current_page = 0
+            elif component_ctx.custom_id == "to_end":
+                current_page = number_pages - 1
 
-        if not timeout:
-            task = done_tasks.pop()
+            embed.description = build_detailed_description(
+                currency_line, units_lines, current_page
+            )
+            footer = upper_footer + f"\n\nPage {current_page+1} of {number_pages}"
+            embed.set_footer(text=footer)
 
-            reaction, user = await task
+            await component_ctx.edit(embeds=embed)
 
-        for remaining in itertools.chain(done_tasks, pending_tasks):
-            remaining.cancel()
-
-        if timeout:
+        except asyncio.TimeoutError:
             embed.color = Status.KO.value
-            await msg.edit(embed=embed)
-            break
-
-        emoji = str(reaction.emoji)
-
-        if emoji == emoji_left_arrow:
-            current_page = (current_page - 1) % number_pages
-        elif emoji == emoji_right_arrow:
-            current_page = (current_page + 1) % number_pages
-        
-        embed.description = build_description(currency_lines, units_lines, current_page, per_page)
-        
-        footer_page = "Page {} of {}".format(current_page+1, number_pages)
-        footer = footer_number + "\n" + footer_page
-        embed.set_footer(text=footer)
-        
-        await msg.edit(embed=embed)     
+            return await ctx.edit(embeds=embed, components=[])
 
 
-def build_description(currency_lines, units_lines, current_page, per_page):
-    description = ""
-    for line in currency_lines:
-        description += line
+def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
+    sorted_categories: List[Tuple[str, int]] = []
+    previous_category = ""
+    previous_number = 0
+    for unit in units:
+        category = star_emoji * unit["stars"]
+        if unit["unit_type"] == "adventurer":
+            category += f" {adventurer_emoji}"
+        elif unit["unit_type"] == "assist":
+            category += f" {assist_emoji}"
+        if unit["number"] > 1:
+            number = min(unit["number"] - 1, 5)
+            category += f" {limitbreak_emojis[number]}"
+
+        if category == previous_category:
+            previous_number += 1
+            sorted_categories[-1] = (category, previous_number)
+        else:
+            previous_category = category
+            previous_number = 1
+            sorted_categories.append((category, previous_number))
+
+    units_lines = []
+    for item in sorted_categories:
+        units_line = f"{item[0]} x {item[1]}\n"
+        units_lines.append(units_line)
+
+    return units_lines
+
+
+def get_detailed_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
+    units_lines = []
+    for unit in units:
+        units_line = star_emoji * unit["stars"]
+        if unit["unit_type"] == "adventurer":
+            units_line += f" {adventurer_emoji}"
+        elif unit["unit_type"] == "assist":
+            units_line += f" {assist_emoji}"
+        units_line += (
+            f" [{unit['unit_label']}] {unit['character_name']}: {unit['number']}\n"
+        )
+        units_lines.append(units_line)
+
+    return units_lines
+
+
+def build_detailed_description(
+    currency_line: str, units_lines: List[str], current_page: int, per_page=20
+):
+    description = currency_line
     for i in range(len(units_lines)):
-        if per_page*current_page <= i and i < per_page*(current_page+1):
+        if per_page * current_page <= i and i < per_page * (current_page + 1):
             description += units_lines[i]
     return description
-
-
-def wait_for_reaction(client, msg_id, emojis, event_name):
-    def check(reaction, user):
-        return str(reaction.emoji) in emojis and user != client.user and reaction.message.id == msg_id
-
-    return client.wait_for(event_name,check=check)

@@ -1,54 +1,100 @@
-
-import discord
-from commands.utils import getDefaultEmoji, Status
 import asyncio
-import itertools
+from typing import List
+
+import interactions
+from interactions.ext.files import CommandContext
+from interactions.ext.wait_for import WaitForClient
+
+from commands.buttons import (
+    next_page,
+    previous_page,
+    to_end,
+    to_start,
+    toggle_combat,
+    toggle_counters,
+    toggle_effects,
+)
+from commands.entities.adventurer import Adventurer
+from commands.entities.assist import Assist
+from commands.utils import TIMEOUT, Status, getDefaultEmoji
+
+# emoji strings
+arrow_left = "\u2b05"
+arrow_right = "\u27a1"
+rewind = "\u23ee"
+forward = "\u23ed"
+attacks_toggle = getDefaultEmoji("crossed_swords")
+counters_toggle = getDefaultEmoji("shield")
+info_toggle = getDefaultEmoji("information_source")
+
+buttons = [
+    to_start,
+    previous_page,
+    next_page,
+    to_end,
+    toggle_combat,
+    toggle_counters,
+    toggle_effects,
+]
+
+# button rows
+row1 = interactions.ActionRow(components=buttons[:4])
+row2 = interactions.ActionRow(components=buttons[4:])
 
 
-async def pageRBHandler(client, ctx, logs, total_damage, total_score, unit_list, ast_list):
+async def pageRBHandler(
+    client: WaitForClient,
+    ctx: CommandContext,
+    logs: List[dict],
+    total_damage: int,
+    total_score: float,
+    unit_list: List[Adventurer],
+    assist_list: List[Assist],
+):
     """This handles the logic of the page handling for the single result adventurer
 
     Arguments:
-        client {discord.client} -- the discord bot object
-        ctx {discord.context} -- command message context
-        pages {list of discord.embeds} -- adventurer stats/skills page
+        client {interactions.client} -- the discord interactions bot object
+        ctx {interactions.CommandContext} -- command message context
+        pages {list of interactions.embeds} -- adventurer stats/skills pages
     """
-    current_page = 0
-    #temp_embed.set_footer(text="Page {} of {}".format(current_page+1,len(pages))) 
 
     page_list = []
-
-
+    current_page = 0
 
     # first page
-    first_page = discord.Embed()
+    first_page = interactions.Embed()
     page_list.append(first_page)
     first_page.color = Status.OK.value
     first_page.title = "Summary of Record Buster"
     # all the advs being used
-    first_page.add_field(name="Adventurers",value="{}, {}, {}, {}, {}, {}".format(unit_list[0].name,unit_list[1].name,unit_list[2].name,unit_list[3].name,unit_list[4].name,unit_list[5].name),inline=False)
+    first_page.add_field(
+        name="Adventurers",
+        value=f"{unit_list[0].name}, {unit_list[1].name}, {unit_list[2].name}, {unit_list[3].name}, {unit_list[4].name}, {unit_list[5].name}",
+        inline=False,
+    )
     # all the assists being used
-    first_page.add_field(name="Assists",value="{}, {}, {}, {}, {}, {}".format(ast_list[0].name,ast_list[1].name,ast_list[2].name,ast_list[3].name,ast_list[4].name,ast_list[5].name),inline=False)
+    first_page.add_field(
+        name="Assists",
+        value=f"{assist_list[0].name}, {assist_list[1].name}, {assist_list[2].name}, {assist_list[3].name}, {assist_list[4].name}, {assist_list[5].name}",
+        inline=False,
+    )
     # damage per adv
-    #current_damage
+    # current_damage
     for adv in unit_list:
-        first_page.add_field(name="{} total damage".format(adv.name),value="{:,}".format(int(adv.current_damage)),inline=False)
+        first_page.add_field(
+            name=f"{adv.name} total damage",
+            value=f"{adv.current_damage:,}",
+            inline=False,
+        )
     # total damage
-    first_page.add_field(name="Total Damage",value="{:,}".format(int(total_damage)),inline=False)
+    first_page.add_field(name="Total Damage", value=f"{total_damage:,}", inline=False)
     # total score
-    first_page.add_field(name="Total Score",value="{:,}".format(int(total_score)),inline=False)
-    
-    toggle_log_list={"attack":True, "counters":False,"info":False}
-    # enemy, unit{0-3}, turn
-    # turn_logs = {"sa":[], "combat_skills":[], "counters":[], "sacs":[]}
-    #### set up pages ####
-    # title
-    # description
-    # color
-    # footer
-    # fields.append
-    # page_list[current_page].color = Status.OK.value
+    first_page.add_field(
+        name="Total Score", value=f"{int(total_score):,}", inline=False
+    )
 
+    toggle_log_list = {"attack": True, "counters": False, "info": False}
 
     """  # page_list[current_page].color = Status.OK.value
     logs_per_page = 1
@@ -65,7 +111,7 @@ async def pageRBHandler(client, ctx, logs, total_damage, total_score, unit_list,
         field_list_temp.append(("Turn {}\n".format(turn_logs+1),temp_value))
         
         if(logs_per_page_counter == logs_per_page or turn_logs ==len(logs)-1):
-            temp_embed = discord.Embed()
+            temp_embed = interactions.Embed()
             temp_embed.color = Status.OK.value
             page_list.append(temp_embed)
             temp_embed.title = "Buffs/Debuffs Check for Turn {}".format(turn_logs+1)
@@ -76,165 +122,125 @@ async def pageRBHandler(client, ctx, logs, total_damage, total_score, unit_list,
         else:
             logs_per_page_counter+=1 """
 
-    
-    
-
-    emoji1 = '\u2b05'
-    emoji2 = '\u27a1'
-    
-    rewind = '\u23ea'
-    forward = '\u23e9'
-
-    counters_toggle = getDefaultEmoji("shield")
-    attacks_toggle = getDefaultEmoji("crossed_swords")
-    info_toggle = getDefaultEmoji("information_source")
-
     # whenever toggles
-    async def updateStats(page_list):
+    def updateStats(page_list):
         page_list = page_list[:1]
         logs_per_page = 1
-        logs_per_page_counter=1
-        field_list_temp=[]
-        for turn_logs in range(0,len(logs)):
-            
+        logs_per_page_counter = 1
+        field_list_temp = []
+        for turn_logs in range(0, len(logs)):
 
             # attacks
-            if(toggle_log_list.get("attack")==True):
+            if toggle_log_list.get("attack") == True:
                 temp_value = ""
                 # sa
                 for sa in logs[turn_logs].get("sa"):
-                    temp_value +="{}\n".format(sa)
+                    temp_value += f"{sa}\n"
                 # combatskills
                 for c_skill in logs[turn_logs].get("combat_skills"):
-                    temp_value +="{}\n".format(c_skill)
-                if(temp_value != ""):
-                    field_list_temp.append(("**Skills**",temp_value))
+                    temp_value += f"{c_skill}\n"
+                if temp_value != "":
+                    field_list_temp.append(("**Skills**", temp_value))
+
             # counters
-            if (toggle_log_list.get("counters")==True):
+            if toggle_log_list.get("counters") == True:
                 temp_value = ""
                 for counter_skill in logs[turn_logs].get("counters"):
-                    temp_value +="{}\n".format(counter_skill)
-                if(temp_value != ""):
-                    field_list_temp.append(("**Counters**",temp_value))
-
-
-           
+                    temp_value += f"{counter_skill}\n"
+                if temp_value != "":
+                    field_list_temp.append(("**Counters**", temp_value))
 
             # boost check
-            if(toggle_log_list.get("info")== True):
-                #temp_value+="Turn {}\n".format(turn_logs+1)
+            if toggle_log_list.get("info") == True:
+                # temp_value+="Turn {}\n".format(turn_logs+1)
                 temp_value = ""
-                if(len(logs[turn_logs].get("enemy")) != 0):
-                    field_list_temp.append(("**RB Boss**",logs[turn_logs].get("enemy")))
-
-
+                if len(logs[turn_logs].get("enemy")) != 0:
+                    field_list_temp.append(
+                        ("**RB Boss**", logs[turn_logs].get("enemy"))
+                    )
 
                 # stats
                 for active_adv_count in range(0, 4):
-                    #temp_value+="{}\n".format(logs[turn_logs].get("unit{}".format(active_adv_count)))
-                    if(len(logs[turn_logs].get("unit{}".format(active_adv_count))) != 0):
-                        field_list_temp.append(("\U0000200e", logs[turn_logs].get("unit{}".format(active_adv_count))))
-                    
-                    #field_list_temp.append(("**Info**",temp_value))
+                    # temp_value+="{}\n".format(logs[turn_logs].get("unit{}".format(active_adv_count)))
+                    if len(logs[turn_logs].get(f"unit{active_adv_count}")) != 0:
+                        field_list_temp.append(
+                            (
+                                "\U0000200e",
+                                logs[turn_logs].get(f"unit{active_adv_count}"),
+                            )
+                        )
+
+                    # field_list_temp.append(("**Info**",temp_value))
+
             # sacs
             temp_value = ""
             for sacs in logs[turn_logs].get("sacs"):
-                temp_value +="{}\n".format(sacs)
-            
-            if(temp_value != ""):
-                field_list_temp.append(("**Sacs**",temp_value))
-            
-            
-            
-            if(logs_per_page_counter == logs_per_page or turn_logs ==len(logs)-1):
-                temp_embed = discord.Embed()
+                temp_value += f"{sacs}\n"
+
+            if temp_value != "":
+                field_list_temp.append(("**Sacs**", temp_value))
+
+            if logs_per_page_counter == logs_per_page or turn_logs == len(logs) - 1:
+                temp_embed = interactions.Embed()
                 temp_embed.color = Status.OK.value
                 page_list.append(temp_embed)
-                temp_embed.title = "Damage for Turn {}".format(turn_logs+1)
-                temp_embed.description="react to change pages"
+                temp_embed.title = f"Damage for Turn {turn_logs+1}"
+                temp_embed.description = "Press buttons to switch pages"
                 for fields in field_list_temp:
-                    temp_embed.add_field(name=fields[0],value=fields[1],inline=False)
-                logs_per_page_counter=1
-                field_list_temp=[]
+                    temp_embed.add_field(name=fields[0], value=fields[1], inline=False)
+                logs_per_page_counter = 1
+                field_list_temp = []
             else:
-                logs_per_page_counter+=1
-        #page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+                logs_per_page_counter += 1
         return page_list
-    page_list = await updateStats(page_list)
+
+    page_list = updateStats(page_list)
     # set footer for first page
-    page_list[current_page].description="react {} or {} to change pages\n{} to toggle sa/combat skills\n{} to toggle counters\n{}\
-         to toggle buffs/debuffs".format(emoji1,emoji2,attacks_toggle,counters_toggle,info_toggle)
-    page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
+    description = f"Press {arrow_left} or {arrow_right} to change pages\n{attacks_toggle} to toggle sa/combat skills\n{counters_toggle} to toggle counters\n{info_toggle}\
+         to toggle buffs/debuffs"
+    page_list[current_page].description = description
+    page_list[current_page].set_footer(
+        text=f"Page {current_page+1} of {len(page_list)}"
+    )
 
-    msg = await ctx.send(embed=page_list[current_page])
-    await msg.add_reaction(rewind)
-    await msg.add_reaction(emoji1)
-    await msg.add_reaction(emoji2)
-    await msg.add_reaction(forward)
-
-    await msg.add_reaction(counters_toggle)
-    await msg.add_reaction(attacks_toggle)
-    await msg.add_reaction(info_toggle)
-    # set_field_at(index, *, name, value, inline=True)
-    def check(payload):
-        return (str(payload.emoji) == emoji2 
-                or str(payload.emoji) == emoji1 
-                or str(payload.emoji) == rewind
-                or str(payload.emoji) == forward
-                or str(payload.emoji) == counters_toggle
-                or str(payload.emoji) == attacks_toggle
-                or str(payload.emoji) == info_toggle) and payload.user_id !=client.user.id and payload.message_id == msg.id
-    
-    def wait_for_reaction(event_name):
-        return client.wait_for(event_name,check=check)
+    msg = await ctx.send(embeds=page_list[current_page], components=[row1, row2])
 
     while True:
-        pending_tasks = [wait_for_reaction("raw_reaction_add"), wait_for_reaction("raw_reaction_remove")]
-        done_tasks, pending_tasks = await asyncio.wait(pending_tasks, timeout=60.0, return_when=asyncio.FIRST_COMPLETED)
+        try:
+            component_ctx: interactions.ComponentContext = (
+                await client.wait_for_component(
+                    components=buttons, messages=msg, timeout=TIMEOUT
+                )
+            )
 
-        timeout = len(done_tasks) == 0
-
-        if not timeout:
-            task = done_tasks.pop()
-
-            reaction = await task
-
-        for remaining in itertools.chain(done_tasks, pending_tasks):
-            remaining.cancel()
-
-        if timeout:
-            page_list[current_page].color = Status.KO.value
-            await msg.edit(embed=page_list[current_page])
-            break
-
-        # left
-        if str(reaction.emoji) == emoji1:
-            if(current_page > 0):
-                current_page = current_page -1
-            else:
-                current_page = len(page_list)-1
-        # right
-        if str(reaction.emoji) == emoji2:
-            if( current_page+1 < len(page_list)):
-                current_page = current_page +1
-            else:
+            if component_ctx.custom_id == "previous_page":
+                current_page = (current_page - 1) % len(page_list)
+            elif component_ctx.custom_id == "next_page":
+                current_page = (current_page + 1) % len(page_list)
+            elif component_ctx.custom_id == "to_start":
                 current_page = 0
-        if str(reaction.emoji) == rewind:
-            current_page = 0
-        if str(reaction.emoji) == forward:
-            current_page = len(page_list)-1
-        
-        #toggle switch
-        if str(reaction.emoji) == attacks_toggle:
-            toggle_log_list["attack"] = not toggle_log_list.get("attack")
-            page_list = await updateStats(page_list)
-        if str(reaction.emoji) == counters_toggle:
-            toggle_log_list["counters"] = not toggle_log_list.get("counters")
-            page_list = await updateStats(page_list)
-        if str(reaction.emoji) == info_toggle:
-            toggle_log_list["info"] = not toggle_log_list.get("info")
-            page_list = await updateStats(page_list)
-        page_list[current_page].set_footer(text="Page {} of {}".format(current_page+1,len(page_list)))
-        page_list[current_page].description="react {} or {} to change pages\n{} to toggle sa/combat skills\n{} to toggle counters\n{}\
-         to toggle buffs/debuffs".format(emoji1,emoji2,attacks_toggle,counters_toggle,info_toggle)
-        await msg.edit(embed=page_list[current_page]) 
+            elif component_ctx.custom_id == "to_end":
+                current_page = len(page_list) - 1
+            elif component_ctx.custom_id == "toggle_combat":
+                toggle_log_list["attack"] = not toggle_log_list.get("attack")
+                page_list = updateStats(page_list)
+            elif component_ctx.custom_id == "toggle_counters":
+                toggle_log_list["counters"] = not toggle_log_list.get("counters")
+                page_list = updateStats(page_list)
+            elif component_ctx.custom_id == "toggle_effects":
+                toggle_log_list["info"] = not toggle_log_list.get("info")
+                page_list = updateStats(page_list)
+
+            page_list[current_page].set_footer(
+                text=f"Page {current_page+1} of {len(page_list)}"
+            )
+            page_list[current_page].description = description
+            page_list[current_page].set_footer(
+                text=f"Page {current_page+1} of {len(page_list)}"
+            )
+
+            await component_ctx.edit(embeds=page_list[current_page])
+
+        except asyncio.TimeoutError:
+            page_list[current_page].color = Status.KO.value
+            return await ctx.edit(embeds=page_list[current_page], components=[])

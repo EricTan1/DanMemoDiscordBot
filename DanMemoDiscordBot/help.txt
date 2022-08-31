@@ -1,11 +1,16 @@
 F
+**PLEASE NOTE**
+Due to changes to the Discord API, we've had to switch to slash commands!
+This means old text commands (e.g. "!$rbcalc") are not going to work anymore. All commands start with a '/' now. This has autocomplete and a description of the command and its parameters, but here's a list of available commands anyway:
+
+F
 **CHARACTER SEARCH**
-Alias: cs, csearch
-Usage: !$cs <insert search here>
+Command name: /character-search
+Usage: /character-search <insert search here>
 Supports aliases (such as "ny" for "new year")
 F
 Example:
-!$cs princess
+/character-search princess
 
 EXAMPLE BOT OUTPUT:
 Bathroom Princess Ais Wallenstein
@@ -14,8 +19,8 @@ Bunny Princess Ais Wallenstein
 
 F
 **SKILL SEARCH**
-Alias: ss, ssearch
-Usage: !$ss <attribute1>,<attribute2>,<attribute3>
+Command name: /skill-search
+Usage: /skill-search <attribute1>,<attribute2>,<attribute3>
 Attributes can be:
 Target : foes, allies, foe, ally, self, skill
 Attribute : hp regen, sleep, phys resist, crit damage, seal...
@@ -26,7 +31,7 @@ Type: physical, magical, balance...
 https://docs.google.com/document/d/1XTNPLRg5CXTPFVMpOyY_W0KkPtGAXOWATCRvNIVc08E/edit?usp=sharing
 F
 Example:
-!$ss allies, phys resist
+/skill-search allies, phys resist
 
 EXAMPLE BOT OUTPUT:
 Bathroom Princess Ais Wallenstein
@@ -40,110 +45,111 @@ Combat: Suzila
 
 F
 **RECORD BUSTER**
-Alias: recordbuster, rb, rbguide
-Usage: !$rb <character>
-Characters : Ottar, Riveria, Revis, Finn
+Command name: /recordbuster
+Usage: /recordbuster <character>
+Characters : Ottarl, Riveria, Revis, Finn
 F
 Example:
-!$rb ottar
+/recordbuster ottarl
 
 F
 **DISPATCH QUESTS**
-Alias: dp, dispatch, dq
-Usage: !$dp <quest>
+Command name: /dispatch
+Usage: /dispatch <quest>
 Displays all the special board dispatch quests related to the search
 F
 Example:
-!$dp millionaire 1
+/dispatch millionaire 1
 
 EXAMPLE BOT OUTPUT:
 E_1 - Anonymous Millionaire:
 Riveria, Dionysis, Raul, Amid
 F
 **SA CALCULATOR**
-Alias: sa, sacalc
-Usage: !$sa
-Please attach the notepad template with this command to calculate SA.
-
-F
-**BENTO**
-Alias: bento
-Usage: !$bento
-Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!
-
-F
-**GACHA**
-Alias: gacha, pull
-Usage: !$gacha
-Trades a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included
+Command name: /sa-calculator
+Usage: /sa-calculator
+Please attach the filled out config with this command to calculate SA.
 
 F
 **KILLER**
-Alias: killers, slayer, slayers
-Usage: !$killer <optional: monster type>
+Command name: /killers
+Usage: /killers <monster type>
+Monster type can be "all"
 Gives a nice infographic of all the slayer/killer related units in the game. Can also filter to show only units for one monster type.
 
 F
 **ELEMENTAL ASSISTS**
-Alias: elementassists, ea
-Usage: !$ea
+Command name: /elemental-assists
+Usage: /elemental-assists
 Gives a nice infographic about all elemental damage buffing/elemental resist debuffing assists in the game
 
 F
+**BENTO**
+Command name: /bento
+Usage: /bento
+Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!
+
+F
+**GACHA**
+Command name: /gacha
+Usage: /gacha
+Trades a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included
+
+F
 **GACHA MODE**
-Alias: gachamode, gm
-Usage: !$gm <img/gif>
+Command name: /gacha-mode
+Usage: /gacha-mode <image/gif>
 Changes the way your gacha pulls are shown
 F
 Example:
-!$gachamode img
-!$gachamode gif
+/gacha-mode image
+/gacha-mode gif
 
 F
 **PROFILE**
-Alias: profile, inventory, p
-Usage: !$profile <summary>
+Command name: /profile
+Usage: /profile <summary/detailed>
 Your personal stats and inventory
 F
 Example:
-!$profile
-!$profile summary
+/profile detailed
+/profile summary
 
 F
 **TOP**
-Alias: top
-Usage: !$top <crepes>
+Command name: /top-users
+Usage: /top-users <gourmets/whales>
 Shows the biggest Whales/Gourmets, all servers combined
 F
 Example:
-!$top
-!$top crepes
+/top-users gourmets
+/top-users whales
 
 F
 **POPULARITY**
-Alias: popularity
-Usage: !$popularity
-Displays current Ais popularity
+Command name: /popularity
+Usage: /popularity
+Displays current Ais bot popularity
 
 F
 **INVITE**
-Alias: invite
-Usage: !$invite
+Command name: /invite
+Usage: /invite
 Sends the bot invite link
 
 F
 **SUPPORT**
-Alias: support
-Usage: !$support
+Command name: /support
+Usage: /support
 Sends a link to our support server. Please contact Eric#5731 or Yon#7436
 
 F
 **HELP**
-Alias: help
-Usage: !$help <server>
+Command name: /help
+Usage: /help <user/server>
 Sends the commands summary to user or server
 F
 Example:
-!$help
-!$help server
+/help
+/help server
 E

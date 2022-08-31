@@ -6,332 +6,422 @@ Created on Thu Jan 28 00:53:39 2021
 """
 
 import numpy as np
-#import sys
 
-##################  
+# import sys
+
+##################
 # Initialization #
 ##################
-totalDamage=0
-totalCounter=0
-accumulateDamage=[0,0,0,0]
-elementResistDownBase=[0, 0, 0, 0]
-elementResistDownAdv=[0, 0, 0, 0]
-elementResistDownAst=[0, 0, 0, 0]
-typeResistDownBase=[0, 0, 0, 0]
-typeResistDownAdv=[0, 0, 0, 0]
-typeResistDownAst=[0, 0, 0, 0]
-elementDamageBoostAdv=[0, 0, 0, 0]
-elementDamageBoostAst=[0, 0, 0, 0]
-targetResistDownAdv=[0, 0]
-targetResistDownAst=[0, 0]
-powerBoostAdv=[0, 0, 0, 0]
-powerBoostAst=[0, 0, 0, 0]
+totalDamage = 0
+totalCounter = 0
+accumulateDamage = [0, 0, 0, 0]
+elementResistDownBase = [0, 0, 0, 0]
+elementResistDownAdv = [0, 0, 0, 0]
+elementResistDownAst = [0, 0, 0, 0]
+typeResistDownBase = [0, 0, 0, 0]
+typeResistDownAdv = [0, 0, 0, 0]
+typeResistDownAst = [0, 0, 0, 0]
+elementDamageBoostAdv = [0, 0, 0, 0]
+elementDamageBoostAst = [0, 0, 0, 0]
+targetResistDownAdv = [0, 0]
+targetResistDownAst = [0, 0]
+powerBoostAdv = [0, 0, 0, 0]
+powerBoostAst = [0, 0, 0, 0]
 ultRatio = 0.0
 counterRateBase = 0.0
 critRateBase = 0.0
 penRateBase = 0.0
 bossPowerUp = 0
 # Adv Stats
-power=[0,0,0,0]
-counterBoost=[0, 0, 0, 0.0]
-critPenBoost=[0, 0, 0, 0]
-chaseCount=[0,0,0,0]
+power = [0, 0, 0, 0]
+counterBoost = [0, 0, 0, 0.0]
+critPenBoost = [0, 0, 0, 0]
+chaseCount = [0, 0, 0, 0]
 maxHaruMP = 0
 currentHaruMP = 0
 # AssistsIn
-targetResistDownAst=[-0.0, -0.0]
-elementDamageBoostAst=[0.0, 0.0, 0.0, 0.0]
-powerBoostAst=[0.0, 0.0, 0.0, 0.0]
-typeResistDownAst=[-0.0, -0.0, -0.0, -0.0]
-elementResistDownAst=[-0.0, -0.0, -0.0, -0.0]
+targetResistDownAst = [-0.0, -0.0]
+elementDamageBoostAst = [0.0, 0.0, 0.0, 0.0]
+powerBoostAst = [0.0, 0.0, 0.0, 0.0]
+typeResistDownAst = [-0.0, -0.0, -0.0, -0.0]
+elementResistDownAst = [-0.0, -0.0, -0.0, -0.0]
 # Special Parameter
-missBoost = [0,0,0,0]
+missBoost = [0, 0, 0, 0]
 defense = 100
 # Printing
-logprint = [1,1,1,1]
+logprint = [1, 1, 1, 1]
 counterprint = 1
 totaldamageprint = 1
-##################  
+##################
 # RB Clear Skill #
 ##################
 def RevisPowerUp():
-  global bossPowerUp
-  bossPowerUp = 1
+    global bossPowerUp
+    bossPowerUp = 1
+
+
 def RiveriaPowerUp():
-  global bossPowerUp
-  bossPowerUp = 1  
+    global bossPowerUp
+    bossPowerUp = 1
+
+
 def RevisAdd():
-  global typeResistDownAdv
-  global bossPowerUp
-  typeResistDownAdv=np.minimum([-0.0, -0.7, -0.7, -0.7],typeResistDownAdv)
-  bossPowerUp = 1
+    global typeResistDownAdv
+    global bossPowerUp
+    typeResistDownAdv = np.minimum([-0.0, -0.7, -0.7, -0.7], typeResistDownAdv)
+    bossPowerUp = 1
+
+
 def RevisInitial():
-  global typeResistDownAdv
-  typeResistDownAdv=np.minimum([-0.0, -0.7, -0.7, -0.7],typeResistDownAdv)
-  #print(typeResistDownAdv)
+    global typeResistDownAdv
+    typeResistDownAdv = np.minimum([-0.0, -0.7, -0.7, -0.7], typeResistDownAdv)
+    # print(typeResistDownAdv)
+
+
 def RevisClear():
-  global elementResistDownAdv
-  global typeResistDownAdv
-  global targetResistDownAdv
-  elementResistDownAdv=[0, 0, 0, 0]
-  typeResistDownAdv=[0, 0, 0, 0]
-  targetResistDownAdv=[0, 0]
+    global elementResistDownAdv
+    global typeResistDownAdv
+    global targetResistDownAdv
+    elementResistDownAdv = [0, 0, 0, 0]
+    typeResistDownAdv = [0, 0, 0, 0]
+    targetResistDownAdv = [0, 0]
+
+
 def RiveriaClear():
-  global elementDamageBoostAdv
-  global powerBoostAdv
-  elementDamageBoostAdv=[0, 0, 0, 0]
-  powerBoostAdv=[0, 0, 0, 0]  
+    global elementDamageBoostAdv
+    global powerBoostAdv
+    elementDamageBoostAdv = [0, 0, 0, 0]
+    powerBoostAdv = [0, 0, 0, 0]
+
+
 def FinnClear():
-  global elementResistDownAdv
-  global typeResistDownAdv
-  global targetResistDownAdv  
-  global elementDamageBoostAdv
-  global powerBoostAdv
-  elementResistDownAdv=[0, 0, 0, 0]
-  typeResistDownAdv=[0, 0, 0, 0]
-  targetResistDownAdv=[0, 0]
-  elementDamageBoostAdv=[0, 0, 0, 0]
-  powerBoostAdv=[0, 0, 0, 0]  
+    global elementResistDownAdv
+    global typeResistDownAdv
+    global targetResistDownAdv
+    global elementDamageBoostAdv
+    global powerBoostAdv
+    elementResistDownAdv = [0, 0, 0, 0]
+    typeResistDownAdv = [0, 0, 0, 0]
+    targetResistDownAdv = [0, 0]
+    elementDamageBoostAdv = [0, 0, 0, 0]
+    powerBoostAdv = [0, 0, 0, 0]
+
+
 def FinnAdd():
-  global powerBoostAdv  
-  global bossPowerUp
-  powerBoostAdv=[1.5, 1.5, 1.5, 1.5]
-  bossPowerUp = 2  
+    global powerBoostAdv
+    global bossPowerUp
+    powerBoostAdv = [1.5, 1.5, 1.5, 1.5]
+    bossPowerUp = 2
+
+
 def OttarlClear():
-  global elementDamageBoostAdv
-  global powerBoostAdv
-  elementDamageBoostAdv=[0, 0, 0, 0]
-  powerBoostAdv=[0, 0, 0, 0]    
+    global elementDamageBoostAdv
+    global powerBoostAdv
+    elementDamageBoostAdv = [0, 0, 0, 0]
+    powerBoostAdv = [0, 0, 0, 0]
+
+
 def Clear1():
-  global elementDamageBoostAdv
-  global powerBoostAdv
-  elementDamageBoostAdv[0]=0
-  powerBoostAdv[0]=0  
+    global elementDamageBoostAdv
+    global powerBoostAdv
+    elementDamageBoostAdv[0] = 0
+    powerBoostAdv[0] = 0
+
+
 def ManaRegen():
-  global currentHaruMP
-  global maxHaruMP
-  currentHaruMP = min(currentHaruMP+25,maxHaruMP)
+    global currentHaruMP
+    global maxHaruMP
+    currentHaruMP = min(currentHaruMP + 25, maxHaruMP)
+
+
 def magresistbreak():
-  global typeResistDownAdv
-  typeResistDownAdv=[-0.0, -0.0, -0.0, -0.0]
+    global typeResistDownAdv
+    typeResistDownAdv = [-0.0, -0.0, -0.0, -0.0]
+
+
 ###################
 # Damage Function #
 ###################
 def DamageFunction(
-    location = 0,
-    target = 'Single',
-    tempBoost = 'None',
-    powerCoefficient = 'Low',
-    extraBoost = 1, # Typical value is 1, should be 1+XX%*X
-    NoType = 0
-    ):
-  global totalDamage 
-  global accumulateDamage 
-  if target == 'Single':
-    targetTemp = 0
-    if tempBoost == 'None':
-      tempBoostTemp = 1.0
-    elif tempBoost == 'Normal':   
-      tempBoostTemp = 1.3
-    elif tempBoost == 'Normal2':   
-      tempBoostTemp = 1.4     
-    else:   
-      tempBoostTemp = 1.6   
-    if powerCoefficient == 'Low':
-      powerCoefficientTemp = 1.5
-    elif powerCoefficient == 'Mid':
-      powerCoefficientTemp = 1.7
-    elif powerCoefficient == 'High':
-      powerCoefficientTemp = 1.9
-    elif powerCoefficient == 'Super':
-      powerCoefficientTemp = 2.1
-    elif powerCoefficient == 'Magic':
-      powerCoefficientTemp = 0.75
+    location=0,
+    target="Single",
+    tempBoost="None",
+    powerCoefficient="Low",
+    extraBoost=1,  # Typical value is 1, should be 1+XX%*X
+    NoType=0,
+):
+    global totalDamage
+    global accumulateDamage
+    if target == "Single":
+        targetTemp = 0
+        if tempBoost == "None":
+            tempBoostTemp = 1.0
+        elif tempBoost == "Normal":
+            tempBoostTemp = 1.3
+        elif tempBoost == "Normal2":
+            tempBoostTemp = 1.4
+        else:
+            tempBoostTemp = 1.6
+        if powerCoefficient == "Low":
+            powerCoefficientTemp = 1.5
+        elif powerCoefficient == "Mid":
+            powerCoefficientTemp = 1.7
+        elif powerCoefficient == "High":
+            powerCoefficientTemp = 1.9
+        elif powerCoefficient == "Super":
+            powerCoefficientTemp = 2.1
+        elif powerCoefficient == "Magic":
+            powerCoefficientTemp = 0.75
+        else:
+            powerCoefficientTemp = 1.0
     else:
-      powerCoefficientTemp = 1.0        
-  else:
-    targetTemp = 1
-    if tempBoost == 'None':
-      tempBoostTemp = 1.0
-    elif tempBoost == 'Normal':   
-      tempBoostTemp = 1.4
-    else:   
-      tempBoostTemp = 1.7      
-    if powerCoefficient == 'Low':
-      powerCoefficientTemp = 1.1
-    elif powerCoefficient == 'Mid':
-      powerCoefficientTemp = 1.15
-    elif powerCoefficient == 'High':
-      powerCoefficientTemp = 1.2
-    elif powerCoefficient == 'Super':
-      powerCoefficientTemp = 1.4            
-  tempDamage = (2*power[location]*tempBoostTemp*(1+powerBoostAdv[location]+powerBoostAst[location])-defense)*\
-               (1-(1-NoType)*elementResistDownBase[location]-(1-NoType)*elementResistDownAdv[location]\
-                -(1-NoType)*elementResistDownAst[location]-typeResistDownBase[location]\
-                -typeResistDownAdv[location]-typeResistDownAst[location])*\
-               (1+(1-NoType)*elementDamageBoostAdv[location]+(1-NoType)*elementDamageBoostAst[location])*\
-               (1+critPenBoost[location])*\
-               (1-targetResistDownAdv[targetTemp]-targetResistDownAst[targetTemp])*\
-               powerCoefficientTemp*1.5*(extraBoost)
-  totalDamage = totalDamage + tempDamage 
-  accumulateDamage[location] = accumulateDamage[location] + tempDamage
-  return tempDamage
+        targetTemp = 1
+        if tempBoost == "None":
+            tempBoostTemp = 1.0
+        elif tempBoost == "Normal":
+            tempBoostTemp = 1.4
+        else:
+            tempBoostTemp = 1.7
+        if powerCoefficient == "Low":
+            powerCoefficientTemp = 1.1
+        elif powerCoefficient == "Mid":
+            powerCoefficientTemp = 1.15
+        elif powerCoefficient == "High":
+            powerCoefficientTemp = 1.2
+        elif powerCoefficient == "Super":
+            powerCoefficientTemp = 1.4
+    tempDamage = (
+        (
+            2
+            * power[location]
+            * tempBoostTemp
+            * (1 + powerBoostAdv[location] + powerBoostAst[location])
+            - defense
+        )
+        * (
+            1
+            - (1 - NoType) * elementResistDownBase[location]
+            - (1 - NoType) * elementResistDownAdv[location]
+            - (1 - NoType) * elementResistDownAst[location]
+            - typeResistDownBase[location]
+            - typeResistDownAdv[location]
+            - typeResistDownAst[location]
+        )
+        * (
+            1
+            + (1 - NoType) * elementDamageBoostAdv[location]
+            + (1 - NoType) * elementDamageBoostAst[location]
+        )
+        * (1 + critPenBoost[location])
+        * (1 - targetResistDownAdv[targetTemp] - targetResistDownAst[targetTemp])
+        * powerCoefficientTemp
+        * 1.5
+        * (extraBoost)
+    )
+    totalDamage = totalDamage + tempDamage
+    accumulateDamage[location] = accumulateDamage[location] + tempDamage
+    return tempDamage
+
+
 def CounterDamageFunction(
-    location = 0,
-    target = 'Single',
-    tempBoost = 'None',
-    powerCoefficient = 'Low',
-    extraBoost = 1, # Typical value is 1, should be 1+XX%*X
-    NoType = 0
-    ):
-  global totalDamage 
-  global accumulateDamage 
-  if target == 'Single':
-    targetTemp = 0
-    if tempBoost == 'None':
-      tempBoostTemp = 1.0
-    elif tempBoost == 'Normal':   
-      tempBoostTemp = 1.3
-    else:   
-      tempBoostTemp = 1.6   
-    if powerCoefficient == 'Low':
-      powerCoefficientTemp = 1.5
-    elif powerCoefficient == 'Mid':
-      powerCoefficientTemp = 1.7
-    elif powerCoefficient == 'High':
-      powerCoefficientTemp = 1.9
-    elif powerCoefficient == 'Super':
-      powerCoefficientTemp = 2.1
-    elif powerCoefficient == 'Magic': # Magic Normal Attach/Counter
-      powerCoefficientTemp = 0.75
+    location=0,
+    target="Single",
+    tempBoost="None",
+    powerCoefficient="Low",
+    extraBoost=1,  # Typical value is 1, should be 1+XX%*X
+    NoType=0,
+):
+    global totalDamage
+    global accumulateDamage
+    if target == "Single":
+        targetTemp = 0
+        if tempBoost == "None":
+            tempBoostTemp = 1.0
+        elif tempBoost == "Normal":
+            tempBoostTemp = 1.3
+        else:
+            tempBoostTemp = 1.6
+        if powerCoefficient == "Low":
+            powerCoefficientTemp = 1.5
+        elif powerCoefficient == "Mid":
+            powerCoefficientTemp = 1.7
+        elif powerCoefficient == "High":
+            powerCoefficientTemp = 1.9
+        elif powerCoefficient == "Super":
+            powerCoefficientTemp = 2.1
+        elif powerCoefficient == "Magic":  # Magic Normal Attach/Counter
+            powerCoefficientTemp = 0.75
+        else:
+            powerCoefficientTemp = 1.0
     else:
-      powerCoefficientTemp = 1.0        
-  else:
-    targetTemp = 1
-    if tempBoost == 'None':
-      tempBoostTemp = 1.0
-    elif tempBoost == 'Normal':   
-      tempBoostTemp = 1.4
-    else:   
-      tempBoostTemp = 1.7      
-    if powerCoefficient == 'Low':
-      powerCoefficientTemp = 1.1
-    elif powerCoefficient == 'Mid':
-      powerCoefficientTemp = 1.15
-    elif powerCoefficient == 'High':
-      powerCoefficientTemp = 1.2
-    elif powerCoefficient == 'Super':
-      powerCoefficientTemp = 1.4            
-  tempDamage = (2*power[location]*tempBoostTemp*(1+powerBoostAdv[location]+powerBoostAst[location])-defense)*\
-               (1-(1-NoType)*elementResistDownBase[location]-(1-NoType)*elementResistDownAdv[location]\
-                -(1-NoType)*elementResistDownAst[location]-typeResistDownBase[location]\
-                -typeResistDownAdv[location]-typeResistDownAst[location])*\
-               (1+(1-NoType)*elementDamageBoostAdv[location]+(1-NoType)*elementDamageBoostAst[location])*\
-               (1+critPenBoost[location]+counterBoost[location])*\
-               (1-targetResistDownAdv[targetTemp]-targetResistDownAst[targetTemp])*\
-               powerCoefficientTemp*1.5*(extraBoost)*counterRate
-  totalDamage = totalDamage + tempDamage 
-  accumulateDamage[location] = accumulateDamage[location] + tempDamage
-  return tempDamage
+        targetTemp = 1
+        if tempBoost == "None":
+            tempBoostTemp = 1.0
+        elif tempBoost == "Normal":
+            tempBoostTemp = 1.4
+        else:
+            tempBoostTemp = 1.7
+        if powerCoefficient == "Low":
+            powerCoefficientTemp = 1.1
+        elif powerCoefficient == "Mid":
+            powerCoefficientTemp = 1.15
+        elif powerCoefficient == "High":
+            powerCoefficientTemp = 1.2
+        elif powerCoefficient == "Super":
+            powerCoefficientTemp = 1.4
+    tempDamage = (
+        (
+            2
+            * power[location]
+            * tempBoostTemp
+            * (1 + powerBoostAdv[location] + powerBoostAst[location])
+            - defense
+        )
+        * (
+            1
+            - (1 - NoType) * elementResistDownBase[location]
+            - (1 - NoType) * elementResistDownAdv[location]
+            - (1 - NoType) * elementResistDownAst[location]
+            - typeResistDownBase[location]
+            - typeResistDownAdv[location]
+            - typeResistDownAst[location]
+        )
+        * (
+            1
+            + (1 - NoType) * elementDamageBoostAdv[location]
+            + (1 - NoType) * elementDamageBoostAst[location]
+        )
+        * (1 + critPenBoost[location] + counterBoost[location])
+        * (1 - targetResistDownAdv[targetTemp] - targetResistDownAst[targetTemp])
+        * powerCoefficientTemp
+        * 1.5
+        * (extraBoost)
+        * counterRate
+    )
+    totalDamage = totalDamage + tempDamage
+    accumulateDamage[location] = accumulateDamage[location] + tempDamage
+    return tempDamage
+
+
 def SADamageFunction(
-    location = 0,
-    target = 'Single',
-    tempBoost = 'None',
-    powerCoefficient = 'Low',
-    extraBoost = 1, # Typical value is 1, should be 1+XX%*X
-    combo = 1,
-    ):
-  global totalDamage 
-  global accumulateDamage 
-  if tempBoost == 'None':
-    tempBoostTemp = 1.0
-  elif tempBoost == 'Normal':   
-    tempBoostTemp = 1.4
-  else:   
-    tempBoostTemp = 1.7     
-  if target == 'Single':
-    targetTemp = 0
-    if powerCoefficient == 'Low':
-      powerCoefficientTemp = 1.5
-    elif powerCoefficient == 'Mid':
-      powerCoefficientTemp = 1.7
-    elif powerCoefficient == 'High':
-      powerCoefficientTemp = 1.9
-    elif powerCoefficient == 'Super':
-      powerCoefficientTemp = 2.1
-    elif powerCoefficient == 'Ultra':
-      powerCoefficientTemp = 4.0        
-  else:
-    targetTemp = 1    
-    if powerCoefficient == 'Low':
-      powerCoefficientTemp = 1.1
-    elif powerCoefficient == 'Mid':
-      powerCoefficientTemp = 1.15
-    elif powerCoefficient == 'High':
-      powerCoefficientTemp = 1.2
-    elif powerCoefficient == 'Super':
-      powerCoefficientTemp = 1.4 
-    elif powerCoefficient == 'Ultra':
-      powerCoefficientTemp = 3.6             
-  tempDamage = (2*power[location]*tempBoostTemp*(1+powerBoostAdv[location]+powerBoostAst[location])-defense)*\
-               (1-elementResistDownBase[location]-elementResistDownAdv[location]\
-                -elementResistDownAst[location]-typeResistDownBase[location]\
-                -typeResistDownAdv[location]-typeResistDownAst[location])*\
-               (1+elementDamageBoostAdv[location]+elementDamageBoostAst[location])*\
-               (1+critPenBoost[location])*\
-               (1-targetResistDownAdv[targetTemp]-targetResistDownAst[targetTemp])*\
-               powerCoefficientTemp*1.5*(extraBoost)*(0.8+combo*0.2)*ultRatio 
-  totalDamage = totalDamage + tempDamage 
-  accumulateDamage[location] = accumulateDamage[location] + tempDamage
-  return tempDamage
-def OverwriteDamageFunction(
-    location = 0,
-    target = 'Single',
-    tempBoost = 'None',
-    powerCoefficient = 'Low',
-    extraBoost = 1, # Typical value is 1, should be 1+XX%*X
-    ):
-  global totalDamage 
-  global accumulateDamage 
-  if target == 'Single':
-    targetTemp = 0
-    if tempBoost == 'None':
-      tempBoostTemp = 1.0
-    elif tempBoost == 'Normal':   
-      tempBoostTemp = 1.3
-    elif tempBoost == 'Normal2':   
-      tempBoostTemp = 1.4     
-    else:   
-      tempBoostTemp = 1.6   
-    if powerCoefficient == 'Low':
-      powerCoefficientTemp = 1.5
-    elif powerCoefficient == 'Mid':
-      powerCoefficientTemp = 1.7
-    elif powerCoefficient == 'High':
-      powerCoefficientTemp = 1.9
-    elif powerCoefficient == 'Super':
-      powerCoefficientTemp = 2.1
-    elif powerCoefficient == 'Magic':
-      powerCoefficientTemp = 0.75
+    location=0,
+    target="Single",
+    tempBoost="None",
+    powerCoefficient="Low",
+    extraBoost=1,  # Typical value is 1, should be 1+XX%*X
+    combo=1,
+):
+    global totalDamage
+    global accumulateDamage
+    if tempBoost == "None":
+        tempBoostTemp = 1.0
+    elif tempBoost == "Normal":
+        tempBoostTemp = 1.4
     else:
-      powerCoefficientTemp = 1.0        
-  else:
-    targetTemp = 1
-    if tempBoost == 'None':
-      tempBoostTemp = 1.0
-    elif tempBoost == 'Normal':   
-      tempBoostTemp = 1.4
-    else:   
-      tempBoostTemp = 1.7      
-    if powerCoefficient == 'Low':
-      powerCoefficientTemp = 1.1
-    elif powerCoefficient == 'Mid':
-      powerCoefficientTemp = 1.15
-    elif powerCoefficient == 'High':
-      powerCoefficientTemp = 1.2
-    elif powerCoefficient == 'Super':
-      powerCoefficientTemp = 1.4     
-  """       
+        tempBoostTemp = 1.7
+    if target == "Single":
+        targetTemp = 0
+        if powerCoefficient == "Low":
+            powerCoefficientTemp = 1.5
+        elif powerCoefficient == "Mid":
+            powerCoefficientTemp = 1.7
+        elif powerCoefficient == "High":
+            powerCoefficientTemp = 1.9
+        elif powerCoefficient == "Super":
+            powerCoefficientTemp = 2.1
+        elif powerCoefficient == "Ultra":
+            powerCoefficientTemp = 4.0
+    else:
+        targetTemp = 1
+        if powerCoefficient == "Low":
+            powerCoefficientTemp = 1.1
+        elif powerCoefficient == "Mid":
+            powerCoefficientTemp = 1.15
+        elif powerCoefficient == "High":
+            powerCoefficientTemp = 1.2
+        elif powerCoefficient == "Super":
+            powerCoefficientTemp = 1.4
+        elif powerCoefficient == "Ultra":
+            powerCoefficientTemp = 3.6
+    tempDamage = (
+        (
+            2
+            * power[location]
+            * tempBoostTemp
+            * (1 + powerBoostAdv[location] + powerBoostAst[location])
+            - defense
+        )
+        * (
+            1
+            - elementResistDownBase[location]
+            - elementResistDownAdv[location]
+            - elementResistDownAst[location]
+            - typeResistDownBase[location]
+            - typeResistDownAdv[location]
+            - typeResistDownAst[location]
+        )
+        * (1 + elementDamageBoostAdv[location] + elementDamageBoostAst[location])
+        * (1 + critPenBoost[location])
+        * (1 - targetResistDownAdv[targetTemp] - targetResistDownAst[targetTemp])
+        * powerCoefficientTemp
+        * 1.5
+        * (extraBoost)
+        * (0.8 + combo * 0.2)
+        * ultRatio
+    )
+    totalDamage = totalDamage + tempDamage
+    accumulateDamage[location] = accumulateDamage[location] + tempDamage
+    return tempDamage
+
+
+def OverwriteDamageFunction(
+    location=0,
+    target="Single",
+    tempBoost="None",
+    powerCoefficient="Low",
+    extraBoost=1,  # Typical value is 1, should be 1+XX%*X
+):
+    global totalDamage
+    global accumulateDamage
+    if target == "Single":
+        targetTemp = 0
+        if tempBoost == "None":
+            tempBoostTemp = 1.0
+        elif tempBoost == "Normal":
+            tempBoostTemp = 1.3
+        elif tempBoost == "Normal2":
+            tempBoostTemp = 1.4
+        else:
+            tempBoostTemp = 1.6
+        if powerCoefficient == "Low":
+            powerCoefficientTemp = 1.5
+        elif powerCoefficient == "Mid":
+            powerCoefficientTemp = 1.7
+        elif powerCoefficient == "High":
+            powerCoefficientTemp = 1.9
+        elif powerCoefficient == "Super":
+            powerCoefficientTemp = 2.1
+        elif powerCoefficient == "Magic":
+            powerCoefficientTemp = 0.75
+        else:
+            powerCoefficientTemp = 1.0
+    else:
+        targetTemp = 1
+        if tempBoost == "None":
+            tempBoostTemp = 1.0
+        elif tempBoost == "Normal":
+            tempBoostTemp = 1.4
+        else:
+            tempBoostTemp = 1.7
+        if powerCoefficient == "Low":
+            powerCoefficientTemp = 1.1
+        elif powerCoefficient == "Mid":
+            powerCoefficientTemp = 1.15
+        elif powerCoefficient == "High":
+            powerCoefficientTemp = 1.2
+        elif powerCoefficient == "Super":
+            powerCoefficientTemp = 1.4
+    """       
   tempDamage = (2*power[location]*tempBoostTemp*(1+powerBoostAdv[location]+powerBoostAst[location])-defense)*\
                (1-elementResistDownBase[location]-elementResistDownAdv[location]\
                 -elementResistDownAst[location]-typeResistDownBase[location]\
@@ -341,306 +431,359 @@ def OverwriteDamageFunction(
                (1-targetResistDownAdv[targetTemp]-targetResistDownAst[targetTemp])*\
                powerCoefficientTemp*1.5*(extraBoost)
   """
-  tempDamage = (2*power[location]*tempBoostTemp*(1+powerBoostAdv[location]+powerBoostAst[location])-defense)*\
-               (1-elementResistDownBase[1]-elementResistDownAdv[1]\
-                -elementResistDownAst[1]-typeResistDownBase[location]\
-                -typeResistDownAdv[location]-typeResistDownAst[location])*\
-               (1+elementDamageBoostAdv[1]+elementDamageBoostAst[location])*\
-               (1+critPenBoost[location])*\
-               (1-targetResistDownAdv[targetTemp]-targetResistDownAst[targetTemp])*\
-               powerCoefficientTemp*1.5*(extraBoost)             
-  totalDamage = totalDamage + tempDamage 
-  accumulateDamage[location] = accumulateDamage[location] + tempDamage
-  return tempDamage
-#########    
+    tempDamage = (
+        (
+            2
+            * power[location]
+            * tempBoostTemp
+            * (1 + powerBoostAdv[location] + powerBoostAst[location])
+            - defense
+        )
+        * (
+            1
+            - elementResistDownBase[1]
+            - elementResistDownAdv[1]
+            - elementResistDownAst[1]
+            - typeResistDownBase[location]
+            - typeResistDownAdv[location]
+            - typeResistDownAst[location]
+        )
+        * (1 + elementDamageBoostAdv[1] + elementDamageBoostAst[location])
+        * (1 + critPenBoost[location])
+        * (1 - targetResistDownAdv[targetTemp] - targetResistDownAst[targetTemp])
+        * powerCoefficientTemp
+        * 1.5
+        * (extraBoost)
+    )
+    totalDamage = totalDamage + tempDamage
+    accumulateDamage[location] = accumulateDamage[location] + tempDamage
+    return tempDamage
+
+
+#########
 # Debug #
 #########
 def DebugPrint():
-  global elementResistDownAdv
-  global typeResistDownAdv
-  global elementDamageBoostAdv
-  global targetResistDownAdv
-  global powerBoostAdv
-  print('elementResistDownAdv is:')
-  print(elementResistDownAdv)
-  print('typeResistDownAdv is:')
-  print(typeResistDownAdv)
-  print('elementDamageBoostAdv is:')
-  print(elementDamageBoostAdv)
-  print('targetResistDownAdv is:')
-  print(targetResistDownAdv)
-  print('powerBoostAdv is:')
-  print(powerBoostAdv)
-  print('chaseCount is:')
-  print(chaseCount)  
-    
-########    
-# Haru #
-########  
-def HaruS1():
-  global totalDamage
-  global accumulateDamage  
-  global typeResistDownAdv
-  tempDamage = DamageFunction(
-      location = 0,
-      target = 'AOE',
-      tempBoost = 'None',
-      powerCoefficient = 'Mid',
-      extraBoost = 1,
-      )
-  if logprint[0] == 1:
-    print('Haru S1 damage is {}'.format(np.floor(tempDamage).item()))         
-def HaruS2():
-  return 0  
-def HaruS3():
-  global totalDamage
-  global accumulateDamage  
-  global typeResistDownAdv
-  tempDamage = DamageFunction(
-      location = 0,
-      target = 'AOE',
-      tempBoost = 'None',
-      powerCoefficient = 'Super',
-      extraBoost = 1,
-      )
-  if logprint[0] == 1:
-    print('Haru S3 damage is {}'.format(np.floor(tempDamage).item()))   
-def HaruSA(combo=0):  
-  global powerBoostAdv
-  powerBoostAdv=np.maximum([1.2, 1.2, 1.2, 1.2], powerBoostAdv)
+    global elementResistDownAdv
+    global typeResistDownAdv
+    global elementDamageBoostAdv
+    global targetResistDownAdv
+    global powerBoostAdv
+    print("elementResistDownAdv is:")
+    print(elementResistDownAdv)
+    print("typeResistDownAdv is:")
+    print(typeResistDownAdv)
+    print("elementDamageBoostAdv is:")
+    print(elementDamageBoostAdv)
+    print("targetResistDownAdv is:")
+    print(targetResistDownAdv)
+    print("powerBoostAdv is:")
+    print(powerBoostAdv)
+    print("chaseCount is:")
+    print(chaseCount)
 
-########    
+
+########
+# Haru #
+########
+def HaruS1():
+    global totalDamage
+    global accumulateDamage
+    global typeResistDownAdv
+    tempDamage = DamageFunction(
+        location=0,
+        target="AOE",
+        tempBoost="None",
+        powerCoefficient="Mid",
+        extraBoost=1,
+    )
+    if logprint[0] == 1:
+        print("Haru S1 damage is {}".format(np.floor(tempDamage).item()))
+
+
+def HaruS2():
+    return 0
+
+
+def HaruS3():
+    global totalDamage
+    global accumulateDamage
+    global typeResistDownAdv
+    tempDamage = DamageFunction(
+        location=0,
+        target="AOE",
+        tempBoost="None",
+        powerCoefficient="Super",
+        extraBoost=1,
+    )
+    if logprint[0] == 1:
+        print("Haru S3 damage is {}".format(np.floor(tempDamage).item()))
+
+
+def HaruSA(combo=0):
+    global powerBoostAdv
+    powerBoostAdv = np.maximum([1.2, 1.2, 1.2, 1.2], powerBoostAdv)
+
+
+########
 # Bell #
 ########
 def BellS1():
-  global totalDamage
-  global accumulateDamage  
-  global typeResistDownAdv
-  tempDamage = DamageFunction(
-      location = 1,
-      target = 'AOE',
-      tempBoost = 'None',
-      powerCoefficient = 'Mid',
-      extraBoost = 1,
-      )
-  if logprint[1] == 1:
-    print('Bell S1 damage is {}'.format(np.floor(tempDamage).item()))         
-  typeResistDownAdv=np.minimum([-0.40, -0.40, -0.40, -0.40],typeResistDownAdv)
-  BellChase()
-  chaseCount[1] = 3   
-def BellS2():
-  global elementDamageBoostAdv
-  global powerBoostAdv
-  global totalDamage
-  global accumulateDamage    
-  tempDamage = DamageFunction(
-      location = 1,
-      target = 'AOE',
-      tempBoost = 'None',
-      powerCoefficient = 'High',
-      extraBoost = 1,
-      )
-  if logprint[1] == 1:
-    print('Bell S2 damage is {}'.format(np.floor(tempDamage).item()))     
-  elementDamageBoostAdv=np.maximum([0.0, 0.70, 0.0, 0.0], elementDamageBoostAdv)
-  powerBoostAdv=np.maximum([0.0, 0.70, 0.0, 0.0], powerBoostAdv)  
-  BellChase()
-def BellS3():
-  global totalDamage
-  global accumulateDamage  
-  tempDamage = DamageFunction(
-      location = 1,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Super',
-      extraBoost = 2.6,
-      )
-  if logprint[1] == 1:
-    print('Bell S3 damage is {}'.format(np.floor(tempDamage).item()))  
-  BellChase()  
-def BellSA(Combo=1):
-  global elementDamageBoostAdv
-  global totalDamage  
-  global accumulateDamage
-  tempDamage = SADamageFunction(
-    location = 1,
-    target = 'AOE',
-    tempBoost = 'Great',
-    powerCoefficient = 'Ultra',
-    extraBoost = 1.0,
-    combo = Combo,
-    )            
-  if logprint[1] == 1:
-    print('Bell SA damage is {}'.format(np.floor(tempDamage).item()))     
-  elementDamageBoostAdv=np.maximum([0.0, 1.0, 1.0, 1.0], elementDamageBoostAdv)    
-def BellChase():
-  global chaseCount
-  global totalDamage
-  global accumulateDamage  
-  if chaseCount[1] > 0.5:
+    global totalDamage
+    global accumulateDamage
+    global typeResistDownAdv
     tempDamage = DamageFunction(
-      location = 1,
-      target = 'AOE',
-      tempBoost = 'None',
-      powerCoefficient = 'Mid',
-      extraBoost = 1,
-      )
+        location=1,
+        target="AOE",
+        tempBoost="None",
+        powerCoefficient="Mid",
+        extraBoost=1,
+    )
     if logprint[1] == 1:
-      print('Bell chase damage is {}'.format(np.floor(tempDamage).item()))
-    chaseCount[1] = chaseCount[1] - 1  
+        print("Bell S1 damage is {}".format(np.floor(tempDamage).item()))
+    typeResistDownAdv = np.minimum([-0.40, -0.40, -0.40, -0.40], typeResistDownAdv)
+    BellChase()
+    chaseCount[1] = 3
 
-########    
-# Welf #
-######## 
-def WelfS1(): 
-  global elementDamageBoostAdv
-  global powerBoostAdv  
-  global totalDamage 
-  global accumulateDamage  
-  global targetResistDownAdv
-  tempDamage = DamageFunction(
-      location = 2,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Mid',
-      extraBoost = 1,
-      )
-  if logprint[2] == 1:
-    print('Welf S1 damage is {}'.format(np.floor(tempDamage).item())) 
-  powerBoostAdv=np.maximum([0.0, 0.0, 1.0, 0.0], powerBoostAdv);    
-  targetResistDownAdv=np.minimum([-0.25, -0.0],targetResistDownAdv)  
-  WelfChase()     
-def WelfS2():   
-  global totalDamage 
-  global accumulateDamage  
-  global elementDamageBoostAdv
-  tempDamage = DamageFunction(
-      location = 2,
-      target = 'Single',
-      tempBoost = 'Normal',
-      powerCoefficient = 'High',
-      extraBoost = 1,
-      )
-  if logprint[2] == 1:
-    print('Welf S2 damage is {}'.format(np.floor(tempDamage).item()))
-  elementDamageBoostAdv=np.maximum([0.0, 0.0, 0.6, 0.0], elementDamageBoostAdv)   
-  WelfChase() 
-  chaseCount[2] = 3 
-def WelfS3():   
-  global powerBoostAdv    
-  global totalDamage 
-  global accumulateDamage  
-  tempDamage = DamageFunction(
-      location = 2,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Super',
-      extraBoost = 2.6,
-      )
-  if logprint[2] == 1:
-    print('Welf S3 damage is {}'.format(np.floor(tempDamage).item()))
-  WelfChase() 
-def WelfSA(Combo=1):
-  global totalDamage  
-  global accumulateDamage
-  global elementDamageBoostAdv
-  global powerBoostAdv  
-  tempDamage = SADamageFunction(
-    location = 2,
-    target = 'Single',
-    tempBoost = 'Great',
-    powerCoefficient = 'Ultra',
-    extraBoost = 1,
-    combo = Combo,
-    )            
-  if logprint[2] == 1:
-    print('Welf SA damage is {}'.format(np.floor(tempDamage).item()))
-  powerBoostAdv=np.maximum([0.75, 0.75, 0.75, 0.75], powerBoostAdv);  
-  elementDamageBoostAdv=np.maximum([0.0, 0.75, 0.75, 0.75], elementDamageBoostAdv)    
-def WelfChase():
-  global chaseCount
-  global totalDamage
-  global accumulateDamage  
-  if chaseCount[2] > 0.5:
+
+def BellS2():
+    global elementDamageBoostAdv
+    global powerBoostAdv
+    global totalDamage
+    global accumulateDamage
     tempDamage = DamageFunction(
-      location = 2,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Mid',
-      extraBoost = 1,
-      )
+        location=1,
+        target="AOE",
+        tempBoost="None",
+        powerCoefficient="High",
+        extraBoost=1,
+    )
+    if logprint[1] == 1:
+        print("Bell S2 damage is {}".format(np.floor(tempDamage).item()))
+    elementDamageBoostAdv = np.maximum([0.0, 0.70, 0.0, 0.0], elementDamageBoostAdv)
+    powerBoostAdv = np.maximum([0.0, 0.70, 0.0, 0.0], powerBoostAdv)
+    BellChase()
+
+
+def BellS3():
+    global totalDamage
+    global accumulateDamage
+    tempDamage = DamageFunction(
+        location=1,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Super",
+        extraBoost=2.6,
+    )
+    if logprint[1] == 1:
+        print("Bell S3 damage is {}".format(np.floor(tempDamage).item()))
+    BellChase()
+
+
+def BellSA(Combo=1):
+    global elementDamageBoostAdv
+    global totalDamage
+    global accumulateDamage
+    tempDamage = SADamageFunction(
+        location=1,
+        target="AOE",
+        tempBoost="Great",
+        powerCoefficient="Ultra",
+        extraBoost=1.0,
+        combo=Combo,
+    )
+    if logprint[1] == 1:
+        print("Bell SA damage is {}".format(np.floor(tempDamage).item()))
+    elementDamageBoostAdv = np.maximum([0.0, 1.0, 1.0, 1.0], elementDamageBoostAdv)
+
+
+def BellChase():
+    global chaseCount
+    global totalDamage
+    global accumulateDamage
+    if chaseCount[1] > 0.5:
+        tempDamage = DamageFunction(
+            location=1,
+            target="AOE",
+            tempBoost="None",
+            powerCoefficient="Mid",
+            extraBoost=1,
+        )
+        if logprint[1] == 1:
+            print("Bell chase damage is {}".format(np.floor(tempDamage).item()))
+        chaseCount[1] = chaseCount[1] - 1
+
+
+########
+# Welf #
+########
+def WelfS1():
+    global elementDamageBoostAdv
+    global powerBoostAdv
+    global totalDamage
+    global accumulateDamage
+    global targetResistDownAdv
+    tempDamage = DamageFunction(
+        location=2,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Mid",
+        extraBoost=1,
+    )
     if logprint[2] == 1:
-      print('Welf chase damage is {}'.format(np.floor(tempDamage).item()))
-    chaseCount[2] = chaseCount[2] - 1   
-    
-########    
+        print("Welf S1 damage is {}".format(np.floor(tempDamage).item()))
+    powerBoostAdv = np.maximum([0.0, 0.0, 1.0, 0.0], powerBoostAdv)
+    targetResistDownAdv = np.minimum([-0.25, -0.0], targetResistDownAdv)
+    WelfChase()
+
+
+def WelfS2():
+    global totalDamage
+    global accumulateDamage
+    global elementDamageBoostAdv
+    tempDamage = DamageFunction(
+        location=2,
+        target="Single",
+        tempBoost="Normal",
+        powerCoefficient="High",
+        extraBoost=1,
+    )
+    if logprint[2] == 1:
+        print("Welf S2 damage is {}".format(np.floor(tempDamage).item()))
+    elementDamageBoostAdv = np.maximum([0.0, 0.0, 0.6, 0.0], elementDamageBoostAdv)
+    WelfChase()
+    chaseCount[2] = 3
+
+
+def WelfS3():
+    global powerBoostAdv
+    global totalDamage
+    global accumulateDamage
+    tempDamage = DamageFunction(
+        location=2,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Super",
+        extraBoost=2.6,
+    )
+    if logprint[2] == 1:
+        print("Welf S3 damage is {}".format(np.floor(tempDamage).item()))
+    WelfChase()
+
+
+def WelfSA(Combo=1):
+    global totalDamage
+    global accumulateDamage
+    global elementDamageBoostAdv
+    global powerBoostAdv
+    tempDamage = SADamageFunction(
+        location=2,
+        target="Single",
+        tempBoost="Great",
+        powerCoefficient="Ultra",
+        extraBoost=1,
+        combo=Combo,
+    )
+    if logprint[2] == 1:
+        print("Welf SA damage is {}".format(np.floor(tempDamage).item()))
+    powerBoostAdv = np.maximum([0.75, 0.75, 0.75, 0.75], powerBoostAdv)
+    elementDamageBoostAdv = np.maximum([0.0, 0.75, 0.75, 0.75], elementDamageBoostAdv)
+
+
+def WelfChase():
+    global chaseCount
+    global totalDamage
+    global accumulateDamage
+    if chaseCount[2] > 0.5:
+        tempDamage = DamageFunction(
+            location=2,
+            target="Single",
+            tempBoost="None",
+            powerCoefficient="Mid",
+            extraBoost=1,
+        )
+        if logprint[2] == 1:
+            print("Welf chase damage is {}".format(np.floor(tempDamage).item()))
+        chaseCount[2] = chaseCount[2] - 1
+
+
+########
 # Finn #
 ########
 def FinnS1():
-  global powerBoostAdv
-  global elementDamageBoostAdv
-  powerBoostAdv=np.maximum([0, 0.0, 0.0, 0.65], powerBoostAdv);
-  elementDamageBoostAdv=np.maximum([0, 0.0, 0.0, 0.65], elementDamageBoostAdv);  
-  FinnChase() 
-  chaseCount[3]=3    
+    global powerBoostAdv
+    global elementDamageBoostAdv
+    powerBoostAdv = np.maximum([0, 0.0, 0.0, 0.65], powerBoostAdv)
+    elementDamageBoostAdv = np.maximum([0, 0.0, 0.0, 0.65], elementDamageBoostAdv)
+    FinnChase()
+    chaseCount[3] = 3
+
+
 def FinnS2():
-  global totalDamage
-  global elementResistDownAdv
-  global typeResistDownAdv
-  tempDamage = DamageFunction(
-      location = 3,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Mid',
-      extraBoost = 1
-      )
-  if logprint[3] == 1:
-    print('Finn S3 damage is {}'.format(np.floor(tempDamage).item()))     
-  elementResistDownAdv=np.minimum([0, -0.3, -0.3, -0.3],elementResistDownAdv)
-  typeResistDownAdv=np.minimum([-0.0, -0.3, -0.3, -0.3],typeResistDownAdv); 
-  FinnChase() 
-def FinnS3():
-  global totalDamage
-  global elementDamageBoostAdv 
-  tempDamage = DamageFunction(
-      location = 3,
-      target = 'Single',
-      tempBoost = 'Normal',
-      powerCoefficient = 'Super',
-      extraBoost = 1
-      )  
-  if logprint[3] == 1:
-    print('Finn S3 damage is {}'.format(np.floor(tempDamage).item()))
-  FinnChase() 
-def FinnSA(Combo=1):
-  global totalDamage
-  global elementResistDownAdv
-  global typeResistDownAdv  
-  tempDamage = SADamageFunction(
-    location = 3,
-    target = 'Single',
-    tempBoost = 'None',
-    powerCoefficient = 'Ultra',
-    extraBoost = 1.9,
-    combo = Combo,
-    )     
-  if logprint[3] == 1:
-    print('Finn SA damage is {}'.format(np.floor(tempDamage).item()))
-def FinnChase():
-  global totalDamage
-  global accumulateDamage  
-  if chaseCount[3] > 0.5:  
+    global totalDamage
+    global elementResistDownAdv
+    global typeResistDownAdv
     tempDamage = DamageFunction(
-      location = 3,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Low',
-      extraBoost = 1
-      )
+        location=3,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Mid",
+        extraBoost=1,
+    )
     if logprint[3] == 1:
-      print('Finn chase damage is {}'.format(np.floor(tempDamage).item()))
-    chaseCount[3]=chaseCount[3]-1       
-    
+        print("Finn S3 damage is {}".format(np.floor(tempDamage).item()))
+    elementResistDownAdv = np.minimum([0, -0.3, -0.3, -0.3], elementResistDownAdv)
+    typeResistDownAdv = np.minimum([-0.0, -0.3, -0.3, -0.3], typeResistDownAdv)
+    FinnChase()
+
+
+def FinnS3():
+    global totalDamage
+    global elementDamageBoostAdv
+    tempDamage = DamageFunction(
+        location=3,
+        target="Single",
+        tempBoost="Normal",
+        powerCoefficient="Super",
+        extraBoost=1,
+    )
+    if logprint[3] == 1:
+        print("Finn S3 damage is {}".format(np.floor(tempDamage).item()))
+    FinnChase()
+
+
+def FinnSA(Combo=1):
+    global totalDamage
+    global elementResistDownAdv
+    global typeResistDownAdv
+    tempDamage = SADamageFunction(
+        location=3,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Ultra",
+        extraBoost=1.9,
+        combo=Combo,
+    )
+    if logprint[3] == 1:
+        print("Finn SA damage is {}".format(np.floor(tempDamage).item()))
+
+
+def FinnChase():
+    global totalDamage
+    global accumulateDamage
+    if chaseCount[3] > 0.5:
+        tempDamage = DamageFunction(
+            location=3,
+            target="Single",
+            tempBoost="None",
+            powerCoefficient="Low",
+            extraBoost=1,
+        )
+        if logprint[3] == 1:
+            print("Finn chase damage is {}".format(np.floor(tempDamage).item()))
+        chaseCount[3] = chaseCount[3] - 1
+
+
 """   
 #########    
 # Aisha #
@@ -2280,149 +2423,199 @@ def LefiyaSA(Combo=1):
   elementResistDownAdv=np.minimum([0, -0.5, -0.5, -0.5],elementResistDownAdv)
 """
 
-##################    
+##################
 # SA and Counter #
 ##################
-def CombineSA(Char1,Char2,Char3,Char4):
-  global totalDamage
-  tempDamage = (Char1*(1.16*power[0]*(1+powerBoostAdv[0]+powerBoostAst[0]))+
-                Char2*(1.16*power[1]*(1+powerBoostAdv[1]+powerBoostAst[1]))+
-                Char3*(1.16*power[2]*(1+powerBoostAdv[2]+powerBoostAst[2]))+
-                Char4*(1.16*power[3]*(1+powerBoostAdv[3]+powerBoostAst[3]))-
-                defense)*\
-                (1-typeResistDownAdv[0]-typeResistDownAst[0])*\
-                (1-targetResistDownAdv[1]-targetResistDownAst[1])*\
-                3.7*1.5
-  print('Combine SA damage is {}'.format(np.floor(tempDamage).item()))
-  totalDamage = totalDamage + np.floor(tempDamage).item()  
-def Counter(notIn=[0,0,0,0]):
-  global totalDamage
-  global accumulateDamage  
-  tempDamage = CounterDamageFunction(
-      location = 0,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Magic',
-      extraBoost = 0.25*counter0Active*counterScale,
-      NoType = 1          
-      )
-  if logprint[0] == 1 and counterprint == 1:
-    print('Haru average single counter damage is {}'.format(np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 1,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = 0.25*(1-notIn[1])*(counterScale)*counter1Active    
-      )            
-  if logprint[1] == 1 and counterprint == 1:
-    print('Bell average single counter damage is {}'.format(np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 2,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = 0.25*(1-notIn[2])*1*counter2Active             
-      )
-  if logprint[2] == 1 and counterprint == 1:
-    print('Welf average single counter damage is {}'.format(np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 3,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = 0.25*(1-notIn[3])*counterScale         
-      )  
-  if logprint[3] == 1 and counterprint == 1:
-    print('Finn average single counter damage is {}'.format(np.floor(tempDamage).item()))
-def Counters(notIn=[0,0,0,0]):
-  global totalDamage
-  global accumulateDamage
-  tempDamage = CounterDamageFunction(
-      location = 0,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Magic',
-      extraBoost = counter0Active*counterScale,
-      NoType = 1  
-      )               
-  if logprint[0] == 1 and counterprint == 1:
-    print('Haru counter damage is {}'.format(np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 1,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = (1-notIn[1])*(counterScale)*counter1Active        
-      ) 
-  if logprint[1] == 1 and counterprint == 1:
-    print('Bell counter damage is {}'.format(np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 2,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = (1-notIn[2])*1*counter2Active           
-      )  
-  if logprint[2] == 1 and counterprint == 1:
-    print('Welf counter damage is {}'.format(np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 3,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = (1-notIn[3])*counterScale     
-      )  
-  if logprint[3] == 1 and counterprint == 1:
-    print('Finn counter damage is {}'.format(np.floor(tempDamage).item()))
+def CombineSA(Char1, Char2, Char3, Char4):
+    global totalDamage
+    tempDamage = (
+        (
+            Char1 * (1.16 * power[0] * (1 + powerBoostAdv[0] + powerBoostAst[0]))
+            + Char2 * (1.16 * power[1] * (1 + powerBoostAdv[1] + powerBoostAst[1]))
+            + Char3 * (1.16 * power[2] * (1 + powerBoostAdv[2] + powerBoostAst[2]))
+            + Char4 * (1.16 * power[3] * (1 + powerBoostAdv[3] + powerBoostAst[3]))
+            - defense
+        )
+        * (1 - typeResistDownAdv[0] - typeResistDownAst[0])
+        * (1 - targetResistDownAdv[1] - targetResistDownAst[1])
+        * 3.7
+        * 1.5
+    )
+    print("Combine SA damage is {}".format(np.floor(tempDamage).item()))
+    totalDamage = totalDamage + np.floor(tempDamage).item()
 
-########    
+
+def Counter(notIn=[0, 0, 0, 0]):
+    global totalDamage
+    global accumulateDamage
+    tempDamage = CounterDamageFunction(
+        location=0,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Magic",
+        extraBoost=0.25 * counter0Active * counterScale,
+        NoType=1,
+    )
+    if logprint[0] == 1 and counterprint == 1:
+        print(
+            "Haru average single counter damage is {}".format(
+                np.floor(tempDamage).item()
+            )
+        )
+    tempDamage = CounterDamageFunction(
+        location=1,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Physic",
+        extraBoost=0.25 * (1 - notIn[1]) * (counterScale) * counter1Active,
+    )
+    if logprint[1] == 1 and counterprint == 1:
+        print(
+            "Bell average single counter damage is {}".format(
+                np.floor(tempDamage).item()
+            )
+        )
+    tempDamage = CounterDamageFunction(
+        location=2,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Physic",
+        extraBoost=0.25 * (1 - notIn[2]) * 1 * counter2Active,
+    )
+    if logprint[2] == 1 and counterprint == 1:
+        print(
+            "Welf average single counter damage is {}".format(
+                np.floor(tempDamage).item()
+            )
+        )
+    tempDamage = CounterDamageFunction(
+        location=3,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Physic",
+        extraBoost=0.25 * (1 - notIn[3]) * counterScale,
+    )
+    if logprint[3] == 1 and counterprint == 1:
+        print(
+            "Finn average single counter damage is {}".format(
+                np.floor(tempDamage).item()
+            )
+        )
+
+
+def Counters(notIn=[0, 0, 0, 0]):
+    global totalDamage
+    global accumulateDamage
+    tempDamage = CounterDamageFunction(
+        location=0,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Magic",
+        extraBoost=counter0Active * counterScale,
+        NoType=1,
+    )
+    if logprint[0] == 1 and counterprint == 1:
+        print("Haru counter damage is {}".format(np.floor(tempDamage).item()))
+    tempDamage = CounterDamageFunction(
+        location=1,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Physic",
+        extraBoost=(1 - notIn[1]) * (counterScale) * counter1Active,
+    )
+    if logprint[1] == 1 and counterprint == 1:
+        print("Bell counter damage is {}".format(np.floor(tempDamage).item()))
+    tempDamage = CounterDamageFunction(
+        location=2,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Physic",
+        extraBoost=(1 - notIn[2]) * 1 * counter2Active,
+    )
+    if logprint[2] == 1 and counterprint == 1:
+        print("Welf counter damage is {}".format(np.floor(tempDamage).item()))
+    tempDamage = CounterDamageFunction(
+        location=3,
+        target="Single",
+        tempBoost="None",
+        powerCoefficient="Physic",
+        extraBoost=(1 - notIn[3]) * counterScale,
+    )
+    if logprint[3] == 1 and counterprint == 1:
+        print("Finn counter damage is {}".format(np.floor(tempDamage).item()))
+
+
+########
 # Sacs #
 ########
 def ArcherS1():
-  global elementDamageBoostAdv
-  elementDamageBoostAdv=np.maximum([0, 0.25, 0.25, 0.25], elementDamageBoostAdv);    
+    global elementDamageBoostAdv
+    elementDamageBoostAdv = np.maximum([0, 0.25, 0.25, 0.25], elementDamageBoostAdv)
+
+
 def LyraS1():
-  global typeResistDownAdv
-  typeResistDownAdv=np.minimum([-0.35, -0.35, -0.35, -0.35],typeResistDownAdv)   
+    global typeResistDownAdv
+    typeResistDownAdv = np.minimum([-0.35, -0.35, -0.35, -0.35], typeResistDownAdv)
+
+
 def AliseS1():
-  global elementResistDownAdv
-  elementResistDownAdv=np.minimum([-0.40, -0.40, -0.40, -0.40],elementResistDownAdv)      
+    global elementResistDownAdv
+    elementResistDownAdv = np.minimum(
+        [-0.40, -0.40, -0.40, -0.40], elementResistDownAdv
+    )
+
+
 def WindRyuS3():
-  global elementResistDownAdv
-  elementResistDownAdv=np.minimum([-0.25, -0.0, -0.0, -0.0],elementResistDownAdv)    
+    global elementResistDownAdv
+    elementResistDownAdv = np.minimum([-0.25, -0.0, -0.0, -0.0], elementResistDownAdv)
+
+
 def AnnakittyS1():
-  global targetResistDownAdv
-  targetResistDownAdv=np.minimum([-0.2, -0.2],targetResistDownAdv)    
+    global targetResistDownAdv
+    targetResistDownAdv = np.minimum([-0.2, -0.2], targetResistDownAdv)
+
+
 def NazaS1():
-  global targetResistDownAdv
-  targetResistDownAdv=np.minimum([-0.25, -0.0],targetResistDownAdv)      
-# def OttarlS2(): 
+    global targetResistDownAdv
+    targetResistDownAdv = np.minimum([-0.25, -0.0], targetResistDownAdv)
+
+
+# def OttarlS2():
 #   global typeResistDownAdv
-#   typeResistDownAdv=np.minimum([0, -0.35, -0.0, -0.35],typeResistDownAdv) 
+#   typeResistDownAdv=np.minimum([0, -0.35, -0.0, -0.35],typeResistDownAdv)
 def ArdeeS2():
-  global typeResistDownAdv
-  typeResistDownAdv=np.minimum([-0.3, -0.3, -0.3, -0.3],typeResistDownAdv)  
+    global typeResistDownAdv
+    typeResistDownAdv = np.minimum([-0.3, -0.3, -0.3, -0.3], typeResistDownAdv)
+
+
 def AisS1():
-  global elementResistDownAdv
-  elementResistDownAdv=np.minimum([-0.0, -0.0, -0.35, -0.35],elementResistDownAdv) 
-def WindHaruS2(): 
-  global elementResistDownAdv
-  global typeResistDownAdv
-  global targetResistDownAdv
-  elementResistDownAdv=np.minimum([-0.0, -0.0, 0.0, 0.0],elementResistDownAdv)
-  typeResistDownAdv=np.minimum([-0.35, -0.35, -0.0, -0.35],typeResistDownAdv)  
-  targetResistDownAdv=np.minimum([-0.2, 0],targetResistDownAdv)      
+    global elementResistDownAdv
+    elementResistDownAdv = np.minimum([-0.0, -0.0, -0.35, -0.35], elementResistDownAdv)
+
+
+def WindHaruS2():
+    global elementResistDownAdv
+    global typeResistDownAdv
+    global targetResistDownAdv
+    elementResistDownAdv = np.minimum([-0.0, -0.0, 0.0, 0.0], elementResistDownAdv)
+    typeResistDownAdv = np.minimum([-0.35, -0.35, -0.0, -0.35], typeResistDownAdv)
+    targetResistDownAdv = np.minimum([-0.2, 0], targetResistDownAdv)
+
+
 """  
 def FinnS1():
   global elementResistDownAdv
   elementResistDownAdv=np.minimum([-0.40, -0.40, -0.0, -0.0],elementResistDownAdv)    
-"""  
-def PhotoSA(Combo=1):  
-  global typeResistDownAdv
-  global targetResistDownAdv
-  typeResistDownAdv=np.minimum([-0.35, -0.35, -0.35, -0.35],elementResistDownAdv)
-  targetResistDownAdv=np.minimum([-0.35, -0.35],targetResistDownAdv)
+"""
+
+
+def PhotoSA(Combo=1):
+    global typeResistDownAdv
+    global targetResistDownAdv
+    typeResistDownAdv = np.minimum([-0.35, -0.35, -0.35, -0.35], elementResistDownAdv)
+    targetResistDownAdv = np.minimum([-0.35, -0.35], targetResistDownAdv)
+
+
 """  
 def FilvisS2():
   global elementResistDownAdv
@@ -2449,25 +2642,35 @@ def FilvisSA(Combo=1):
   global typeResistDownAdv
   elementResistDownAdv=np.minimum([-0.00, -0.50, -0.50, -0.50],elementResistDownAdv)
   typeResistDownAdv=np.minimum([-0.50, -0.50, -0.50, -0.50],typeResistDownAdv)
-"""  
-def YuriS2():     
-  global elementResistDownAdv  
-  elementResistDownAdv=np.minimum([-0.0, -0.0, -0.0, -0.4],elementResistDownAdv)
-def WieneS1():     
-  global powerBoostAdv  
-  powerBoostAdv=np.maximum([0.4, 0.4, 0.4, 0.4], powerBoostAdv);    
-  print('Wiene S1 damage is {}'.format(np.floor(0).item()))  
-def WieneS2():  
-  global targetResistDownAdv
-  targetResistDownAdv=np.minimum([-0.20, -0.20],targetResistDownAdv)  
-  print('Wiene S2 damage is {}'.format(np.floor(0).item()))    
-def WieneSA(Combo=1):  
-  global targetResistDownAdv
-  targetResistDownAdv=np.minimum([-0.50, -0.50],targetResistDownAdv)
-  print('Wiene SA damage is {}'.format(np.floor(0).item())) 
-# def HaruSA(combo=0):  
+"""
+
+
+def YuriS2():
+    global elementResistDownAdv
+    elementResistDownAdv = np.minimum([-0.0, -0.0, -0.0, -0.4], elementResistDownAdv)
+
+
+def WieneS1():
+    global powerBoostAdv
+    powerBoostAdv = np.maximum([0.4, 0.4, 0.4, 0.4], powerBoostAdv)
+    print("Wiene S1 damage is {}".format(np.floor(0).item()))
+
+
+def WieneS2():
+    global targetResistDownAdv
+    targetResistDownAdv = np.minimum([-0.20, -0.20], targetResistDownAdv)
+    print("Wiene S2 damage is {}".format(np.floor(0).item()))
+
+
+def WieneSA(Combo=1):
+    global targetResistDownAdv
+    targetResistDownAdv = np.minimum([-0.50, -0.50], targetResistDownAdv)
+    print("Wiene SA damage is {}".format(np.floor(0).item()))
+
+
+# def HaruSA(combo=0):
 #   global powerBoostAdv
-#   powerBoostAdv=np.maximum([0, 1.2, 1.2, 1.2], powerBoostAdv);  
+#   powerBoostAdv=np.maximum([0, 1.2, 1.2, 1.2], powerBoostAdv);
 """  
 def KotoriS3(Combo=1):  
   global targetResistDownAdv
@@ -2480,122 +2683,130 @@ def AishaS2():
 def AishaSA(Combo=1):
   global elementDamageBoostAdv
   elementDamageBoostAdv=np.maximum([1.0, 0.0, 1.0, 1.0], elementDamageBoostAdv)
-"""   
-  
-  
+"""
+
+
 #############
-# Define RB #  
+# Define RB #
 #############
 # Boss
-boss = 'Riveria'
+boss = "Riveria"
 # Fit Parameter
 ultRatio = 1.00
-#counterRate = 0.79
+# counterRate = 0.79
 counterRate = 1.0
 critRate = 1
-penRate =1
+penRate = 1
 # RB Weakness
-elementResistDownBase=[-0.20, -0.50, -0.50, -0.50];
-typeResistDownBase=[0.0, -0.20, -0.20, -0.20];
+elementResistDownBase = [-0.20, -0.50, -0.50, -0.50]
+typeResistDownBase = [0.0, -0.20, -0.20, -0.20]
 # Adv Stats
 
-power=[1902,3324,3394,3313];
-power=[2600,3363,3394,3274];
+power = [1902, 3324, 3394, 3313]
+power = [2600, 3363, 3394, 3274]
 # power=[2600,3363,3388,3111];
 # power=[2600,3363,3161,3338];
 # power=[2600,3161,3388,3313];
-#power=[1902,3363,3394,3274];
-#power=[1902,3388,3400,3084];
-#power=[3293,3297,3299,3309];
-counterBoost=[0.00, 0.00, 0.60, 0.00];
-critPenBoost=[0.06, 0.06, 0.06, 0.26];
-#maxHaruMP = 823
+# power=[1902,3363,3394,3274];
+# power=[1902,3388,3400,3084];
+# power=[3293,3297,3299,3309];
+counterBoost = [0.00, 0.00, 0.60, 0.00]
+critPenBoost = [0.06, 0.06, 0.06, 0.26]
+# maxHaruMP = 823
 counterScale = 0.80
-#counterScale = 0.968
+# counterScale = 0.968
 counter0Active = 0
 counter1Active = 1
 counter2Active = 1
 counter3Active = 1
 ###################
-# Define Strategy #  
+# Define Strategy #
 ###################
 # Assist
 def assistIn1():
-  global powerBoostAst
-  global typeResistDownAst
-  global targetResistDownAst  
-  global elementDamageBoostAst
-  global elementResistDownAst
-  global defense
-  elementResistDownAst=[-0.15, -0.15, -0.15, -0.15]
-  targetResistDownAst=[-0.20, 0.0]
-  #elementDamageBoostAst=[0.00, 0.20, 0.20, 0.20]; 
-  powerBoostAst=[0.00, 0.20, 0.20, 0.20]  
-  #powerBoostAst=[0.00, 0.15, 0.15, 0.15]  
-  elementDamageBoostAst=[0.0, 0.00, 0.00, 0.00]; 
-  typeResistDownAst=[-0.00, -0.20, -0.20, -0.20] 
-  #defense = defense*0.85
+    global powerBoostAst
+    global typeResistDownAst
+    global targetResistDownAst
+    global elementDamageBoostAst
+    global elementResistDownAst
+    global defense
+    elementResistDownAst = [-0.15, -0.15, -0.15, -0.15]
+    targetResistDownAst = [-0.20, 0.0]
+    # elementDamageBoostAst=[0.00, 0.20, 0.20, 0.20];
+    powerBoostAst = [0.00, 0.20, 0.20, 0.20]
+    # powerBoostAst=[0.00, 0.15, 0.15, 0.15]
+    elementDamageBoostAst = [0.0, 0.00, 0.00, 0.00]
+    typeResistDownAst = [-0.00, -0.20, -0.20, -0.20]
+    # defense = defense*0.85
+
+
 def assistIn2():
-  global power  
-  global elementResistDownAst  
-  global typeResistDownAst
-  global elementDamageBoostAst
-  global targetResistDownAst
-  elementDamageBoostAst=[0.00, 0.20, 0.20, 0.20]; 
-  #targetResistDownAst=[-0.20, 0.0]
-  #elementResistDownAst=[-0.00, -0.00, -0.10, -0.10]   
-  #targetResistDownAst=[-0.20, 0]    
-  #elementResistDownAst=[-0.00, -0.20, -0.20, -0.20]      
-  #power[0]=1893;  
-  return 0   
+    global power
+    global elementResistDownAst
+    global typeResistDownAst
+    global elementDamageBoostAst
+    global targetResistDownAst
+    elementDamageBoostAst = [0.00, 0.20, 0.20, 0.20]
+    # targetResistDownAst=[-0.20, 0.0]
+    # elementResistDownAst=[-0.00, -0.00, -0.10, -0.10]
+    # targetResistDownAst=[-0.20, 0]
+    # elementResistDownAst=[-0.00, -0.20, -0.20, -0.20]
+    # power[0]=1893;
+    return 0
+
+
 def assistIn3():
-  global powerBoostAst 
-  global power  
-  global typeResistDownAst  
-  global elementResistDownAst
-  global elementDamageBoostAst
-  global counter0Active
-  global currentHaruMP
-  global counter2Active
-  global counter1Active
-  global counter3Active
-  #power[0]=2518;  
-  #powerBoostAst=[0.15, 0.20, 0.20, 0.15]  
-  #typeResistDownAst=[-0.15, -0.15, -0.15, -0.15]
-  #elementResistDownAst=[-0.00, -0.20, -0.20, -0.20]  
-  powerBoostAst=[0.10, 0.20, 0.20, 0.20]  
-  #elementDamageBoostAst=[0.00, 0.20, 0.20, 0.20]; 
-  #powerBoostAst=[0.10, 0.15, 0.15, 0.15]    
-  #elementDamageBoostAst=[0.15, 0.15, 0.15, 0.15]; 
-  #elementDamageBoostAst=[0.20, 0.20, 0.0, 0.00]; 
-  counter3Active = 1
-  counter1Active = 1
-  counter2Active = 1
-  return 0 
-assistInTurn = [1,2,5]  
+    global powerBoostAst
+    global power
+    global typeResistDownAst
+    global elementResistDownAst
+    global elementDamageBoostAst
+    global counter0Active
+    global currentHaruMP
+    global counter2Active
+    global counter1Active
+    global counter3Active
+    # power[0]=2518;
+    # powerBoostAst=[0.15, 0.20, 0.20, 0.15]
+    # typeResistDownAst=[-0.15, -0.15, -0.15, -0.15]
+    # elementResistDownAst=[-0.00, -0.20, -0.20, -0.20]
+    powerBoostAst = [0.10, 0.20, 0.20, 0.20]
+    # elementDamageBoostAst=[0.00, 0.20, 0.20, 0.20];
+    # powerBoostAst=[0.10, 0.15, 0.15, 0.15]
+    # elementDamageBoostAst=[0.15, 0.15, 0.15, 0.15];
+    # elementDamageBoostAst=[0.20, 0.20, 0.0, 0.00];
+    counter3Active = 1
+    counter1Active = 1
+    counter2Active = 1
+    return 0
+
+
+assistInTurn = [1, 2, 5]
 # Sac
-#sac = 'WindRyu'  
-#sac = 'Ais'  
-#sac = 'Aisha'
-#sac = 'Line'
-#sac = 'Alise'
-#sac = 'Lyra'
-#sac = 'Filvis'
-#sac1 = 'Kotori'
-sac1 = 'Line'
-sac = 'Wiene'
+# sac = 'WindRyu'
+# sac = 'Ais'
+# sac = 'Aisha'
+# sac = 'Line'
+# sac = 'Alise'
+# sac = 'Lyra'
+# sac = 'Filvis'
+# sac1 = 'Kotori'
+sac1 = "Line"
+sac = "Wiene"
 # Skills
-skill = np.array([
-    [-1, -1, -1, -1,   1, 2, 1, 3,   1, 4, 2, 3,   3, 3, 3],
-    [ 2,  1,  3,  3,   2, 3, 3, 3,   1, 4, 3, 3,   3, 3, 3],
-    [ 1,  2,  3,  2,   1, 2, 3, 3,   2, 3, 3, 2,   3, 3, 3],    
-    [ 1,  2,  3,  3,   1, 3, 3, 3,   1, 3, 3, 3,   3, 4, 4],       
-    [ 0,  1,  3,  4,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0], 
-    [ 1,  0,  0,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0] 
-    ]) # 5 rows for special ult (Photo etc.) 1279.62
-#2133_2132_3323_334
-#2132_3123_3323_334
-#2132_3123_3233_334
+skill = np.array(
+    [
+        [-1, -1, -1, -1, 1, 2, 1, 3, 1, 4, 2, 3, 3, 3, 3],
+        [2, 1, 3, 3, 2, 3, 3, 3, 1, 4, 3, 3, 3, 3, 3],
+        [1, 2, 3, 2, 1, 2, 3, 3, 2, 3, 3, 2, 3, 3, 3],
+        [1, 2, 3, 3, 1, 3, 3, 3, 1, 3, 3, 3, 3, 4, 4],
+        [0, 1, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ]
+)  # 5 rows for special ult (Photo etc.) 1279.62
+# 2133_2132_3323_334
+# 2132_3123_3323_334
+# 2132_3123_3233_334
 """ 
 skill = np.array([
     [-1, -1, -1, -1,   1, 3, 3, 3,   1, 3, 4, 3,   1, 2, 2],
@@ -2709,226 +2920,312 @@ skill = np.array([
     [ 0,  1,  4,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0], 
     [ 2,  0,  0,  0,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0] 
     ]) # 5 rows for special ult (Photo etc.) 827
-"""    
+"""
 #############
-# Main Loop #  
+# Main Loop #
 #############
 magresisthalt = 0
 currentHaruMP = maxHaruMP
 totalDamageTemp = 0
-for Turn in range(1,16):
-  # Turn Start
-  print("Turn {}:".format(int(Turn)))
-  # if Turn == 13: 
-  #   elementDamageBoostAdv=np.maximum([0, 1, 1, 1], elementDamageBoostAdv);    
-  if Turn == -1: 
-    magresisthalt = 1
-  else:
-    magresisthalt = 0
-  if boss == 'Ottarl':
-    if Turn == 5 or Turn == 9: OttarlClear()
-  if boss == 'Riveria':
-    if Turn == 5 or Turn == 9: RiveriaClear() 
-    #if Turn == 12: RiveriaPowerUp()  
-  if boss == 'Revis':
-    if Turn == 1: RevisInitial()
-    if Turn == 12: RevisPowerUp()
-  if boss == 'Finn':    
-    if Turn == 5 or Turn == 9: FinnClear()
-    if Turn == 4 or Turn == 8 or Turn == 12: FinnAdd()    
-  # Assist
-  if Turn == assistInTurn[0]: assistIn1()
-  if Turn == assistInTurn[1]: assistIn2()
-  if Turn == assistInTurn[2]: assistIn3()    
-  # SA  
-  combo = np.sum(skill[:,Turn-1]==4)
-  if skill[0][Turn-1]==4: WieneSA(combo)  
-  if sac == 'Wiene' and skill[4][Turn-1]==4: WieneSA(combo)   
-  # if sac1 == 'Haru' and skill[4][Turn-1]==4: HaruSA(combo)   
-  if skill[0][Turn-1]==4: HaruSA(combo)   
-  # if skill[2][Turn-1]==4: TionaSA(combo) 
-  if skill[1][Turn-1]==4: BellSA(combo) 
-  if skill[2][Turn-1]==4: WelfSA(combo)   
-  if skill[3][Turn-1]==4: FinnSA(combo)    
-  #if skill[4][Turn-1]==4: WieneSA(combo)  
-  # if skill[2][Turn-1]==4: TioneSA(combo)    
-  # if skill[1][Turn-1]==4: GarethSA(combo)    
-  # if skill[2][Turn-1]==4: ArgonautSA(combo)   
-  # if skill[3][Turn-1]==4: LefiyaSA(combo)
-  # if skill[2][Turn-1]==4: TioneSA(combo)    
-  # if skill[1][Turn-1]==4: Ais2SA(combo)    
-  # if skill[1][Turn-1]==4: RyuSA(combo)
-  # if skill[4][Turn-1]==4: WieneSA(combo)  
-  if combo > 1.5: CombineSA(int(skill[0][Turn-1]==4),
-                            int(skill[1][Turn-1]==4),
-                            int(skill[2][Turn-1]==4),
-                            int(skill[3][Turn-1]==4))
-  if boss == 'Revis':
-    if Turn == 6 or Turn == 10: 
-      RevisClear()  
-    elif Turn == 4 or Turn == 8 or Turn == 12: 
-      RevisAdd() 
-  # Fast+No damage\    
-  # if skill[2][Turn-1]==1: ArgonautS1()     
-  if skill[0][Turn-1]==2: HaruS2()  
-  # Fast 
-  if skill[0][Turn-1]==1: HaruS1()  
-  if skill[1][Turn-1]==2: BellS2() 
-  if skill[2][Turn-1]==1: WelfS1() 
-  # if skill[2][Turn-1]==2: AishaS2()      
-  # if skill[1][Turn-1]==2: OttarlS2() 
-  # if skill[2][Turn-1]==2: LenaS2()  
-  # if skill[1][Turn-1]==2: HaruS2()  
-  # if skill[3][Turn-1]==2: HestiaS2()     
-  # if skill[1][Turn-1]==1: TioneS1()      
-  # if skill[0][Turn-1]==1: HaruS1()     
-  if boss == 'Finn':  
-    if Turn == 2 or Turn == 3 or Turn == 7 or Turn == 10 or Turn == 11 or\
-    Turn == 13 or Turn == 14:
-        Counters(skill[:,Turn-1]==-1)   
-  # No damage 
-  if skill[3][Turn-1]==1: FinnS1() 
-  # if skill[0][Turn-1]==1: WieneS1()  
-  # if skill[0][Turn-1]==1: RayS1()   
-  # if skill[0][Turn-1]==3: RayS3()   
-  # if skill[2][Turn-1]==1: LenaS1()   
-  # if skill[2][Turn-1]==1: TionaS1()   
-  # if skill[1][Turn-1]==1: HaruS1()   
-  # if skill[1][Turn-1]==1: OttarlS1()   
-  # if skill[3][Turn-1]==1: HestiaS1()   
-  # if skill[3][Turn-1]==1: LefiyaS1()   
-  # if skill[3][Turn-2]==2: LefiyaS2()   
-  # if skill[4][Turn-1]==1: WieneS1()    
-  # Boss fast attack
-  if boss == 'Ottarl':
-    if Turn == 2 or Turn == 6 or Turn == 10:
-      Counter(skill[:,Turn-1]==-1)
-      Counter(skill[:,Turn-1]==-1)
-      Counter(skill[:,Turn-1]==-1)   
-    if Turn == 3 or Turn == 7 or Turn == 11:
-      Counters(skill[:,Turn-1]==-1)  
-  if boss == 'Riveria':
-    if Turn == 4 or Turn == 7 or Turn == 8 or Turn == 11 or Turn == 12:
-      Counters(skill[:,Turn-1]==-1)          
-    elif Turn == 15:
-      Counter(skill[:,Turn-1]==-1)
-      Counter(skill[:,Turn-1]==-1)
-  if boss == 'Revis':  
-    if Turn == 4 or Turn == 5 or Turn == 6 or Turn == 7 or Turn == 8 or\
-    Turn == 9 or Turn == 10 or Turn == 11 or Turn == 12:    
-        Counters(skill[:,Turn-1]==-1)
-    elif Turn == 13 or Turn == 14:
-        Counters(skill[:,Turn-1]==-1)
-        Counters(skill[:,Turn-1]==-1)                      
-  # Phy Normal 
-  if skill[1][Turn-1]==1: BellS1()  
-  if skill[1][Turn-1]==3: BellS3() 
-  if skill[3][Turn-1]==2: FinnS2() 
-  if skill[2][Turn-1]==2: WelfS2() 
-  if skill[2][Turn-1]==3: WelfS3() 
-  if sac1 == 'Ais' and skill[5][Turn-1]==1: AisS1()     
-  # if skill[1][Turn-1]==3: OttarlS3() 
-  # if skill[5][Turn-1]==2: YuriS2()    
-  # if skill[5][Turn-1]==1: NazaS1()    
-  # if skill[0][Turn-1]==2: WieneS2()    
-  # if skill[2][Turn-1]==2: TioneS2()     
-  # if skill[2][Turn-1]==3: TioneS3() 
-  # if skill[1][Turn-1]==1: GarethS1() 
-  # if skill[1][Turn-1]==2: GarethS2() 
-  # if skill[1][Turn-1]==3: GarethS3()  
-  # if skill[2][Turn-1]==2: ArgonautS2() 
-  # if skill[2][Turn-1]==3: ArgonautS3()    
-  # if skill[4][Turn-1]==2: WieneS2()  
-  # if skill[1][Turn-1]==2: Ais2S2() 
-  # if skill[1][Turn-1]==3: Ais2S3()   
-  # if skill[1][Turn-1]==3: KotoriS3()   
-  # if skill[2][Turn-1]==2: FinnS2()    
-  if sac == 'Wiene' and skill[4][Turn-1]==2: WieneS2()  
-  if boss == 'Finn':  
-    if Turn == 2 or Turn == 3 or Turn == 7 or Turn == 9 or Turn == 10 or\
-    Turn == 11:
-        Counters(skill[:,Turn-1]==-1)   
-    elif Turn == 1 or Turn == 4 or Turn == 5 or Turn == 6 or Turn == 8 or\
-    Turn == 12 or Turn == 13 or Turn == 14:
-        Counters(skill[:,Turn-1]==-1)  
-        Counters(skill[:,Turn-1]==-1)     
-    elif Turn == 15:
-      Counters(skill[:,Turn-1]==-1)         
-      Counter(skill[:,Turn-1]==-1)    
-  if boss == 'Riveria':
-    if Turn == 7 or Turn == 8 or Turn == 9 or Turn == 11 or Turn == 12:
-      RiveriaPowerUp()
-  # Mag Normal   
-  if skill[0][Turn-1]==3: HaruS3()  
-  # if skill[0][Turn-1]==2: RayS2()  
-  # if skill[2][Turn-1]==2: TionaS2() 
-  # if skill[2][Turn-1]==3: TionaS3()  
-  # if skill[1][Turn-1]==3: HaruS3() 
-  # if skill[3][Turn-1]==3: LefiyaS3()
-  # Boss normal attack  
-  if boss == 'Riveria':
-    if Turn == 4:
-      RiveriaPowerUp()  
-  if boss == 'Revis':  
-    if Turn == 4 or Turn == 8 or Turn == 12:
-        Counters(skill[:,Turn-1]==-1)   
-    elif Turn == 5 or Turn == 6 or Turn == 7 or Turn == 9 or Turn == 10 or\
-    Turn == 11 or Turn == 13 or Turn == 14:      
-        Counters(skill[:,Turn-1]==-1)  
-        Counters(skill[:,Turn-1]==-1)          
-  if boss == 'Ottarl':
-    if Turn == 1:
-      Counter(skill[:,Turn-1]==-1)
-      Counter(skill[:,Turn-1]==-1)  
-    if Turn == 5 or Turn == 9:
-      Counter(skill[:,Turn-1]==-1)
-    if Turn == 1 or Turn == 4 or Turn == 5 or Turn == 8 or Turn == 9 or Turn == 12 or Turn == 15:  
-      Counters(skill[:,Turn-1]==-1)   
-    if Turn == 13 or Turn == 14:  
-      Counters(skill[:,Turn-1]==-1)     
-      Counters(skill[:,Turn-1]==-1)
-  if boss == 'Riveria':
-    if Turn == 1 or Turn == 3 or Turn == 9:
-      Counters(skill[:,Turn-1]==-1)       
-    elif Turn == 5 or Turn == 6 or Turn == 10 or Turn == 13:
-      Counters(skill[:,Turn-1]==-1)     
-      Counters(skill[:,Turn-1]==-1)    
-    elif Turn == 14:
-      Counters(skill[:,Turn-1]==-1)     
-      Counters(skill[:,Turn-1]==-1)
-      Counters(skill[:,Turn-1]==-1)
-  if boss == 'Revis':
+for Turn in range(1, 16):
+    # Turn Start
+    print("Turn {}:".format(int(Turn)))
+    # if Turn == 13:
+    #   elementDamageBoostAdv=np.maximum([0, 1, 1, 1], elementDamageBoostAdv);
+    if Turn == -1:
+        magresisthalt = 1
+    else:
+        magresisthalt = 0
+    if boss == "Ottarl":
+        if Turn == 5 or Turn == 9:
+            OttarlClear()
+    if boss == "Riveria":
+        if Turn == 5 or Turn == 9:
+            RiveriaClear()
+        # if Turn == 12: RiveriaPowerUp()
+    if boss == "Revis":
+        if Turn == 1:
+            RevisInitial()
+        if Turn == 12:
+            RevisPowerUp()
+    if boss == "Finn":
+        if Turn == 5 or Turn == 9:
+            FinnClear()
+        if Turn == 4 or Turn == 8 or Turn == 12:
+            FinnAdd()
+    # Assist
+    if Turn == assistInTurn[0]:
+        assistIn1()
+    if Turn == assistInTurn[1]:
+        assistIn2()
+    if Turn == assistInTurn[2]:
+        assistIn3()
+    # SA
+    combo = np.sum(skill[:, Turn - 1] == 4)
+    if skill[0][Turn - 1] == 4:
+        WieneSA(combo)
+    if sac == "Wiene" and skill[4][Turn - 1] == 4:
+        WieneSA(combo)
+    # if sac1 == 'Haru' and skill[4][Turn-1]==4: HaruSA(combo)
+    if skill[0][Turn - 1] == 4:
+        HaruSA(combo)
+    # if skill[2][Turn-1]==4: TionaSA(combo)
+    if skill[1][Turn - 1] == 4:
+        BellSA(combo)
+    if skill[2][Turn - 1] == 4:
+        WelfSA(combo)
+    if skill[3][Turn - 1] == 4:
+        FinnSA(combo)
+    # if skill[4][Turn-1]==4: WieneSA(combo)
+    # if skill[2][Turn-1]==4: TioneSA(combo)
+    # if skill[1][Turn-1]==4: GarethSA(combo)
+    # if skill[2][Turn-1]==4: ArgonautSA(combo)
+    # if skill[3][Turn-1]==4: LefiyaSA(combo)
+    # if skill[2][Turn-1]==4: TioneSA(combo)
+    # if skill[1][Turn-1]==4: Ais2SA(combo)
+    # if skill[1][Turn-1]==4: RyuSA(combo)
+    # if skill[4][Turn-1]==4: WieneSA(combo)
+    if combo > 1.5:
+        CombineSA(
+            int(skill[0][Turn - 1] == 4),
+            int(skill[1][Turn - 1] == 4),
+            int(skill[2][Turn - 1] == 4),
+            int(skill[3][Turn - 1] == 4),
+        )
+    if boss == "Revis":
+        if Turn == 6 or Turn == 10:
+            RevisClear()
+        elif Turn == 4 or Turn == 8 or Turn == 12:
+            RevisAdd()
+    # Fast+No damage\
+    # if skill[2][Turn-1]==1: ArgonautS1()
+    if skill[0][Turn - 1] == 2:
+        HaruS2()
+    # Fast
+    if skill[0][Turn - 1] == 1:
+        HaruS1()
+    if skill[1][Turn - 1] == 2:
+        BellS2()
+    if skill[2][Turn - 1] == 1:
+        WelfS1()
+    # if skill[2][Turn-1]==2: AishaS2()
+    # if skill[1][Turn-1]==2: OttarlS2()
+    # if skill[2][Turn-1]==2: LenaS2()
+    # if skill[1][Turn-1]==2: HaruS2()
+    # if skill[3][Turn-1]==2: HestiaS2()
+    # if skill[1][Turn-1]==1: TioneS1()
+    # if skill[0][Turn-1]==1: HaruS1()
+    if boss == "Finn":
+        if (
+            Turn == 2
+            or Turn == 3
+            or Turn == 7
+            or Turn == 10
+            or Turn == 11
+            or Turn == 13
+            or Turn == 14
+        ):
+            Counters(skill[:, Turn - 1] == -1)
+    # No damage
+    if skill[3][Turn - 1] == 1:
+        FinnS1()
+    # if skill[0][Turn-1]==1: WieneS1()
+    # if skill[0][Turn-1]==1: RayS1()
+    # if skill[0][Turn-1]==3: RayS3()
+    # if skill[2][Turn-1]==1: LenaS1()
+    # if skill[2][Turn-1]==1: TionaS1()
+    # if skill[1][Turn-1]==1: HaruS1()
+    # if skill[1][Turn-1]==1: OttarlS1()
+    # if skill[3][Turn-1]==1: HestiaS1()
+    # if skill[3][Turn-1]==1: LefiyaS1()
+    # if skill[3][Turn-2]==2: LefiyaS2()
+    # if skill[4][Turn-1]==1: WieneS1()
+    # Boss fast attack
+    if boss == "Ottarl":
+        if Turn == 2 or Turn == 6 or Turn == 10:
+            Counter(skill[:, Turn - 1] == -1)
+            Counter(skill[:, Turn - 1] == -1)
+            Counter(skill[:, Turn - 1] == -1)
+        if Turn == 3 or Turn == 7 or Turn == 11:
+            Counters(skill[:, Turn - 1] == -1)
+    if boss == "Riveria":
+        if Turn == 4 or Turn == 7 or Turn == 8 or Turn == 11 or Turn == 12:
+            Counters(skill[:, Turn - 1] == -1)
+        elif Turn == 15:
+            Counter(skill[:, Turn - 1] == -1)
+            Counter(skill[:, Turn - 1] == -1)
+    if boss == "Revis":
+        if (
+            Turn == 4
+            or Turn == 5
+            or Turn == 6
+            or Turn == 7
+            or Turn == 8
+            or Turn == 9
+            or Turn == 10
+            or Turn == 11
+            or Turn == 12
+        ):
+            Counters(skill[:, Turn - 1] == -1)
+        elif Turn == 13 or Turn == 14:
+            Counters(skill[:, Turn - 1] == -1)
+            Counters(skill[:, Turn - 1] == -1)
+    # Phy Normal
+    if skill[1][Turn - 1] == 1:
+        BellS1()
+    if skill[1][Turn - 1] == 3:
+        BellS3()
+    if skill[3][Turn - 1] == 2:
+        FinnS2()
+    if skill[2][Turn - 1] == 2:
+        WelfS2()
+    if skill[2][Turn - 1] == 3:
+        WelfS3()
+    if sac1 == "Ais" and skill[5][Turn - 1] == 1:
+        AisS1()
+    # if skill[1][Turn-1]==3: OttarlS3()
+    # if skill[5][Turn-1]==2: YuriS2()
+    # if skill[5][Turn-1]==1: NazaS1()
+    # if skill[0][Turn-1]==2: WieneS2()
+    # if skill[2][Turn-1]==2: TioneS2()
+    # if skill[2][Turn-1]==3: TioneS3()
+    # if skill[1][Turn-1]==1: GarethS1()
+    # if skill[1][Turn-1]==2: GarethS2()
+    # if skill[1][Turn-1]==3: GarethS3()
+    # if skill[2][Turn-1]==2: ArgonautS2()
+    # if skill[2][Turn-1]==3: ArgonautS3()
+    # if skill[4][Turn-1]==2: WieneS2()
+    # if skill[1][Turn-1]==2: Ais2S2()
+    # if skill[1][Turn-1]==3: Ais2S3()
+    # if skill[1][Turn-1]==3: KotoriS3()
+    # if skill[2][Turn-1]==2: FinnS2()
+    if sac == "Wiene" and skill[4][Turn - 1] == 2:
+        WieneS2()
+    if boss == "Finn":
+        if Turn == 2 or Turn == 3 or Turn == 7 or Turn == 9 or Turn == 10 or Turn == 11:
+            Counters(skill[:, Turn - 1] == -1)
+        elif (
+            Turn == 1
+            or Turn == 4
+            or Turn == 5
+            or Turn == 6
+            or Turn == 8
+            or Turn == 12
+            or Turn == 13
+            or Turn == 14
+        ):
+            Counters(skill[:, Turn - 1] == -1)
+            Counters(skill[:, Turn - 1] == -1)
+        elif Turn == 15:
+            Counters(skill[:, Turn - 1] == -1)
+            Counter(skill[:, Turn - 1] == -1)
+    if boss == "Riveria":
+        if Turn == 7 or Turn == 8 or Turn == 9 or Turn == 11 or Turn == 12:
+            RiveriaPowerUp()
+    # Mag Normal
+    if skill[0][Turn - 1] == 3:
+        HaruS3()
+    # if skill[0][Turn-1]==2: RayS2()
+    # if skill[2][Turn-1]==2: TionaS2()
+    # if skill[2][Turn-1]==3: TionaS3()
+    # if skill[1][Turn-1]==3: HaruS3()
+    # if skill[3][Turn-1]==3: LefiyaS3()
+    # Boss normal attack
+    if boss == "Riveria":
+        if Turn == 4:
+            RiveriaPowerUp()
+    if boss == "Revis":
+        if Turn == 4 or Turn == 8 or Turn == 12:
+            Counters(skill[:, Turn - 1] == -1)
+        elif (
+            Turn == 5
+            or Turn == 6
+            or Turn == 7
+            or Turn == 9
+            or Turn == 10
+            or Turn == 11
+            or Turn == 13
+            or Turn == 14
+        ):
+            Counters(skill[:, Turn - 1] == -1)
+            Counters(skill[:, Turn - 1] == -1)
+    if boss == "Ottarl":
+        if Turn == 1:
+            Counter(skill[:, Turn - 1] == -1)
+            Counter(skill[:, Turn - 1] == -1)
+        if Turn == 5 or Turn == 9:
+            Counter(skill[:, Turn - 1] == -1)
+        if (
+            Turn == 1
+            or Turn == 4
+            or Turn == 5
+            or Turn == 8
+            or Turn == 9
+            or Turn == 12
+            or Turn == 15
+        ):
+            Counters(skill[:, Turn - 1] == -1)
+        if Turn == 13 or Turn == 14:
+            Counters(skill[:, Turn - 1] == -1)
+            Counters(skill[:, Turn - 1] == -1)
+    if boss == "Riveria":
+        if Turn == 1 or Turn == 3 or Turn == 9:
+            Counters(skill[:, Turn - 1] == -1)
+        elif Turn == 5 or Turn == 6 or Turn == 10 or Turn == 13:
+            Counters(skill[:, Turn - 1] == -1)
+            Counters(skill[:, Turn - 1] == -1)
+        elif Turn == 14:
+            Counters(skill[:, Turn - 1] == -1)
+            Counters(skill[:, Turn - 1] == -1)
+            Counters(skill[:, Turn - 1] == -1)
+    if boss == "Revis":
+        if Turn == 15:
+            Counter(skill[:, Turn - 1] == -1)
+            Counter(skill[:, Turn - 1] == -1)
+    # Slow
+    if skill[3][Turn - 1] == 3:
+        FinnS3()
+    # if skill[2][Turn-1]==1: AishaS1()
+    # if skill[2][Turn-1]==3: AishaS3()
+    # if skill[2][Turn-1]==3: LenaS3()
+    # if skill[3][Turn-1]==3: HestiaS3()
+    # if skill[0][Turn-1]==3: WieneS3()
+    # if skill[0][Turn-1]==2: WieneS2()
+    # if skill[2][Turn-1]==3: FinnS3()
+    # if skill[3][Turn-1]==2: RiveriaS2()
+    # if skill[1][Turn-1]==3: RyuS3()
+    # if Turn == 12 or Turn == 13: magresistbreak()
+    # DebugPrint()
+    turnDamage = totalDamage - totalDamageTemp
+    if totaldamageprint == 1:
+        print("Turn {} total damage is {}".format(Turn, np.floor(turnDamage).item()))
+    totalDamageTemp = totalDamage
+    ManaRegen()
     if Turn == 15:
-      Counter(skill[:,Turn-1]==-1)
-      Counter(skill[:,Turn-1]==-1)        
-  # Slow   
-  if skill[3][Turn-1]==3: FinnS3() 
-  # if skill[2][Turn-1]==1: AishaS1()    
-  # if skill[2][Turn-1]==3: AishaS3()  
-  # if skill[2][Turn-1]==3: LenaS3()  
-  # if skill[3][Turn-1]==3: HestiaS3()
-  # if skill[0][Turn-1]==3: WieneS3()              
-  # if skill[0][Turn-1]==2: WieneS2()  
-  # if skill[2][Turn-1]==3: FinnS3()  
-  # if skill[3][Turn-1]==2: RiveriaS2()
-  # if skill[1][Turn-1]==3: RyuS3()
-  #if Turn == 12 or Turn == 13: magresistbreak()
-  # DebugPrint()
-  turnDamage = totalDamage - totalDamageTemp
-  if totaldamageprint == 1:
-    print('Turn {} total damage is {}'.format(Turn,np.floor(turnDamage).item()))
-  totalDamageTemp = totalDamage
-  ManaRegen()
-  if Turn == 15:
-    print('\n')
-    if logprint[0] == 1: print('Wiene total damage is {}'.format(np.floor(accumulateDamage[0]).item()))
-    if logprint[1] == 1: print('Bell total damage is {}'.format(np.floor(accumulateDamage[1]).item()))
-    if logprint[2] == 1: print('Welf total damage is {}'.format(np.floor(accumulateDamage[2]).item()))
-    if logprint[3] == 1: print('Finn total damage is {}'.format(np.floor(accumulateDamage[3]).item()))
-    if totaldamageprint == 1: print('\n')
-    if totaldamageprint == 1: print('Current total damage is {}'.format(np.floor(totalDamage).item()))
-    if totaldamageprint == 1: print('Current total score is {}'.format(np.floor(totalDamage*8.5*2).item()))
-
-
-
-
+        print("\n")
+        if logprint[0] == 1:
+            print(
+                "Wiene total damage is {}".format(np.floor(accumulateDamage[0]).item())
+            )
+        if logprint[1] == 1:
+            print(
+                "Bell total damage is {}".format(np.floor(accumulateDamage[1]).item())
+            )
+        if logprint[2] == 1:
+            print(
+                "Welf total damage is {}".format(np.floor(accumulateDamage[2]).item())
+            )
+        if logprint[3] == 1:
+            print(
+                "Finn total damage is {}".format(np.floor(accumulateDamage[3]).item())
+            )
+        if totaldamageprint == 1:
+            print("\n")
+        if totaldamageprint == 1:
+            print("Current total damage is {}".format(np.floor(totalDamage).item()))
+        if totaldamageprint == 1:
+            print(
+                "Current total score is {}".format(
+                    np.floor(totalDamage * 8.5 * 2).item()
+                )
+            )
