@@ -120,6 +120,7 @@ async def DamageFunction(
                 tempPowerBoostAdv += adventurer.statsBoostAdv.get(index_to_attributes)
                 tempPowerBoostAst += adventurer.statsBoostAst.get(index_to_attributes)
                 tempMemBoost += memboost[index_to_attributes]
+        tempElementBoostDebuff = 0
         if skill.element != "" and skill.noType != 1:
             # elementResistDownBase
             tempElementResistDownBase = enemy.elementResistDownBase.get(skill.element)
@@ -144,8 +145,6 @@ async def DamageFunction(
             tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(False, f"{skill.element}_attack")
             if(tempEleDebuff != None):
                 tempElementBoostDebuff = abs(tempEleDebuff.get("modifier")/100)
-            else:
-                tempElementBoostDebuff = 0
 
         else:
             tempElementResistDownBase = 0
@@ -269,7 +268,7 @@ async def CounterDamageFunction(
             tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier")/100)
         else:
             tempPowerBoostDebuff = 0
-
+    tempElementBoostDebuff = 0
     if counter.element != "" and counter.noType != 1:
         # elementResistDownBase
         tempElementResistDownBase = enemy.elementResistDownBase.get(counter.element)
@@ -290,8 +289,6 @@ async def CounterDamageFunction(
         tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(False, f"{counter.element}_attack")
         if(tempEleDebuff != None):
             tempElementBoostDebuff = abs(tempEleDebuff.get("modifier")/100)
-        else:
-            tempElementBoostDebuff = 0
 
     else:
         tempElementResistDownBase = 0
@@ -451,6 +448,7 @@ async def SADamageFunction(
                 tempPowerBoostAdv += adventurer.statsBoostAdv[index_to_attributes]
                 tempPowerBoostAst += adventurer.statsBoostAst[index_to_attributes]
                 tempMemBoost += memboost[index_to_attributes]
+        tempElementBoostDebuff = 0
         if skill.element != "" and skill.noType != 1:
             # elementResistDownBase
             tempElementResistDownBase = enemy.elementResistDownBase[skill.element]
@@ -474,8 +472,6 @@ async def SADamageFunction(
             tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(False, f"{counter.element}_attack")
             if(tempEleDebuff != None):
                 tempElementBoostDebuff = abs(tempEleDebuff.get("modifier")/100)
-            else:
-                tempElementBoostDebuff = 0
         else:
             tempElementResistDownBase = 0.0
             tempElementResistDownAdv = 0.0
