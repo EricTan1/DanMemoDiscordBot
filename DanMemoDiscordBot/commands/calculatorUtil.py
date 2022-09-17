@@ -469,7 +469,7 @@ async def SADamageFunction(
             # elementDamageBoostAst[location]
             tempElementDamageBoostAst = adventurer.elementDamageBoostAst[skill.element]
             # element debuff
-            tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(False, "{}_attack".format(counter.element))
+            tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(False, f"{skill.element}_attack")
             if(tempEleDebuff != None):
                 tempElementBoostDebuff = abs(tempEleDebuff.get("modifier")/100)
         else:
