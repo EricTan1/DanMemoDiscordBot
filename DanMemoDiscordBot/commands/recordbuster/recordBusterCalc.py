@@ -69,7 +69,9 @@ async def run(
             for x in range(0, 6):
                 unit_titles.append(config.get(f"unit{x+1}", "adventurer_title"))
                 ast_titles.append(config.get(f"unit{x+1}", "assist_title"))
-                unit_stats_list.append(ast.literal_eval(config.get(f"unit{x+1}", "stats")))
+                unit_stats_list.append(
+                    ast.literal_eval(config.get(f"unit{x+1}", "stats"))
+                )
                 unit_enable_counter.append(
                     config.getboolean(f"unit{x+1}", "enable_counter")
                 )
@@ -168,7 +170,9 @@ async def run(
                     if len(ast_matches) > 0:
                         current_assist = ast_matches[0]
                         ast_skill_matches = [
-                            x for x in ast_skill if x.assistsid == current_assist.unit_id
+                            x
+                            for x in ast_skill
+                            if x.assistsid == current_assist.unit_id
                         ]
                         # non mlb skill and mlb skill
                         for ast_skills in ast_skill_matches:
@@ -197,7 +201,9 @@ async def run(
                                 )
                     # no assist
                     else:
-                        raise CalculatorException(f"Can not find assist: {temp_ast_title}")
+                        raise CalculatorException(
+                            f"Can not find assist: {temp_ast_title}"
+                        )
                         # assist_list.append(Assist([],""))
                 # no assist
                 else:
@@ -218,7 +224,9 @@ async def run(
             ad_dev_effects = cache.get_all_adventurers_developments()
             # SELECT adventurerstatsid, adventurerid, advstats.attributeid, attri.name, value
             adv_stats = cache.get_all_adventurers_stats()
-            ad_dev_skill_effects = cache.get_all_adventurers_developments_skills_effects()
+            ad_dev_skill_effects = (
+                cache.get_all_adventurers_developments_skills_effects()
+            )
 
             # all the units
             unit_list = []
@@ -234,7 +242,11 @@ async def run(
                     ]
                     if len(adv_matches) > 0:
                         curr_unit = adv_matches[0]
-                        current_skills: Dict[str, List[Tuple[str, list]]] = {"combat": [], "special": [], "additionals": []}
+                        current_skills: Dict[str, List[Tuple[str, list]]] = {
+                            "combat": [],
+                            "special": [],
+                            "additionals": [],
+                        }
 
                         current_skills_agi_mod: Dict[str, List[str]] = {
                             "combat": [],
@@ -260,9 +272,13 @@ async def run(
                                 if x.speed.lower() == "fast"
                             ]
                             if len(adv_skill_effects_agi_matches) > 0:
-                                temp_list_agi = current_skills_agi_mod[adv_skills.skilltype]
+                                temp_list_agi = current_skills_agi_mod[
+                                    adv_skills.skilltype
+                                ]
                                 temp_list_agi.append("fast")
-                                current_skills_agi_mod[adv_skills.skilltype] = temp_list_agi
+                                current_skills_agi_mod[
+                                    adv_skills.skilltype
+                                ] = temp_list_agi
                             else:
                                 adv_skill_effects_agi_matches = [
                                     x
@@ -300,7 +316,9 @@ async def run(
                         # development skills that boosts crit/pen dmg and counter damage
                         # counter damage
                         adv_dev_matches = [
-                            x for x in ad_dev_effects if x.adventurerid == curr_unit.unit_id
+                            x
+                            for x in ad_dev_effects
+                            if x.adventurerid == curr_unit.unit_id
                         ]
                         adv_dev_effects_matches = []
                         tempCounterBoost = 0.0
@@ -331,7 +349,9 @@ async def run(
                             ]
 
                             for curr_adv_dev_skill_effects in adv_dev_effects_matches:
-                                dev_attribute_name = curr_adv_dev_skill_effects.attribute
+                                dev_attribute_name = (
+                                    curr_adv_dev_skill_effects.attribute
+                                )
                                 try:
                                     dev_modifier_percent = (
                                         int(curr_adv_dev_skill_effects.modifier.strip())
@@ -387,7 +407,8 @@ async def run(
                                 if (
                                     "encouragement"
                                     in curr_adv_dev_skill.development.lower()
-                                    or "blessing" in curr_adv_dev_skill.development.lower()
+                                    or "blessing"
+                                    in curr_adv_dev_skill.development.lower()
                                     or "disturbance"
                                     in curr_adv_dev_skill.development.lower()
                                     or "hierophant"
@@ -491,12 +512,16 @@ async def run(
                 for key in memboost.keys():
                     # activate memoria boost if its starting turn matches the current turn
                     try:
-                        if original_memboost[key] and memoria_turns[key][0] == turn+1:
+                        if original_memboost[key] and memoria_turns[key][0] == turn + 1:
                             memboost[key] = original_memboost[key]
                     except KeyError:
-                        raise CalculatorException("Make sure you also enter the active turns for your memoria in the memoria_turns section")
+                        raise CalculatorException(
+                            "Make sure you also enter the active turns for your memoria in the memoria_turns section"
+                        )
                     except ValueError:
-                        raise CalculatorException("Make sure you enter memoria turns as: (<start turn>, <end turn>)")
+                        raise CalculatorException(
+                            "Make sure you enter memoria turns as: (<start turn>, <end turn>)"
+                        )
 
                 # assist skills first turn!!
                 if turn == 0:
@@ -513,8 +538,9 @@ async def run(
                 # print("Turn: {}".format(turn+1))
                 turn_logs["enemy"] = str(enemy)
                 for active_adv_log in range(0, len(active_advs)):
-                    turn_logs[f"unit{active_adv_log}"] = str(active_advs[active_adv_log])
-
+                    turn_logs[f"unit{active_adv_log}"] = str(
+                        active_advs[active_adv_log]
+                    )
 
                 # SAs SA damage function, combine SA
                 character_sa_list = []
@@ -591,7 +617,9 @@ async def run(
                     current_sf = active_adv.turnOrder[turn]
                     if current_sf in [0, 1, 2, 3]:
                         if current_sf in [1, 2, 3]:
-                            current_speed = await active_adv.get_combatSkill_agi(current_sf)
+                            current_speed = await active_adv.get_combatSkill_agi(
+                                current_sf
+                            )
                         else:
                             current_speed = "none"
 
@@ -676,7 +704,11 @@ async def run(
                             Optional[AdventurerSkill], removed_sorted_skill[2]
                         )
                         temp_damage = await DamageFunction(
-                            cast_skill, removed_sorted_skill[3], enemy, memboost, skillRatio
+                            cast_skill,
+                            removed_sorted_skill[3],
+                            enemy,
+                            memboost,
+                            skillRatio,
                         )
                     elif isinstance(removed_sorted_skill[2], AdventurerCounter):
                         # no extra boosts for auto attacks
@@ -700,7 +732,10 @@ async def run(
                         perform_additional = True
                         removed_sorted_skill[3].additionalCount -= 1
                     await interpretSkillAdventurerEffects(
-                        removed_sorted_skill[4], removed_sorted_skill[3], enemy, active_advs
+                        removed_sorted_skill[4],
+                        removed_sorted_skill[3],
+                        enemy,
+                        active_advs,
                     )
                     total_damage += temp_damage
                     await removed_sorted_skill[3].add_damage(temp_damage)
@@ -760,7 +795,7 @@ async def run(
 
                 # memoria expiry end of turn
                 for key in memboost.keys():
-                    if memboost[key] and memoria_turns[key][1] == turn+1:
+                    if memboost[key] and memoria_turns[key][1] == turn + 1:
                         memboost[key] = 0.0
 
                 # sacs
@@ -800,9 +835,9 @@ async def run(
                 assist_list,
             )
 
-
         except CalculatorException as e:
-             await ctx.send(f"ERROR:\n```{e}```")
+            await ctx.send(f"ERROR:\n```{e}```")
+
 
 class CalculatorException(Exception):
-    """ Custom exception thrown whenever we detect an error with the inputs in the RBConfig file """
+    """Custom exception thrown whenever we detect an error with the inputs in the RBConfig file"""

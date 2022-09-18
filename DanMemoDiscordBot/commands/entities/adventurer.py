@@ -289,6 +289,7 @@ class Adventurer:
             for item in self.boostCheckAlliesAdv
             if isinstance(item.get("duration"), int) and item.get("duration") > 0
         ]
+
     async def get_boostCheckAlliesAdv(self, isbuff: bool, attribute: str):
         "returns the item in the buff/debuff list if it exists, returns NONE otherwise"
         for item in self.boostCheckAlliesAdv:
@@ -304,7 +305,7 @@ class Adventurer:
         duration: 1,2,3,4
         is_assist: is this an assist buff or not
         position : the active unit position in the party
-        """        
+        """
         self.boostCheckAlliesAdv = [
             item
             for item in self.boostCheckAlliesAdv

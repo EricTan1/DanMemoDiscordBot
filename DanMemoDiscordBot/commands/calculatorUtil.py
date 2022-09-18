@@ -85,8 +85,8 @@ async def DamageFunction(
 
             # get str debuff
             tempStrDebuff = await adventurer.get_boostCheckAlliesAdv(False, "strength")
-            if(tempStrDebuff != None):
-                tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier")/100)
+            if tempStrDebuff != None:
+                tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier") / 100)
             else:
                 tempPowerBoostDebuff = 0
 
@@ -104,8 +104,8 @@ async def DamageFunction(
 
             # get magic debuff
             tempMagDebuff = await adventurer.get_boostCheckAlliesAdv(False, "magic")
-            if(tempMagDebuff != None):
-                tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier")/100)
+            if tempMagDebuff != None:
+                tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier") / 100)
             else:
                 tempPowerBoostDebuff = 0
 
@@ -142,9 +142,11 @@ async def DamageFunction(
                 skill.element
             )
             # element debuff
-            tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(False, f"{skill.element}_attack")
-            if(tempEleDebuff != None):
-                tempElementBoostDebuff = abs(tempEleDebuff.get("modifier")/100)
+            tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(
+                False, f"{skill.element}_attack"
+            )
+            if tempEleDebuff != None:
+                tempElementBoostDebuff = abs(tempEleDebuff.get("modifier") / 100)
 
         else:
             tempElementResistDownBase = 0
@@ -171,7 +173,13 @@ async def DamageFunction(
                     2
                     * tempPower
                     * tempBoostTemp
-                    * (1 + tempPowerBoostAdv + tempPowerBoostAst + tempMemBoost - tempPowerBoostDebuff)
+                    * (
+                        1
+                        + tempPowerBoostAdv
+                        + tempPowerBoostAst
+                        + tempMemBoost
+                        - tempPowerBoostDebuff
+                    )
                     - temp_enemy_end.get("endurance"),
                     0,
                 )
@@ -190,7 +198,7 @@ async def DamageFunction(
                 1
                 + (1 - skill.noType) * tempElementDamageBoostAdv
                 + (1 - skill.noType) * tempElementDamageBoostAst
-                - (1-skill.noType) * tempElementBoostDebuff
+                - (1 - skill.noType) * tempElementBoostDebuff
             )
             * (1 + adventurer.critPenBoost + 0.06)
             * (1 - temptargetResistDownAdv - temptargetResistDownAst)
@@ -246,8 +254,8 @@ async def CounterDamageFunction(
         tempTypeResistBuff = await enemy.get_buff_mod("physical_resist")
         # get str debuff
         tempStrDebuff = await adventurer.get_boostCheckAlliesAdv(False, "strength")
-        if(tempStrDebuff != None):
-            tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier")/100)
+        if tempStrDebuff != None:
+            tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier") / 100)
         else:
             tempPowerBoostDebuff = 0
     else:
@@ -262,10 +270,10 @@ async def CounterDamageFunction(
         tempTypeResistDownAst = enemy.typeResistDownAst.get("magic")
 
         tempTypeResistBuff = await enemy.get_buff_mod("magic_resist")
-         # get magic debuff
+        # get magic debuff
         tempMagDebuff = await adventurer.get_boostCheckAlliesAdv(False, "magic")
-        if(tempMagDebuff != None):
-            tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier")/100)
+        if tempMagDebuff != None:
+            tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier") / 100)
         else:
             tempPowerBoostDebuff = 0
     tempElementBoostDebuff = 0
@@ -286,9 +294,11 @@ async def CounterDamageFunction(
         # elementDamageBoostAst[location]
         tempElementDamageBoostAst = adventurer.elementDamageBoostAst[counter.element]
         # element debuff
-        tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(False, f"{counter.element}_attack")
-        if(tempEleDebuff != None):
-            tempElementBoostDebuff = abs(tempEleDebuff.get("modifier")/100)
+        tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(
+            False, f"{counter.element}_attack"
+        )
+        if tempEleDebuff != None:
+            tempElementBoostDebuff = abs(tempEleDebuff.get("modifier") / 100)
 
     else:
         tempElementResistDownBase = 0
@@ -315,7 +325,13 @@ async def CounterDamageFunction(
                 2
                 * tempPower
                 * tempBoostTemp
-                * (1 + tempPowerBoostAdv + tempPowerBoostAst + tempMemBoost - tempPowerBoostDebuff)
+                * (
+                    1
+                    + tempPowerBoostAdv
+                    + tempPowerBoostAst
+                    + tempMemBoost
+                    - tempPowerBoostDebuff
+                )
                 - temp_enemy_end.get("endurance"),
                 0,
             )
@@ -334,7 +350,7 @@ async def CounterDamageFunction(
             1
             + (1 - counter.noType) * tempElementDamageBoostAdv
             + (1 - counter.noType) * tempElementDamageBoostAst
-            - (1-counter.noType) * tempElementBoostDebuff
+            - (1 - counter.noType) * tempElementBoostDebuff
         )
         * (1 + adventurer.critPenBoost + adventurer.counterBoost + 0.06)
         * (1 - temptargetResistDownAdv - temptargetResistDownAst)
@@ -416,8 +432,8 @@ async def SADamageFunction(
             tempTypeResistBuff = await enemy.get_buff_mod("physical_resist")
             # get str debuff
             tempStrDebuff = await adventurer.get_boostCheckAlliesAdv(False, "strength")
-            if(tempStrDebuff != None):
-                tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier")/100)
+            if tempStrDebuff != None:
+                tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier") / 100)
             else:
                 tempPowerBoostDebuff = 0
         else:
@@ -433,8 +449,8 @@ async def SADamageFunction(
             tempTypeResistBuff = await enemy.get_buff_mod("magic_resist")
             # get magic debuff
             tempMagDebuff = await adventurer.get_boostCheckAlliesAdv(False, "magic")
-            if(tempMagDebuff != None):
-                tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier")/100)
+            if tempMagDebuff != None:
+                tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier") / 100)
             else:
                 tempPowerBoostDebuff = 0
         if len(skill.index_to) != 0:
@@ -469,9 +485,11 @@ async def SADamageFunction(
             # elementDamageBoostAst[location]
             tempElementDamageBoostAst = adventurer.elementDamageBoostAst[skill.element]
             # element debuff
-            tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(False, f"{skill.element}_attack")
-            if(tempEleDebuff != None):
-                tempElementBoostDebuff = abs(tempEleDebuff.get("modifier")/100)
+            tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(
+                False, f"{skill.element}_attack"
+            )
+            if tempEleDebuff != None:
+                tempElementBoostDebuff = abs(tempEleDebuff.get("modifier") / 100)
         else:
             tempElementResistDownBase = 0.0
             tempElementResistDownAdv = 0.0
@@ -498,7 +516,13 @@ async def SADamageFunction(
                     2
                     * tempPower
                     * tempBoostTemp
-                    * (1 + tempPowerBoostAdv + tempPowerBoostAst + tempMemBoost - tempPowerBoostDebuff)
+                    * (
+                        1
+                        + tempPowerBoostAdv
+                        + tempPowerBoostAst
+                        + tempMemBoost
+                        - tempPowerBoostDebuff
+                    )
                     - temp_enemy_end["endurance"],
                     0,
                 )
@@ -513,7 +537,12 @@ async def SADamageFunction(
                 - tempTypeResistDownAst
                 - tempTypeResistBuff
             )
-            * (1 + tempElementDamageBoostAdv + tempElementDamageBoostAst-tempElementBoostDebuff)
+            * (
+                1
+                + tempElementDamageBoostAdv
+                + tempElementDamageBoostAst
+                - tempElementBoostDebuff
+            )
             * (1 + adventurer.critPenBoost + 0.06)
             * (1 - temptargetResistDownAdv - temptargetResistDownAst)
             * powerCoefficientTemp
@@ -540,7 +569,7 @@ async def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list):
             adventurerList[character].stats["magic"]
             <= adventurerList[character].stats["strength"]
         )
-    
+
         tempPower = max(
             adventurerList[character].stats["strength"],
             adventurerList[character].stats["magic"],
@@ -551,9 +580,11 @@ async def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list):
             tempPowerBoostAdv = adventurerList[character].statsBoostAdv["strength"]
             tempPowerBoostAst = adventurerList[character].statsBoostAst["strength"]
             # get str debuff
-            tempStrDebuff = await adventurerList[character].get_boostCheckAlliesAdv(False, "strength")
-            if(tempStrDebuff != None):
-                tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier")/100)
+            tempStrDebuff = await adventurerList[character].get_boostCheckAlliesAdv(
+                False, "strength"
+            )
+            if tempStrDebuff != None:
+                tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier") / 100)
             else:
                 tempPowerBoostDebuff = 0
         else:
@@ -561,14 +592,20 @@ async def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list):
             tempPowerBoostAdv = adventurerList[character].statsBoostAdv["magic"]
             tempPowerBoostAst = adventurerList[character].statsBoostAst["magic"]
             # get magic debuff
-            tempMagDebuff = await adventurerList[character].get_boostCheckAlliesAdv(False, "magic")
-            if(tempMagDebuff != None):
-                tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier")/100)
+            tempMagDebuff = await adventurerList[character].get_boostCheckAlliesAdv(
+                False, "magic"
+            )
+            if tempMagDebuff != None:
+                tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier") / 100)
             else:
                 tempPowerBoostDebuff = 0
         tempDamage = tempDamage + (
             character_list[character]
-            * (1.16 * tempPower * (1 + tempPowerBoostAdv + tempPowerBoostAst-tempPowerBoostDebuff))
+            * (
+                1.16
+                * tempPower
+                * (1 + tempPowerBoostAdv + tempPowerBoostAst - tempPowerBoostDebuff)
+            )
         )
 
     tempDamage = (
