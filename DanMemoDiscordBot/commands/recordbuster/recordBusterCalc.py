@@ -57,7 +57,9 @@ async def run(
                     config.get("DEFAULT", "memoria_turns")
                 )
             except configparser.NoOptionError:
-                raise CalculatorException("Please make sure you specify the duration of your memoria in the memoria_turns variable. If you don't know what this should look like, re-download the config file for an example.")
+                raise CalculatorException(
+                    "Please make sure you specify the duration of your memoria in the memoria_turns variable. If you don't know what this should look like, re-download the config file for an example."
+                )
 
             ultRatio = config.getfloat("DEFAULT", "sa_rng")
             difficulty = config.getint("DEFAULT", "difficulty")

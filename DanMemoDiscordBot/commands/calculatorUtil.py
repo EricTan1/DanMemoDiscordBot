@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, cast
 
 import numpy as np
 
@@ -855,7 +855,10 @@ async def interpretSkillAdventurerAttack(
 
 
 async def interpretSkillAdventurerEffects(
-    skillEffectsWithName: Tuple[str, list], adventurer, enemy: "Enemy", adv_list: list
+    skillEffectsWithName: Tuple[str, list],
+    adventurer: "Adventurer",
+    enemy: "Enemy",
+    adv_list: List["Adventurer"],
 ):
     """(list of skilleffects, Adventurer, Enemy, list of Adventurer)"""
 
@@ -867,293 +870,184 @@ async def interpretSkillAdventurerEffects(
 
     # go through the effects
     for skillEffect in skillEffects:
-        curr_attribute = skillEffect.attribute
-        if curr_attribute != None:
-            curr_attribute = curr_attribute.strip().lower()
-            try:
-                curr_modifier = int(skillEffect.modifier) / 100
-            except:
-                curr_modifier = skillEffect.modifier
+        if skillEffect.attribute is None:
+            continue
 
-            # st/aoe resist down
-            if curr_attribute == "all_damage_resist":
-                if skillEffect.target.strip() == "self":
-                    adventurer.set_boostCheckAlliesAdv(
+        curr_attribute = skillEffect.attribute.strip().lower()
+
+        try:
+            curr_modifier = int(skillEffect.modifier) / 100
+        except:
+            curr_modifier = skillEffect.modifier
+
+        current_target = skillEffect.target.strip()
+        if current_target == "self":
+            target_list = [adventurer]
+        elif current_target == "allies":
+            target_list = adv_list
+        else:
+            target_list = []
+
+        # st/aoe resist down
+        if curr_attribute in ["all_damage_resist", "single_damage_resist"]:
+            if current_target in ["self", "allies"]:
+                for curr_adv in target_list:
+                    curr_adv.set_boostCheckAlliesAdv(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
                         skillEffect.duration,
                     )
-                elif skillEffect.target.strip() == "allies":
-                    for curr_adv in adv_list:
-                        curr_adv.set_boostCheckAlliesAdv(
-                            curr_modifier >= 0,
-                            curr_attribute,
-                            curr_modifier,
-                            skillEffect.duration,
-                        )
-                elif (
-                    skillEffect.target.strip() == "foe"
-                    or skillEffect.target.strip() == "foes"
-                ):
-                    temp_min = min(enemy.targetResistDownAdv["aoe"], curr_modifier)
-                    enemy.targetResistDownAdv["aoe"] = temp_min
-                    enemy.set_boostCheckEnemyAdv(
-                        False, curr_attribute, curr_modifier, skillEffect.duration
-                    )
-            elif curr_attribute == "single_damage_resist":
-                if skillEffect.target.strip() == "self":
-                    adventurer.set_boostCheckAlliesAdv(
+            elif current_target in ["foe", "foes"]:
+                if curr_attribute == "single_damage_resist":
+                    stat_key = "st"
+                elif curr_attribute == "all_damage_resist":
+                    stat_key = "aoe"
+                temp_min = min(enemy.targetResistDownAdv[stat_key], curr_modifier)
+                enemy.targetResistDownAdv[stat_key] = temp_min
+                enemy.set_boostCheckEnemyAdv(
+                    False, curr_attribute, curr_modifier, skillEffect.duration
+                )
+        # physical/magic resist down
+        elif curr_attribute in ["physical_resist", "magic_resist"]:
+            if current_target in ["self", "allies"]:
+                for curr_adv in target_list:
+                    curr_adv.set_boostCheckAlliesAdv(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
                         skillEffect.duration,
                     )
-                elif skillEffect.target.strip() == "allies":
-                    for curr_adv in adv_list:
-                        curr_adv.set_boostCheckAlliesAdv(
-                            curr_modifier >= 0,
-                            curr_attribute,
-                            curr_modifier,
-                            skillEffect.duration,
-                        )
-                elif (
-                    skillEffect.target.strip() == "foe"
-                    or skillEffect.target.strip() == "foes"
-                ):
-                    temp_min = min(enemy.targetResistDownAdv["st"], curr_modifier)
-                    enemy.targetResistDownAdv["st"] = temp_min
-                    enemy.set_boostCheckEnemyAdv(
-                        False, curr_attribute, curr_modifier, skillEffect.duration
-                    )
-            # physical/magic resist down
-            elif curr_attribute == "physical_resist":
-                if skillEffect.target.strip() == "self":
-                    adventurer.set_boostCheckAlliesAdv(
-                        curr_modifier >= 0,
-                        curr_attribute,
-                        curr_modifier,
-                        skillEffect.duration,
-                    )
-                elif skillEffect.target.strip() == "allies":
-                    for curr_adv in adv_list:
-                        curr_adv.set_boostCheckAlliesAdv(
-                            curr_modifier >= 0,
-                            curr_attribute,
-                            curr_modifier,
-                            skillEffect.duration,
-                        )
-                elif (
-                    skillEffect.target.strip() == "foe"
-                    or skillEffect.target.strip() == "foes"
-                ):
-                    temp_min = min(enemy.typeResistDownAdv["physical"], curr_modifier)
-                    enemy.typeResistDownAdv["physical"] = temp_min
-                    enemy.set_boostCheckEnemyAdv(
-                        False, curr_attribute, curr_modifier, skillEffect.duration
-                    )
-            elif curr_attribute == "magic_resist":
-                if skillEffect.target.strip() == "self":
-                    adventurer.set_boostCheckAlliesAdv(
-                        curr_modifier >= 0,
-                        curr_attribute,
-                        curr_modifier,
-                        skillEffect.duration,
-                    )
-                elif skillEffect.target.strip() == "allies":
-                    for curr_adv in adv_list:
-                        curr_adv.set_boostCheckAlliesAdv(
-                            curr_modifier >= 0,
-                            curr_attribute,
-                            curr_modifier,
-                            skillEffect.duration,
-                        )
-                elif (
-                    skillEffect.target.strip() == "foe"
-                    or skillEffect.target.strip() == "foes"
-                ):
-                    temp_min = min(enemy.typeResistDownAdv["magic"], curr_modifier)
-                    enemy.typeResistDownAdv["magic"] = temp_min
-                    enemy.set_boostCheckEnemyAdv(
-                        False, curr_attribute, curr_modifier, skillEffect.duration
-                    )
-            # STAT buffs including str/mag buffs
-            elif curr_attribute in [
-                "strength",
-                "magic",
-                "endurance",
-                "dexterity",
-                "agility",
-            ]:
-                if skillEffect.target.strip() == "self":
+            elif current_target in ["foe", "foes"]:
+                if curr_attribute == "physical_resist":
+                    stat_key = "physical"
+                elif curr_attribute == "magic_resist":
+                    stat_key = "magic"
+                temp_min = min(enemy.typeResistDownAdv[stat_key], curr_modifier)
+                enemy.typeResistDownAdv[stat_key] = temp_min
+                enemy.set_boostCheckEnemyAdv(
+                    False, curr_attribute, curr_modifier, skillEffect.duration
+                )
+        # STAT buffs including str/mag buffs
+        elif curr_attribute in [
+            "strength",
+            "magic",
+            "endurance",
+            "dexterity",
+            "agility",
+        ]:
+            if current_target in ["self", "allies"]:
+                for curr_adv in target_list:
                     temp_max = max(
-                        adventurer.statsBoostAdv[curr_attribute.strip()], curr_modifier
+                        curr_adv.statsBoostAdv[curr_attribute.strip()], curr_modifier
                     )
-                    adventurer.statsBoostAdv[curr_attribute.strip()] = temp_max
-                    adventurer.set_boostCheckAlliesAdv(
+                    curr_adv.statsBoostAdv[curr_attribute.strip()] = temp_max
+                    curr_adv.set_boostCheckAlliesAdv(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
                         skillEffect.duration,
                     )
-                elif skillEffect.target.strip() == "allies":
-                    for curr_adv in adv_list:
+            elif current_target in ["foe", "foes"]:
+                enemy.set_boostCheckEnemyAdv(
+                    False, curr_attribute, curr_modifier, skillEffect.duration
+                )
+        # element Resist & elemental buffs Down
+        for curr_element in getElements():
+            if curr_element in curr_attribute and "attack" in curr_attribute:
+                if current_target in ["self", "allies"]:
+                    for curr_adv in target_list:
                         temp_max = max(
-                            curr_adv.statsBoostAdv[curr_attribute.strip()],
+                            curr_adv.elementDamageBoostAdv[curr_element],
                             curr_modifier,
                         )
-                        curr_adv.statsBoostAdv[curr_attribute.strip()] = temp_max
+                        curr_adv.elementDamageBoostAdv[curr_element] = temp_max
                         curr_adv.set_boostCheckAlliesAdv(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
                             skillEffect.duration,
                         )
-                elif (
-                    skillEffect.target.strip() == "foe"
-                    or skillEffect.target.strip() == "foes"
-                ):
+            elif curr_element in curr_attribute and "resist" in curr_attribute:
+                if current_target in ["foe", "foes"]:
+                    temp_min = min(
+                        enemy.elementResistDownAdv[curr_element], curr_modifier
+                    )
+                    enemy.elementResistDownAdv[curr_element] = temp_min
                     enemy.set_boostCheckEnemyAdv(
                         False, curr_attribute, curr_modifier, skillEffect.duration
                     )
-            # element Resist & elemental buffs Down
-            for curr_element in getElements():
-                if curr_element in curr_attribute and "attack" in curr_attribute:
-                    if skillEffect.target.strip() == "self":
-                        temp_max = max(
-                            adventurer.elementDamageBoostAdv[curr_element],
-                            curr_modifier,
-                        )
-                        adventurer.elementDamageBoostAdv[curr_element] = temp_max
-                        adventurer.set_boostCheckAlliesAdv(
-                            curr_modifier >= 0,
-                            curr_attribute,
-                            curr_modifier,
-                            skillEffect.duration,
-                        )
-                    elif skillEffect.target.strip() == "allies":
-                        for curr_adv in adv_list:
-                            temp_max = max(
-                                curr_adv.elementDamageBoostAdv[curr_element],
-                                curr_modifier,
-                            )
-                            curr_adv.elementDamageBoostAdv[curr_element] = temp_max
-                            curr_adv.set_boostCheckAlliesAdv(
-                                curr_modifier >= 0,
-                                curr_attribute,
-                                curr_modifier,
-                                skillEffect.duration,
-                            )
-                elif curr_element in curr_attribute and "resist" in curr_attribute:
-                    if (
-                        skillEffect.target.strip() == "foe"
-                        or skillEffect.target.strip() == "foes"
-                    ):
-                        temp_min = min(
-                            enemy.elementResistDownAdv[curr_element], curr_modifier
-                        )
-                        enemy.elementResistDownAdv[curr_element] = temp_min
-                        enemy.set_boostCheckEnemyAdv(
-                            False, curr_attribute, curr_modifier, skillEffect.duration
-                        )
-            # removal status_debuffs / status_buffs
+        # removal status_debuffs / status_buffs
+        if (
+            "status" in curr_attribute
+            and "debuff" in curr_attribute
+            and skillEffect.duration != None
+        ):
+            temp_duration = int(skillEffect.duration)
+            if current_target in ["self", "allies"]:
+                for curr_adv in target_list:
+                    await curr_adv.ExtendReduceDebuffs(temp_duration)
+            elif current_target in ["foe", "foes"]:
+                await enemy.ExtendReduceDebuffs(temp_duration)
+        # status buff / debuffs extends/reduction
+        elif (
+            "status" in curr_attribute
+            and "buff" in curr_attribute
+            and skillEffect.duration != None
+        ):
+            temp_duration = int(skillEffect.duration)
+            if current_target in ["self", "allies"]:
+                for curr_adv in target_list:
+                    await curr_adv.ExtendReduceBuffs(temp_duration)
+            elif current_target in ["foe", "foes"]:
+                await enemy.ExtendReduceBuffs(temp_duration)
+
+        # status buff removal and status debuff removal add
+
+        # additional refresh
+        if curr_attribute == "additional_action":
+            if current_target == "self":
+                await adventurer.set_additionals(int(skillEffect.duration), skillName)
+        # removal skills
+        elif "removal_no_assist" in curr_attribute:
+            is_buff = not ("debuff" in curr_attribute)
+
+            temp_list = curr_attribute.replace("removal_no_assist", "").split("_")
+            try:
+                temp_list.remove("buff")
+            except:
+                pass
+            try:
+                temp_list.remove("debuff")
+            except:
+                pass
+            temp_attribute = " ".join(temp_list).strip()
+            if current_target in ["self", "allies"]:
+                for curr_adv in target_list:
+                    await curr_adv.pop_boostCheckAlliesAdv(is_buff, temp_attribute)
+            elif current_target in ["foe", "foes"]:
+                await enemy.pop_boostCheckEnemyAdv(is_buff, temp_attribute)
+        else:
+            NumberTypes = (int, float)
             if (
-                "status" in curr_attribute
-                and "debuff" in curr_attribute
-                and skillEffect.duration != None
+                isinstance(curr_modifier, NumberTypes)
+                and curr_attribute != None
+                and curr_attribute != "none"
+                and not curr_attribute in getAilment()
             ):
-                temp_duration = int(skillEffect.duration)
-                if skillEffect.target.strip() == "self":
-                    await adventurer.ExtendReduceDebuffs(temp_duration)
-                elif skillEffect.target.strip() == "allies":
-                    for curr_adv in adv_list:
-                        await curr_adv.ExtendReduceDebuffs(temp_duration)
-                elif (
-                    skillEffect.target.strip() == "foe"
-                    or skillEffect.target.strip() == "foes"
-                ):
-                    await enemy.ExtendReduceDebuffs(temp_duration)
-            # status buff / debuffs extends/reduction
-            elif (
-                "status" in curr_attribute
-                and "buff" in curr_attribute
-                and skillEffect.duration != None
-            ):
-                temp_duration = int(skillEffect.duration)
-                if skillEffect.target.strip() == "self":
-                    await adventurer.ExtendReduceBuffs(temp_duration)
-                elif skillEffect.target.strip() == "allies":
-                    for curr_adv in adv_list:
-                        await curr_adv.ExtendReduceBuffs(temp_duration)
-                elif (
-                    skillEffect.target.strip() == "foe"
-                    or skillEffect.target.strip() == "foes"
-                ):
-                    await enemy.ExtendReduceBuffs(temp_duration)
-
-            # status buff removal and status debuff removal add
-
-            # additional refresh
-            if curr_attribute == "additional_action":
-                if skillEffect.target.strip() == "self":
-                    await adventurer.set_additionals(
-                        int(skillEffect.duration), skillName
+                if current_target in ["foe", "foes"]:
+                    # boostCheckEnemyAppend
+                    enemy.set_boostCheckEnemyAdv(
+                        curr_modifier >= 0,
+                        curr_attribute,
+                        curr_modifier,
+                        skillEffect.duration,
                     )
-            # removal skills
-            elif "removal_no_assist" in curr_attribute:
-                is_buff = not ("debuff" in curr_attribute)
-
-                temp_list = curr_attribute.replace("removal_no_assist", "").split("_")
-                try:
-                    temp_list.remove("buff")
-                except:
-                    pass
-                try:
-                    temp_list.remove("debuff")
-                except:
-                    pass
-                temp_attribute = " ".join(temp_list).strip()
-                if skillEffect.target.strip() == "self":
-                    await adventurer.pop_boostCheckAlliesAdv(is_buff, temp_attribute)
-                elif skillEffect.target.strip() == "allies":
-                    for curr_adv in adv_list:
-                        await curr_adv.pop_boostCheckAlliesAdv(is_buff, temp_attribute)
-                elif (
-                    skillEffect.target.strip() == "foe"
-                    or skillEffect.target.strip() == "foes"
-                ):
-                    await enemy.pop_boostCheckEnemyAdv(is_buff, temp_attribute)
-            else:
-                NumberTypes = (int, float)
-                if (
-                    isinstance(curr_modifier, NumberTypes)
-                    and curr_attribute != None
-                    and curr_attribute != "none"
-                    and not curr_attribute in getAilment()
-                ):
-                    if (
-                        skillEffect.target.strip() == "foe"
-                        or skillEffect.target.strip() == "foes"
-                    ):
-                        # boostCheckEnemyAppend
-                        enemy.set_boostCheckEnemyAdv(
-                            curr_modifier >= 0,
-                            curr_attribute,
-                            curr_modifier,
-                            skillEffect.duration,
-                        )
-                    # ally exists for a heal but doesn't matter here because its a heal. but maybe in the future??
-                    if skillEffect.target.strip() == "allies":
-                        # boostCheckAllyAppend
-                        for curr_adv in adv_list:
-                            curr_adv.set_boostCheckAlliesAdv(
-                                curr_modifier >= 0,
-                                curr_attribute,
-                                curr_modifier,
-                                skillEffect.duration,
-                            )
-                    if skillEffect.target.strip() == "self":
-                        adventurer.set_boostCheckAlliesAdv(
+                # ally exists for a heal but doesn't matter here because its a heal. but maybe in the future??
+                if current_target in ["self", "allies"]:
+                    # boostCheckAllyAppend
+                    for curr_adv in target_list:
+                        curr_adv.set_boostCheckAlliesAdv(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
