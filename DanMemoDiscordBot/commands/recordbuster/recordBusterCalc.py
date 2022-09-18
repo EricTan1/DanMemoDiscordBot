@@ -52,9 +52,13 @@ async def run(
             original_memboost: Dict[str, Union[int, float]] = ast.literal_eval(
                 config.get("DEFAULT", "memoria_boost")
             )
-            memoria_turns: Dict[str, Tuple[int, int]] = ast.literal_eval(
-                config.get("DEFAULT", "memoria_turns")
-            )
+            try:
+                memoria_turns: Dict[str, Tuple[int, int]] = ast.literal_eval(
+                    config.get("DEFAULT", "memoria_turns")
+                )
+            except configparser.NoOptionError:
+                raise CalculatorException("Please make sure you specify the duration of your memoria in the memoria_turns variable. If you don't know what this should look like, re-download the config file for an example.")
+
             ultRatio = config.getfloat("DEFAULT", "sa_rng")
             difficulty = config.getint("DEFAULT", "difficulty")
             # counter_RNG
@@ -676,12 +680,12 @@ async def run(
                                 )
                             )
 
+                # sort the list by first element in tuple
                 sorted_skills_priority_list = sorted(
                     skills_priority_list, key=lambda x: x[0], reverse=True
                 )
                 is_fast = True
                 is_enemy_attacked = False
-                # sort the list by first element in tuple
                 for _ in range(0, len(sorted_skills_priority_list)):
                     removed_sorted_skill = sorted_skills_priority_list.pop(0)
                     if removed_sorted_skill[1] != "fast":
@@ -695,6 +699,7 @@ async def run(
                             turn, active_advs, memboost, counterRate, 1, turn_logs
                         )
                         is_enemy_attacked = True
+                        ### TODO: add instant effects
 
                     if (
                         isinstance(removed_sorted_skill[2], AdventurerSkill)
