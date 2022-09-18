@@ -289,6 +289,12 @@ class Adventurer:
             for item in self.boostCheckAlliesAdv
             if isinstance(item.get("duration"), int) and item.get("duration") > 0
         ]
+    async def get_boostCheckAlliesAdv(self, isbuff: bool, attribute: str):
+        "returns the item in the buff/debuff list if it exists, returns NONE otherwise"
+        for item in self.boostCheckAlliesAdv:
+            if item.get("isbuff") == isbuff and item.get("attribute") == attribute:
+                return item
+        return None
 
     async def pop_boostCheckAlliesAdv(self, isbuff: bool, attribute: str):
         """(bool, str, int or float, int, bool, int) -> None
@@ -298,8 +304,7 @@ class Adventurer:
         duration: 1,2,3,4
         is_assist: is this an assist buff or not
         position : the active unit position in the party
-        """
-        temp_length = len(self.boostCheckAlliesAdv)
+        """        
         self.boostCheckAlliesAdv = [
             item
             for item in self.boostCheckAlliesAdv
@@ -307,10 +312,10 @@ class Adventurer:
         ]
         # remove from actual thing
         # if something is actually changed then remove o/w ignore
-        if temp_length != len(self.boostCheckAlliesAdv):
-            if attribute in getDamageBuffs():
-                curr_element = attribute.replace("_attack", "")
-                if curr_element in getElements():
-                    self.elementDamageBoostAdv[curr_element] = 0
-                else:
-                    self.statsBoostAdv[attribute] = 0
+        # if temp_length != len(self.boostCheckAlliesAdv) and temp_item!= None:
+        #     if attribute in getDamageBuffs():
+        #         curr_element = attribute.replace("_attack", "")
+        #         if curr_element in getElements():
+        #             self.elementDamageBoostAdv[curr_element] = self.elementDamageBoostAdv[curr_element] - (temp_item.get("modifier")/100)
+        #         else:
+        #             self.statsBoostAdv[attribute] = self.statsBoostAdv[attribute] - (temp_item.get("modifier")/100)
