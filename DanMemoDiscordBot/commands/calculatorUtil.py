@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 
 
 async def DamageFunction(
-    optSkill: Optional[AdventurerSkill],
-    adventurer,
+    skill: Optional[AdventurerSkill],
+    adventurer: "Adventurer",
     enemy: "Enemy",
     memboost: Dict[str, Union[int, float]],
     skillRatio,
@@ -20,197 +20,163 @@ async def DamageFunction(
     """(AdventurerSkill, Adventurer, Enemy, dict, int) -> float
     memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
     """
-    if optSkill != None:
-        skill = cast(AdventurerSkill, optSkill)
-        # lowercase everything
-        target = skill.target.lower()
-        tempBoost = skill.tempBoost.lower()
-        powerCoefficient = skill.powerCoefficient.lower()
-        powerCoefficientTemp = 1.0
-
-        if target == "foe":
-            if tempBoost == "none":
-                tempBoostTemp = 1.0
-            elif "normal2" in tempBoost:
-                tempBoostTemp = 1.4
-            elif "normal" in tempBoost:
-                tempBoostTemp = 1.3
-            else:
-                tempBoostTemp = 1.6
-            if powerCoefficient == "low" or powerCoefficient == "lo":
-                powerCoefficientTemp = 1.5
-            elif powerCoefficient == "mid" or powerCoefficient == "medium":
-                powerCoefficientTemp = 1.7
-            elif powerCoefficient == "high":
-                powerCoefficientTemp = 1.9
-            elif powerCoefficient == "super":
-                powerCoefficientTemp = 2.1
-            elif powerCoefficient == "magic":
-                powerCoefficientTemp = 0.75
-        else:
-            if tempBoost == "none":
-                tempBoostTemp = 1.0
-            elif tempBoost == "normal":
-                tempBoostTemp = 1.4
-            else:
-                tempBoostTemp = 1.7
-            if powerCoefficient == "low" or powerCoefficient == "lo":
-                powerCoefficientTemp = 1.1
-            elif powerCoefficient == "mid" or powerCoefficient == "medium":
-                powerCoefficientTemp = 1.15
-            elif powerCoefficient == "high":
-                powerCoefficientTemp = 1.2
-            elif powerCoefficient == "super":
-                powerCoefficientTemp = 1.4
-
-        # power[location]
-        # powerBoostAdv[location]
-        # powerBoostAst[location]
-        # memboost[location] memorias
-        # typeResistDownBase[location]
-        # typeResistDownAdv[location]
-        # typeResistDownAst[location]
-        if "physical" in skill.type:
-            tempPower = adventurer.stats.get("strength")
-            tempPowerBoostAdv = adventurer.statsBoostAdv.get("strength")
-            tempPowerBoostAst = adventurer.statsBoostAst.get("strength")
-            tempMemBoost = memboost.get("strength")
-
-            tempTypeResistDownBase = enemy.typeResistDownBase.get("physical")
-            tempTypeResistDownAdv = enemy.typeResistDownAdv.get("physical")
-            tempTypeResistDownAst = enemy.typeResistDownAst.get("physical")
-            # check enemy buffs p resist
-
-            tempTypeResistBuff = await enemy.get_buff_mod("physical_resist")
-
-            # get str debuff
-            tempStrDebuff = await adventurer.get_boostCheckAlliesAdv(False, "strength")
-            if tempStrDebuff != None:
-                tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier") / 100)
-            else:
-                tempPowerBoostDebuff = 0
-
-        else:
-            tempPower = adventurer.stats.get("magic")
-            tempPowerBoostAdv = adventurer.statsBoostAdv.get("magic")
-            tempPowerBoostAst = adventurer.statsBoostAst.get("magic")
-            tempMemBoost = memboost.get("magic")
-
-            tempTypeResistDownBase = enemy.typeResistDownBase.get("magic")
-            tempTypeResistDownAdv = enemy.typeResistDownAdv.get("magic")
-            tempTypeResistDownAst = enemy.typeResistDownAst.get("magic")
-            # check enemy buffs m resist
-            tempTypeResistBuff = await enemy.get_buff_mod("magic_resist")
-
-            # get magic debuff
-            tempMagDebuff = await adventurer.get_boostCheckAlliesAdv(False, "magic")
-            if tempMagDebuff != None:
-                tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier") / 100)
-            else:
-                tempPowerBoostDebuff = 0
-
-        if len(skill.index_to) != 0:
-            tempPower = 0
-            tempPowerBoostAdv = 0
-            tempPowerBoostAst = 0
-            tempMemBoost = 0
-            powerCoefficientTemp = powerCoefficientTemp * 1.96
-            for index_to_attributes in skill.index_to:
-                tempPower += adventurer.stats.get(index_to_attributes)
-                tempPowerBoostAdv += adventurer.statsBoostAdv.get(index_to_attributes)
-                tempPowerBoostAst += adventurer.statsBoostAst.get(index_to_attributes)
-                tempMemBoost += memboost[index_to_attributes]
-        tempElementBoostDebuff = 0
-        if skill.element != "" and skill.noType != 1:
-            # elementResistDownBase
-            tempElementResistDownBase = enemy.elementResistDownBase.get(skill.element)
-            # elementResistDownAdv
-            tempElementResistDownAdv = enemy.elementResistDownAdv.get(skill.element)
-            # elementResistDownAst
-            tempElementResistDownAst = enemy.elementResistDownAst.get(skill.element)
-            # elementDamageBoostAdv[location]
-            tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv.get(
-                skill.element
-            )
-            if memboost.get(f"{skill.element}_attack") != None:
-                tempElementDamageBoostAdv += memboost.get(f"{skill.element}_attack")
-            # elemental damage boost from weapon
-            if adventurer.stats.get(skill.element) != None:
-                tempElementDamageBoostAdv += adventurer.stats.get(skill.element)
-            # elementDamageBoostAst[location]
-            tempElementDamageBoostAst = adventurer.elementDamageBoostAst.get(
-                skill.element
-            )
-            # element debuff
-            tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(
-                False, f"{skill.element}_attack"
-            )
-            if tempEleDebuff != None:
-                tempElementBoostDebuff = abs(tempEleDebuff.get("modifier") / 100)
-
-        else:
-            tempElementResistDownBase = 0
-            tempElementResistDownAdv = 0
-            tempElementResistDownAst = 0
-            tempElementDamageBoostAdv = 0
-            tempElementDamageBoostAst = 0
-
-        # critPenBoost[location] # dev skills
-        # targetResistDownAdv[targetTemp]
-        # targetResistDownAst[targetTemp]
-        if target == "foe":
-            temptargetResistDownAdv = enemy.targetResistDownAdv["st"]
-            temptargetResistDownAst = enemy.targetResistDownAst["st"]
-        # foes
-        else:
-            temptargetResistDownAdv = enemy.targetResistDownAdv["aoe"]
-            temptargetResistDownAst = enemy.targetResistDownAst["aoe"]
-        temp_enemy_end = enemy.stats
-
-        tempDamage = (
-            (
-                max(
-                    2
-                    * tempPower
-                    * tempBoostTemp
-                    * (
-                        1
-                        + tempPowerBoostAdv
-                        + tempPowerBoostAst
-                        + tempMemBoost
-                        - tempPowerBoostDebuff
-                    )
-                    - temp_enemy_end.get("endurance"),
-                    0,
-                )
-            )
-            * (
-                1
-                - (1 - skill.noType) * tempElementResistDownBase
-                - (1 - skill.noType) * tempElementResistDownAdv
-                - (1 - skill.noType) * tempElementResistDownAst
-                - tempTypeResistDownBase
-                - tempTypeResistDownAdv
-                - tempTypeResistDownAst
-                - tempTypeResistBuff
-            )
-            * (
-                1
-                + (1 - skill.noType) * tempElementDamageBoostAdv
-                + (1 - skill.noType) * tempElementDamageBoostAst
-                - (1 - skill.noType) * tempElementBoostDebuff
-            )
-            * (1 + adventurer.critPenBoost + 0.06)
-            * (1 - temptargetResistDownAdv - temptargetResistDownAst)
-            * powerCoefficientTemp
-            * 1.5
-            * (skill.extraBoost)
-        ) * skillRatio
-        # totalDamage = totalDamage + tempDamage
-        # accumulateDamage[location] = accumulateDamage[location] + tempDamage
-        return np.floor(tempDamage).item()
-    else:
+    if skill is None:
         return 0
+
+    # lowercase everything
+    target = skill.target.lower()
+    tempBoost = skill.tempBoost.lower()
+    powerCoefficient = skill.powerCoefficient.lower()
+    powerCoefficientTemp = 1.0
+
+    if target == "foe":
+        if tempBoost == "none":
+            tempBoost = 1.0
+        elif "normal2" in tempBoost:
+            tempBoost = 1.4
+        elif "normal" in tempBoost:
+            tempBoost = 1.3
+        else:
+            tempBoost = 1.6
+
+        if powerCoefficient == "low" or powerCoefficient == "lo":
+            powerCoefficientTemp = 1.5
+        elif powerCoefficient == "mid" or powerCoefficient == "medium":
+            powerCoefficientTemp = 1.7
+        elif powerCoefficient == "high":
+            powerCoefficientTemp = 1.9
+        elif powerCoefficient == "super":
+            powerCoefficientTemp = 2.1
+        elif powerCoefficient == "magic":
+            powerCoefficientTemp = 0.75
+    else:
+        if tempBoost == "none":
+            tempBoost = 1.0
+        elif tempBoost == "normal":
+            tempBoost = 1.4
+        else:
+            tempBoost = 1.7
+
+        if powerCoefficient == "low" or powerCoefficient == "lo":
+            powerCoefficientTemp = 1.1
+        elif powerCoefficient == "mid" or powerCoefficient == "medium":
+            powerCoefficientTemp = 1.15
+        elif powerCoefficient == "high":
+            powerCoefficientTemp = 1.2
+        elif powerCoefficient == "super":
+            powerCoefficientTemp = 1.4
+
+    # power[location]
+    # powerBoostAdv[location]
+    # powerBoostAst[location]
+    # memboost[location] memorias
+    # typeResistDownBase[location]
+    # typeResistDownAdv[location]
+    # typeResistDownAst[location]
+    if "physical" in skill.type:
+        stat_key = "strength"
+        resist_key = "physical"
+    else:
+        stat_key = "magic"
+        resist_key = "magic"
+
+    power = adventurer.stats[stat_key]
+    powerBoostAdv = adventurer.statsBoostAdv[stat_key]
+    powerBoostAst = adventurer.statsBoostAst[stat_key]
+    currMemBoost = memboost[stat_key]
+
+    typeResistDownBase = enemy.typeResistDownBase.get(resist_key)
+    typeResistDownAdv = enemy.typeResistDownAdv.get(resist_key)
+    typeResistDownAst = enemy.typeResistDownAst.get(resist_key)
+    # check enemy buffs p/m resist
+    typeResistBuff = await enemy.get_buff_mod(f"{resist_key}_resist")
+
+    # get strength/magic debuff
+    powerDebuff = await adventurer.get_boostCheckAlliesAdv(False, stat_key)
+    if powerDebuff != None:
+        powerBoostDebuff = abs(powerDebuff.get("modifier") / 100)
+    else:
+        powerBoostDebuff = 0
+
+    if len(skill.index_to) != 0:
+        power = 0
+        powerBoostAdv = 0
+        powerBoostAst = 0
+        currMemBoost = 0
+        powerCoefficientTemp = powerCoefficientTemp * 1.96
+        for index_to_attributes in skill.index_to:
+            power += adventurer.stats[index_to_attributes]
+            powerBoostAdv += adventurer.statsBoostAdv[index_to_attributes]
+            powerBoostAst += adventurer.statsBoostAst[index_to_attributes]
+            currMemBoost += memboost[index_to_attributes]
+    elementBoostDebuff = 0
+    if skill.element != "" and skill.noType != 1:
+        elementResistDownBase = enemy.elementResistDownBase[skill.element]
+        elementResistDownAdv = enemy.elementResistDownAdv[skill.element]
+        elementResistDownAst = enemy.elementResistDownAst[skill.element]
+        elementDamageBoostAdv = adventurer.elementDamageBoostAdv[skill.element]
+        if memboost.get(f"{skill.element}_attack") != None:
+            elementDamageBoostAdv += memboost[f"{skill.element}_attack"]
+        # elemental damage boost from weapon
+        if adventurer.stats.get(skill.element) != None:
+            elementDamageBoostAdv += adventurer.stats[skill.element]
+        # elementDamageBoostAst[location]
+        elementDamageBoostAst = adventurer.elementDamageBoostAst[skill.element]
+        # element debuff
+        eleDebuff = await adventurer.get_boostCheckAlliesAdv(
+            False, f"{skill.element}_attack"
+        )
+        if eleDebuff != None:
+            elementBoostDebuff = abs(eleDebuff.get("modifier") / 100)
+
+    else:
+        elementResistDownBase = 0
+        elementResistDownAdv = 0
+        elementResistDownAst = 0
+        elementDamageBoostAdv = 0
+        elementDamageBoostAst = 0
+
+    # critPenBoost[location] # dev skills
+    # targetResistDownAdv[targetTemp]
+    # targetResistDownAst[targetTemp]
+    if target == "foe":
+        targetResistDownAdv = enemy.targetResistDownAdv["st"]
+        targetResistDownAst = enemy.targetResistDownAst["st"]
+    # foes
+    else:
+        targetResistDownAdv = enemy.targetResistDownAdv["aoe"]
+        targetResistDownAst = enemy.targetResistDownAst["aoe"]
+    enemyEnd = enemy.stats["endurance"]
+
+    totalPowerBoost = powerBoostAdv + powerBoostAst + currMemBoost - powerBoostDebuff
+    elementBaseVal = 1 - skill.noType
+    totalElementBoost = elementBaseVal * (
+        elementDamageBoostAdv + elementDamageBoostAst - elementBoostDebuff
+    )
+    totalElementResistDown = elementBaseVal * (
+        elementResistDownBase + elementResistDownAdv + elementResistDownAst
+    )
+    totalTypeResistDown = (
+        typeResistDownBase + typeResistDownAdv + typeResistDownAst + typeResistBuff
+    )
+
+    damage = (
+        max(
+            2 * power * tempBoost * (1 + totalPowerBoost) - enemyEnd,
+            0,
+        )
+        * (1 - totalElementResistDown - totalTypeResistDown)
+        * (1 + totalElementBoost)
+        * (1 + adventurer.critPenBoost + 0.06)
+        * (1 - targetResistDownAdv - targetResistDownAst)
+        * powerCoefficientTemp
+        * 1.5
+        * (skill.extraBoost)
+        * skillRatio
+    )
+    # totalDamage = totalDamage + tempDamage
+    # accumulateDamage[location] = accumulateDamage[location] + tempDamage
+    return np.floor(damage).item()
 
 
 async def CounterDamageFunction(
