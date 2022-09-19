@@ -47,12 +47,10 @@ async def DamageFunction(
             powerCoefficientTemp = 1.9
         elif powerCoefficient == "super":
             powerCoefficientTemp = 2.1
-        elif powerCoefficient == "magic":
-            powerCoefficientTemp = 0.75
     else:
         if tempBoost == "none":
             tempBoost = 1.0
-        elif tempBoost == "normal":
+        elif "normal" in tempBoost:
             tempBoost = 1.4
         else:
             tempBoost = 1.7
@@ -342,6 +340,7 @@ async def SADamageFunction(
     """
     if skill is None:
         return 0
+
     # lowercase everything
     target = skill.target.lower()
     tempBoost = skill.tempBoost.lower()
