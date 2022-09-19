@@ -80,7 +80,7 @@ async def run(
 
     embed = interactions.Embed()
     embed.color = Status.OK.value
-    embed.set_thumbnail(url=ctx.author.get_avatar_url(await ctx.get_guild()))
+    embed.set_thumbnail(url=ctx.author.user.avatar_url)
     embed.title = f"{ctx.author}'s summary profile"
     embed.description = description
     embed.set_footer(text=footer)
