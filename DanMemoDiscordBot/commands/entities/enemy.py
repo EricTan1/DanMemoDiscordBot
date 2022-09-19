@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from commands.calculatorUtil import counter, counters
 from commands.utils import checkBuffExistsReplace, getDamageDebuffs, getElements
@@ -185,6 +185,25 @@ class Enemy:
         """speed : 0 - fast, 1- normal, 2- slow"""
         pass
 
+    def ExtendShortenSingleEffect(self, attribute: str, turns: int, is_buff: bool):
+        buffsDebuffs = self.get_boostCheckEnemyAdv(is_buff, attribute)
+        if buffsDebuffs is None:
+            return
+        buffsDebuffs["duration"] += turns
+        if buffsDebuffs["duration"] <= 0:
+            self.boostCheckEnemyAdv.remove(buffsDebuffs)
+            if not is_buff and attribute in getDamageDebuffs():
+                curr_element = attribute.replace("_resist", "")
+                if curr_element in getElements():
+                    self.elementResistDownAdv[curr_element] = 0
+                elif curr_element in ["physical", "magic"]:
+                    self.typeResistDownAdv[curr_element] = 0
+                else:
+                    if "single" in attribute:
+                        self.targetResistDownAdv["st"] = 0
+                    else:
+                        self.targetResistDownAdv["aoe"] = 0
+
     async def ExtendReduceBuffs(self, turns):
         for buffsDebuffs in self.boostCheckEnemyAdv:
             if buffsDebuffs.get("isbuff") == True and isinstance(
@@ -244,6 +263,15 @@ class Enemy:
             for item in self.boostCheckEnemyAdv
             if item.get("isbuff") != isbuff and item.get("attribute") != attribute
         ]
+
+    def get_boostCheckEnemyAdv(
+        self, isbuff: bool, attribute: str
+    ) -> Optional[Dict[str, Any]]:
+        "returns the item in the buff/debuff list if it exists, returns NONE otherwise"
+        for item in self.boostCheckEnemyAdv:
+            if item.get("isbuff") == isbuff and item.get("attribute") == attribute:
+                return item
+        return None
 
     async def get_buff_mod(self, buffName: str):
         ret = [

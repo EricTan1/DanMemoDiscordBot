@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from commands.entities.skills import AdventurerCounter
 from commands.utils import checkBuffExistsReplace, getDamageBuffs, getElements
@@ -250,13 +250,26 @@ class Adventurer:
             item for item in self.boostCheckAlliesAdv if item.get("isbuff") == True
         ]
 
+    def ExtendShortenSingleEffect(self, attribute: str, turns: int, is_buff: bool):
+        buffsDebuffs = self.get_boostCheckAlliesAdv(is_buff, attribute)
+        if buffsDebuffs is None:
+            return
+        buffsDebuffs["duration"] += turns
+        if buffsDebuffs["duration"] <= 0:
+            self.boostCheckAlliesAdv.remove(buffsDebuffs)
+            if is_buff and attribute in getDamageBuffs():
+                element = attribute.replace("_attack", "")
+                if element in getElements():
+                    self.elementDamageBoostAdv[element] = 0
+                else:
+                    self.statsBoostAdv[attribute] = 0
+
     async def ExtendReduceBuffs(self, turns):
         for buffsDebuffs in self.boostCheckAlliesAdv:
             if buffsDebuffs.get("isbuff") == True and isinstance(
                 buffsDebuffs.get("duration"), int
             ):
-                temp_duration = buffsDebuffs.get("duration") + turns
-                buffsDebuffs["duration"] = temp_duration
+                buffsDebuffs["duration"] += turns
         temp_expiry = [
             item
             for item in self.boostCheckAlliesAdv
@@ -270,7 +283,7 @@ class Adventurer:
 
         for buffsDebuffs in temp_expiry:
             curr_attribute = buffsDebuffs.get("attribute")
-            if buffsDebuffs.get("attribute") in getDamageBuffs():
+            if curr_attribute in getDamageBuffs():
                 curr_element = curr_attribute.replace("_attack", "")
                 if curr_element in getElements():
                     self.elementDamageBoostAdv[curr_element] = 0
@@ -290,7 +303,9 @@ class Adventurer:
             if isinstance(item.get("duration"), int) and item.get("duration") > 0
         ]
 
-    async def get_boostCheckAlliesAdv(self, isbuff: bool, attribute: str):
+    async def get_boostCheckAlliesAdv(
+        self, isbuff: bool, attribute: str
+    ) -> Optional[Dict[str, Any]]:
         "returns the item in the buff/debuff list if it exists, returns NONE otherwise"
         for item in self.boostCheckAlliesAdv:
             if item.get("isbuff") == isbuff and item.get("attribute") == attribute:

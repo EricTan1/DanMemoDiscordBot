@@ -937,34 +937,39 @@ async def interpretSkillAdventurerEffects(
         elif curr_attribute in [f"{element}_resist" for element in getElements()]:
             if current_target in ["foe", "foes"]:
                 curr_element = curr_attribute.replace("_resist", "")
-                temp_min = min(
-                    enemy.elementResistDownAdv[curr_element], curr_modifier
-                )
+                temp_min = min(enemy.elementResistDownAdv[curr_element], curr_modifier)
                 enemy.elementResistDownAdv[curr_element] = temp_min
                 enemy.set_boostCheckEnemyAdv(
                     False, curr_attribute, curr_modifier, skillEffect.duration
                 )
-        # status buff / debuffs extends/reduction
-        elif (
-            curr_attribute == "status_debuff"
-            and skillEffect.duration != None
-        ):
+        # status buff/debuff extension/shortening
+        elif curr_attribute == "status_debuff" and skillEffect.duration != None:
             temp_duration = int(skillEffect.duration)
             if current_target in ["self", "allies"]:
                 for curr_adv in target_list:
                     await curr_adv.ExtendReduceDebuffs(temp_duration)
             elif current_target in ["foe", "foes"]:
                 await enemy.ExtendReduceDebuffs(temp_duration)
-        elif (
-            curr_attribute == "status_buff"
-            and skillEffect.duration != None
-        ):
+        elif curr_attribute == "status_buff" and skillEffect.duration != None:
             temp_duration = int(skillEffect.duration)
             if current_target in ["self", "allies"]:
                 for curr_adv in target_list:
                     await curr_adv.ExtendReduceBuffs(temp_duration)
             elif current_target in ["foe", "foes"]:
                 await enemy.ExtendReduceBuffs(temp_duration)
+        # single effect extension/shortening
+        elif curr_attribute.endswith("_debuffs") or curr_attribute.endswith("_buffs"):
+            is_buff = not curr_attribute.endswith("_debuffs")
+            attribute = curr_attribute.replace("_debuffs", "")
+            attribute = attribute.replace("_buffs", "")
+            temp_duration = int(skillEffect.duration)
+            if current_target in ["self", "allies"]:
+                for curr_adv in target_list:
+                    curr_adv.ExtendShortenSingleEffect(
+                        attribute, temp_duration, is_buff
+                    )
+            elif current_target in ["foe", "foes"]:
+                enemy.ExtendShortenSingleEffect(attribute, temp_duration, is_buff)
 
         # additional refresh
         elif curr_attribute == "additional_action":
@@ -1238,6 +1243,26 @@ async def interpretSkillAssistEffects(
                     or skillEffect.target.strip() == "foes"
                 ):
                     await enemy.ExtendReduceBuffs(temp_duration)
+            # single effect extension/shortening
+            elif curr_attribute.endswith("_debuffs") or curr_attribute.endswith(
+                "_buffs"
+            ):
+                is_buff = not curr_attribute.endswith("_debuffs")
+                attribute = curr_attribute.replace("_debuffs", "")
+                attribute = attribute.replace("_buffs", "")
+                temp_duration = int(skillEffect.duration)
+                if skillEffect.target.strip() in ["self", "allies"]:
+                    target_list = (
+                        [adventurer]
+                        if skillEffect.target.strip() == "self"
+                        else adv_list
+                    )
+                    for curr_adv in target_list:
+                        curr_adv.ExtendShortenSingleEffect(
+                            attribute, temp_duration, is_buff
+                        )
+                elif skillEffect.target.strip() in ["foe", "foes"]:
+                    enemy.ExtendShortenSingleEffect(attribute, temp_duration, is_buff)
             else:
                 NumberTypes = (int, float)
                 if (
