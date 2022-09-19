@@ -85,16 +85,16 @@ async def DamageFunction(
     powerBoostAst = adventurer.statsBoostAst[stat_key]
     currMemBoost = memboost[stat_key]
 
-    typeResistDownBase = enemy.typeResistDownBase.get(resist_key)
-    typeResistDownAdv = enemy.typeResistDownAdv.get(resist_key)
-    typeResistDownAst = enemy.typeResistDownAst.get(resist_key)
+    typeResistDownBase = enemy.typeResistDownBase[resist_key]
+    typeResistDownAdv = enemy.typeResistDownAdv[resist_key]
+    typeResistDownAst = enemy.typeResistDownAst[resist_key]
     # check enemy buffs p/m resist
     typeResistBuff = await enemy.get_buff_mod(f"{resist_key}_resist")
 
     # get strength/magic debuff
-    powerDebuff = await adventurer.get_boostCheckAlliesAdv(False, stat_key)
-    if powerDebuff != None:
-        powerBoostDebuff = abs(powerDebuff.get("modifier"))
+    powerDebuff = adventurer.get_boostCheckAlliesAdv(False, stat_key)
+    if powerDebuff is not None:
+        powerBoostDebuff = abs(powerDebuff["modifier"])
     else:
         powerBoostDebuff = 0
 
@@ -123,11 +123,9 @@ async def DamageFunction(
         # elementDamageBoostAst[location]
         elementDamageBoostAst = adventurer.elementDamageBoostAst[skill.element]
         # element debuff
-        eleDebuff = await adventurer.get_boostCheckAlliesAdv(
-            False, f"{skill.element}_attack"
-        )
-        if eleDebuff != None:
-            elementBoostDebuff = abs(eleDebuff.get("modifier"))
+        eleDebuff = adventurer.get_boostCheckAlliesAdv(False, f"{skill.element}_attack")
+        if eleDebuff is not None:
+            elementBoostDebuff = abs(eleDebuff["modifier"])
 
     else:
         elementResistDownBase = 0
@@ -185,7 +183,7 @@ async def CounterDamageFunction(
     enemy: "Enemy",
     memboost: dict,
     counterRate: float,
-    extra_boost: int,
+    extra_boost: float,
 ):
     """(AdventurerSkill, Adventurer, Enemy, dict) -> float
     memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
@@ -219,9 +217,9 @@ async def CounterDamageFunction(
 
         tempTypeResistBuff = await enemy.get_buff_mod("physical_resist")
         # get str debuff
-        tempStrDebuff = await adventurer.get_boostCheckAlliesAdv(False, "strength")
+        tempStrDebuff = adventurer.get_boostCheckAlliesAdv(False, "strength")
         if tempStrDebuff != None:
-            tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier"))
+            tempPowerBoostDebuff = abs(tempStrDebuff["modifier"])
         else:
             tempPowerBoostDebuff = 0
     else:
@@ -237,7 +235,7 @@ async def CounterDamageFunction(
 
         tempTypeResistBuff = await enemy.get_buff_mod("magic_resist")
         # get magic debuff
-        tempMagDebuff = await adventurer.get_boostCheckAlliesAdv(False, "magic")
+        tempMagDebuff = adventurer.get_boostCheckAlliesAdv(False, "magic")
         if tempMagDebuff != None:
             tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier"))
         else:
@@ -260,11 +258,11 @@ async def CounterDamageFunction(
         # elementDamageBoostAst[location]
         tempElementDamageBoostAst = adventurer.elementDamageBoostAst[counter.element]
         # element debuff
-        tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(
+        tempEleDebuff = adventurer.get_boostCheckAlliesAdv(
             False, f"{counter.element}_attack"
         )
         if tempEleDebuff != None:
-            tempElementBoostDebuff = abs(tempEleDebuff.get("modifier"))
+            tempElementBoostDebuff = abs(tempEleDebuff["modifier"])
 
     else:
         tempElementResistDownBase = 0
@@ -397,9 +395,9 @@ async def SADamageFunction(
 
             tempTypeResistBuff = await enemy.get_buff_mod("physical_resist")
             # get str debuff
-            tempStrDebuff = await adventurer.get_boostCheckAlliesAdv(False, "strength")
-            if tempStrDebuff != None:
-                tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier"))
+            tempStrDebuff = adventurer.get_boostCheckAlliesAdv(False, "strength")
+            if tempStrDebuff is not None:
+                tempPowerBoostDebuff = abs(tempStrDebuff["modifier"])
             else:
                 tempPowerBoostDebuff = 0
         else:
@@ -414,9 +412,9 @@ async def SADamageFunction(
 
             tempTypeResistBuff = await enemy.get_buff_mod("magic_resist")
             # get magic debuff
-            tempMagDebuff = await adventurer.get_boostCheckAlliesAdv(False, "magic")
-            if tempMagDebuff != None:
-                tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier"))
+            tempMagDebuff = adventurer.get_boostCheckAlliesAdv(False, "magic")
+            if tempMagDebuff is not None:
+                tempPowerBoostDebuff = abs(tempMagDebuff["modifier"])
             else:
                 tempPowerBoostDebuff = 0
         if len(skill.index_to) != 0:
@@ -451,11 +449,11 @@ async def SADamageFunction(
             # elementDamageBoostAst[location]
             tempElementDamageBoostAst = adventurer.elementDamageBoostAst[skill.element]
             # element debuff
-            tempEleDebuff = await adventurer.get_boostCheckAlliesAdv(
+            tempEleDebuff = adventurer.get_boostCheckAlliesAdv(
                 False, f"{skill.element}_attack"
             )
-            if tempEleDebuff != None:
-                tempElementBoostDebuff = abs(tempEleDebuff.get("modifier"))
+            if tempEleDebuff is not None:
+                tempElementBoostDebuff = abs(tempEleDebuff["modifier"])
         else:
             tempElementResistDownBase = 0.0
             tempElementResistDownAdv = 0.0
@@ -546,11 +544,11 @@ async def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list):
             tempPowerBoostAdv = adventurerList[character].statsBoostAdv["strength"]
             tempPowerBoostAst = adventurerList[character].statsBoostAst["strength"]
             # get str debuff
-            tempStrDebuff = await adventurerList[character].get_boostCheckAlliesAdv(
+            tempStrDebuff = adventurerList[character].get_boostCheckAlliesAdv(
                 False, "strength"
             )
             if tempStrDebuff != None:
-                tempPowerBoostDebuff = abs(tempStrDebuff.get("modifier"))
+                tempPowerBoostDebuff = abs(tempStrDebuff["modifier"])
             else:
                 tempPowerBoostDebuff = 0
         else:
@@ -558,11 +556,11 @@ async def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list):
             tempPowerBoostAdv = adventurerList[character].statsBoostAdv["magic"]
             tempPowerBoostAst = adventurerList[character].statsBoostAst["magic"]
             # get magic debuff
-            tempMagDebuff = await adventurerList[character].get_boostCheckAlliesAdv(
+            tempMagDebuff = adventurerList[character].get_boostCheckAlliesAdv(
                 False, "magic"
             )
             if tempMagDebuff != None:
-                tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier"))
+                tempPowerBoostDebuff = abs(tempMagDebuff["modifier"])
             else:
                 tempPowerBoostDebuff = 0
         tempDamage = tempDamage + (
@@ -670,7 +668,9 @@ def Counters(notIn=[0,0,0,0]):
  """
 
 
-async def interpretExtraBoost(skillEffect, adventurer, enemy: "Enemy"):
+async def interpretExtraBoost(
+    skillEffect, adventurer: "Adventurer", enemy: "Enemy"
+) -> float:
     """(adventurerSkillEffect) -> float
     takes in a skill effect with attribute exists of "per_each" then parse it and return the extra boosts multiplier
 
@@ -796,7 +796,7 @@ async def interpretSkillAdventurerAttack(
         extra_boosts_effects = [
             x for x in skillEffects if "per_each" in x.attribute.lower().strip()
         ]
-        extra_boosts_value = 1
+        extra_boosts_value = 1.0
         # for example str/mag debuff
         if len(extra_boosts_effects) > 0:
             for extra_boosts in extra_boosts_effects:
@@ -1310,7 +1310,7 @@ async def counter(
     for adv in adv_list:
 
         temp_adv_counter = adv.adventurerCounter
-        temp_extra_boost = 1
+        temp_extra_boost = 1.0
         if adv.adventurerCounter.extraBoost != None:
             temp_extra_boost_value = await interpretExtraBoost(
                 adv.adventurerCounter.extraBoost, adv, enemy
@@ -1350,7 +1350,7 @@ async def counters(
         # create adventurerCounter
 
         temp_adv_counter = adv.adventurerCounter
-        temp_extra_boost = 1
+        temp_extra_boost = 1.0
         if adv.adventurerCounter.extraBoost != None:
             temp_extra_boost_value = await interpretExtraBoost(
                 adv.adventurerCounter.extraBoost, adv, enemy

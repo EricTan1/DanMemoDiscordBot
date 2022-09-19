@@ -303,7 +303,7 @@ class Adventurer:
             if isinstance(item.get("duration"), int) and item.get("duration") > 0
         ]
 
-    async def get_boostCheckAlliesAdv(
+    def get_boostCheckAlliesAdv(
         self, isbuff: bool, attribute: str
     ) -> Optional[Dict[str, Any]]:
         "returns the item in the buff/debuff list if it exists, returns NONE otherwise"
