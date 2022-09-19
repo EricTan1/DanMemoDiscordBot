@@ -919,34 +919,34 @@ async def interpretSkillAdventurerEffects(
                     False, curr_attribute, curr_modifier, skillEffect.duration
                 )
         # element Resist & elemental buffs Down
-        for curr_element in getElements():
-            if curr_element in curr_attribute and "attack" in curr_attribute:
-                if current_target in ["self", "allies"]:
-                    for curr_adv in target_list:
-                        temp_max = max(
-                            curr_adv.elementDamageBoostAdv[curr_element],
-                            curr_modifier,
-                        )
-                        curr_adv.elementDamageBoostAdv[curr_element] = temp_max
-                        curr_adv.set_boostCheckAlliesAdv(
-                            curr_modifier >= 0,
-                            curr_attribute,
-                            curr_modifier,
-                            skillEffect.duration,
-                        )
-            elif curr_element in curr_attribute and "resist" in curr_attribute:
-                if current_target in ["foe", "foes"]:
-                    temp_min = min(
-                        enemy.elementResistDownAdv[curr_element], curr_modifier
+        elif curr_attribute in [f"{element}_attack" for element in getElements()]:
+            if current_target in ["self", "allies"]:
+                curr_element = curr_attribute.replace("_attack", "")
+                for curr_adv in target_list:
+                    temp_max = max(
+                        curr_adv.elementDamageBoostAdv[curr_element],
+                        curr_modifier,
                     )
-                    enemy.elementResistDownAdv[curr_element] = temp_min
-                    enemy.set_boostCheckEnemyAdv(
-                        False, curr_attribute, curr_modifier, skillEffect.duration
+                    curr_adv.elementDamageBoostAdv[curr_element] = temp_max
+                    curr_adv.set_boostCheckAlliesAdv(
+                        curr_modifier >= 0,
+                        curr_attribute,
+                        curr_modifier,
+                        skillEffect.duration,
                     )
-        # removal status_debuffs / status_buffs
-        if (
-            "status" in curr_attribute
-            and "debuff" in curr_attribute
+        elif curr_attribute in [f"{element}_resist" for element in getElements()]:
+            if current_target in ["foe", "foes"]:
+                curr_element = curr_attribute.replace("_resist", "")
+                temp_min = min(
+                    enemy.elementResistDownAdv[curr_element], curr_modifier
+                )
+                enemy.elementResistDownAdv[curr_element] = temp_min
+                enemy.set_boostCheckEnemyAdv(
+                    False, curr_attribute, curr_modifier, skillEffect.duration
+                )
+        # status buff / debuffs extends/reduction
+        elif (
+            curr_attribute == "status_debuff"
             and skillEffect.duration != None
         ):
             temp_duration = int(skillEffect.duration)
@@ -955,10 +955,8 @@ async def interpretSkillAdventurerEffects(
                     await curr_adv.ExtendReduceDebuffs(temp_duration)
             elif current_target in ["foe", "foes"]:
                 await enemy.ExtendReduceDebuffs(temp_duration)
-        # status buff / debuffs extends/reduction
         elif (
-            "status" in curr_attribute
-            and "buff" in curr_attribute
+            curr_attribute == "status_buff"
             and skillEffect.duration != None
         ):
             temp_duration = int(skillEffect.duration)
@@ -968,10 +966,8 @@ async def interpretSkillAdventurerEffects(
             elif current_target in ["foe", "foes"]:
                 await enemy.ExtendReduceBuffs(temp_duration)
 
-        # status buff removal and status debuff removal add
-
         # additional refresh
-        if curr_attribute == "additional_action":
+        elif curr_attribute == "additional_action":
             if current_target == "self":
                 await adventurer.set_additionals(int(skillEffect.duration), skillName)
         # removal skills
