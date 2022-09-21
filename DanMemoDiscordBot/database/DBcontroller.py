@@ -1807,7 +1807,7 @@ class DBcontroller:
                 alias,
                 limited,
                 character,
-                maxActivcations,
+                maxActivations,
                 element,
                 type,
             ) = row
@@ -1824,7 +1824,7 @@ class DBcontroller:
                 alias=alias,
                 limited=limited,
                 character=character,
-                maxActivcations=maxActivcations,
+                maxActivations=maxActivations,
                 element=element,
                 type=type,
             )
