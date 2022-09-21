@@ -716,7 +716,6 @@ async def run(
                             turn_logs,
                         )
                         is_enemy_attacked = True
-                        ### TODO: add instant effects
 
                     if (
                         isinstance(removed_sorted_skill[2], AdventurerSkill)

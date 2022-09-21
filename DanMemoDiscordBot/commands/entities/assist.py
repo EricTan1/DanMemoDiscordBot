@@ -20,5 +20,5 @@ class Assist:
     def activations_per_turn(self) -> int:
         for skill in self.skills:
             if skill.attribute == "instant_effect":
-                return int(skill.maxActivations or 1)
+                return int(skill.maxActivations)
         raise ValueError("Unit is missing max_activations on instant effect")
