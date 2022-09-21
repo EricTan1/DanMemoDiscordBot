@@ -1,6 +1,6 @@
 import ast
 import configparser
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Dict, List, Optional, Tuple, Union, cast
 
 import interactions
 import numpy as np
@@ -67,6 +67,16 @@ async def run(
             counterRate = config.getfloat("DEFAULT", "counter_rng")
             # skill_RNG
             skillRatio = config.getfloat("DEFAULT", "skill_rng")
+            try:
+                react_on_st = config.getboolean("DEFAULT", "react_on_st")
+            except configparser.NoOptionError:
+                raise CalculatorException(
+                    "Please make sure to specify the 'react_on_st' option in the DEFAULT section"
+                )
+            except ValueError:
+                raise CalculatorException(
+                    "Please make sure you set 'react_on_st' to either True or False"
+                )
             # units
             unit_titles = []
             ast_titles = []
@@ -156,9 +166,9 @@ async def run(
             ast_skill_effects = cache.get_all_assists_skills_effects()
 
             assist_list = []
-            for assist in ast_titles:
+            for assist_title in ast_titles:
                 # parse assist titles by space
-                temp_ast_title_list = assist.split(" ")
+                temp_ast_title_list = assist_title.split(" ")
                 is_mlb = False
                 if len(temp_ast_title_list) > 0:
                     # its an mlb unit
@@ -181,6 +191,8 @@ async def run(
                             if x.assistsid == current_assist.unit_id
                         ]
                         # non mlb skill and mlb skill
+                        skill_effects = []
+                        instant_effects = []
                         for ast_skills in ast_skill_matches:
                             ast_skill_effects_matches = [
                                 x
@@ -192,23 +204,27 @@ async def run(
                                 "instant effect" in ast_skills.skillname
                             ):
                                 if is_mlb:
-                                    assist_list.append(
-                                        Assist(
-                                            ast_skill_effects_matches,
-                                            f"[{current_assist.unit_label}] {current_assist.character_name}",
-                                        )
-                                    )
-                            elif not is_mlb:
-                                assist_list.append(
-                                    Assist(
-                                        ast_skill_effects_matches,
-                                        f"[{current_assist.unit_label}] {current_assist.character_name}",
-                                    )
-                                )
+                                    skill_effects = ast_skill_effects_matches
+                            elif (
+                                not is_mlb
+                                and not "instant effect" in ast_skills.skillname
+                            ):
+                                skill_effects = ast_skill_effects_matches
+                            elif "instant effect" in ast_skills.skillname:
+                                instant_effects = ast_skill_effects_matches
+
+                        assist_list.append(
+                            Assist(
+                                f"[{current_assist.unit_label}] {current_assist.character_name}",
+                                skill_effects,
+                                instant_effects,
+                            )
+                        )
+
                     # no assist
                     else:
                         raise CalculatorException(
-                            f"Can not find assist: {temp_ast_title}"
+                            f"Cannot find assist: {temp_ast_title}"
                         )
                         # assist_list.append(Assist([],""))
                 # no assist
@@ -228,8 +244,6 @@ async def run(
             ad_skill_effects = cache.get_all_adventurers_skills_effects()
             # SELECT addev.adventurerdevelopmentid,addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name
             ad_dev_effects = cache.get_all_adventurers_developments()
-            # SELECT adventurerstatsid, adventurerid, advstats.attributeid, attri.name, value
-            adv_stats = cache.get_all_adventurers_stats()
             ad_dev_skill_effects = (
                 cache.get_all_adventurers_developments_skills_effects()
             )
@@ -483,18 +497,15 @@ async def run(
                         )
                     else:
                         raise CalculatorException(
-                            f"Can not find adventurer: {unit_titles[unitsCounter]}"
+                            f"Cannot find adventurer: {unit_titles[unitsCounter]}"
                         )
             ########################
             # Main Loop
             ########################
             # unit_list 0-5 aka 6 advs in order
-            active_advs: List[Adventurer] = [
-                unit_list[0],
-                unit_list[1],
-                unit_list[2],
-                unit_list[3],
-            ]  # always length 4 current active adv
+            # always length 4 current active adv
+            active_advs: List[Adventurer] = unit_list[0:4]
+            active_assists: List[Assist] = assist_list[0:4]
             sac_counter = 0
             total_damage = 0
             logs = []
@@ -507,9 +518,10 @@ async def run(
             for turn in range(0, 15):
                 # logging init
                 # enemy, unit{0-3}, turn
-                turn_logs: Dict[str, Any] = {
+                turn_logs: Dict[str, List[str]] = {
                     "sa": [],
                     "combat_skills": [],
+                    "instant_actions": [],
                     "counters": [],
                     "sacs": [],
                 }
@@ -531,22 +543,20 @@ async def run(
 
                 # assist skills first turn!!
                 if turn == 0:
-                    for assistCount in range(0, 4):
-                        await interpretSkillAssistEffects(
-                            assist_list[assistCount].skills,
-                            active_advs[assistCount],
+                    for assist_number in range(4):
+                        interpretSkillAssistEffects(
+                            assist_list[assist_number].skills,
+                            active_advs[assist_number],
                             enemy,
                             active_advs,
                         )
 
                 # logging buffs/debuffs
-                turn_logs["turn"] = turn
-                # print("Turn: {}".format(turn+1))
-                turn_logs["enemy"] = str(enemy)
-                for active_adv_log in range(0, len(active_advs)):
-                    turn_logs[f"unit{active_adv_log}"] = str(
-                        active_advs[active_adv_log]
-                    )
+                turn_logs["enemy"] = enemy.get_log_effect_list()
+                for adventurer_number in range(len(active_advs)):
+                    turn_logs[f"unit{adventurer_number}"] = active_advs[
+                        adventurer_number
+                    ].get_log_effect_list()
 
                 # SAs SA damage function, combine SA
                 character_sa_list = []
@@ -560,11 +570,11 @@ async def run(
                 # do the sa
                 for active_adv in active_advs:
                     if active_adv.turnOrder[turn] == 4:
-                        temp_adv_effects_list = await active_adv.get_specialSkill()
-                        temp_adv_skill = await interpretSkillAdventurerAttack(
+                        temp_adv_effects_list = active_adv.get_specialSkill()
+                        temp_adv_skill = interpretSkillAdventurerAttack(
                             temp_adv_effects_list, active_adv, enemy
                         )
-                        temp_damage = await SADamageFunction(
+                        temp_damage = SADamageFunction(
                             temp_adv_skill,
                             active_adv,
                             enemy,
@@ -574,31 +584,31 @@ async def run(
                         )
 
                         # print("{} SA damage for {}".format(active_advs[active_adv].name,int(temp_damage)))
-                        temp_list_logs_sa = turn_logs["sa"]
-                        temp_list_logs_sa.append(
+                        turn_logs["sa"].append(
                             f"{active_adv.name} SA damage for {temp_damage:,}"
                         )
-                        turn_logs["sa"] = temp_list_logs_sa
 
-                        await interpretSkillAdventurerEffects(
+                        interpretSkillAdventurerEffects(
                             temp_adv_effects_list, active_adv, enemy, active_advs
                         )
                         total_damage += temp_damage
-                        await active_adv.add_damage(temp_damage)
+                        active_adv.add_damage(temp_damage)
 
                 if sa_counter > 1:
-                    temp_damage = await CombineSA(active_advs, enemy, character_sa_list)
-                    total_damage += temp_damage
-                    temp_list_logs_sas = turn_logs["sa"]
-                    temp_list_logs_sas.append(
-                        f"Combined SA damage for {int(temp_damage):,}"
-                    )
-                    turn_logs["sa"] = temp_list_logs_sas
+                    temp_damage = CombineSA(active_advs, enemy, character_sa_list)
+                    turn_logs["sa"].append(f"Combined SA damage for {temp_damage:,}")
                 # RB boss turn
-                await enemy.turnOrder(turn, active_advs, 0)
+                enemy.turnOrder(turn, active_advs, 0)
 
-                total_damage += await enemy.turnOrderCounters(
-                    turn, active_advs, memboost, counterRate, 0, turn_logs
+                total_damage += enemy.turnOrderCounters(
+                    turn,
+                    active_advs,
+                    active_assists,
+                    memboost,
+                    counterRate,
+                    react_on_st,
+                    0,
+                    turn_logs,
                 )
 
                 # combat skills
@@ -623,9 +633,7 @@ async def run(
                     current_sf = active_adv.turnOrder[turn]
                     if current_sf in [0, 1, 2, 3]:
                         if current_sf in [1, 2, 3]:
-                            current_speed = await active_adv.get_combatSkill_agi(
-                                current_sf
-                            )
+                            current_speed = active_adv.get_combatSkill_agi(current_sf)
                         else:
                             current_speed = "none"
 
@@ -634,10 +642,10 @@ async def run(
                         )
                         # fast skills and agi war
                         if current_sf in [1, 2, 3]:
-                            temp_adv_effects_list = await active_adv.get_combatSkill(
+                            temp_adv_effects_list = active_adv.get_combatSkill(
                                 current_sf
                             )
-                            temp_adv_skill = await interpretSkillAdventurerAttack(
+                            temp_adv_skill = interpretSkillAdventurerAttack(
                                 temp_adv_effects_list, active_adv, enemy
                             )
                             # buff skills
@@ -696,9 +704,16 @@ async def run(
                     if (
                         not is_fast or len(sorted_skills_priority_list) == 0
                     ) and not is_enemy_attacked:
-                        await enemy.turnOrder(turn, active_advs, 1)
-                        total_damage += await enemy.turnOrderCounters(
-                            turn, active_advs, memboost, counterRate, 1, turn_logs
+                        enemy.turnOrder(turn, active_advs, 1)
+                        total_damage += enemy.turnOrderCounters(
+                            turn,
+                            active_advs,
+                            active_assists,
+                            memboost,
+                            counterRate,
+                            react_on_st,
+                            1,
+                            turn_logs,
                         )
                         is_enemy_attacked = True
                         ### TODO: add instant effects
@@ -710,7 +725,7 @@ async def run(
                         cast_skill = cast(
                             Optional[AdventurerSkill], removed_sorted_skill[2]
                         )
-                        temp_damage = await DamageFunction(
+                        temp_damage = DamageFunction(
                             cast_skill,
                             removed_sorted_skill[3],
                             enemy,
@@ -719,7 +734,7 @@ async def run(
                         )
                     elif isinstance(removed_sorted_skill[2], AdventurerCounter):
                         # no extra boosts for auto attacks
-                        temp_damage = await CounterDamageFunction(
+                        temp_damage = CounterDamageFunction(
                             removed_sorted_skill[2],
                             removed_sorted_skill[3],
                             enemy,
@@ -727,36 +742,34 @@ async def run(
                             counterRate,
                             1,
                         )
-                    temp_list_logs_combat = turn_logs["combat_skills"]
-                    temp_list_logs_combat.append(
+                    turn_logs["combat_skills"].append(
                         f"{removed_sorted_skill[3].name} skill {removed_sorted_skill[3].turnOrder[turn]} damage for {int(temp_damage):,}"
                     )
-                    turn_logs["combat_skills"] = temp_list_logs_combat
 
                     # check if additional count == 0 so you dont attack this turn
                     perform_additional = False
                     if removed_sorted_skill[3].additionalCount > 0:
                         perform_additional = True
                         removed_sorted_skill[3].additionalCount -= 1
-                    await interpretSkillAdventurerEffects(
+                    interpretSkillAdventurerEffects(
                         removed_sorted_skill[4],
                         removed_sorted_skill[3],
                         enemy,
                         active_advs,
                     )
                     total_damage += temp_damage
-                    await removed_sorted_skill[3].add_damage(temp_damage)
+                    removed_sorted_skill[3].add_damage(temp_damage)
 
                     # additionals here
                     if perform_additional:
-                        temp_adv_effects_list = await removed_sorted_skill[
+                        temp_adv_effects_list = removed_sorted_skill[
                             3
                         ].get_current_additional()
-                        temp_adv_skill = await interpretSkillAdventurerAttack(
+                        temp_adv_skill = interpretSkillAdventurerAttack(
                             temp_adv_effects_list, removed_sorted_skill[3], enemy
                         )
                         # damage
-                        temp_damage = await DamageFunction(
+                        temp_damage = DamageFunction(
                             temp_adv_skill,
                             removed_sorted_skill[3],
                             enemy,
@@ -764,26 +777,31 @@ async def run(
                             skillRatio,
                         )
                         # effects
-                        await interpretSkillAdventurerEffects(
+                        interpretSkillAdventurerEffects(
                             temp_adv_effects_list,
                             removed_sorted_skill[3],
                             enemy,
                             active_advs,
                         )
                         # logging and adding damage
-                        temp_list_logs_additional = turn_logs["combat_skills"]
-                        temp_list_logs_additional.append(
+                        turn_logs["combat_skills"].append(
                             f"{removed_sorted_skill[3].name} additional damage for {temp_damage:,}"
                         )
-                        turn_logs["combat_skills"] = temp_list_logs_additional
                         # damage adding
                         total_damage += temp_damage
-                        await removed_sorted_skill[3].add_damage(temp_damage)
+                        removed_sorted_skill[3].add_damage(temp_damage)
 
                 # end of turn skills
-                await enemy.turnOrder(turn, active_advs, 2)
-                total_damage += await enemy.turnOrderCounters(
-                    turn, active_advs, memboost, counterRate, 2, turn_logs
+                enemy.turnOrder(turn, active_advs, 2)
+                total_damage += enemy.turnOrderCounters(
+                    turn,
+                    active_advs,
+                    active_assists,
+                    memboost,
+                    counterRate,
+                    react_on_st,
+                    2,
+                    turn_logs,
                 )
                 # if(turn+1 == 13):
                 # for active_adv in active_advs:
@@ -794,11 +812,15 @@ async def run(
 
                 # allies tick down status buffs
                 for active_adv in active_advs:
-                    await active_adv.ExtendReduceBuffs(-1)
-                    await active_adv.ExtendReduceDebuffs(-1)
+                    active_adv.ExtendReduceDebuffs(-1)
+                    active_adv.ExtendReduceBuffs(-1)
                 # enemy statuses tick down
-                await enemy.ExtendReduceDebuffs(-1)
-                await enemy.ExtendReduceBuffs(-1)
+                enemy.ExtendReduceDebuffs(-1)
+                enemy.ExtendReduceBuffs(-1)
+
+                # renew instant effects activations
+                for assist in active_assists:
+                    assist.current_turn_activations = 0
 
                 # memoria expiry end of turn
                 for key in memboost.keys():
@@ -813,16 +835,15 @@ async def run(
                             # sac
                             if active_adv.turnOrder[turn + 1] == -1 and sac_counter < 2:
                                 num_of_sac = len(active_advs) + sac_counter
-                                temp_list_logs_sac = turn_logs["sacs"]
-                                temp_list_logs_sac.append(
+                                turn_logs["sacs"].append(
                                     f"{active_adv.name} leaving. {unit_list[num_of_sac].name} entering"
                                 )
-                                turn_logs["sacs"] = temp_list_logs_sac
 
                                 active_advs[i] = unit_list[num_of_sac]
+                                active_assists[i] = assist_list[num_of_sac]
 
                                 # assist
-                                await interpretSkillAssistEffects(
+                                interpretSkillAssistEffects(
                                     assist_list[num_of_sac].skills,
                                     unit_list[num_of_sac],
                                     enemy,

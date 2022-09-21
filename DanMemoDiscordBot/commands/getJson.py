@@ -73,7 +73,8 @@ async def run(ctx: CommandContext):
                     if curr_skills.adventurerskillid == skills.adventurerskillid
                 ]
                 curr_effects_list = set_skill_effects(
-                    ad_skills_effect_temp, is_assist=False,
+                    ad_skills_effect_temp,
+                    is_assist=False,
                 )
 
                 # special
