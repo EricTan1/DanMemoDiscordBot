@@ -73,7 +73,8 @@ async def run(ctx: CommandContext):
                     if curr_skills.adventurerskillid == skills.adventurerskillid
                 ]
                 curr_effects_list = set_skill_effects(
-                    ad_skills_effect_temp, has_speed=True
+                    ad_skills_effect_temp,
+                    is_assist=False,
                 )
 
                 # special
@@ -108,7 +109,7 @@ async def run(ctx: CommandContext):
                     == skills.adventurerdevelopmentid
                 ]
                 curr_effects_list = set_skill_effects(
-                    ad_dev_skills_effect_temp, has_speed=True
+                    ad_dev_skills_effect_temp, is_assist=False
                 )
                 curr_adv_dev_dict = dict()
                 curr_adv_dev_dict["name"] = curr_adv_dev.development
@@ -165,7 +166,7 @@ async def run(ctx: CommandContext):
                     if curr_skills.assistsskillid == skills.assistskillid
                 ]
                 curr_effects_list = set_skill_effects(
-                    as_skills_effect_temp, has_speed=False
+                    as_skills_effect_temp, is_assist=True
                 )
 
                 if curr_skills.skilltype == "regular":
@@ -206,7 +207,7 @@ async def run(ctx: CommandContext):
         )
 
 
-def set_skill_effects(effects: list, has_speed: bool) -> List[dict]:
+def set_skill_effects(effects: list, is_assist: bool) -> List[dict]:
     curr_effects_list = []
 
     for curr_effects in effects:
@@ -230,8 +231,11 @@ def set_skill_effects(effects: list, has_speed: bool) -> List[dict]:
         if curr_effects.type:
             curr_effects_dict["type"] = curr_effects.type
 
+        if is_assist and curr_effects.maxActivations:
+            curr_effects_dict["max_activations"] = curr_effects.maxActivations
+
         if (
-            has_speed
+            not is_assist
             and curr_effects.speed
             and curr_effects.speed.strip().lower() != "none"
         ):

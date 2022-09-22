@@ -1,37 +1,11 @@
 import json
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from commands.entities.skills import AdventurerCounter
 from commands.utils import checkBuffExistsReplace, getDamageBuffs, getElements
 
 
 class Adventurer:
-    def __str__(self) -> str:
-        ret = f"**{self.name}**:\n"
-        with open("database/terms/human_readable.json", "r") as f:
-            human_readable_dict = json.load(f)
-        # return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
-        # loop through all buffs/debuffs
-        for buffsdebuffs in self.boostCheckAlliesAdv:
-            if human_readable_dict.get(buffsdebuffs.get("attribute")) != None:
-                # duration
-                ret += "{:.0f}% {} for {} turns\n".format(
-                    float(buffsdebuffs["modifier"]) * 100,
-                    human_readable_dict.get(buffsdebuffs.get("attribute")),
-                    buffsdebuffs.get("duration"),
-                )
-            else:
-                ret += "{:.0f}% {} for {} turns\n".format(
-                    float(buffsdebuffs["modifier"]) * 100,
-                    buffsdebuffs.get("attribute"),
-                    buffsdebuffs.get("duration"),
-                )
-        return ret
-
-    #
-    # if(self.human_readable_dict.get(temp_target)!= None):
-    #            temp_target=self.human_readable_dict.get(temp_target)
-
     def __init__(
         self,
         stats: Dict[str, Union[int, float]] = {
@@ -142,43 +116,43 @@ class Adventurer:
         self.boostCheckAlliesAst: List[Dict[str, Any]] = []
         self.name = name
 
-    async def get_combatSkill_agi(self, index: int) -> str:
+    def get_combatSkill_agi(self, index: int) -> str:
         """index = 1-3"""
         return self.current_skills_agi_mod["combat"][index - 1]
 
-    async def add_damage(self, damage: int):
+    def add_damage(self, damage: int):
         self.current_damage += damage
 
     # main loop need to check skill [1,4]
-    async def get_combatSkill(self, index: int) -> Tuple[str, list]:
+    def get_combatSkill(self, index: int) -> Tuple[str, list]:
         """index = 1-3"""
         return self.current_skills.get("combat")[index - 1]
 
-    async def get_specialSkill(self) -> Tuple[str, list]:
+    def get_specialSkill(self) -> Tuple[str, list]:
         return self.current_skills.get("special")[0]
 
-    async def get_additionals(self) -> Tuple[str, list]:
+    def get_additionals(self) -> Tuple[str, list]:
         return self.current_skills.get("additionals")
 
-    async def get_current_additional(self):
-        additionals = await self.get_additionals()
+    def get_current_additional(self):
+        additionals = self.get_additionals()
         for aa in additionals:
             if aa[0] == self.additionalName:
                 return aa
         # if no additional with matching name was found, we assume the unit has only one AA and it wasn't named
         return additionals[0]
 
-    async def set_statsBoostAdv(self, stat: str, modifier: float):
+    def set_statsBoostAdv(self, stat: str, modifier: float):
         self.statsBoostAdv[stat.lower()] = modifier
 
-    async def set_statsBoostAst(self, stat: str, modifier: float):
+    def set_statsBoostAst(self, stat: str, modifier: float):
         self.statsBoostAst[stat.lower()] = modifier
 
-    async def set_elementDamageBoostAdv(self, element: str, modifier: float):
+    def set_elementDamageBoostAdv(self, element: str, modifier: float):
         if element.lower() in getElements():
             self.elementDamageBoostAdv[element.lower()] = modifier
 
-    async def set_elementDamageBoostAst(self, element: str, modifier: float):
+    def set_elementDamageBoostAst(self, element: str, modifier: float):
         if element.lower() in getElements():
             self.elementDamageBoostAst[element.lower()] = modifier
 
@@ -224,7 +198,7 @@ class Adventurer:
         }
         checkBuffExistsReplace(self.boostCheckAlliesAst, tempAppend)
 
-    async def set_additionals(self, additional_count: int, origin_name: str):
+    def set_additionals(self, additional_count: int, origin_name: str):
         # only change/refresh if
         # - the current additional action is already empty, or
         # - the same additional is added, meaning it'll just be refreshed
@@ -232,31 +206,44 @@ class Adventurer:
         if (
             self.additionalCount == 0
             or origin_name == self.additionalName
-            or origin_name == (await self.get_specialSkill())[0]
+            or origin_name == (self.get_specialSkill())[0]
         ):
             self.additionalCount = additional_count
             self.additionalName = origin_name
         # else: SA additional is active and the newly activated is non-SA, which must not override so nothing happens
 
-    async def clearBuffs(self):
+    def clearBuffs(self):
         # take the list but all the buffs with True is removed (keep all  the isbuff==False)
         self.boostCheckAlliesAdv = [
             item for item in self.boostCheckAlliesAdv if item.get("isbuff") == False
         ]
 
-    async def clearDebuffs(self):
+    def clearDebuffs(self):
         # take the list but all the buffs with True is removed (keep all  the isbuff==False)
         self.boostCheckAlliesAdv = [
             item for item in self.boostCheckAlliesAdv if item.get("isbuff") == True
         ]
 
-    async def ExtendReduceBuffs(self, turns):
+    def ExtendShortenSingleEffect(self, attribute: str, turns: int, is_buff: bool):
+        buffsDebuffs = self.get_boostCheckAlliesAdv(is_buff, attribute)
+        if buffsDebuffs is None:
+            return
+        buffsDebuffs["duration"] += turns
+        if buffsDebuffs["duration"] <= 0:
+            self.boostCheckAlliesAdv.remove(buffsDebuffs)
+            if is_buff and attribute in getDamageBuffs():
+                element = attribute.replace("_attack", "")
+                if element in getElements():
+                    self.elementDamageBoostAdv[element] = 0
+                else:
+                    self.statsBoostAdv[attribute] = 0
+
+    def ExtendReduceBuffs(self, turns):
         for buffsDebuffs in self.boostCheckAlliesAdv:
             if buffsDebuffs.get("isbuff") == True and isinstance(
                 buffsDebuffs.get("duration"), int
             ):
-                temp_duration = buffsDebuffs.get("duration") + turns
-                buffsDebuffs["duration"] = temp_duration
+                buffsDebuffs["duration"] += turns
         temp_expiry = [
             item
             for item in self.boostCheckAlliesAdv
@@ -270,14 +257,14 @@ class Adventurer:
 
         for buffsDebuffs in temp_expiry:
             curr_attribute = buffsDebuffs.get("attribute")
-            if buffsDebuffs.get("attribute") in getDamageBuffs():
+            if curr_attribute in getDamageBuffs():
                 curr_element = curr_attribute.replace("_attack", "")
                 if curr_element in getElements():
                     self.elementDamageBoostAdv[curr_element] = 0
                 else:
                     self.statsBoostAdv[curr_attribute] = 0
 
-    async def ExtendReduceDebuffs(self, turns):
+    def ExtendReduceDebuffs(self, turns):
         for buffsDebuffs in self.boostCheckAlliesAdv:
             if buffsDebuffs.get("isbuff") == False and isinstance(
                 buffsDebuffs.get("duration"), int
@@ -289,14 +276,17 @@ class Adventurer:
             for item in self.boostCheckAlliesAdv
             if isinstance(item.get("duration"), int) and item.get("duration") > 0
         ]
-    async def get_boostCheckAlliesAdv(self, isbuff: bool, attribute: str):
+
+    def get_boostCheckAlliesAdv(
+        self, isbuff: bool, attribute: str
+    ) -> Optional[Dict[str, Any]]:
         "returns the item in the buff/debuff list if it exists, returns NONE otherwise"
         for item in self.boostCheckAlliesAdv:
             if item.get("isbuff") == isbuff and item.get("attribute") == attribute:
                 return item
         return None
 
-    async def pop_boostCheckAlliesAdv(self, isbuff: bool, attribute: str):
+    def pop_boostCheckAlliesAdv(self, isbuff: bool, attribute: str):
         """(bool, str, int or float, int, bool, int) -> None
         target: self, allies, foes, foe
         attribute: strength, magic, st, aoe
@@ -304,7 +294,7 @@ class Adventurer:
         duration: 1,2,3,4
         is_assist: is this an assist buff or not
         position : the active unit position in the party
-        """        
+        """
         self.boostCheckAlliesAdv = [
             item
             for item in self.boostCheckAlliesAdv
@@ -319,3 +309,29 @@ class Adventurer:
         #             self.elementDamageBoostAdv[curr_element] = self.elementDamageBoostAdv[curr_element] - (temp_item.get("modifier")/100)
         #         else:
         #             self.statsBoostAdv[attribute] = self.statsBoostAdv[attribute] - (temp_item.get("modifier")/100)
+
+    def get_log_effect_list(self) -> List[str]:
+        ret = [f"**{self.name}**"]
+        with open("database/terms/human_readable.json", "r") as f:
+            human_readable_dict = json.load(f)
+        # return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
+        # loop through all buffs/debuffs
+        for buffsdebuffs in self.boostCheckAlliesAdv:
+            if human_readable_dict.get(buffsdebuffs.get("attribute")) != None:
+                # duration
+                ret.append(
+                    "{:.0f}% {} for {} turns".format(
+                        float(buffsdebuffs["modifier"]) * 100,
+                        human_readable_dict.get(buffsdebuffs.get("attribute")),
+                        buffsdebuffs.get("duration"),
+                    )
+                )
+            else:
+                ret.append(
+                    "{:.0f}% {} for {} turns".format(
+                        float(buffsdebuffs["modifier"]) * 100,
+                        buffsdebuffs.get("attribute"),
+                        buffsdebuffs.get("duration"),
+                    )
+                )
+        return ret

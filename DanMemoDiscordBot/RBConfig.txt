@@ -1,5 +1,7 @@
 ##Basic Tutorial:
-# In [Default] you can add you memoria boost and the boss difficulty level
+# In [Default] you can add you memoria boost and the boss difficulty level.
+# Memoria duration is given via first and last turn in memoria_turns, e.g. for the turn 8 - 15 Strength memoria it would be "strength":(8,15)
+# react_on_st should be set to False if you want assist's instant actions to never trigger on enemy single target attacks. If you set this to True, ST attacks are treated like AoE skills, triggering all instant effects
 # In [Enemy] type the Record Buster boss' name, and edit his resist under elemental_resist and type_resist
 # For units, enter the title for the adventurer and assist, EX. Glowing Pride, Key Strategist. If the assist is mlb add it before their title, EX. mlb Key Strategist.
 # Under each [Unit] tab, edit their agility, endurance, dexterity, strength and magic stats. IMPORTANT: Strength and Magic stats are their M.Attack and P.Attack values, not their actual stats. 
@@ -20,7 +22,9 @@
 sa_rng = 1.00
 skill_rng = 1.00
 counter_rng = 1.00
-memoria_boost = {"hp":0,"mp":0,"strength":0, "magic":0,"agility":0,"endurance":0,"dexterity":0, "water_attack":0, "wind_attack":0, "dark_attack":0, "thunder_attack":0}
+memoria_boost = {"hp":0, "mp":0, "strength":0, "magic":0, "agility":0, "endurance":0, "dexterity":0, "fire_attack":0, "water_attack":0, "thunder_attack":0, "earth_attack":0, "wind_attack":0, "dark_attack":0, "light_attack":0}
+memoria_turns = {"hp":(0,0), "mp":(0,0), "strength":(0,0), "magic":(0,0), "agility":(0,0), "endurance":(0,0), "dexterity":(0,0), "fire_attack":(0,0), "water_attack":(0,0), "thunder_attack":(0,0), "earth_attack":(0,0), "wind_attack":(0,0), "dark_attack":(0,0), "light_attack":(0,0)}
+react_on_st = False
 difficulty=7
 
 [revis]
