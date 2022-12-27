@@ -506,8 +506,10 @@ class DBcontroller:
             # CHECK IF TIME LIMITED
             title = title + "[{}] {}\n".format(row[0], row[1])
             title_name = title_name + "{} {}".format(row[0], row[1])
-            if bool(row[2]):
-                title = title + "[Limited-Time] "
+            if row[2] == 1:
+                title += "[Time-Limited] "
+            elif row[2] == 2:
+                title += "[Hero Festa] "
             for x in range(0, row[4]):
                 title = title + ":star:"
             ascended = row[3]
@@ -551,8 +553,10 @@ class DBcontroller:
             # CHECK IF TIME LIMITED
             title = title + "[{}] {}\n".format(row[0], row[1])
             title_name = title_name + "{} {}".format(row[0], row[1])
-            if bool(row[2]):
-                title = title + "[Limited-Time] "
+            if row[2] == 1:
+                title += "[Time-Limited] "
+            elif row[2] == 2:
+                title += "[Hero Festa] "
             for x in range(0, row[3]):
                 title = title + ":star:"
         # stats (based on LB? idk somehow dynamically change stats here maybe send?)
@@ -1084,8 +1088,10 @@ class DBcontroller:
             # TITLE CHARACTERNAME STARS
             # CHECK IF TIME LIMITED
             ret = ret + "{} {}".format(row[0], row[1])
-            if bool(row[2]):
-                ret = ret + "\n[Limited-Time] "
+            if row[2] == 1:
+                ret += "\n[Time-Limited] "
+            elif row[2] == 2:
+                ret += "\n[Hero Festa] "
             for x in range(0, row[4]):
                 ret = ret + ":star:"
             ret = ret + "\n"
@@ -1185,8 +1191,10 @@ class DBcontroller:
             # TITLE CHARACTERNAME STARS
             # CHECK IF TIME LIMITED
             ret = ret + "[{}] {}\n".format(row[0], row[1])
-            if bool(row[2]):
-                ret = ret + " [Limited-Time] "
+            if row[2] == 1:
+                ret += " [Time-Limited] "
+            elif row[2] == 2:
+                ret += " [Hero Festa] "
             for x in range(0, row[3]):
                 ret = ret + ":star:"
             ret = ret + "\n"
