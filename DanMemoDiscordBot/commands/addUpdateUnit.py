@@ -486,7 +486,7 @@ async def run(
             my_json = read_json.decode("utf8")
             as_dict = json.loads(my_json)
             if as_dict.get("limited") == None:
-                as_dict["limited"] = False
+                as_dict["limited"] = 0
             if sub_command == "assist":
                 temp_as = AssistC(
                     as_dict.get("title"),
@@ -511,7 +511,11 @@ async def run(
                 ic.insertAdventurer(temp_ad)
             else:
                 return ctx.send("Error reading command")
-            await ctx.send("Character has been added")
+            title = f"{as_dict['title']} - {as_dict['name']}.json"
+            await ctx.send(
+                "Character has been added",
+                files=interactions.File(title, read_json),
+            )
         except:
             await ctx.send("Error in reading json")
 
