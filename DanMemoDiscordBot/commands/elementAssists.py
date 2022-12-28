@@ -61,9 +61,6 @@ textLineHeightFactor = 0.21 / 2  # /2 because the modifier text has 2 lines
 
 
 async def run(ctx: CommandContext, dbConfig: DBConfig):
-    # to tell Discord this command may take longer than the default 3s timeout
-    await ctx.defer()
-
     generateInfographic(dbConfig)
 
     temp_embed = interactions.Embed()

@@ -37,9 +37,6 @@ killers = [
 
 
 async def run(ctx: CommandContext, dbConfig: DBConfig, sub_command: str):
-    # to tell Discord this command may take longer than the default 3s timeout
-    await ctx.defer()
-
     generateInfographic(dbConfig)
 
     if sub_command != "all":

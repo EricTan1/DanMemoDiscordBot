@@ -73,6 +73,7 @@ async def on_start():
         )
     ],
 )
+@interactions.autodefer()  # to tell Discord that commands may take longer than the default 3s timeout
 async def sacalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
     await command_saCalculator.run(client, ctx, config)
 
@@ -89,6 +90,7 @@ async def sacalc(ctx: CommandContext, config: Optional[interactions.Attachment] 
         )
     ],
 )
+@interactions.autodefer()
 async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
     # imanity server only and ex-imanity role
     # if(await hasAccess(ctx.message.author,EDITORS) or ctx.message.author.guild.id == 685046495988154373):
@@ -111,6 +113,7 @@ async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] 
         )
     ],
 )
+@interactions.autodefer()
 async def characterSearch(ctx: CommandContext, keywords: str):
     await command_commonSearch.run(
         dbConfig, client, ctx, keywords, is_character_search=True
@@ -129,6 +132,7 @@ async def characterSearch(ctx: CommandContext, keywords: str):
         )
     ],
 )
+@interactions.autodefer()
 async def skillSearch(ctx: CommandContext, keywords: str):
     await command_commonSearch.run(
         dbConfig, client, ctx, keywords, is_character_search=False
@@ -153,6 +157,7 @@ async def skillSearch(ctx: CommandContext, keywords: str):
         ),
     ],
 )
+@interactions.autodefer()
 async def help(ctx: CommandContext, sub_command: str):
     await command_help.run(ctx, sub_command)
 
@@ -161,6 +166,7 @@ async def help(ctx: CommandContext, sub_command: str):
     name="invite",
     description="Prints the server invite link for the bot",
 )
+@interactions.autodefer()
 async def invite(ctx: CommandContext):
     await command_invite.run(ctx)
 
@@ -169,6 +175,7 @@ async def invite(ctx: CommandContext):
     name="support",
     description="Sends a link to our support server. Please contact Eric#5731 or Yon#7436",
 )
+@interactions.autodefer()
 async def support(ctx: CommandContext):
     await command_support.run(ctx)
 
@@ -177,6 +184,7 @@ async def support(ctx: CommandContext):
     name="popularity",
     description="Displays current Ais bot popularity",
 )
+@interactions.autodefer()
 async def popularity(ctx: CommandContext):
     await command_popularity.run(client, ctx)
 
@@ -185,6 +193,7 @@ async def popularity(ctx: CommandContext):
     name="bento",
     description="Syr's lunch box! Get crepes every two hours that can be traded for gacha rolls!",
 )
+@interactions.autodefer()
 async def bento(ctx: CommandContext):
     await command_bento.run(dbConfig, ctx)
 
@@ -193,6 +202,7 @@ async def bento(ctx: CommandContext):
     name="gacha",
     description="Trade a crepe for an 11-draw gacha pull. In-game gacha rates. Limited and JP-only units are included",
 )
+@interactions.autodefer()
 async def gacha(ctx: CommandContext):
     await command_gacha.run(dbConfig, ctx)
 
@@ -215,6 +225,7 @@ async def gacha(ctx: CommandContext):
         ),
     ],
 )
+@interactions.autodefer()
 async def gachamode(ctx: CommandContext, sub_command: str):
     await command_gachaMode.run(dbConfig, ctx, sub_command)
 
@@ -237,6 +248,7 @@ async def gachamode(ctx: CommandContext, sub_command: str):
         ),
     ],
 )
+@interactions.autodefer()
 async def profile(ctx: CommandContext, sub_command: str):
     await command_profile.run(dbConfig, client, ctx, sub_command)
 
@@ -259,6 +271,7 @@ async def profile(ctx: CommandContext, sub_command: str):
         ),
     ],
 )
+@interactions.autodefer()
 async def topUsers(ctx: CommandContext, sub_command: str):
     await command_topUsers.run(dbConfig, client, ctx, sub_command)
 
@@ -275,6 +288,7 @@ async def topUsers(ctx: CommandContext, sub_command: str):
         )
     ],
 )
+@interactions.autodefer()
 async def dispatch(ctx: CommandContext, keywords: str):
     await command_dispatch.run(dbConfig, ctx, keywords)
 
@@ -307,6 +321,7 @@ unit_attachment = interactions.Option(
         ),
     ],
 )
+@interactions.autodefer()
 async def addUpdateUnit(
     ctx: CommandContext, sub_command: str, unit_file: interactions.Attachment
 ):
@@ -322,6 +337,7 @@ async def addUpdateUnit(
     scope=GUILD_ID,  # so the command is only visible & available on the dev server
     default_scope=False,
 )
+@interactions.autodefer()
 async def getJson(ctx: CommandContext):
     await command_getJson.run(ctx)
 
@@ -332,6 +348,7 @@ async def getJson(ctx: CommandContext):
     scope=GUILD_ID,  # so the command is only visible & available on the dev server
     default_scope=False,
 )
+@interactions.autodefer()
 async def init(ctx: CommandContext):
     await command_init.run(ctx)
 
@@ -366,6 +383,7 @@ killer_subcommands = [
     description="Posts infographic of all killer units in the game. Can also filter to one monster type.",
     options=killer_subcommands,
 )
+@interactions.autodefer()
 async def killer(ctx, sub_command: str):
     await command_killer.run(ctx, dbConfig, sub_command)
 
@@ -374,6 +392,7 @@ async def killer(ctx, sub_command: str):
     name="elemental-assists",
     description="Posts an infographic of all elemental damage buffing/elemental resist debuffing assists in the game",
 )
+@interactions.autodefer()
 async def elementAssists(ctx: CommandContext):
     await command_elementAssists.run(ctx, dbConfig)
 
@@ -404,6 +423,7 @@ async def elementAssists(ctx: CommandContext):
         ),
     ],
 )
+@interactions.autodefer()
 async def rb(ctx: CommandContext, sub_command: str):
     await command_rb.run(client, ctx, sub_command)
 

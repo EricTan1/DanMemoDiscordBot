@@ -45,9 +45,6 @@ async def run(
         search_words {str} -- the search query
         is_character_search {bool} -- True for character search, false for skill search
     """
-    # to tell Discord this command may take longer than the default 3s timeout
-    await ctx.defer()
-
     search = search_words.split()
     my_search = ""
     for words in search:

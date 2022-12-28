@@ -37,8 +37,6 @@ async def run(
         )
     else:
         try:
-            # to tell Discord this command may take longer than the default 3s timeout
-            await ctx.defer()
             # if template attached start to verify it
             # attachment object only contains the URL, so have to download it first
             async with client._http._req._session.get(config_file.url) as request:
