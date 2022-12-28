@@ -16,13 +16,13 @@ class Assist(Base):
         """(Assist, int, int, int, bool, int, str or None, str or
         None) -> Assist
         stars : the base stars of a unit (1/2/3/4)
-        limited : is the unit time-limited?
+        limited : is the unit regular/Time-limited/Hero Festa -> 0/1/2
         """
         self.assistid = assistid
-        self.characterid = int(characterid)
-        self.limited = bool(limited)
-        self.title = str(title)
-        self.stars = int(stars)
+        self.characterid = characterid
+        self.limited = limited
+        self.title = title
+        self.stars = stars
         self.alias = str(alias)
 
     def __str__(self):
@@ -35,9 +35,9 @@ class AssistSkill(Base):
         skillname: the name of the skill of the assist
         """
         self.assistskillid = assistskillid
-        self.assistid = int(assistid)
-        self.skillname = str(skillname)
-        self.skilltype = str(skilltype)
+        self.assistid = assistid
+        self.skillname = skillname
+        self.skilltype = skilltype
 
     def __str__(self):
         return self.skillname
@@ -61,10 +61,10 @@ class AssistSkillEffects(Base):
         duration : some buffs/debuffs have durations
         """
         self.assistskilleffectsid = assistskilleffectsid
-        self.assistskillid = int(assistskillid)
-        self.targetid = int(targetid)
-        self.attributeid = int(attributeid)
-        self.modifierid = int(modifierid)
+        self.assistskillid = assistskillid
+        self.targetid = targetid
+        self.attributeid = attributeid
+        self.modifierid = modifierid
         self.duration = duration
         self.maxActivations = maxActivations
         self.elementid = elementid
@@ -89,8 +89,8 @@ class AssistStats(Base):
         corresponds with limit break 0-5
         """
         self.assiststatsid = assiststatsid
-        self.assistid = int(assistid)
-        self.attributeid = int(attributeid)
+        self.assistid = assistid
+        self.attributeid = attributeid
         self.value = value
 
     def __str__(self):

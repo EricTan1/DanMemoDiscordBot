@@ -40,7 +40,7 @@ async def run(ctx: CommandContext):
             # stars
             current_adv_json["stars"] = current_adv.stars
             # limited
-            current_adv_json["limited"] = bool(current_adv.is_limited)
+            current_adv_json["limited"] = current_adv.is_limited
 
             # stats
             current_adv_json["stats"] = dict()
@@ -138,7 +138,7 @@ async def run(ctx: CommandContext):
             # stars
             current_as_json["stars"] = current_as.stars
             # limited
-            current_as_json["limited"] = bool(current_as.is_limited)
+            current_as_json["limited"] = current_as.is_limited
 
             # stats
             current_as_json["stats"] = dict()

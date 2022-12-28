@@ -41,7 +41,7 @@ class AdventureC:
         name: str,
         types: str,
         stars: int,
-        limited: bool,
+        limited: int,
         ascended: bool,
         stats: dict,
         skills: dict,
@@ -62,7 +62,7 @@ class AssistC:
         title: str,
         name: str,
         stars: int,
-        limited: bool,
+        limited: int,
         stats: dict,
         skills: dict,
     ):
@@ -395,7 +395,7 @@ class InsertCharacter:
         return ret
 
     def getInsertAdventurerID(
-        self, characterid: int, typeid: int, limited: bool, stars: int, title: str
+        self, characterid: int, typeid: int, limited: int, stars: int, title: str
     ) -> int:
         ret = -1
         ret_list = self._db.getDataColumn("adventurer", "title", title)

@@ -10,7 +10,7 @@ class Adventurer(Base):
         characterid: int,
         typeid: int,
         title: str,
-        limited: bool,
+        limited: int,
         ascended: bool,
         stars: int,
         alias: Optional[str],
@@ -18,16 +18,16 @@ class Adventurer(Base):
         """(Adventurer, int, int, int, bool, bool, int, str or None, str or
         None) -> Adventurer
         stars : the base stars of a unit (1/2/3/4)
-        limited : is the unit time-limited?
+        limited : is the unit regular/Time-limited/Hero Festa -> 0/1/2
         ascended : does the unit have hero ascension?
         """
         self.adventurerid = adventurerid
-        self.characterid = int(characterid)
-        self.title = str(title)
-        self.typeid = int(typeid)
-        self.limited = bool(limited)
-        self.ascended = bool(ascended)
-        self.stars = int(stars)
+        self.characterid = characterid
+        self.title = title
+        self.typeid = typeid
+        self.limited = limited
+        self.ascended = ascended
+        self.stars = stars
         self.alias = str(alias)
 
     def __str__(self):
@@ -42,9 +42,9 @@ class AdventurerSkill(Base):
         skillname: the name of the skill of the adventurer
         """
         self.adventurerskillid = adventurerskillid
-        self.adventurerid = int(adventurerid)
-        self.skillname = str(skillname)
-        self.skilltype = str(skilltype)
+        self.adventurerid = adventurerid
+        self.skillname = skillname
+        self.skilltype = skilltype
 
     def __str__(self):
         return self.skillname
@@ -68,13 +68,13 @@ class AdventurerSkillEffects(Base):
         duration : some buffs/debuffs have durations
         """
         self.adventurerskilleffectsid = adventurerskilleffectsid
-        self.adventurerskillid = int(adventurerskillid)
-        self.targetid = int(targetid)
-        self.attributeid = int(attributeid)
-        self.modifierid = int(modifierid)
+        self.adventurerskillid = adventurerskillid
+        self.targetid = targetid
+        self.attributeid = attributeid
+        self.modifierid = modifierid
         self.duration = duration
-        self.typeid = int(typeid)
-        self.eleid = int(eleid)
+        self.typeid = typeid
+        self.eleid = eleid
         self.speedid = speedid
 
     def __str__(self):
@@ -88,8 +88,8 @@ class AdventurerDevelopment(Base):
         name : name of the development skill
         """
         self.adventurerdevelopmentid = adventurerdevelopmentid
-        self.adventurerid = int(adventurerid)
-        self.name = str(name)
+        self.adventurerid = adventurerid
+        self.name = name
         # self.attributeid = int(attributeid)
         # self.modifierid = int(modifierid)
 
@@ -113,8 +113,8 @@ class AdventurerDevelopmentSkillEffects(Base):
         """
         self.adventurerdevelopmentskilleffectsid = adventurerdevelopmentskilleffectsid
         self.adventurerdevelopmentid = adventurerdevelopmentid
-        self.attributeid = int(attributeid)
-        self.modifierid = int(modifierid)
+        self.attributeid = attributeid
+        self.modifierid = modifierid
         self.targetid = targetid
         self.duration = duration
         self.typeid = typeid
@@ -143,9 +143,9 @@ class AdventurerStats(Base):
         corresponds with limit break 0-5
         """
         self.adventurerstatsid = adventurerstatsid
-        self.adventurerid = int(adventurerid)
-        self.attributeid = int(attributeid)
-        self.value = str(value)
+        self.adventurerid = adventurerid
+        self.attributeid = attributeid
+        self.value = value
 
     def __str__(self):
         return self.name

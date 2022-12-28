@@ -54,7 +54,7 @@ class InsertCharacter:
         adventurerid = self.getInsertAdventurerID(
             characterid,
             typeid,
-            int(adventureComplete._limited),
+            adventureComplete._limited,
             adventureComplete._stars,
             adventureComplete._title,
         )
@@ -173,7 +173,7 @@ class InsertCharacter:
         characterid = self.getInsertCharacterID(assistComplete._name, False)
         assistid = self.getInsertAssistID(
             characterid,
-            int(assistComplete._limited),
+            assistComplete._limited,
             assistComplete._stars,
             assistComplete._title,
         )
