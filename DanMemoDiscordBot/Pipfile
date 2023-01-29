@@ -13,9 +13,9 @@ pylint = "pylint"
 [packages]
 numpy = "==1.22.0"
 gspread = "==3.7.0"
-Pillow = "==9.0.1"
+Pillow = "==9.3.0"
 mysql-connector-python = "==8.0.19"
-discord-py-interactions = "*"
+discord-py-interactions = "4.3.4"
 interactions-files = "*"
 interactions-wait-for = "*"
 
