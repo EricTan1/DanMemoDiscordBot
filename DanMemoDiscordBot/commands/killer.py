@@ -63,10 +63,7 @@ async def run(ctx: CommandContext, dbConfig: DBConfig, sub_command: str):
             )
             croppedGraphic.save("./infographic/killer.png", quality=95)
 
-    embed = interactions.Embed()
-    embed.set_image(url="attachment://killer.png")
-    embed.color = Status.OK.value
-    await ctx.send(embeds=embed, files=interactions.File("./infographic/killer.png"))
+    await ctx.send(files=interactions.File("./infographic/killer.png"))
 
 
 def generateInfographic(dbConfig: DBConfig):

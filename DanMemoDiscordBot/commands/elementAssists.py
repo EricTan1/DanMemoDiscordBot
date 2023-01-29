@@ -63,13 +63,9 @@ textLineHeightFactor = 0.21 / 2  # /2 because the modifier text has 2 lines
 async def run(ctx: CommandContext, dbConfig: DBConfig):
     generateInfographic(dbConfig)
 
-    temp_embed = interactions.Embed()
-    temp_embed.color = 3066993
-
     file = open("./infographic/elementAssists.png", "rb")
     ifile = interactions.File("ea.png", fp=file)
-    temp_embed.set_image(url="attachment://ea.png")
-    await ctx.send(embeds=temp_embed, files=ifile)
+    await ctx.send(files=ifile)
 
 
 def generateInfographic(dbConfig: DBConfig):

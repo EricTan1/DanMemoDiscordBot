@@ -134,7 +134,7 @@ def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
         elif unit["unit_type"] == "assist":
             category += f" {assist_emoji}"
         if unit["number"] > 1:
-            number = min(unit["number"] - 1, 5)
+            number = min(unit["number"] - 2, 4)
             category += f" {limitbreak_emojis[number]}"
 
         if category == previous_category:
