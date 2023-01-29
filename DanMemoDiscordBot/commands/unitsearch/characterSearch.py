@@ -174,12 +174,8 @@ async def pageHandler(
             stats_dict, current_limitbreak, unit_type, current_ha
         )
 
-        # have to remove and insert again, since set_field_at doesn't work
-        # a fix is waiting for release: https://github.com/interactions-py/library/pull/1033
-        temp_embed.remove_field(0)
-        temp_embed.insert_field_at(0, name="Stats", value=stats, inline=True)
-        temp_embed.remove_field(1)
-        temp_embed.insert_field_at(1, name="Abilities", value=abilities, inline=True)
+        temp_embed.set_field_at(0, name="Stats", value=stats, inline=True)
+        temp_embed.set_field_at(1, name="Abilities", value=abilities, inline=True)
 
     MAXLB = 5
     MAXHA = 6

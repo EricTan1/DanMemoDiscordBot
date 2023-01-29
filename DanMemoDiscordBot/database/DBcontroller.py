@@ -493,11 +493,6 @@ class DBcontroller:
         ).format(
             adventurerid
         )
-        dev_id_sql = "SELECT * FROM danmemo.adventurerdevelopment where adventurerid = {}".replace(
-            "danmemo", self.database
-        ).format(
-            adventurerid
-        )
         # base adventurer assemble
         self._mycursor.execute(adventurer_base_sql)
         # free up the list cursor
@@ -637,15 +632,19 @@ class DBcontroller:
             temp_element = row[5]
             temp_type = row[6]
 
-            if (
-                temp_attribute.lower() == "all_damage_resist"
-                or temp_attribute.lower() == "single_damage_resist"
-            ):
+            if temp_attribute in ["all_damage_resist", "single_damage_resist"]:
                 temp_modifier = int(temp_modifier) * -1
                 if temp_modifier > 0:
                     temp_modifier = "+" + str(temp_modifier)
                 else:
                     temp_modifier = str(temp_modifier)
+            if (
+                temp_modifier[1:].isnumeric()
+                and temp_modifier[0] != "x"
+                and temp_attribute != "mp_regen"
+            ):
+                temp_modifier += "%"
+
             if temp_type == None or temp_type.strip() == "None":
                 temp_type = ""
             if temp_element == None or temp_element.strip() == "None":
@@ -653,7 +652,7 @@ class DBcontroller:
             else:
                 temp_element = temp_element.capitalize()
 
-            if temp_attribute == None or temp_attribute.lower() == "none":
+            if temp_attribute.lower() == "none":
                 temp_attribute = ""
 
             # [TARGET] Modifier Attribute /duration
@@ -669,24 +668,13 @@ class DBcontroller:
                 temp_element = self.human_readable_dict.get(temp_element)
             # element
 
-            if temp_modifier[1:].isnumeric() and temp_modifier[0] != "x":
-                temp_modifier = temp_modifier + "%"
+            ret += f"[{temp_target}] {temp_modifier} {temp_element} {temp_type} {temp_attribute} "
 
             if temp_duration != None and temp_duration.strip() != "None":
-                ret = ret + "[{}] {} {} {} {} /{} turn(s) \n".format(
-                    temp_target,
-                    temp_modifier,
-                    temp_element,
-                    temp_type,
-                    temp_attribute,
-                    temp_duration,
-                )
-            else:
-                ret = ret + "[{}] {} {} {} {} \n".format(
-                    temp_target, temp_modifier, temp_element, temp_type, temp_attribute
-                )
+                ret += f"/{temp_duration} turn(s) "
+            ret += "\n "
             if temp_max_activations != "None" and temp_max_activations != None:
-                ret = ret + "**{} per turn**".format(temp_max_activations)
+                ret += f"**{temp_max_activations} per turn**"
         return (skillname, ret, skilltype)
 
     def assembleAdventurerSkill(self, skillid):
@@ -921,7 +909,7 @@ class DBcontroller:
                             LEFT JOIN {}.speed AS s on adse.speedid = s.speedid\
                             WHERE adse.adventurerdevelopmentid={}".format(
                 *((self.database.lower(),) * 7),
-                adventurerdevelopmentid_list[adventurerdevelopmentid]
+                adventurerdevelopmentid_list[adventurerdevelopmentid],
             )
             self._mycursor.execute(effects_sql)
             ret = ""
