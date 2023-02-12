@@ -314,24 +314,26 @@ class Adventurer:
         ret = [f"**{self.name}**"]
         with open("database/terms/human_readable.json", "r") as f:
             human_readable_dict = json.load(f)
-        # return "**{}**\nElement Boost:\nadv:{}\nast:{}\nStats Boost:\nadv:{}\nast:{}".format(self.name,self.elementDamageBoostAdv,self.elementDamageBoostAst,self.statsBoostAdv,self.statsBoostAst)
-        # loop through all buffs/debuffs
         for buffsdebuffs in self.boostCheckAlliesAdv:
-            if human_readable_dict.get(buffsdebuffs.get("attribute")) != None:
-                # duration
-                ret.append(
-                    "{:.0f}% {} for {} turns".format(
-                        float(buffsdebuffs["modifier"]) * 100,
-                        human_readable_dict.get(buffsdebuffs.get("attribute")),
-                        buffsdebuffs.get("duration"),
-                    )
-                )
+            if buffsdebuffs["attribute"] in [
+                "all_damage_resist",
+                "single_damage_resist",
+            ]:
+                modifier = -buffsdebuffs["modifier"] * 100
             else:
-                ret.append(
-                    "{:.0f}% {} for {} turns".format(
-                        float(buffsdebuffs["modifier"]) * 100,
-                        buffsdebuffs.get("attribute"),
-                        buffsdebuffs.get("duration"),
-                    )
+                modifier = buffsdebuffs["modifier"] * 100
+            modifierStr = f"{modifier:.0f}" if modifier < 0 else f"+{modifier:.0f}"
+
+            if human_readable_dict.get(buffsdebuffs["attribute"]) != None:
+                attribute = human_readable_dict.get(buffsdebuffs["attribute"])
+            else:
+                attribute = buffsdebuffs["attribute"]
+
+            ret.append(
+                "{}% {} for {} turn(s)".format(
+                    modifierStr,
+                    attribute,
+                    buffsdebuffs.get("duration"),
                 )
+            )
         return ret
