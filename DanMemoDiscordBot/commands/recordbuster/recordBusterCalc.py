@@ -99,11 +99,12 @@ async def run(
             boss_stats = ast.literal_eval(config.get("enemy", "stats"))
 
             # skillflow
-            sf_list = []
+            skillflows = []
 
             for x in range(0, 6):
-                sf_list.append(ast.literal_eval(config.get("skillFlow", f"unit{x+1}")))
-            skillflow = np.array(sf_list)
+                skillflows.append(
+                    ast.literal_eval(config.get("skillFlow", f"unit{x+1}"))
+                )
 
             # revis config
             revis_type_debuff = config.get("revis", "debuff")
@@ -485,7 +486,7 @@ async def run(
                                 critPenBoost=tempCritPenBoost,
                                 current_skills=current_skills,
                                 current_skills_agi_mod=current_skills_agi_mod,
-                                turnOrder=skillflow[unitsCounter],
+                                turnOrder=skillflows[unitsCounter],
                                 adventurerCounter=tempCounter,
                                 adventurerAttack=tempAttack,
                                 name=f"[{unit_titles[unitsCounter]}] {curr_unit.character_name}",

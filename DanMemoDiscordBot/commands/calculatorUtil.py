@@ -1,7 +1,5 @@
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, cast
 
-import numpy as np
-
 from commands.entities.skills import AdventurerCounter, AdventurerSkill
 from commands.utils import getAilment, getElements
 
@@ -173,7 +171,7 @@ def DamageFunction(
     )
     # totalDamage = totalDamage + tempDamage
     # accumulateDamage[location] = accumulateDamage[location] + tempDamage
-    return int(np.floor(damage).item())
+    return int(damage)
 
 
 def CounterDamageFunction(
@@ -325,7 +323,7 @@ def CounterDamageFunction(
     # accumulateDamage[location] = accumulateDamage[location] + tempDamage
     # if(tempDamage > 0):
     # print("{} counter damage for {}".format(adventurer.name,tempDamage))
-    return int(np.floor(tempDamage).item())
+    return int(tempDamage)
 
 
 def SADamageFunction(
@@ -515,7 +513,7 @@ def SADamageFunction(
     )
     # totalDamage = totalDamage + tempDamage
     # accumulateDamage[location] = accumulateDamage[location] + tempDamage
-    return int(np.floor(tempDamage).item())
+    return int(tempDamage)
 
 
 def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list) -> int:
@@ -575,93 +573,8 @@ def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list) -> int
         * 3.7
         * 1.5
     )
-    print(f"Combine SA damage is {np.floor(tempDamage).item()}")
-    # totalDamage = totalDamage + np.floor(tempDamage).item()
-    return int(np.floor(tempDamage).item())
-
-
-""" def Counter(notIn=[0,0,0,0]):
-  global totalDamage
-  global accumulateDamage  
-  tempDamage = CounterDamageFunction(
-      location = 0,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Magic',
-      extraBoost = 0.25*counter0Active*counterScale,
-      NoType = 1          
-      )
-  if logprint[0] == 1 and counterprint == 1:
-    print('{} average single counter damage is {}'.format("PositionName0",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 1,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = 0.25*(1-notIn[1])*(counterScale)*counter1Active    
-      )            
-  if logprint[1] == 1 and counterprint == 1:
-    print('{} average single counter damage is {}'.format("PositionName1",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 2,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = 0.25*(1-notIn[2])*1*counter2Active
-      )
-  if logprint[2] == 1 and counterprint == 1:
-    print('{} average single counter damage is {}'.format("PositionName2",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 3,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = 0.25*(1-notIn[3])*counterScale     
-      )  
-  if logprint[3] == 1 and counterprint == 1:
-    print('{} average single counter damage is {}'.format("PositionName3",np.floor(tempDamage).item()))
-def Counters(notIn=[0,0,0,0]):
-  global totalDamage
-  global accumulateDamage
-  tempDamage = CounterDamageFunction(
-      location = 0,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Magic',
-      extraBoost = counter0Active*counterScale,
-      NoType = 1  
-      )               
-  if logprint[0] == 1 and counterprint == 1:
-    print('{} counter damage is {}'.format("PositionName0",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 1,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = (1-notIn[1])*(counterScale)*counter1Active        
-      ) 
-  if logprint[1] == 1 and counterprint == 1:
-    print('{} counter damage is {}'.format("PositionName1",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 2,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = (1-notIn[2])*1*counter2Active            
-      )  
-  if logprint[2] == 1 and counterprint == 1:
-    print('{} counter damage is {}'.format("PositionName2",np.floor(tempDamage).item()))
-  tempDamage = CounterDamageFunction(
-      location = 3,
-      target = 'Single',
-      tempBoost = 'None',
-      powerCoefficient = 'Physic',
-      extraBoost = (1-notIn[3])*counterScale   
-      )  
-  if logprint[3] == 1 and counterprint == 1:
-    print('{} counter damage is {}'.format("PositionName3",np.floor(tempDamage).item()))
-
- """
+    print(f"Combine SA damage is {int(tempDamage)}")
+    return int(tempDamage)
 
 
 def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -> float:

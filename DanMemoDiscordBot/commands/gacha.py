@@ -7,7 +7,7 @@ from typing import List
 
 import interactions
 from interactions.ext.files import CommandContext
-from numpy.random import choice
+from random import choice, choices
 from PIL import Image
 
 from commands.cache import Cache
@@ -100,10 +100,7 @@ def get_pulls(number: int, gacha_rates) -> list:
 def random_pulls(number: int, gacha_rates) -> list:
     possibilities = [e.name for e in gacha_rates]
     probabilities = [e.value for e in gacha_rates]
-    pulls = []
-    for _ in range(number):
-        pulls.append(choice(possibilities, p=probabilities))
-    return pulls
+    return choices(possibilities, weights=probabilities, k=number)
 
 
 def get_random_unit(gacha_category: GachaRates):
