@@ -88,7 +88,7 @@ def DamageFunction(
     # get strength/magic debuff
     powerDebuff = adventurer.get_boostCheckAlliesAdv(False, stat_key)
     if powerDebuff is not None:
-        powerBoostDebuff = abs(powerDebuff["modifier"])
+        powerBoostDebuff = abs(powerDebuff.modifier)
     else:
         powerBoostDebuff = 0
 
@@ -119,7 +119,7 @@ def DamageFunction(
         # element debuff
         eleDebuff = adventurer.get_boostCheckAlliesAdv(False, f"{skill.element}_attack")
         if eleDebuff is not None:
-            elementBoostDebuff = abs(eleDebuff["modifier"])
+            elementBoostDebuff = abs(eleDebuff.modifier)
 
     else:
         elementResistDownBase = 0
@@ -210,7 +210,7 @@ def CounterDamageFunction(
         # get str debuff
         tempStrDebuff = adventurer.get_boostCheckAlliesAdv(False, "strength")
         if tempStrDebuff is not None:
-            tempPowerBoostDebuff = abs(tempStrDebuff["modifier"])
+            tempPowerBoostDebuff = abs(tempStrDebuff.modifier)
         else:
             tempPowerBoostDebuff = 0
     else:
@@ -253,7 +253,7 @@ def CounterDamageFunction(
             False, f"{counter.element}_attack"
         )
         if tempEleDebuff is not None:
-            tempElementBoostDebuff = abs(tempEleDebuff["modifier"])
+            tempElementBoostDebuff = abs(tempEleDebuff.modifier)
 
     else:
         tempElementResistDownBase = 0
@@ -389,7 +389,7 @@ def SADamageFunction(
         # get str debuff
         tempStrDebuff = adventurer.get_boostCheckAlliesAdv(False, "strength")
         if tempStrDebuff is not None:
-            tempPowerBoostDebuff = abs(tempStrDebuff["modifier"])
+            tempPowerBoostDebuff = abs(tempStrDebuff.modifier)
         else:
             tempPowerBoostDebuff = 0
     else:
@@ -406,7 +406,7 @@ def SADamageFunction(
         # get magic debuff
         tempMagDebuff = adventurer.get_boostCheckAlliesAdv(False, "magic")
         if tempMagDebuff is not None:
-            tempPowerBoostDebuff = abs(tempMagDebuff["modifier"])
+            tempPowerBoostDebuff = abs(tempMagDebuff.modifier)
         else:
             tempPowerBoostDebuff = 0
     if len(skill.index_to) != 0:
@@ -443,7 +443,7 @@ def SADamageFunction(
             False, f"{skill.element}_attack"
         )
         if tempEleDebuff is not None:
-            tempElementBoostDebuff = abs(tempEleDebuff["modifier"])
+            tempElementBoostDebuff = abs(tempEleDebuff.modifier)
     else:
         tempElementResistDownBase = 0.0
         tempElementResistDownAdv = 0.0
@@ -536,7 +536,7 @@ def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list) -> int
                 False, "strength"
             )
             if tempStrDebuff is not None:
-                tempPowerBoostDebuff = abs(tempStrDebuff["modifier"])
+                tempPowerBoostDebuff = abs(tempStrDebuff.modifier)
             else:
                 tempPowerBoostDebuff = 0
         else:
@@ -548,7 +548,7 @@ def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list) -> int
                 False, "magic"
             )
             if tempMagDebuff is not None:
-                tempPowerBoostDebuff = abs(tempMagDebuff["modifier"])
+                tempPowerBoostDebuff = abs(tempMagDebuff.modifier)
             else:
                 tempPowerBoostDebuff = 0
         tempDamage = tempDamage + (
@@ -605,16 +605,16 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
     if target == "self":
         # boostCheckAlliesAdv
         for selfBuffsAdv in adventurer.boostCheckAlliesAdv:
-            if selfBuffsAdv.get("isbuff") == (attribute_type == "buff"):
-                if selfBuffsAdv.get("attribute") == attribute:
+            if selfBuffsAdv.isbuff == (attribute_type == "buff"):
+                if selfBuffsAdv.attribute == attribute:
                     extra_boosts_modifier_value = (
                         extra_boosts_modifier_value
                         + int(skillEffect.modifier.strip()) / 100
                     )
         # boostCheckAlliesAst
         for selfBuffsAst in adventurer.boostCheckAlliesAst:
-            if selfBuffsAst.get("isbuff") == (attribute_type == "buff"):
-                if selfBuffsAst.get("attribute") == attribute:
+            if selfBuffsAst.isbuff == (attribute_type == "buff"):
+                if selfBuffsAst.attribute == attribute:
                     extra_boosts_modifier_value = (
                         extra_boosts_modifier_value
                         + int(skillEffect.modifier.strip()) / 100
@@ -622,16 +622,16 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
     # target aka foes/foe
     else:
         for selfBuffsAdv in enemy.boostCheckEnemyAdv:
-            if selfBuffsAdv.get("isbuff") == (attribute_type == "buff"):
-                if selfBuffsAdv.get("attribute") == attribute:
+            if selfBuffsAdv.isbuff == (attribute_type == "buff"):
+                if selfBuffsAdv.attribute == attribute:
                     extra_boosts_modifier_value = (
                         extra_boosts_modifier_value
                         + int(skillEffect.modifier.strip()) / 100
                     )
         # boostCheckAlliesAst
         for selfBuffsAst in enemy.boostCheckEnemyAst:
-            if selfBuffsAst.get("isbuff") == (attribute_type == "buff"):
-                if selfBuffsAst.get("attribute") == attribute:
+            if selfBuffsAst.isbuff == (attribute_type == "buff"):
+                if selfBuffsAst.attribute == attribute:
                     extra_boosts_modifier_value = (
                         extra_boosts_modifier_value
                         + int(skillEffect.modifier.strip()) / 100
@@ -757,7 +757,7 @@ def interpretSkillAdventurerEffects(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
-                        skillEffect.duration,
+                        int(skillEffect.duration),
                     )
             elif current_target in ["foe", "foes"]:
                 if curr_attribute == "single_damage_resist":
@@ -767,7 +767,7 @@ def interpretSkillAdventurerEffects(
                 temp_min = min(enemy.targetResistDownAdv[stat_key], curr_modifier)
                 enemy.targetResistDownAdv[stat_key] = temp_min
                 enemy.set_boostCheckEnemyAdv(
-                    False, curr_attribute, curr_modifier, skillEffect.duration
+                    False, curr_attribute, curr_modifier, int(skillEffect.duration)
                 )
         # physical/magic resist down
         elif curr_attribute in ["physical_resist", "magic_resist"]:
@@ -777,7 +777,7 @@ def interpretSkillAdventurerEffects(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
-                        skillEffect.duration,
+                        int(skillEffect.duration),
                     )
             elif current_target in ["foe", "foes"]:
                 if curr_attribute == "physical_resist":
@@ -787,7 +787,7 @@ def interpretSkillAdventurerEffects(
                 temp_min = min(enemy.typeResistDownAdv[stat_key], curr_modifier)
                 enemy.typeResistDownAdv[stat_key] = temp_min
                 enemy.set_boostCheckEnemyAdv(
-                    False, curr_attribute, curr_modifier, skillEffect.duration
+                    False, curr_attribute, curr_modifier, int(skillEffect.duration)
                 )
         # STAT buffs including str/mag buffs
         elif curr_attribute in [
@@ -807,11 +807,11 @@ def interpretSkillAdventurerEffects(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
-                        skillEffect.duration,
+                        int(skillEffect.duration),
                     )
             elif current_target in ["foe", "foes"]:
                 enemy.set_boostCheckEnemyAdv(
-                    False, curr_attribute, curr_modifier, skillEffect.duration
+                    False, curr_attribute, curr_modifier, int(skillEffect.duration)
                 )
         # element Resist & elemental buffs Down
         elif curr_attribute in [f"{element}_attack" for element in getElements()]:
@@ -827,7 +827,7 @@ def interpretSkillAdventurerEffects(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
-                        skillEffect.duration,
+                        int(skillEffect.duration),
                     )
         elif curr_attribute in [f"{element}_resist" for element in getElements()]:
             if current_target in ["foe", "foes"]:
@@ -835,7 +835,7 @@ def interpretSkillAdventurerEffects(
                 temp_min = min(enemy.elementResistDownAdv[curr_element], curr_modifier)
                 enemy.elementResistDownAdv[curr_element] = temp_min
                 enemy.set_boostCheckEnemyAdv(
-                    False, curr_attribute, curr_modifier, skillEffect.duration
+                    False, curr_attribute, curr_modifier, int(skillEffect.duration)
                 )
         # status buff/debuff extension/shortening
         elif curr_attribute == "status_debuff" and skillEffect.duration is not None:
@@ -891,19 +891,20 @@ def interpretSkillAdventurerEffects(
                 enemy.pop_boostCheckEnemyAdv(is_buff, temp_attribute)
         else:
             NumberTypes = (int, float)
-            if (
-                isinstance(curr_modifier, NumberTypes)
-                and curr_attribute != None
-                and curr_attribute != "none"
-                and not curr_attribute in getAilment()
-            ):
+            if isinstance(curr_modifier, NumberTypes) and curr_attribute in [
+                "sa_gauge_charge",
+                "critical_rate",
+                "penetration_rate",
+                "counter_rate",
+                "guard_rate",
+            ]:  # TODO: does this nail all the cases?
                 if current_target in ["foe", "foes"]:
                     # boostCheckEnemyAppend
                     enemy.set_boostCheckEnemyAdv(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
-                        skillEffect.duration,
+                        int(skillEffect.duration),
                     )
                 # ally exists for a heal but doesn't matter here because its a heal. but maybe in the future??
                 if current_target in ["self", "allies"]:
@@ -913,7 +914,7 @@ def interpretSkillAdventurerEffects(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
-                            skillEffect.duration,
+                            int(skillEffect.duration),
                         )
 
 
@@ -937,7 +938,6 @@ def interpretSkillAssistEffects(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
-                        skillEffect.duration,
                     )
                 elif skillEffect.target.strip() == "allies":
                     for curr_adv in adv_list:
@@ -945,7 +945,6 @@ def interpretSkillAssistEffects(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
-                            skillEffect.duration,
                         )
                 elif (
                     skillEffect.target.strip() == "foe"
@@ -953,16 +952,13 @@ def interpretSkillAssistEffects(
                 ):
                     temp_min = min(enemy.targetResistDownAst["aoe"], curr_modifier)
                     enemy.targetResistDownAst["aoe"] = temp_min
-                    enemy.set_boostCheckEnemyAst(
-                        False, curr_attribute, curr_modifier, skillEffect.duration
-                    )
+                    enemy.set_boostCheckEnemyAst(False, curr_attribute, curr_modifier)
             elif curr_attribute == "single_damage_resist":
                 if skillEffect.target.strip() == "self":
                     adventurer.set_boostCheckAlliesAst(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
-                        skillEffect.duration,
                     )
                 elif skillEffect.target.strip() == "allies":
                     for curr_adv in adv_list:
@@ -970,7 +966,6 @@ def interpretSkillAssistEffects(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
-                            skillEffect.duration,
                         )
                 elif (
                     skillEffect.target.strip() == "foe"
@@ -978,9 +973,7 @@ def interpretSkillAssistEffects(
                 ):
                     temp_min = min(enemy.targetResistDownAst["st"], curr_modifier)
                     enemy.targetResistDownAst["st"] = temp_min
-                    enemy.set_boostCheckEnemyAst(
-                        False, curr_attribute, curr_modifier, skillEffect.duration
-                    )
+                    enemy.set_boostCheckEnemyAst(False, curr_attribute, curr_modifier)
             # physical/magic resist down
             elif curr_attribute == "physical_resist":
                 if skillEffect.target.strip() == "self":
@@ -988,7 +981,6 @@ def interpretSkillAssistEffects(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
-                        skillEffect.duration,
                     )
                 elif skillEffect.target.strip() == "allies":
                     for curr_adv in adv_list:
@@ -996,7 +988,6 @@ def interpretSkillAssistEffects(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
-                            skillEffect.duration,
                         )
                 elif (
                     skillEffect.target.strip() == "foe"
@@ -1004,16 +995,13 @@ def interpretSkillAssistEffects(
                 ):
                     temp_min = min(enemy.typeResistDownAst["physical"], curr_modifier)
                     enemy.typeResistDownAst["physical"] = temp_min
-                    enemy.set_boostCheckEnemyAst(
-                        False, curr_attribute, curr_modifier, skillEffect.duration
-                    )
+                    enemy.set_boostCheckEnemyAst(False, curr_attribute, curr_modifier)
             elif curr_attribute == "magic_resist":
                 if skillEffect.target.strip() == "self":
                     adventurer.set_boostCheckAlliesAst(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
-                        skillEffect.duration,
                     )
                 elif skillEffect.target.strip() == "allies":
                     for curr_adv in adv_list:
@@ -1021,7 +1009,6 @@ def interpretSkillAssistEffects(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
-                            skillEffect.duration,
                         )
                 elif (
                     skillEffect.target.strip() == "foe"
@@ -1029,9 +1016,7 @@ def interpretSkillAssistEffects(
                 ):
                     temp_min = min(enemy.typeResistDownAst["magic"], curr_modifier)
                     enemy.typeResistDownAst["magic"] = temp_min
-                    enemy.set_boostCheckEnemyAst(
-                        False, curr_attribute, curr_modifier, skillEffect.duration
-                    )
+                    enemy.set_boostCheckEnemyAst(False, curr_attribute, curr_modifier)
             # STATS || str/mag buffs
             elif curr_attribute in [
                 "strength",
@@ -1049,12 +1034,11 @@ def interpretSkillAssistEffects(
                         curr_modifier >= 0,
                         curr_attribute,
                         curr_modifier,
-                        skillEffect.duration,
                     )
                 elif skillEffect.target.strip() == "allies":
                     for curr_adv in adv_list:
                         temp_max = max(
-                            curr_adv.statsBoostAst.get(curr_attribute.strip()),
+                            curr_adv.statsBoostAst[curr_attribute.strip()],
                             curr_modifier,
                         )
                         curr_adv.statsBoostAst[curr_attribute.strip()] = temp_max
@@ -1062,15 +1046,12 @@ def interpretSkillAssistEffects(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
-                            skillEffect.duration,
                         )
                 elif (
                     skillEffect.target.strip() == "foe"
                     or skillEffect.target.strip() == "foes"
                 ):
-                    enemy.set_boostCheckEnemyAst(
-                        False, curr_attribute, curr_modifier, skillEffect.duration
-                    )
+                    enemy.set_boostCheckEnemyAst(False, curr_attribute, curr_modifier)
             # element Resist & elemental buffs Down
             for curr_element in getElements():
                 if curr_element in curr_attribute and "attack" in curr_attribute:
@@ -1084,7 +1065,6 @@ def interpretSkillAssistEffects(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
-                            skillEffect.duration,
                         )
                     elif skillEffect.target.strip() == "allies":
                         for curr_adv in adv_list:
@@ -1097,7 +1077,6 @@ def interpretSkillAssistEffects(
                                 curr_modifier >= 0,
                                 curr_attribute,
                                 curr_modifier,
-                                skillEffect.duration,
                             )
                 elif curr_element in curr_attribute and "resist" in curr_attribute:
                     if (
@@ -1109,7 +1088,7 @@ def interpretSkillAssistEffects(
                         )
                         enemy.elementResistDownAst[curr_element] = temp_min
                         enemy.set_boostCheckEnemyAst(
-                            False, curr_attribute, curr_modifier, skillEffect.duration
+                            False, curr_attribute, curr_modifier
                         )
 
             if "status" in curr_attribute and "debuff" in curr_attribute:
@@ -1174,7 +1153,6 @@ def interpretSkillAssistEffects(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
-                            skillEffect.duration,
                         )
                     # ally exists for a heal but doesn't matter here because its a heal. but maybe in the future??
                     if skillEffect.target.strip() == "allies":
@@ -1184,14 +1162,12 @@ def interpretSkillAssistEffects(
                                 curr_modifier >= 0,
                                 curr_attribute,
                                 curr_modifier,
-                                skillEffect.duration,
                             )
                     if skillEffect.target.strip() == "self":
                         adventurer.set_boostCheckAlliesAst(
                             curr_modifier >= 0,
                             curr_attribute,
                             curr_modifier,
-                            skillEffect.duration,
                         )
 
 

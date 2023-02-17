@@ -1,8 +1,14 @@
 import json
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from commands.calculatorUtil import counter, counters
-from commands.utils import checkBuffExistsReplace, getDamageDebuffs, getElements
+from commands.utils import (
+    AssistEffect,
+    Effect,
+    checkBuffExistsReplace,
+    getDamageDebuffs,
+    getElements,
+)
 
 if TYPE_CHECKING:
     from commands.entities.adventurer import Adventurer
@@ -70,12 +76,8 @@ class Enemy:
 
         # buffs and debuffs
         # append buffs to dict and remove once wiped
-        # list of dict
-        # {isbuff,Attribute,Modifier,duration}
-        # each list object
-        # {"isbuff":False,"attribute":"strength","modifier":-45,"duration":1}
-        self.boostCheckEnemyAdv: List[Dict[str, Any]] = []
-        self.boostCheckEnemyAst: List[Dict[str, Any]] = []
+        self.boostCheckEnemyAdv: List[Effect] = []
+        self.boostCheckEnemyAst: List[AssistEffect] = []
 
     def set_elementResistDownAdv(self, element: str, modifier: float):
         if element.lower() in getElements():
@@ -97,24 +99,6 @@ class Enemy:
     def set_targetResistDownAst(self, target: str, modifier: float):
         self.targetResistDownAst[target.lower()] = modifier
 
-    def set_boostCheckEnemyAst(
-        self, isbuff: bool, attribute: str, modifier: float, duration: int
-    ):
-        """(bool, str, int or float, int, bool) -> None
-        target: self, allies, foes, foe
-        attribute: strength, magic, st, aoe
-        modifier: -10 ,+50
-        duration: 1,2,3,4
-        is_assist: is this an assist buff or not
-        """
-        tempAppend = {
-            "isbuff": isbuff,
-            "attribute": attribute,
-            "modifier": modifier,
-            "duration": duration,
-        }
-        checkBuffExistsReplace(self.boostCheckEnemyAst, tempAppend)
-
     def set_boostCheckEnemyAdv(
         self, isbuff: bool, attribute: str, modifier: float, duration: int
     ):
@@ -125,28 +109,34 @@ class Enemy:
         duration: 1,2,3,4
         is_assist: is this an assist buff or not
         """
-        try:
-            duration = int(duration)
-        except:
-            pass
-        tempAppend = {
-            "isbuff": isbuff,
-            "attribute": attribute,
-            "modifier": modifier,
-            "duration": duration,
-        }
-        checkBuffExistsReplace(self.boostCheckEnemyAdv, tempAppend)
+        assert isinstance(isbuff, bool)  # TODO: remove
+        assert isinstance(attribute, str)
+        assert isinstance(modifier, float)
+        assert isinstance(duration, int)
+        effect = Effect(isbuff, attribute, modifier, duration)
+        checkBuffExistsReplace(self.boostCheckEnemyAdv, effect)
+
+    def set_boostCheckEnemyAst(self, isbuff: bool, attribute: str, modifier: float):
+        """(bool, str, int or float) -> None
+        attribute: strength, magic, st, aoe
+        modifier: -10 ,+50
+        """
+        assert isinstance(isbuff, bool)  # TODO: remove
+        assert isinstance(attribute, str)
+        assert isinstance(modifier, float)
+        effect = AssistEffect(isbuff, attribute, modifier)
+        checkBuffExistsReplace(self.boostCheckEnemyAst, effect)
 
     def clearBuffs(self):
         # take the list but all the buffs with True is removed (keep all  the isbuff==False)
         self.boostCheckEnemyAdv = [
-            item for item in self.boostCheckEnemyAdv if item.get("isbuff") == False
+            item for item in self.boostCheckEnemyAdv if item.isbuff == False
         ]
 
     def clearDebuffs(self):
         # take the list but all the buffs with True is removed (keep all  the isbuff==False)
         self.boostCheckEnemyAdv = [
-            item for item in self.boostCheckEnemyAdv if item.get("isbuff") == True
+            item for item in self.boostCheckEnemyAdv if item.isbuff == True
         ]
 
     def turnOrder(self, turnOrder: int, adv_list: list, speed: int):
@@ -171,8 +161,8 @@ class Enemy:
         buffsDebuffs = self.get_boostCheckEnemyAdv(is_buff, attribute)
         if buffsDebuffs is None:
             return
-        buffsDebuffs["duration"] += turns
-        if buffsDebuffs["duration"] <= 0:
+        buffsDebuffs.duration += turns
+        if buffsDebuffs.duration <= 0:
             self.boostCheckEnemyAdv.remove(buffsDebuffs)
             if not is_buff and attribute in getDamageDebuffs():
                 curr_element = attribute.replace("_resist", "")
@@ -188,37 +178,23 @@ class Enemy:
 
     def ExtendReduceBuffs(self, turns):
         for buffsDebuffs in self.boostCheckEnemyAdv:
-            if buffsDebuffs.get("isbuff") == True and isinstance(
-                buffsDebuffs.get("duration"), int
-            ):
-                temp_duration = buffsDebuffs.get("duration") + turns
-                buffsDebuffs["duration"] = temp_duration
+            if buffsDebuffs.isbuff:
+                buffsDebuffs.duration += turns
         self.boostCheckEnemyAdv = [
-            item
-            for item in self.boostCheckEnemyAdv
-            if isinstance(item.get("duration"), int) and item.get("duration") > 0
+            item for item in self.boostCheckEnemyAdv if item.duration > 0
         ]
 
     def ExtendReduceDebuffs(self, turns):
         for buffsDebuffs in self.boostCheckEnemyAdv:
-            if buffsDebuffs.get("isbuff") == False and isinstance(
-                buffsDebuffs.get("duration"), int
-            ):
-                temp_duration = buffsDebuffs.get("duration") + turns
-                buffsDebuffs["duration"] = temp_duration
-        tempExpiry = [
-            item
-            for item in self.boostCheckEnemyAdv
-            if isinstance(item.get("duration"), int) and item.get("duration") <= 0
-        ]
+            if not buffsDebuffs.isbuff:
+                buffsDebuffs.duration += turns
+        tempExpiry = [item for item in self.boostCheckEnemyAdv if item.duration <= 0]
         self.boostCheckEnemyAdv = [
-            item
-            for item in self.boostCheckEnemyAdv
-            if isinstance(item.get("duration"), int) and item.get("duration") > 0
+            item for item in self.boostCheckEnemyAdv if item.duration > 0
         ]
 
         for buffsDebuffs in tempExpiry:
-            curr_attribute = buffsDebuffs.get("attribute")
+            curr_attribute = buffsDebuffs.attribute
             if curr_attribute in getDamageDebuffs():
                 curr_element = curr_attribute.replace("_resist", "")
                 if curr_element in getElements():
@@ -243,15 +219,13 @@ class Enemy:
         self.boostCheckEnemyAdv = [
             item
             for item in self.boostCheckEnemyAdv
-            if item.get("isbuff") != isbuff or item.get("attribute") != attribute
+            if item.isbuff != isbuff or item.attribute != attribute
         ]
 
-    def get_boostCheckEnemyAdv(
-        self, isbuff: bool, attribute: str
-    ) -> Optional[Dict[str, Any]]:
+    def get_boostCheckEnemyAdv(self, isbuff: bool, attribute: str) -> Optional[Effect]:
         "returns the item in the buff/debuff list if it exists, returns NONE otherwise"
         for item in self.boostCheckEnemyAdv:
-            if item.get("isbuff") == isbuff and item.get("attribute") == attribute:
+            if item.isbuff == isbuff and item.attribute == attribute:
                 return item
         return None
 
@@ -259,10 +233,10 @@ class Enemy:
         ret = [
             item
             for item in self.boostCheckEnemyAdv
-            if item.get("isbuff") == True and item.get("attribute") == buffName
+            if item.isbuff == True and item.attribute == buffName
         ]
         if len(ret) == 1:
-            return ret[0].get("modifier")
+            return ret[0].modifier
         else:
             # 0
             return 0
@@ -529,7 +503,7 @@ class Gareth(Enemy):
     def clearDebuffs(self):
         # take the list but all the buffs with True is removed (keep all  the isbuff==False)
         self.boostCheckEnemyAdv = [
-            item for item in self.boostCheckEnemyAdv if item.get("isbuff") == True
+            item for item in self.boostCheckEnemyAdv if item.isbuff == True
         ]
 
     def turnOrder(self, turnOrder: int, adv_list: list, speed: int):

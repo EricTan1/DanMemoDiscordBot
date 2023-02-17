@@ -3,7 +3,7 @@ import json
 import os
 from enum import Enum
 from types import SimpleNamespace
-from typing import List
+from typing import List, TypeVar, cast
 
 import interactions
 from PIL import Image
@@ -28,6 +28,11 @@ class Status(Enum):
 
 
 class GachaRates(Enum):
+    # Abstract base class
+    pass
+
+
+class GachaRatesRegular(GachaRates):
     """gacha rates for danmemo summoning"""
 
     ADVENTURER_2_STARS = 0.54
@@ -38,7 +43,7 @@ class GachaRates(Enum):
     ASSIST_4_STARS = 0.01
 
 
-class GachaRatesEleventh(Enum):
+class GachaRatesEleventh(GachaRates):
     """gacha rates for eleventh draw"""
 
     ADVENTURER_3_STARS = 0.64
@@ -324,64 +329,57 @@ def createGSpreadJSON():
         pass
 
 
-def checkperms(ctx, guild_id, perm_list):
-    current_user = ctx.message.author
-    if current_user.guild.id == guild_id:
-        has_access = False
-        for temp_roles in current_user.roles:
-            if temp_roles.id in perm_list:
-                has_access = True
-    return has_access
+class AssistEffect:
+    def __init__(self, isbuff: bool, attribute: str, modifier: float):
+        self.isbuff = isbuff
+        self.attribute = attribute
+        self.modifier = modifier
 
 
-async def hasAccess(currentuser, guildid: list, roleid: list):
-    ret = False
-    if currentuser.guild.id in guildid:
-        for roles in currentuser.roles:
-            if roles.id in roleid:
-                ret = True
-    return ret
+class Effect(AssistEffect):
+    def __init__(self, isbuff: bool, attribute: str, modifier: float, duration: int):
+        super().__init__(isbuff, attribute, modifier)
+        self.duration = duration
 
 
-def checkBuffExistsReplace(buffDebuffList: list, buffDebuff: dict):
-    """(list, dict) -> None
+T_A = TypeVar("T_A", bound=AssistEffect)
+
+
+def checkBuffExistsReplace(buffDebuffList: List[T_A], buffDebuff: T_A) -> None:
+    """
     Check the buffs/debuffs in the list and replace if attribute and target is the same and
     if the modifier is equal or greater than the one in the list
-
-    buffDebuffList: list of buffs or debuffs
-    buffDebuff: dictionary of format
-                {isbuff,attribute,modifier,duration}
-                Example:{"isbuff":True","attribute":"strength","modifier":-45,"duration":1}
     """
     pop_value = -1
     # loop through the list to find the buff
     for i in range(0, len(buffDebuffList)):
-        curr_dict = buffDebuffList[i]
+        curr_effect = buffDebuffList[i]
         # if the buff exists then check modifier
-        if curr_dict.get("attribute") == buffDebuff.get("attribute") and curr_dict.get(
-            "isbuff"
-        ) == buffDebuff.get("isbuff"):
+        if (
+            curr_effect.attribute == buffDebuff.attribute
+            and curr_effect.isbuff == buffDebuff.isbuff
+        ):
             pop_value = i
 
     if pop_value == -1:
         buffDebuffList.append(buffDebuff)
     else:
-        curr_dict = buffDebuffList[pop_value]
+        curr_effect = buffDebuffList[pop_value]
         # if the modifier of the buffdebuff is equal to greater to the one on the list then pop the list and replace it
-        if curr_dict.get("isbuff"):
-            if curr_dict.get("modifier") < buffDebuff.get("modifier"):
+        if curr_effect.isbuff:
+            if curr_effect.modifier < buffDebuff.modifier:
                 buffDebuffList.pop(pop_value)
                 buffDebuffList.append(buffDebuff)
-        else:
-            if curr_dict.get("modifier") > buffDebuff.get("modifier"):
-                buffDebuffList.pop(pop_value)
-                buffDebuffList.append(buffDebuff)
-        # if its equal check duration and replace it with the longer one
-        if (
-            curr_dict.get("modifier") == buffDebuff.get("modifier")
-            and curr_dict.get("duration") != None
-            and buffDebuff.get("duration") != None
+        elif curr_effect.modifier > buffDebuff.modifier:
+            buffDebuffList.pop(pop_value)
+            buffDebuffList.append(buffDebuff)
+        # if it's equal, check duration and replace it with the longer one
+        if curr_effect.modifier == buffDebuff.modifier and isinstance(
+            buffDebuff, Effect
         ):
-            if curr_dict.get("duration") < buffDebuff.get("duration"):
-                buffDebuffList.pop(pop_value)
-                buffDebuffList.append(buffDebuff)
+            # Type checking isn't great for this usecase yet...
+            assert isinstance(curr_effect, Effect)
+            effectList = cast(List[Effect], buffDebuffList)
+            if curr_effect.duration < buffDebuff.duration:
+                effectList.pop(pop_value)
+                effectList.append(buffDebuff)
