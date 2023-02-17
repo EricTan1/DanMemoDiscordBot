@@ -3,7 +3,6 @@ import configparser
 from typing import Dict, List, Optional, Tuple, Union, cast
 
 import interactions
-import numpy as np
 from interactions.ext.files import CommandContext
 from interactions.ext.wait_for import WaitForClient
 
@@ -648,7 +647,7 @@ async def run(
                                 temp_adv_effects_list, active_adv, enemy
                             )
                             # buff skills
-                            if temp_adv_skill == None:
+                            if temp_adv_skill is None:
                                 if current_speed == "fast":
                                     temp_agi *= 5.35
                                 elif current_speed == "slow":
@@ -718,7 +717,7 @@ async def run(
 
                     if (
                         isinstance(removed_sorted_skill[2], AdventurerSkill)
-                        or removed_sorted_skill[2] == None
+                        or removed_sorted_skill[2] is None
                     ):
                         cast_skill = cast(
                             Optional[AdventurerSkill], removed_sorted_skill[2]

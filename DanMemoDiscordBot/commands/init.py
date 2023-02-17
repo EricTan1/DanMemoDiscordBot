@@ -9,7 +9,7 @@ async def run(ctx: CommandContext):
         # record their names and player id
         for roles in member.roles:
             if roles.id == 708008774140690473:
-                if member.nick == None:
+                if member.nick is None:
                     # clan_list.append([member.id,member.name])
                     clan_list_name.append([member.name])
                 else:

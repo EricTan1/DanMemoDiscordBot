@@ -34,7 +34,7 @@ async def run(dbConfig: DBConfig, ctx: CommandContext, search_words: str):
                 file_list.append("./lottery/" + dispatch_dict.get(char) + "/hex.png")
             except:
                 file_list.append("./lottery/gac_dummy/hex.png")
-        if ret[2] == None:
+        if ret[2] is None:
             temp_embed.add_field(
                 name=f"{ret[1]} - {ret[3]}:",
                 value=f"{ret[4]}, {ret[5]}, {ret[6]}, {ret[7]}",

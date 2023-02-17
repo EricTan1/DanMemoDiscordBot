@@ -174,16 +174,16 @@ class InsertCharacter:
         for effects in skilleffectList:
             # Type+Element
             temp_type = effects.get("type")
-            if temp_type == None:
+            if temp_type is None:
                 temp_type = ""
             temp_element = effects.get("element")
-            if temp_element == None:
+            if temp_element is None:
                 temp_element = ""
             if temp_type.split("_")[0] in ele_list:
                 temp_split = temp_type.split("_")
                 temp_element = temp_split[0]
                 print(temp_type)
-                if temp_type != None and len(temp_split) == 3:
+                if temp_type is not None and len(temp_split) == 3:
                     temp_type = temp_split[1] + "_" + temp_split[2]
                 # temp_index = temp_value.find("_")
                 # temp_element = temp_value[0:temp_index]
@@ -200,7 +200,7 @@ class InsertCharacter:
             temp_attribute = effects.get("attribute")
             temp_speed = effects.get("speed")
             temp_modifier = effects.get("modifier")
-            if temp_modifier == None:
+            if temp_modifier is None:
                 temp_modifier = ""
             if len(temp_modifier) > 0 and temp_modifier[len(temp_modifier) - 1] == "%":
                 temp_modifier = temp_modifier[: len(temp_modifier) - 1]
@@ -231,16 +231,16 @@ class InsertCharacter:
         for effects in skilleffectList:
             # Type+Element
             temp_type = effects.get("type")
-            if temp_type == None:
+            if temp_type is None:
                 temp_type = ""
             temp_element = effects.get("element")
-            if temp_element == None:
+            if temp_element is None:
                 temp_element = ""
             if temp_type.split("_")[0] in ele_list:
                 temp_split = temp_type.split("_")
                 temp_element = temp_split[0]
                 print(temp_type)
-                if temp_type != None and len(temp_split) == 3:
+                if temp_type is not None and len(temp_split) == 3:
                     temp_type = temp_split[1] + "_" + temp_split[2]
                 # temp_index = temp_value.find("_")
                 # temp_element = temp_value[0:temp_index]
@@ -257,7 +257,7 @@ class InsertCharacter:
             temp_attribute = effects.get("attribute")
             temp_speed = effects.get("speed")
             temp_modifier = effects.get("modifier")
-            if temp_modifier == None:
+            if temp_modifier is None:
                 temp_modifier = ""
             if len(temp_modifier) > 0 and temp_modifier[len(temp_modifier) - 1] == "%":
                 temp_modifier = temp_modifier[: len(temp_modifier) - 1]
@@ -324,16 +324,16 @@ class InsertCharacter:
             temp_modifier = effects.get("modifier")
             temp_element = effects.get("element")
             temp_type = effects.get("type")
-            if temp_modifier == None:
+            if temp_modifier is None:
                 temp_modifier = ""
             if len(temp_modifier) > 0 and temp_modifier[len(temp_modifier) - 1] == "%":
                 temp_modifier = temp_modifier[: len(temp_modifier) - 1]
             targetid = self.getBaseConstants(Target(None, temp_target), False)
             attributeid = self.getBaseConstants(Attribute(None, temp_attribute), False)
             modifierid = self.getBaseConstants(Modifier(None, temp_modifier), True)
-            if temp_element == None:
+            if temp_element is None:
                 temp_element = ""
-            if temp_type == None:
+            if temp_type is None:
                 temp_type = ""
 
             eleid = self.getBaseConstants(Element(None, temp_element), False)
@@ -439,7 +439,7 @@ if __name__ == "__main__":
             if filename != "desktop.ini":
                 print(filename)
                 as_dict = json.load(f)
-                if as_dict.get("limited") == None:
+                if as_dict.get("limited") is None:
                     as_dict["limited"] = False
                 # temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
                 # ic.insertAssist(temp_as)
@@ -481,7 +481,7 @@ async def run(
 
             validateStructure(as_dict, sub_command)
 
-            if as_dict.get("limited") == None:
+            if as_dict.get("limited") is None:
                 as_dict["limited"] = 0
             if sub_command == "assist":
                 temp_as = AssistC(

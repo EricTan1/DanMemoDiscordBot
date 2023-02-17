@@ -212,7 +212,7 @@ class DBcontroller:
             self._mycursorprepared.execute(characterAdTitleSql, (words, words, words))
             for row in self._mycursorprepared:
                 ad_id = "Ad" + str(row[0])
-                if ret_dict.get(ad_id) == None:
+                if ret_dict.get(ad_id) is None:
                     ret_dict[ad_id] = [0, row[1], row[2]]
                 ret_dict[ad_id] = [ret_dict.get(ad_id)[0] + 1, row[1], row[2]]
             # ASSIST
@@ -223,14 +223,14 @@ class DBcontroller:
             self._mycursorprepared.execute(characterAsTitleSql, (words, words, words))
             for row in self._mycursorprepared:
                 as_id = "As" + str(row[0])
-                if ret_dict.get(as_id) == None:
+                if ret_dict.get(as_id) is None:
                     ret_dict[as_id] = [0, row[1], row[2]]
                 ret_dict[as_id] = [ret_dict.get(as_id)[0] + 1, row[1], row[2]]
 
         ret_list = []
         highest = None
         for keys in ret_dict:
-            if highest == None:
+            if highest is None:
                 highest = ret_dict.get(keys)[0]
                 ret_list.append(ret_dict.get(keys) + [keys])
             elif highest < ret_dict.get(keys)[0]:
@@ -256,7 +256,7 @@ class DBcontroller:
             searchwords_list[index] = searchwords_list[index].strip()
             # check if they are in the dict readable
             temp = self.human_input_dict.get(searchwords_list[index])
-            if temp != None:
+            if temp is not None:
                 searchwords_list[index] = temp.strip()
             # if its not whole sentences try single words
             replace_list = []
@@ -265,7 +265,7 @@ class DBcontroller:
                 print(searchwords_list[index])
                 print(words)
                 temp = self.human_input_dict.get(words)
-                if temp != None:
+                if temp is not None:
                     # (old,new)
                     replace_list.append((words, temp.strip()))
             for (old, new) in replace_list:
@@ -373,14 +373,14 @@ class DBcontroller:
                     skilleffect.adventurerskilleffectsid,
                     "Ad" + str(skilleffect.adventurerskillid),
                 )
-                if ret_dict_effect.get(skillid) == None:
+                if ret_dict_effect.get(skillid) is None:
                     ret_dict_effect[skillid] = 0
                 ret_dict_effect[skillid] = ret_dict_effect.get(skillid) + 1
                 my_set.add(skilleffect.adventurerskillid)
 
             for ids in my_set:
                 skillid = "Ad" + str(ids)
-                if ret_dict.get(skillid) == None:
+                if ret_dict.get(skillid) is None:
                     ret_dict[skillid] = 0
                 ret_dict[skillid] = ret_dict.get(skillid) + 1
             # assist
@@ -391,14 +391,14 @@ class DBcontroller:
                     skilleffect.assistskilleffectsid,
                     "As" + str(skilleffect.assistskillid),
                 )
-                if ret_dict_effect.get(skillid) == None:
+                if ret_dict_effect.get(skillid) is None:
                     ret_dict_effect[skillid] = 0
                 ret_dict_effect[skillid] = ret_dict_effect.get(skillid) + 1
                 my_set.add(skilleffect.assistskillid)
 
             for ids in my_set:
                 skillid = "As" + str(ids)
-                if ret_dict.get(skillid) == None:
+                if ret_dict.get(skillid) is None:
                     ret_dict[skillid] = 0
                 ret_dict[skillid] = ret_dict.get(skillid) + 1
 
@@ -425,7 +425,7 @@ class DBcontroller:
                     skilleffect.adventurerdevelopmentid,
                     "Av" + str(skilleffect.adventurerdevelopmentid),
                 )
-                if ret_dict_effect.get(skillid) == None:
+                if ret_dict_effect.get(skillid) is None:
                     ret_dict_effect[skillid] = 0
                 ret_dict_effect[skillid] = ret_dict_effect.get(skillid) + 1
                 my_set.add(skilleffect.adventurerdevelopmentid)
@@ -435,14 +435,14 @@ class DBcontroller:
                     skilleffect.adventurerdevelopmentid,
                     "Av" + str(skilleffect.adventurerdevelopmentid),
                 )
-                if ret_dict_effect.get(skillid) == None:
+                if ret_dict_effect.get(skillid) is None:
                     ret_dict_effect[skillid] = 0
                 ret_dict_effect[skillid] = ret_dict_effect.get(skillid) + 1
                 my_set.add(skilleffect.adventurerdevelopmentid)
 
             for ids in my_set:
                 skillid = "Av" + str(ids)
-                if ret_dict.get(skillid) == None:
+                if ret_dict.get(skillid) is None:
                     ret_dict[skillid] = 0
                 ret_dict[skillid] = ret_dict.get(skillid) + 1
 
@@ -450,7 +450,7 @@ class DBcontroller:
         ret_list = []
         highest = None
         for keys in ret_dict:
-            if highest == None:
+            if highest is None:
                 highest = ret_dict.get(keys)
                 ret_list.append(keys)
             elif highest < ret_dict.get(keys):
@@ -645,9 +645,9 @@ class DBcontroller:
             ):
                 temp_modifier += "%"
 
-            if temp_type == None or temp_type.strip() == "None":
+            if temp_type is None or temp_type.strip() == "None":
                 temp_type = ""
-            if temp_element == None or temp_element.strip() == "None":
+            if temp_element is None or temp_element.strip() == "None":
                 temp_element = ""
             else:
                 temp_element = temp_element.capitalize()
@@ -656,24 +656,24 @@ class DBcontroller:
                 temp_attribute = ""
 
             # [TARGET] Modifier Attribute /duration
-            if self.human_readable_dict.get(temp_target) != None:
+            if self.human_readable_dict.get(temp_target) is not None:
                 temp_target = self.human_readable_dict.get(temp_target)
-            if self.human_readable_dict.get(temp_modifier) != None:
+            if self.human_readable_dict.get(temp_modifier) is not None:
                 temp_modifier = self.human_readable_dict.get(temp_modifier)
-            if self.human_readable_dict.get(temp_attribute) != None:
+            if self.human_readable_dict.get(temp_attribute) is not None:
                 temp_attribute = self.human_readable_dict.get(temp_attribute)
-            if self.human_readable_dict.get(temp_type) != None:
+            if self.human_readable_dict.get(temp_type) is not None:
                 temp_type = self.human_readable_dict.get(temp_type)
-            if self.human_readable_dict.get(temp_element) != None:
+            if self.human_readable_dict.get(temp_element) is not None:
                 temp_element = self.human_readable_dict.get(temp_element)
             # element
 
             ret += f"[{temp_target}] {temp_modifier} {temp_element} {temp_type} {temp_attribute} "
 
-            if temp_duration != None and temp_duration.strip() != "None":
+            if temp_duration is not None and temp_duration.strip() != "None":
                 ret += f"/{temp_duration} turn(s) "
             ret += "\n "
-            if temp_max_activations != "None" and temp_max_activations != None:
+            if temp_max_activations != "None" and temp_max_activations is not None:
                 ret += f"**{temp_max_activations} per turn**"
         return (skillname, ret, skilltype)
 
@@ -705,15 +705,15 @@ class DBcontroller:
             temp_type = row[4]
             temp_element = row[5]
             temp_speed = row[6]
-            if temp_type == None or temp_type.strip() == "None":
+            if temp_type is None or temp_type.strip() == "None":
                 temp_type = ""
-            if temp_element == None or temp_element.strip() == "None":
+            if temp_element is None or temp_element.strip() == "None":
                 temp_element = ""
             else:
                 temp_element = temp_element.capitalize()
-            if temp_speed == None or temp_speed.strip() == "None":
+            if temp_speed is None or temp_speed.strip() == "None":
                 temp_speed = ""
-            if temp_attribute == None or temp_attribute.strip() == "None":
+            if temp_attribute is None or temp_attribute.strip() == "None":
                 temp_attribute = ""
 
             if (
@@ -726,23 +726,23 @@ class DBcontroller:
                 else:
                     temp_modifier = str(temp_modifier)
             # [TARGET] Modifier Attribute /duration
-            if self.human_readable_dict.get(temp_target) != None:
+            if self.human_readable_dict.get(temp_target) is not None:
                 temp_target = self.human_readable_dict.get(temp_target)
-            if self.human_readable_dict.get(temp_modifier) != None:
+            if self.human_readable_dict.get(temp_modifier) is not None:
                 temp_modifier = self.human_readable_dict.get(temp_modifier)
-            if self.human_readable_dict.get(temp_attribute) != None:
+            if self.human_readable_dict.get(temp_attribute) is not None:
                 temp_attribute = self.human_readable_dict.get(temp_attribute)
 
-            if self.human_readable_dict.get(temp_type) != None:
+            if self.human_readable_dict.get(temp_type) is not None:
                 temp_type = self.human_readable_dict.get(temp_type)
-            if self.human_readable_dict.get(temp_element) != None:
+            if self.human_readable_dict.get(temp_element) is not None:
                 temp_element = self.human_readable_dict.get(temp_element)
-            if self.human_readable_dict.get(temp_speed) != None:
+            if self.human_readable_dict.get(temp_speed) is not None:
                 temp_speed = self.human_readable_dict.get(temp_speed)
             if temp_modifier[1:].isnumeric() and temp_modifier[0] != "x":
                 temp_modifier = temp_modifier + "%"
 
-            if temp_duration != None and temp_duration.strip() != "None":
+            if temp_duration is not None and temp_duration.strip() != "None":
                 ret = ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(
                     temp_target,
                     temp_speed,
@@ -803,15 +803,15 @@ class DBcontroller:
             temp_type = row[4]
             temp_element = row[5]
             temp_speed = row[6]
-            if temp_type == None or temp_type.strip() == "None":
+            if temp_type is None or temp_type.strip() == "None":
                 temp_type = ""
-            if temp_element == None or temp_element.strip() == "None":
+            if temp_element is None or temp_element.strip() == "None":
                 temp_element = ""
             else:
                 temp_element = temp_element.capitalize()
-            if temp_speed == None or temp_speed.strip() == "None":
+            if temp_speed is None or temp_speed.strip() == "None":
                 temp_speed = ""
-            if temp_attribute == None or temp_attribute.strip() == "None":
+            if temp_attribute is None or temp_attribute.strip() == "None":
                 temp_attribute = ""
 
             if (
@@ -824,23 +824,23 @@ class DBcontroller:
                 else:
                     temp_modifier = str(temp_modifier)
             # [TARGET] Modifier Attribute /duration
-            if self.human_readable_dict.get(temp_target) != None:
+            if self.human_readable_dict.get(temp_target) is not None:
                 temp_target = self.human_readable_dict.get(temp_target)
-            if self.human_readable_dict.get(temp_modifier) != None:
+            if self.human_readable_dict.get(temp_modifier) is not None:
                 temp_modifier = self.human_readable_dict.get(temp_modifier)
-            if self.human_readable_dict.get(temp_attribute) != None:
+            if self.human_readable_dict.get(temp_attribute) is not None:
                 temp_attribute = self.human_readable_dict.get(temp_attribute)
 
-            if self.human_readable_dict.get(temp_type) != None:
+            if self.human_readable_dict.get(temp_type) is not None:
                 temp_type = self.human_readable_dict.get(temp_type)
-            if self.human_readable_dict.get(temp_element) != None:
+            if self.human_readable_dict.get(temp_element) is not None:
                 temp_element = self.human_readable_dict.get(temp_element)
-            if self.human_readable_dict.get(temp_speed) != None:
+            if self.human_readable_dict.get(temp_speed) is not None:
                 temp_speed = self.human_readable_dict.get(temp_speed)
             if temp_modifier[1:].isnumeric() and temp_modifier[0] != "x":
                 temp_modifier = temp_modifier + "%"
-            if temp_duration != None and temp_duration.strip() != "None":
-                if temp_target != None and temp_target.strip() != "None":
+            if temp_duration is not None and temp_duration.strip() != "None":
+                if temp_target is not None and temp_target.strip() != "None":
                     ret = ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(
                         temp_target,
                         temp_speed,
@@ -860,7 +860,7 @@ class DBcontroller:
                         row[3],
                     )
             else:
-                if temp_target != None and temp_target.strip() != "None":
+                if temp_target is not None and temp_target.strip() != "None":
                     ret = ret + "[{}] {} {} {} {} {} \n".format(
                         temp_target,
                         temp_speed,
@@ -921,15 +921,15 @@ class DBcontroller:
                 temp_type = row[4]
                 temp_element = row[5]
                 temp_speed = row[6]
-                if temp_type == None or temp_type.strip() == "None":
+                if temp_type is None or temp_type.strip() == "None":
                     temp_type = ""
-                if temp_element == None or temp_element.strip() == "None":
+                if temp_element is None or temp_element.strip() == "None":
                     temp_element = ""
                 else:
                     temp_element = temp_element.capitalize()
-                if temp_speed == None or temp_speed.strip() == "None":
+                if temp_speed is None or temp_speed.strip() == "None":
                     temp_speed = ""
-                if temp_attribute == None or temp_attribute.strip() == "None":
+                if temp_attribute is None or temp_attribute.strip() == "None":
                     temp_attribute = ""
 
                 if (
@@ -942,24 +942,24 @@ class DBcontroller:
                     else:
                         temp_modifier = str(temp_modifier)
                 # [TARGET] Modifier Attribute /duration
-                if self.human_readable_dict.get(temp_target) != None:
+                if self.human_readable_dict.get(temp_target) is not None:
                     temp_target = self.human_readable_dict.get(temp_target)
-                if self.human_readable_dict.get(temp_modifier) != None:
+                if self.human_readable_dict.get(temp_modifier) is not None:
                     temp_modifier = self.human_readable_dict.get(temp_modifier)
-                if self.human_readable_dict.get(temp_attribute) != None:
+                if self.human_readable_dict.get(temp_attribute) is not None:
                     temp_attribute = self.human_readable_dict.get(temp_attribute)
 
-                if self.human_readable_dict.get(temp_type) != None:
+                if self.human_readable_dict.get(temp_type) is not None:
                     temp_type = self.human_readable_dict.get(temp_type)
-                if self.human_readable_dict.get(temp_element) != None:
+                if self.human_readable_dict.get(temp_element) is not None:
                     temp_element = self.human_readable_dict.get(temp_element)
-                if self.human_readable_dict.get(temp_speed) != None:
+                if self.human_readable_dict.get(temp_speed) is not None:
                     temp_speed = self.human_readable_dict.get(temp_speed)
                 if temp_modifier[1:].isnumeric() and temp_modifier[0] != "x":
                     temp_modifier = temp_modifier + "%"
 
-                if temp_duration != None and temp_duration.strip() != "None":
-                    if temp_target != None and temp_target.strip() != "None":
+                if temp_duration is not None and temp_duration.strip() != "None":
+                    if temp_target is not None and temp_target.strip() != "None":
                         ret = ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(
                             temp_target,
                             temp_speed,
@@ -979,7 +979,7 @@ class DBcontroller:
                             row[3],
                         )
                 else:
-                    if temp_target != None and temp_target.strip() != "None":
+                    if temp_target is not None and temp_target.strip() != "None":
                         ret = ret + "[{}] {} {} {} {} {} \n".format(
                             temp_target,
                             temp_speed,
@@ -1124,7 +1124,7 @@ class DBcontroller:
             self._mycursorprepared.execute(sql, (words, words, words))
             for row in self._mycursorprepared:
                 d_id = row[0]
-                if ret_dict.get(d_id) == None:
+                if ret_dict.get(d_id) is None:
                     ret_dict[d_id] = [
                         0,
                         row[1],
@@ -1149,7 +1149,7 @@ class DBcontroller:
         ret_list = []
         highest = None
         for keys in ret_dict:
-            if highest == None:
+            if highest is None:
                 highest = (ret_dict[keys])[0]
                 ret_list.append(ret_dict[keys])
             elif highest < (ret_dict[keys])[0]:
