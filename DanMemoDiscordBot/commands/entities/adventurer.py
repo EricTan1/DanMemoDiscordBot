@@ -43,16 +43,6 @@ class Adventurer:
         isCounter=True,
         counterEffects=[],
     ):
-        """(self, dict, float, float) -> Adventurer
-            is_physical = adv.stats.get("strength")>=adv.stats.get("magic")
-        if(is_physical):
-          temp_type = "physical"
-        else:
-          temp_type = "magic"
-        temp_noType = adv.elementAttackCounter == "None"
-
-        temp_adv_counter= AdventurerCounter(target="foe",extraBoost=1,noType=int(temp_noType),type=temp_type,element = adv.elementAttackCounter)
-        """
         self.stats = stats
         self.counterBoost = counterBoost
         self.critPenBoost = critPenBoost
@@ -126,13 +116,13 @@ class Adventurer:
     # main loop need to check skill [1,4]
     def get_combatSkill(self, index: int) -> Tuple[str, list]:
         """index = 1-3"""
-        return self.current_skills.get("combat")[index - 1]
+        return self.current_skills["combat"][index - 1]
 
     def get_specialSkill(self) -> Tuple[str, list]:
-        return self.current_skills.get("special")[0]
+        return self.current_skills["special"][0]
 
     def get_additionals(self) -> Tuple[str, list]:
-        return self.current_skills.get("additionals")
+        return self.current_skills["additionals"]
 
     def get_current_additional(self):
         additionals = self.get_additionals()
@@ -300,15 +290,6 @@ class Adventurer:
             for item in self.boostCheckAlliesAdv
             if not (item.get("isbuff") == isbuff and item.get("attribute") == attribute)
         ]
-        # remove from actual thing
-        # if something is actually changed then remove o/w ignore
-        # if temp_length != len(self.boostCheckAlliesAdv) and temp_item!= None:
-        #     if attribute in getDamageBuffs():
-        #         curr_element = attribute.replace("_attack", "")
-        #         if curr_element in getElements():
-        #             self.elementDamageBoostAdv[curr_element] = self.elementDamageBoostAdv[curr_element] - (temp_item.get("modifier")/100)
-        #         else:
-        #             self.statsBoostAdv[attribute] = self.statsBoostAdv[attribute] - (temp_item.get("modifier")/100)
 
     def get_log_effect_list(self) -> List[str]:
         ret = [f"**{self.name}**"]

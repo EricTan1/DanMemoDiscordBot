@@ -31,7 +31,7 @@ async def run(dbConfig: DBConfig, ctx: CommandContext, search_words: str):
         file_list = []
         for char in char_list:
             try:
-                file_list.append("./lottery/" + dispatch_dict.get(char) + "/hex.png")
+                file_list.append("./lottery/" + dispatch_dict[char] + "/hex.png")
             except:
                 file_list.append("./lottery/gac_dummy/hex.png")
         if ret[2] is None:

@@ -433,7 +433,6 @@ if __name__ == "__main__":
     path = "../../DB/missingad"
     db = DBcontroller(DBConfig(DatabaseEnvironment.LOCAL))
     ic = InsertCharacter(db)
-    my_set = set()
     for filename in os.listdir(path):
         with open(path + "/" + filename, "r", encoding="utf8") as f:
             if filename != "desktop.ini":
@@ -534,31 +533,3 @@ def validateStructure(unitDict: Dict[str, Any], unitType: str):
         assert set(["regular", "instant_effect"]) == unitDict["skills"].keys()
     else:
         raise
-
-
-""" async def testAd(dbConfig, client, ctx):
-    db = DBcontroller(dbConfig)
-    ic = InsertCharacter(db)
-    for filename in os.listdir("./testJsonAdv/"):
-        if filename.endswith(".json"): 
-            # print(os.path.join(directory, filename))
-            with open('./testJsonAdv/{}'.format(filename)) as f:
-                as_dict = json.load(f)
-                if(as_dict.get("limited")== None):
-                    as_dict["limited"]=False
-                temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
-                ic.insertAdventurer(temp_ad)
-    await ctx.send("character(s) has been added")
-async def testAs(dbConfig, client, ctx):
-    db = DBcontroller(dbConfig)
-    ic = InsertCharacter(db)
-    for filename in os.listdir("./testJsonAs/"):
-        if filename.endswith(".json"): 
-            # print(os.path.join(directory, filename))
-            with open('./testJsonAs/{}'.format(filename)) as f:
-                as_dict = json.load(f)
-                if(as_dict.get("limited")== None):
-                    as_dict["limited"]=False
-                temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
-                ic.insertAssist(temp_as)
-    await ctx.send("character(s) has been added") """

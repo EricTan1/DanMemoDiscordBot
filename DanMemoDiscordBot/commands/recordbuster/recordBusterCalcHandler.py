@@ -96,32 +96,6 @@ async def pageRBHandler(
 
     toggle_log_list = {"attack": True, "counters": False, "info": False}
 
-    """  # page_list[current_page].color = Status.OK.value
-    logs_per_page = 1
-    logs_per_page_counter=1
-    field_list_temp=[]
-    temp_value = ""
-    for turn_logs in range(0,len(logs)):
-        #temp_value+="Turn {}\n".format(turn_logs+1)
-        temp_value+="{}\n{}\n".format("**RB Boss**", logs[turn_logs].get("enemy"))
-        # stats
-        for active_adv_count in range(0, 4):
-            temp_value+="{}\n".format(logs[turn_logs].get("unit{}".format(active_adv_count)))
-        
-        field_list_temp.append(("Turn {}\n".format(turn_logs+1),temp_value))
-        
-        if(logs_per_page_counter == logs_per_page or turn_logs ==len(logs)-1):
-            temp_embed = interactions.Embed()
-            temp_embed.color = Status.OK.value
-            page_list.append(temp_embed)
-            temp_embed.title = "Buffs/Debuffs Check for Turn {}".format(turn_logs+1)
-            temp_embed.description="react to change pages\n"+temp_value
-            logs_per_page_counter=1
-            field_list_temp=[]
-            temp_value=""
-        else:
-            logs_per_page_counter+=1 """
-
     # whenever toggles
     def updateStats(page_list):
         page_list = page_list[:1]
@@ -131,7 +105,7 @@ async def pageRBHandler(
         for turn, turn_logs in enumerate(logs):
 
             # attacks
-            if toggle_log_list.get("attack") == True:
+            if toggle_log_list["attack"]:
                 temp_value = ""
                 # sa
                 for sa in turn_logs["sa"]:
@@ -143,7 +117,7 @@ async def pageRBHandler(
                     field_list_temp.append(("**Skills**", temp_value))
 
             # counters
-            if toggle_log_list.get("counters") == True:
+            if toggle_log_list["counters"]:
                 temp_value = ""
                 for counter_skill in turn_logs["counters"]:
                     temp_value += f"{counter_skill}\n"
@@ -151,8 +125,7 @@ async def pageRBHandler(
                     field_list_temp.append(("**Counters**", temp_value))
 
             # boost check
-            if toggle_log_list.get("info") == True:
-                # temp_value+="Turn {}\n".format(turn_logs+1)
+            if toggle_log_list["info"]:
                 temp_value = ""
                 for effect in turn_logs["enemy"]:
                     temp_value += f"{effect}\n"
@@ -161,7 +134,6 @@ async def pageRBHandler(
 
                 # stats
                 for active_adv_count in range(0, 4):
-                    # temp_value+="{}\n".format(logs[turn_logs].get("unit{}".format(active_adv_count)))
                     temp_value = ""
                     unit_key = f"unit{active_adv_count}"
                     # first field in unit log is used to save its name (already bold)
@@ -227,13 +199,13 @@ async def pageRBHandler(
             elif component_ctx.custom_id == "to_end":
                 current_page = len(page_list) - 1
             elif component_ctx.custom_id == "toggle_combat":
-                toggle_log_list["attack"] = not toggle_log_list.get("attack")
+                toggle_log_list["attack"] = not toggle_log_list["attack"]
                 page_list = updateStats(page_list)
             elif component_ctx.custom_id == "toggle_counters":
-                toggle_log_list["counters"] = not toggle_log_list.get("counters")
+                toggle_log_list["counters"] = not toggle_log_list["counters"]
                 page_list = updateStats(page_list)
             elif component_ctx.custom_id == "toggle_effects":
-                toggle_log_list["info"] = not toggle_log_list.get("info")
+                toggle_log_list["info"] = not toggle_log_list["info"]
                 page_list = updateStats(page_list)
 
             page_list[current_page].set_footer(

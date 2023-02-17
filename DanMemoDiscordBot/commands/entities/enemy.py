@@ -677,16 +677,12 @@ class Revis(Enemy):
         # type = physical/magic
 
         # debuffs own physical resists, take into account later magic resist debuffs
-        self.set_typeResistDownAdv(
-            type, min(self.typeResistDownAdv.get(type), type_mod)
-        )
+        self.set_typeResistDownAdv(type, min(self.typeResistDownAdv[type], type_mod))
         self.set_boostCheckEnemyAdv(True, "strength", 0.2, 4)
         self.set_boostCheckEnemyAdv(False, f"{type}_resist", type_mod, 4)
 
     def RevisInitial(self, type, type_mod):
-        self.set_typeResistDownAdv(
-            type, min(self.typeResistDownAdv.get(type), type_mod)
-        )
+        self.set_typeResistDownAdv(type, min(self.typeResistDownAdv[type], type_mod))
         self.set_boostCheckEnemyAdv(False, f"{type}_resist", type_mod, 4)
 
     def RevisClear(self):

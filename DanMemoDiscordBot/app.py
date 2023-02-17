@@ -93,8 +93,6 @@ async def sacalc(ctx: CommandContext, config: Optional[interactions.Attachment] 
     ],
 )
 async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
-    # imanity server only and ex-imanity role
-    # if(await hasAccess(ctx.message.author,EDITORS) or ctx.message.author.guild.id == 685046495988154373):
     try:
         # to tell Discord this command may take longer than the default 3s timeout
         await ctx.defer()

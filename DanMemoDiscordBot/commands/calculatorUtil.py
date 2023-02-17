@@ -16,9 +16,6 @@ def DamageFunction(
     memboost: Dict[str, Union[int, float]],
     skillRatio,
 ) -> int:
-    """(AdventurerSkill, Adventurer, Enemy, dict, int) -> float
-    memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
-    """
     if skill is None:
         return 0
 
@@ -115,7 +112,7 @@ def DamageFunction(
         if memboost.get(f"{skill.element}_attack") is not None:
             elementDamageBoostAdv += memboost[f"{skill.element}_attack"]
         # elemental damage boost from weapon
-        if adventurer.stats.get(skill.element) != None:
+        if adventurer.stats.get(skill.element) is not None:
             elementDamageBoostAdv += adventurer.stats[skill.element]
         # elementDamageBoostAst[location]
         elementDamageBoostAst = adventurer.elementDamageBoostAst[skill.element]
@@ -182,9 +179,6 @@ def CounterDamageFunction(
     counterRate: float,
     extra_boost: float,
 ) -> int:
-    """(AdventurerSkill, Adventurer, Enemy, dict) -> float
-    memboost: {"strength":0.00, "magic":0.06, "dex":0.00}
-    """
     # disable counters for adventurer
     if adventurer.isCounter == False:
         return 0
@@ -204,13 +198,13 @@ def CounterDamageFunction(
     # typeResistDownAst[location]
     if "physical" in counter.type:
         powerCoefficientTemp = 1.0
-        tempPower = adventurer.stats.get("strength")
-        tempPowerBoostAdv = adventurer.statsBoostAdv.get("strength")
-        tempPowerBoostAst = adventurer.statsBoostAst.get("strength")
-        tempMemBoost = memboost.get("strength")
-        tempTypeResistDownBase = enemy.typeResistDownBase.get("physical")
-        tempTypeResistDownAdv = enemy.typeResistDownAdv.get("physical")
-        tempTypeResistDownAst = enemy.typeResistDownAst.get("physical")
+        tempPower = adventurer.stats["strength"]
+        tempPowerBoostAdv = adventurer.statsBoostAdv["strength"]
+        tempPowerBoostAst = adventurer.statsBoostAst["strength"]
+        tempMemBoost = memboost["strength"]
+        tempTypeResistDownBase = enemy.typeResistDownBase["physical"]
+        tempTypeResistDownAdv = enemy.typeResistDownAdv["physical"]
+        tempTypeResistDownAst = enemy.typeResistDownAst["physical"]
 
         tempTypeResistBuff = enemy.get_buff_mod("physical_resist")
         # get str debuff
@@ -221,36 +215,36 @@ def CounterDamageFunction(
             tempPowerBoostDebuff = 0
     else:
         powerCoefficientTemp = 0.75
-        tempPower = adventurer.stats.get("magic")
-        tempPowerBoostAdv = adventurer.statsBoostAdv.get("magic")
-        tempPowerBoostAst = adventurer.statsBoostAst.get("magic")
-        tempMemBoost = memboost.get("magic")
+        tempPower = adventurer.stats["magic"]
+        tempPowerBoostAdv = adventurer.statsBoostAdv["magic"]
+        tempPowerBoostAst = adventurer.statsBoostAst["magic"]
+        tempMemBoost = memboost["magic"]
 
-        tempTypeResistDownBase = enemy.typeResistDownBase.get("magic")
-        tempTypeResistDownAdv = enemy.typeResistDownAdv.get("magic")
-        tempTypeResistDownAst = enemy.typeResistDownAst.get("magic")
+        tempTypeResistDownBase = enemy.typeResistDownBase["magic"]
+        tempTypeResistDownAdv = enemy.typeResistDownAdv["magic"]
+        tempTypeResistDownAst = enemy.typeResistDownAst["magic"]
 
         tempTypeResistBuff = enemy.get_buff_mod("magic_resist")
         # get magic debuff
         tempMagDebuff = adventurer.get_boostCheckAlliesAdv(False, "magic")
         if tempMagDebuff is not None:
-            tempPowerBoostDebuff = abs(tempMagDebuff.get("modifier"))
+            tempPowerBoostDebuff = abs(tempMagDebuff.modifier)
         else:
             tempPowerBoostDebuff = 0
     tempElementBoostDebuff = 0
     if counter.element != "" and counter.noType != 1:
         # elementResistDownBase
-        tempElementResistDownBase = enemy.elementResistDownBase.get(counter.element)
+        tempElementResistDownBase = enemy.elementResistDownBase[counter.element]
         # elementResistDownAdv
-        tempElementResistDownAdv = enemy.elementResistDownAdv.get(counter.element)
+        tempElementResistDownAdv = enemy.elementResistDownAdv[counter.element]
         # elementResistDownAst
-        tempElementResistDownAst = enemy.elementResistDownAst.get(counter.element)
+        tempElementResistDownAst = enemy.elementResistDownAst[counter.element]
         # elementDamageBoostAdv[location]
         tempElementDamageBoostAdv = adventurer.elementDamageBoostAdv[counter.element]
         if memboost.get(f"{counter.element}_attack") is not None:
             tempElementDamageBoostAdv += memboost[f"{counter.element}_attack"]
         # elemental damage boost from weapon
-        if adventurer.stats.get(counter.element) != None:
+        if adventurer.stats.get(counter.element) is not None:
             tempElementDamageBoostAdv += adventurer.stats[counter.element]
         # elementDamageBoostAst[location]
         tempElementDamageBoostAst = adventurer.elementDamageBoostAst[counter.element]
@@ -293,7 +287,7 @@ def CounterDamageFunction(
                     + tempMemBoost
                     - tempPowerBoostDebuff
                 )
-                - temp_enemy_end.get("endurance"),
+                - temp_enemy_end["endurance"],
                 0,
             )
         )
@@ -594,8 +588,6 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
             # buff/debuff
             "speed": "None"
         },
-        # each list object
-        #{"isbuff":False,"attribute":"strength","modifier":-45,"duration":1}
     """
     extra_boosts_modifier_value = 0.0
     temp_list = skillEffect.attribute.split("_")
@@ -731,8 +723,6 @@ def interpretSkillAdventurerEffects(
     enemy: "Enemy",
     adv_list: List["Adventurer"],
 ):
-    """(list of skilleffects, Adventurer, Enemy, list of Adventurer)"""
-
     # test if skill effects empty
     if skillEffectsWithName:
         skillName, skillEffects = skillEffectsWithName
@@ -930,7 +920,6 @@ def interpretSkillAdventurerEffects(
 def interpretSkillAssistEffects(
     skillEffects, adventurer: "Adventurer", enemy: "Enemy", adv_list: list
 ):
-    """(list of skilleffects, Adventurer, Enemy, list of Adventurer)"""
     # go through the effects
     for skillEffect in skillEffects:
         curr_attribute = skillEffect.attribute
@@ -1226,7 +1215,7 @@ def counter(
 
         temp_adv_counter = adv.adventurerCounter
         temp_extra_boost = 1.0
-        if adv.adventurerCounter.extraBoost != None:
+        if adv.adventurerCounter.extraBoost is not None:
             temp_extra_boost_value = interpretExtraBoost(
                 adv.adventurerCounter.extraBoost, adv, enemy
             )

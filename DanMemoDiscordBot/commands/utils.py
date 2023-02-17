@@ -6,7 +6,6 @@ from types import SimpleNamespace
 from typing import List
 
 import interactions
-from interactions.ext.files import CommandContext
 from PIL import Image
 
 # timeout before an interactable goes inactive
@@ -202,10 +201,6 @@ def format_row_as_sns(**kwargs):
     return ns
 
 
-def dict_to_sns(d):
-    return SimpleNamespace(**d)
-
-
 def getDefaultEmoji(emojiName):
     """given a list of emoji names or just an emoji name return the
     unicode for that emoji
@@ -227,10 +222,6 @@ def getDefaultEmoji(emojiName):
             return ret_list
         else:
             return emoji_json_dict.get(emojiName)
-
-
-def remove_values_from_list(the_list, val):
-    return [value for value in the_list if value != val]
 
 
 class CustomEmoji:
@@ -275,10 +266,6 @@ def get_emoji(name: str) -> interactions.Emoji:
         if emoji.name == name:
             return interactions.Emoji(name=emoji.name, id=emoji.id_discord)
     raise Exception("Unknown emoji id:", name)
-
-
-def mention_author(ctx: CommandContext) -> str:
-    return ctx.author.mention
 
 
 def imageToBytes(image: Image.Image) -> io.BytesIO:

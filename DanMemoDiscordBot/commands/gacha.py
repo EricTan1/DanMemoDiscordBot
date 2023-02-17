@@ -1,7 +1,7 @@
 import datetime
 import io
 from collections import Counter
-from os.path import abspath, isdir
+from os.path import isdir
 from threading import Lock
 from typing import List
 
@@ -16,7 +16,6 @@ from commands.utils import (
     GachaRates,
     GachaRatesEleventh,
     Status,
-    mention_author,
 )
 from database.DBcontroller import DBConfig
 from database.entities.User import User
@@ -75,7 +74,7 @@ async def engine(dbConfig: DBConfig, ctx: CommandContext):
 async def no_gacha(ctx: CommandContext):
     title = "Hold on! Who goes there?"
 
-    description = "What do you think you are doing, " + mention_author(ctx) + "?"
+    description = "What do you think you are doing, " + ctx.author.mention + "?"
     description += " Come back when you have something for me!"
 
     footer = "There are 0 crepes left in your bento box!"
@@ -138,7 +137,7 @@ async def pull_messages(
 
     description = (
         "The crepe was really good, "
-        + mention_author(ctx)
+        + ctx.author.mention
         + "! Please take this:"
         + "\n"
     )
@@ -210,7 +209,6 @@ def create_gif(gif_path: str, pulls: list):
 
 
 def save_gif(images: List[Image.Image], path: str):
-    print("Absolute path:", abspath(path))
     images[0].save(
         path,
         save_all=True,
@@ -328,23 +326,3 @@ def test_gacha_rates():
     print("Aggregating results")
     counter = Counter(pulls)
     print(counter)
-
-
-"""
-Result:
-Counter({
-'ADVENTURER_2_STARS': 54125, 
-'ASSIST_2_STARS': 28052, 
-'ADVENTURER_3_STARS': 9909, 
-'ASSIST_3_STARS': 4936, 
-'ADVENTURER_4_STARS': 1961, 
-'ASSIST_4_STARS': 1017})
-
-Expected:
-ADVENTURER_2_STARS = 0.54
-ASSIST_2_STARS = 0.28
-ADVENTURER_3_STARS = 0.10
-ASSIST_3_STARS = 0.05
-ADVENTURER_4_STARS = 0.02
-ASSIST_4_STARS = 0.01
-"""

@@ -7,8 +7,8 @@ async def run(ctx: CommandContext):
     # loop for everyone in the list imanity discord server member list and check for role: 803388556180455424
     for member in ctx.guild.members:
         # record their names and player id
-        for roles in member.roles:
-            if roles.id == 708008774140690473:
+        for role in member.roles:
+            if role.id == 708008774140690473:
                 if member.nick is None:
                     # clan_list.append([member.id,member.name])
                     clan_list_name.append([member.name])

@@ -3,7 +3,7 @@ import datetime
 import interactions
 from interactions.ext.files import CommandContext
 
-from commands.utils import Status, get_emoji, mention_author
+from commands.utils import Status, get_emoji
 from database.DBcontroller import DBConfig
 from database.entities.User import User
 
@@ -48,7 +48,7 @@ async def run(db_config: DBConfig, ctx: CommandContext):
 
     title = "Wait! Are you going to the dungeon today? Please take this with you! >///<"
 
-    description = mention_author(ctx) + " has received a " + str(crepe_emoji) + "!"
+    description = ctx.author.mention + " has received a " + str(crepe_emoji) + "!"
 
     if user.crepes == 1:
         footer = "There is " + str(user.crepes) + " crepe left in their bento box!"
@@ -68,7 +68,7 @@ async def no_bento(user: User, ctx: CommandContext, difference: float):
     minutes_left = int(difference / 60)
 
     description = (
-        "Sorry, I don't have anything ready for you, " + mention_author(ctx) + "..."
+        "Sorry, I don't have anything ready for you, " + ctx.author.mention + "..."
     )
     description += " Please come back again in **" + str(minutes_left) + "** min!"
 
