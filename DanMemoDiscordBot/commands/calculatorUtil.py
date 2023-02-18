@@ -103,7 +103,7 @@ def DamageFunction(
             powerBoostAdv += adventurer.statsBoostAdv[index_to_attributes]
             powerBoostAst += adventurer.statsBoostAst[index_to_attributes]
             currMemBoost += memboost[index_to_attributes]
-    elementBoostDebuff = 0
+    elementBoostDebuff = 0.0
     if skill.element != "" and skill.noType != 1:
         elementResistDownBase = enemy.elementResistDownBase[skill.element]
         elementResistDownAdv = enemy.elementResistDownAdv[skill.element]
@@ -173,9 +173,9 @@ def DamageFunction(
 
 def CounterDamageFunction(
     counter: AdventurerCounter,
-    adventurer,
+    adventurer: "Adventurer",
     enemy: "Enemy",
-    memboost: dict,
+    memboost: Dict[str, Union[int, float]],
     counterRate: float,
     extra_boost: float,
 ) -> int:
@@ -231,7 +231,7 @@ def CounterDamageFunction(
             tempPowerBoostDebuff = abs(tempMagDebuff.modifier)
         else:
             tempPowerBoostDebuff = 0
-    tempElementBoostDebuff = 0
+    tempElementBoostDebuff = 0.0
     if counter.element != "" and counter.noType != 1:
         # elementResistDownBase
         tempElementResistDownBase = enemy.elementResistDownBase[counter.element]
@@ -420,7 +420,7 @@ def SADamageFunction(
             tempPowerBoostAdv += adventurer.statsBoostAdv[index_to_attributes]
             tempPowerBoostAst += adventurer.statsBoostAst[index_to_attributes]
             tempMemBoost += memboost[index_to_attributes]
-    tempElementBoostDebuff = 0
+    tempElementBoostDebuff = 0.0
     if skill.element != "" and skill.noType != 1:
         # elementResistDownBase
         tempElementResistDownBase = enemy.elementResistDownBase[skill.element]
@@ -510,7 +510,9 @@ def SADamageFunction(
     return int(tempDamage)
 
 
-def CombineSA(adventurerList: list, enemy: "Enemy", character_list: list) -> int:
+def CombineSA(
+    adventurerList: List["Adventurer"], enemy: "Enemy", character_list: list
+) -> int:
     """(list of Adventurer, Enemy, list of boolean) -> int
     characterlist : [Char1,Char2,Char3,Char4]
       char1,char2,char3,char4 : 0 or 1
@@ -590,7 +592,7 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
         },
     """
     extra_boosts_modifier_value = 0.0
-    temp_list = skillEffect.attribute.split("_")
+    temp_list: list = skillEffect.attribute.split("_")
     # per each
     temp_list = temp_list[2:]
     try:
@@ -1179,7 +1181,7 @@ def counter(
     counterRate: float,
     react_on_st: bool,
     logs: dict,
-):
+) -> int:
     ret = 0
     if react_on_st:
         ret = interpretInstantEffects(

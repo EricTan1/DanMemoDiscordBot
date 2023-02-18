@@ -6,6 +6,7 @@ from typing import Any, Dict
 import interactions
 from interactions.ext.files import CommandContext
 from interactions.ext.wait_for import WaitForClient
+from io import BytesIO
 
 from database.DBcontroller import EDITORS, DatabaseEnvironment, DBConfig, DBcontroller
 from database.entities.Adventurer import (
@@ -464,11 +465,11 @@ async def run(
     unit_file: interactions.Attachment,
 ):
     # permission checking
-    if ctx.author.id in EDITORS:
+    if int(ctx.author.id) in EDITORS:  # type: ignore [union-attr]
         ic = InsertCharacter(DBcontroller(dbConfig))
 
         try:
-            async with client._http._req._session.get(unit_file.url) as request:
+            async with client._http._req._session.get(unit_file.url) as request:  # type: ignore [union-attr]
                 read_json = await request.content.read()
             my_json = read_json.decode("utf8")
             as_dict: Dict[str, Any] = json.loads(my_json)

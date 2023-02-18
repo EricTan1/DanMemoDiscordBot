@@ -109,7 +109,6 @@ class AdventurerDevelopmentSkillEffects(Base):
     ):
         """(AdventurerDevelopment, int, int, str, int,
         int) -> AdventurerDevelopment
-        name : name of the development skill
         """
         self.adventurerdevelopmentskilleffectsid = adventurerdevelopmentskilleffectsid
         self.adventurerdevelopmentid = adventurerdevelopmentid
@@ -120,10 +119,6 @@ class AdventurerDevelopmentSkillEffects(Base):
         self.typeid = typeid
         self.eleid = eleid
         self.speedid = speedid
-
-    def __str__(self):
-        """Placeholder for now we will add modifier and attribute after?"""
-        return self.name
 
 
 class AdventurerStats(Base):
@@ -146,6 +141,3 @@ class AdventurerStats(Base):
         self.adventurerid = adventurerid
         self.attributeid = attributeid
         self.value = value
-
-    def __str__(self):
-        return self.name

@@ -142,7 +142,7 @@ async def pageHandler(
     stats_dict: dict,
     temp_embed: interactions.Embed,
     dev_embed: Optional[interactions.Embed] = None,
-    unit_type: Optional[str] = "",
+    unit_type: str = "",
     ascended: Optional[bool] = None,
 ):
     """This handles the logic of the page handling for the single result unit
@@ -166,8 +166,8 @@ async def pageHandler(
             temp_embed.description = (
                 temp_embed.description
                 + "    "
-                + hero_ascend_add_emoji * current_ha
-                + hero_ascend_sub_emoji * (MAXHA - current_ha)
+                + str(hero_ascend_add_emoji) * current_ha
+                + str(hero_ascend_sub_emoji) * (MAXHA - current_ha)
             )
 
         stats, abilities = assembleStats(
@@ -207,7 +207,7 @@ async def pageHandler(
         refresh_files(file_list)
         try:
             component_ctx: ComponentContext = await client.wait_for_component(
-                components=buttons,
+                components=buttons, # type: ignore [arg-type]
                 messages=msg,
                 timeout=TIMEOUT,
             )
@@ -239,7 +239,7 @@ async def pageHandler(
         except asyncio.TimeoutError:
             page_list[current_page].color = Status.KO.value
             return await msg.edit(
-                files=file_list, embeds=page_list[current_page], components=[]
+                files=file_list, embeds=page_list[current_page], components=None
             )
 
 

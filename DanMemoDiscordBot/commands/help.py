@@ -3,7 +3,7 @@ import interactions
 from commands.utils import Status
 
 
-async def run(ctx: interactions.CommandContext, args: str = None):
+async def run(ctx: interactions.CommandContext, args: str):
     """direct message the help command to that user
 
     Arguments:
@@ -37,5 +37,5 @@ async def run(ctx: interactions.CommandContext, args: str = None):
     if args == "server":
         await ctx.send(embeds=temp_embed)
     else:
-        await ctx.author.send(embeds=temp_embed)
+        await ctx.author.send(embeds=temp_embed) # type: ignore [union-attr]
         await ctx.send("Sent info to your DM!")

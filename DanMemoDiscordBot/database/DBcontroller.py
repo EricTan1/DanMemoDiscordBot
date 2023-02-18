@@ -2,7 +2,7 @@ import inspect
 import json
 import os
 from enum import Enum
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 from urllib.parse import urlparse
 
 import mysql.connector
@@ -34,13 +34,13 @@ EDITORS = [
 class DBConfig:
     def __init__(self, environment):
         if environment == DatabaseEnvironment.LOCAL:
-            self.hostname = "localhost"
-            self.username = "root"
-            self.password = "danmemo"
+            self.hostname: Optional[str] = "localhost"
+            self.username: Optional[str] = "root"
+            self.password: Optional[str] = "danmemo"
             self.port = "3306"
             self.database = "aisbot"
         elif environment == DatabaseEnvironment.HEROKU:
-            result = urlparse(os.environ.get("AWS_DATABASE_URL"))
+            result = urlparse(os.environ["AWS_DATABASE_URL"])
             self.hostname = result.hostname
             self.username = result.username
             self.password = result.password
@@ -101,14 +101,14 @@ class DBcontroller:
             valueprep_list.append("%s")
             value_list.append(attributevalue)
 
-        attribute_list = str(tuple(attribute_list)).replace("'", "")
-        valueprep_list = str(tuple(valueprep_list)).replace("'", "")
+        attribute = str(tuple(attribute_list)).replace("'", "")
+        valueprep = str(tuple(valueprep_list)).replace("'", "")
 
         sql = "INSERT INTO {}.{} {} VALUES {}".format(
             self.database,
             str(type(entity).__name__).lower(),
-            attribute_list.lower(),
-            valueprep_list.lower(),
+            attribute.lower(),
+            valueprep.lower(),
         )
         values = tuple(value_list)
         print(sql + "\n")
@@ -192,7 +192,7 @@ class DBcontroller:
 
     def characterSearch(self, search):
         print("searching")
-        ret_dict = dict()
+        ret_dict: Dict[str, list] = dict()
         for words in self.human_input_character_dict:
             if " " + words + " " in search:
                 search = search.replace(
@@ -249,8 +249,8 @@ class DBcontroller:
 
         # separate by commas
         searchwords_list = search.split(",")
-        ret_dict = dict()
-        ret_dict_effect = dict()
+        ret_dict: Dict[str, int] = dict()
+        ret_dict_effect: Dict[Tuple[int, str], int] = dict()
         # get rid of spaces
         for index in range(0, len(searchwords_list)):
             searchwords_list[index] = searchwords_list[index].strip()
@@ -280,14 +280,7 @@ class DBcontroller:
         ad_dev_skill_effects = cache.get_all_adventurers_developments_skills_effects()
         for words in searchwords_list:
             new_words = words.lower()
-            # Target, Attribute(), Modifier(Super, 10%), Type (phys/mag), Element(Wind/Light)
-            # row_as_dict = format_row_as_sns(adventurerskilleffectsid = adventurerskilleffectsid, adventurerskillid=adventurerskillid, unit_type=unit_type, duration=duration, element=element, modifier=modifier, type=type, target=target, attribute=attribute, speed=speed, stars=stars, title=title, alias=alias, limited=limited, character=character)
-            # row_as_dict = format_row_as_sns(assistskilleffectsid=assistskilleffectsid, assistskillid=assistskillid,unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
 
-            # skillAdeffect_sql= "SELECT DISTINCT ase.AdventurerSkillid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE %s or e.name LIKE %s or ta.name=%s or ty.name LIKE %s or a.name LIKE %s or s.name LIKE %s".replace('danmemo',self.database)
-            # skillAdElement_sql = "SELECT DISTINCT ase.AdventurerSkillid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid WHERE e.name = %s".replace('danmemo',self.database)
-
-            # .format
             print(words)
             if words.lower() in ele_set:
                 ad_skill_effects_ret = [
@@ -302,9 +295,7 @@ class DBcontroller:
                     or new_words in skilleffect.attribute.lower()
                     or new_words in skilleffect.modifier.lower()
                 ]
-                # self._mycursorprepared.execute(skillAdElement_sql, (words,))
             else:
-                # self._mycursorprepared.execute(skillAdeffect_sql, (new_words,new_words,words,new_words,new_words,new_words))
                 # we want to iterate through every word
                 if " " in new_words:
                     temp_list = new_words.split(" ")
@@ -369,13 +360,13 @@ class DBcontroller:
             my_set = set()
             # distinct adventurer
             for skilleffect in ad_skill_effects_ret:
-                skillid = (
+                skillidtuple = (
                     skilleffect.adventurerskilleffectsid,
                     "Ad" + str(skilleffect.adventurerskillid),
                 )
-                if ret_dict_effect.get(skillid) is None:
-                    ret_dict_effect[skillid] = 0
-                ret_dict_effect[skillid] = ret_dict_effect[skillid] + 1
+                if ret_dict_effect.get(skillidtuple) is None:
+                    ret_dict_effect[skillidtuple] = 0
+                ret_dict_effect[skillidtuple] = ret_dict_effect[skillidtuple] + 1
                 my_set.add(skilleffect.adventurerskillid)
 
             for ids in my_set:
@@ -387,13 +378,13 @@ class DBcontroller:
             my_set = set()
             # distinct
             for skilleffect in as_skill_effects_ret:
-                skillid = (
+                skillidtuple = (
                     skilleffect.assistskilleffectsid,
                     "As" + str(skilleffect.assistskillid),
                 )
-                if ret_dict_effect.get(skillid) is None:
-                    ret_dict_effect[skillid] = 0
-                ret_dict_effect[skillid] = ret_dict_effect[skillid] + 1
+                if ret_dict_effect.get(skillidtuple) is None:
+                    ret_dict_effect[skillidtuple] = 0
+                ret_dict_effect[skillidtuple] = ret_dict_effect[skillidtuple] + 1
                 my_set.add(skilleffect.assistskillid)
 
             for ids in my_set:
@@ -421,23 +412,23 @@ class DBcontroller:
             #  adventurerdevelopmentid=adventurerdevelopmentid,unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
 
             for skilleffect in av_skill_effects_ret:
-                skillid = (
+                skillidtuple = (
                     skilleffect.adventurerdevelopmentid,
                     "Av" + str(skilleffect.adventurerdevelopmentid),
                 )
-                if ret_dict_effect.get(skillid) is None:
-                    ret_dict_effect[skillid] = 0
-                ret_dict_effect[skillid] = ret_dict_effect[skillid] + 1
+                if ret_dict_effect.get(skillidtuple) is None:
+                    ret_dict_effect[skillidtuple] = 0
+                ret_dict_effect[skillidtuple] = ret_dict_effect[skillidtuple] + 1
                 my_set.add(skilleffect.adventurerdevelopmentid)
 
             for skilleffect in av_skill_effects_ret_2:
-                skillid = (
+                skillidtuple = (
                     skilleffect.adventurerdevelopmentid,
                     "Av" + str(skilleffect.adventurerdevelopmentid),
                 )
-                if ret_dict_effect.get(skillid) is None:
-                    ret_dict_effect[skillid] = 0
-                ret_dict_effect[skillid] = ret_dict_effect[skillid] + 1
+                if ret_dict_effect.get(skillidtuple) is None:
+                    ret_dict_effect[skillidtuple] = 0
+                ret_dict_effect[skillidtuple] = ret_dict_effect[skillidtuple] + 1
                 my_set.add(skilleffect.adventurerdevelopmentid)
 
             for ids in my_set:
@@ -1289,7 +1280,7 @@ class DBcontroller:
             sql = "INSERT INTO {}.user (discord_id, crepes, last_bento_date, units_summary, gacha_mode, discord_unique_id, units_distinct_number, units_score) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)".format(
                 self.database
             )
-            parameters = (
+            parameters = [
                 user.discord_id,
                 user.crepes,
                 user.last_bento_date,
@@ -1298,13 +1289,13 @@ class DBcontroller:
                 user.discord_unique_id,
                 user.units_distinct_number,
                 user.units_score,
-            )
+            ]
         else:
             sql = (
                 "UPDATE {}.user SET discord_id = %s, crepes = %s, last_bento_date = %s, units_summary = %s, gacha_mode = %s, discord_unique_id = %s, units_distinct_number = %s, units_score = %s"
                 " WHERE user_id = %s".format(self.database)
             )
-            parameters = (
+            parameters = [
                 user.discord_id,
                 user.crepes,
                 user.last_bento_date,
@@ -1314,7 +1305,7 @@ class DBcontroller:
                 user.units_distinct_number,
                 user.units_score,
                 user.user_id,
-            )
+            ]
 
         log = LogsCommand(user.discord_id, date, command, sql, parameters)
         print(log)

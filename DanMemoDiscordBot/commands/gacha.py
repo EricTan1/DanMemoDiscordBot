@@ -3,7 +3,7 @@ import io
 from collections import Counter
 from os.path import isdir
 from threading import Lock
-from typing import List
+from typing import List, Type
 
 import interactions
 from interactions.ext.files import CommandContext
@@ -14,6 +14,7 @@ from commands.cache import Cache
 from commands.utils import (
     GachaModes,
     GachaRates,
+    GachaRatesRegular,
     GachaRatesEleventh,
     Status,
 )
@@ -47,7 +48,7 @@ async def try_again_later(ctx: CommandContext):
 
 async def engine(dbConfig: DBConfig, ctx: CommandContext):
     author = str(ctx.author)
-    authorUniqueId = str(ctx.author.id)
+    authorUniqueId = str(ctx.author.id) # type: ignore [union-attr]
 
     user = User.get_user(dbConfig, author, authorUniqueId)
 
@@ -60,7 +61,7 @@ async def engine(dbConfig: DBConfig, ctx: CommandContext):
 
     user.crepes -= 1
 
-    pulls = get_pulls(10, GachaRates)
+    pulls = get_pulls(10, GachaRatesRegular)
     pulls.extend(get_pulls(1, GachaRatesEleventh))
 
     user.add_units(pulls)
@@ -74,7 +75,7 @@ async def engine(dbConfig: DBConfig, ctx: CommandContext):
 async def no_gacha(ctx: CommandContext):
     title = "Hold on! Who goes there?"
 
-    description = "What do you think you are doing, " + ctx.author.mention + "?"
+    description = "What do you think you are doing, " + ctx.author.mention + "?" # type: ignore [union-attr]
     description += " Come back when you have something for me!"
 
     footer = "There are 0 crepes left in your bento box!"
@@ -88,7 +89,7 @@ async def no_gacha(ctx: CommandContext):
     await ctx.send(embeds=embed, files=interactions.File("./images/gacha/nope.png"))
 
 
-def get_pulls(number: int, gacha_rates) -> list:
+def get_pulls(number: int, gacha_rates: Type[GachaRates]) -> list:
     pulls_category = random_pulls(number, gacha_rates)
     pulls = []
     for category in pulls_category:
@@ -96,30 +97,30 @@ def get_pulls(number: int, gacha_rates) -> list:
     return pulls
 
 
-def random_pulls(number: int, gacha_rates) -> list:
+def random_pulls(number: int, gacha_rates: Type[GachaRates]) -> List[str]:
     possibilities = [e.name for e in gacha_rates]
     probabilities = [e.value for e in gacha_rates]
     return choices(possibilities, weights=probabilities, k=number)
 
 
-def get_random_unit(gacha_category: GachaRates):
+def get_random_unit(gacha_category: str):
     cache = Cache()
-    if gacha_category == GachaRates.ADVENTURER_2_STARS.name:
+    if gacha_category == GachaRatesRegular.ADVENTURER_2_STARS.name:
         stars = 2
         units = cache.get_all_adventurers()
-    elif gacha_category == GachaRates.ADVENTURER_3_STARS.name:
+    elif gacha_category == GachaRatesRegular.ADVENTURER_3_STARS.name:
         stars = 3
         units = cache.get_all_adventurers()
-    elif gacha_category == GachaRates.ADVENTURER_4_STARS.name:
+    elif gacha_category == GachaRatesRegular.ADVENTURER_4_STARS.name:
         stars = 4
         units = cache.get_all_adventurers()
-    elif gacha_category == GachaRates.ASSIST_2_STARS.name:
+    elif gacha_category == GachaRatesRegular.ASSIST_2_STARS.name:
         stars = 2
         units = cache.get_all_assists()
-    elif gacha_category == GachaRates.ASSIST_3_STARS.name:
+    elif gacha_category == GachaRatesRegular.ASSIST_3_STARS.name:
         stars = 3
         units = cache.get_all_assists()
-    elif gacha_category == GachaRates.ASSIST_4_STARS.name:
+    elif gacha_category == GachaRatesRegular.ASSIST_4_STARS.name:
         stars = 4
         units = cache.get_all_assists()
     else:
@@ -137,7 +138,7 @@ async def pull_messages(
 
     description = (
         "The crepe was really good, "
-        + ctx.author.mention
+        + ctx.author.mention # type: ignore [union-attr]
         + "! Please take this:"
         + "\n"
     )

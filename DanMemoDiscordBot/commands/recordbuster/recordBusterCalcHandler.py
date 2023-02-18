@@ -186,7 +186,7 @@ async def pageRBHandler(
         try:
             component_ctx: interactions.ComponentContext = (
                 await client.wait_for_component(
-                    components=buttons, messages=msg, timeout=TIMEOUT
+                    components=buttons, messages=msg, timeout=TIMEOUT # type: ignore [arg-type]
                 )
             )
 

@@ -25,7 +25,7 @@ async def run(
     dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, sub_command: str
 ):
     author = str(ctx.author)
-    authorUniqueId = str(ctx.author.id)
+    authorUniqueId = str(ctx.author.id) # type: ignore [union-attr]
     user = User.get_user(dbConfig, author, authorUniqueId)
 
     if sub_command == "summary":
@@ -80,7 +80,7 @@ async def run(
 
     embed = interactions.Embed()
     embed.color = Status.OK.value
-    embed.set_thumbnail(url=ctx.author.user.avatar_url)
+    embed.set_thumbnail(url=ctx.author.user.avatar_url) # type: ignore [union-attr]
     embed.title = f"{ctx.author}'s summary profile"
     embed.description = description
     embed.set_footer(text=footer)
@@ -96,7 +96,7 @@ async def run(
     while True:
         try:
             component_ctx: ComponentContext = await client.wait_for_component(
-                components=components,
+                components=components, # type: ignore [arg-type]
                 messages=msg,
                 timeout=TIMEOUT,
             )

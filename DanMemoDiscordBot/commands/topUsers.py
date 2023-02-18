@@ -14,7 +14,7 @@ from database.DBcontroller import DBConfig, DBcontroller
 async def run(
     dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, sub_command: str
 ):
-    authorUniqueId = str(ctx.author.id)
+    authorUniqueId = str(ctx.author.id) # type: ignore [union-attr]
     db = DBcontroller(dbConfig)
 
     if sub_command == "gourmets":
@@ -77,7 +77,7 @@ async def run(
         ifile = interactions.File("./images/units/" + thumbnail + "/texture.png")
         try:
             component_ctx: ComponentContext = await client.wait_for_component(
-                components=components,
+                components=components, # type: ignore [arg-type]
                 messages=msg,
                 timeout=TIMEOUT,
             )

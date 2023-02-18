@@ -319,7 +319,7 @@ def createGSpreadJSON():
     try:
         my_json = os.environ.get("GSPREAD_IMANITY_JSON")
         current_json = json.loads(str(my_json))
-        current_json["private_key"] = os.environ.get("GSPREAD_IMANITY_KEY").replace(
+        current_json["private_key"] = os.environ["GSPREAD_IMANITY_KEY"].replace(
             "\\n", "\n"
         )
         # write the outfile

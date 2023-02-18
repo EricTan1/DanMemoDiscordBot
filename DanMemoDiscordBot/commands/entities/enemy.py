@@ -176,7 +176,7 @@ class Enemy:
                     else:
                         self.targetResistDownAdv["aoe"] = 0
 
-    def ExtendReduceBuffs(self, turns):
+    def ExtendReduceBuffs(self, turns: int):
         for buffsDebuffs in self.boostCheckEnemyAdv:
             if buffsDebuffs.isbuff:
                 buffsDebuffs.duration += turns
@@ -184,7 +184,7 @@ class Enemy:
             item for item in self.boostCheckEnemyAdv if item.duration > 0
         ]
 
-    def ExtendReduceDebuffs(self, turns):
+    def ExtendReduceDebuffs(self, turns: int):
         for buffsDebuffs in self.boostCheckEnemyAdv:
             if not buffsDebuffs.isbuff:
                 buffsDebuffs.duration += turns
@@ -312,7 +312,7 @@ class Finn(Enemy):
             adv.clearDebuffs()
 
     # clear finn's debuffs from boostCheckEnemyAdv and your adv's buffs boostCheckAlliesAdv
-    def FinnStrMagBuff(self, adv_list: List["Adventurer"], turns):
+    def FinnStrMagBuff(self, adv_list: List["Adventurer"], turns: int):
         # take the max of str/mag buffs
         for adv in adv_list:
             adv.set_statsBoostAdv("strength", max(adv.statsBoostAdv["strength"], 1.5))
