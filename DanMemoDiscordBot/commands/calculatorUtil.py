@@ -14,7 +14,7 @@ def DamageFunction(
     adventurer: "Adventurer",
     enemy: "Enemy",
     memboost: Dict[str, Union[int, float]],
-    skillRatio,
+    skillRng: float,
 ) -> int:
     if skill is None:
         return 0
@@ -164,7 +164,7 @@ def DamageFunction(
         * powerCoefficientTemp
         * 1.5
         * (skill.extraBoost)
-        * skillRatio
+        * skillRng
     )
     # totalDamage = totalDamage + tempDamage
     # accumulateDamage[location] = accumulateDamage[location] + tempDamage
@@ -176,7 +176,7 @@ def CounterDamageFunction(
     adventurer: "Adventurer",
     enemy: "Enemy",
     memboost: Dict[str, Union[int, float]],
-    counterRate: float,
+    counterRng: float,
     extra_boost: float,
 ) -> int:
     # disable counters for adventurer
@@ -312,7 +312,7 @@ def CounterDamageFunction(
         * powerCoefficientTemp
         * 1.5
         * (extra_boost)
-    ) * counterRate
+    ) * counterRng
     # totalDamage = totalDamage + tempDamage
     # accumulateDamage[location] = accumulateDamage[location] + tempDamage
     # if(tempDamage > 0):
@@ -326,10 +326,10 @@ def SADamageFunction(
     enemy: "Enemy",
     memboost: Dict[str, Union[int, float]],
     combo: int,
-    ultRatio: float,
+    saRng: float,
 ) -> int:
     """combo = int 1-4
-    ultRatio = 0.96 - 1.04
+    saRng = 0.96 - 1.04
     """
     if skill is None:
         return 0
@@ -503,7 +503,7 @@ def SADamageFunction(
         * 1.5
         * (skill.extraBoost)
         * (0.8 + combo * 0.2)
-        * ultRatio
+        * saRng
     )
     # totalDamage = totalDamage + tempDamage
     # accumulateDamage[location] = accumulateDamage[location] + tempDamage
@@ -1178,14 +1178,14 @@ def counter(
     adv_list: List["Adventurer"],
     enemy: "Enemy",
     memboost: dict,
-    counterRate: float,
+    counterRng: float,
     react_on_st: bool,
     logs: dict,
 ) -> int:
     ret = 0
     if react_on_st:
         ret = interpretInstantEffects(
-            assist_list, adv_list, enemy, memboost, counterRate, logs
+            assist_list, adv_list, enemy, memboost, counterRng, logs
         )
     # take the avg
     # loop through and take the avg
@@ -1205,7 +1205,7 @@ def counter(
                 adventurer=adv,
                 enemy=enemy,
                 memboost=memboost,
-                counterRate=counterRate,
+                counterRng=counterRng,
                 extra_boost=temp_extra_boost,
             )
             * 0.25
@@ -1225,12 +1225,12 @@ def counters(
     adv_list: List["Adventurer"],
     enemy: "Enemy",
     memboost: Dict[str, Union[int, float]],
-    counterRate: float,
+    counterRng: float,
     logs: Dict[str, List[str]],
 ) -> int:
 
     ret = interpretInstantEffects(
-        assist_list, adv_list, enemy, memboost, counterRate, logs
+        assist_list, adv_list, enemy, memboost, counterRng, logs
     )
 
     # take the avg
@@ -1250,7 +1250,7 @@ def counters(
             adventurer=adv,
             enemy=enemy,
             memboost=memboost,
-            counterRate=counterRate,
+            counterRng=counterRng,
             extra_boost=temp_extra_boost,
         )
         adv.add_damage(temp_counter_damage)

@@ -149,7 +149,7 @@ class Enemy:
         adv_list: List["Adventurer"],
         assist_list: List["Assist"],
         memboost: Dict[str, Union[int, float]],
-        counterRate: float,
+        counterRng: float,
         react_on_st: bool,
         speed: int,
         logs: Dict[str, List[str]],
@@ -348,7 +348,7 @@ class Finn(Enemy):
         adv_list: List["Adventurer"],
         assist_list: List["Assist"],
         memboost: Dict[str, Union[int, float]],
-        counterRate: float,
+        counterRng: float,
         react_on_st: bool,
         speed: int,
         logs: Dict[str, List[str]],
@@ -356,16 +356,16 @@ class Finn(Enemy):
         """speed : 0 - fast, 1- normal, 2- slow"""
         ret = 0
         if turnOrder + 1 in [1, 2, 3, 4, 5, 6, 8, 11, 12, 13, 14] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
         if turnOrder + 1 in [7, 9, 10, 15] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         if turnOrder + 1 in [7, 10, 14] and speed == 0:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
         if turnOrder + 1 in [15] and speed == 1:
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
         return ret
 
@@ -417,7 +417,7 @@ class Riveria(Enemy):
         adv_list: List["Adventurer"],
         assist_list: List["Assist"],
         memboost: Dict[str, Union[int, float]],
-        counterRate: float,
+        counterRng: float,
         react_on_st: bool,
         speed: int,
         logs: Dict[str, List[str]],
@@ -425,26 +425,26 @@ class Riveria(Enemy):
         """speed : 0 - fast, 1- normal, 2- slow"""
         ret = 0
         if turnOrder + 1 in [1, 5, 6, 10] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         if turnOrder + 1 in [14] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         if turnOrder + 1 in [2, 3, 13] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         if turnOrder + 1 in [2, 3, 4, 7, 8, 9, 11, 12, 13] and speed == 0:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         if turnOrder + 1 in [15] and speed == 1:
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
         return ret
 
@@ -523,7 +523,7 @@ class Gareth(Enemy):
         adv_list: List["Adventurer"],
         assist_list: List["Assist"],
         memboost: Dict[str, Union[int, float]],
-        counterRate: float,
+        counterRng: float,
         react_on_st: bool,
         speed: int,
         logs: Dict[str, List[str]],
@@ -532,34 +532,34 @@ class Gareth(Enemy):
         ret = 0
         if turnOrder + 1 in [1, 15] and speed == 1:
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
         if turnOrder + 1 in [2] and speed == 1:
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         if turnOrder + 1 in [6, 7, 11, 12] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
 
         if turnOrder + 1 in [3, 5, 8, 10, 13] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         if turnOrder + 1 in [4, 9] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         if turnOrder + 1 in [14] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         return ret
 
@@ -606,7 +606,7 @@ class Ottarl(Enemy):
         adv_list: List["Adventurer"],
         assist_list: List["Assist"],
         memboost: Dict[str, Union[int, float]],
-        counterRate: float,
+        counterRng: float,
         react_on_st: bool,
         speed: int,
         logs: Dict[str, List[str]],
@@ -614,32 +614,32 @@ class Ottarl(Enemy):
         """speed : 0 - fast, 1- normal, 2- slow"""
         ret = 0
         if turnOrder + 1 in [1, 3, 4, 5, 7, 8, 9, 11, 12, 15] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
         if turnOrder + 1 in [1] and speed == 1:
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
         if turnOrder + 1 in [2, 6, 10] and speed == 1:
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
         if turnOrder + 1 in [5, 9] and speed == 1:
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
 
         if turnOrder + 1 in [13, 14] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
         return ret
 
 
@@ -695,7 +695,7 @@ class Revis(Enemy):
         adv_list: List["Adventurer"],
         assist_list: List["Assist"],
         memboost: Dict[str, Union[int, float]],
-        counterRate: float,
+        counterRng: float,
         react_on_st: bool,
         speed: int,
         logs: Dict[str, List[str]],
@@ -704,26 +704,26 @@ class Revis(Enemy):
         ret = 0
         # double aoe
         if turnOrder + 1 in [5, 6, 7, 9, 10, 11] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         # ailment aoe
         if turnOrder + 1 in [5, 6, 7, 8, 9, 10, 11, 12, 13, 14] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         if turnOrder + 1 in [8, 12] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
 
         if turnOrder + 1 in [13, 14] and speed == 1:
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
-            ret += counters(assist_list, adv_list, self, memboost, counterRate, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
+            ret += counters(assist_list, adv_list, self, memboost, counterRng, logs)
         if turnOrder + 1 in [15] and speed == 1:
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
             ret += counter(
-                assist_list, adv_list, self, memboost, counterRate, react_on_st, logs
+                assist_list, adv_list, self, memboost, counterRng, react_on_st, logs
             )
         return ret
 

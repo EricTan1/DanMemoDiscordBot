@@ -58,12 +58,12 @@ async def run(
                     "Please make sure you specify the duration of your memoria in the memoria_turns variable. If you don't know what this should look like, re-download the config file for an example."
                 )
 
-            ultRatio = config.getfloat("DEFAULT", "sa_rng")
+            saRng = config.getfloat("DEFAULT", "sa_rng")
             difficulty = config.getint("DEFAULT", "difficulty")
             # counter_RNG
-            counterRate = config.getfloat("DEFAULT", "counter_rng")
+            counterRng = config.getfloat("DEFAULT", "counter_rng")
             # skill_RNG
-            skillRatio = config.getfloat("DEFAULT", "skill_rng")
+            skillRng = config.getfloat("DEFAULT", "skill_rng")
             try:
                 react_on_st = config.getboolean("DEFAULT", "react_on_st")
             except configparser.NoOptionError:
@@ -578,7 +578,7 @@ async def run(
                             enemy,
                             memboost,
                             sa_counter,
-                            ultRatio,
+                            saRng,
                         )
 
                         # print("{} SA damage for {}".format(active_advs[active_adv].name,int(temp_damage)))
@@ -603,7 +603,7 @@ async def run(
                     active_advs,
                     active_assists,
                     memboost,
-                    counterRate,
+                    counterRng,
                     react_on_st,
                     0,
                     turn_logs,
@@ -708,7 +708,7 @@ async def run(
                             active_advs,
                             active_assists,
                             memboost,
-                            counterRate,
+                            counterRng,
                             react_on_st,
                             1,
                             turn_logs,
@@ -727,7 +727,7 @@ async def run(
                             removed_sorted_skill[3],
                             enemy,
                             memboost,
-                            skillRatio,
+                            skillRng,
                         )
                     elif isinstance(removed_sorted_skill[2], AdventurerCounter):
                         # no extra boosts for auto attacks
@@ -736,7 +736,7 @@ async def run(
                             removed_sorted_skill[3],
                             enemy,
                             memboost,
-                            counterRate,
+                            counterRng,
                             1,
                         )
                     turn_logs["combat_skills"].append(
@@ -771,7 +771,7 @@ async def run(
                             removed_sorted_skill[3],
                             enemy,
                             memboost,
-                            skillRatio,
+                            skillRng,
                         )
                         # effects
                         interpretSkillAdventurerEffects(
@@ -795,7 +795,7 @@ async def run(
                     active_advs,
                     active_assists,
                     memboost,
-                    counterRate,
+                    counterRng,
                     react_on_st,
                     2,
                     turn_logs,
