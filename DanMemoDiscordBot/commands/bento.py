@@ -12,7 +12,7 @@ crepe_emoji = get_emoji("crepe")
 
 async def run(db_config: DBConfig, ctx: CommandContext):
     author = str(ctx.author)
-    authorUniqueId = str(ctx.author.id) # type: ignore [union-attr]
+    authorUniqueId = str(ctx.author.id)  # type: ignore [union-attr]
 
     user = User.get_user(db_config, author, authorUniqueId)
 
@@ -48,7 +48,7 @@ async def run(db_config: DBConfig, ctx: CommandContext):
 
     title = "Wait! Are you going to the dungeon today? Please take this with you! >///<"
 
-    description = ctx.author.mention + " has received a " + str(crepe_emoji) + "!" # type: ignore [union-attr]
+    description = ctx.author.mention + " has received a " + str(crepe_emoji) + "!"  # type: ignore [union-attr]
 
     if user.crepes == 1:
         footer = "There is " + str(user.crepes) + " crepe left in their bento box!"
@@ -68,7 +68,7 @@ async def no_bento(user: User, ctx: CommandContext, difference: float):
     minutes_left = int(difference / 60)
 
     description = (
-        "Sorry, I don't have anything ready for you, " + ctx.author.mention + "..." # type: ignore [union-attr]
+        "Sorry, I don't have anything ready for you, " + ctx.author.mention + "..."  # type: ignore [union-attr]
     )
     description += " Please come back again in **" + str(minutes_left) + "** min!"
 

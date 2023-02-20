@@ -24,7 +24,7 @@ async def run(
     else:
         # if template attached start to verify it
         # attachment object only contains the URL, so have to download it first
-        async with client._http._req._session.get(config_file.url) as request: # type: ignore [union-attr]
+        async with client._http._req._session.get(config_file.url) as request:  # type: ignore [union-attr]
             contents = await request.content.read()
         contents_decode = contents.decode("utf-8").split("\n")
         positions: List[List[int]] = [[], [], [], []]

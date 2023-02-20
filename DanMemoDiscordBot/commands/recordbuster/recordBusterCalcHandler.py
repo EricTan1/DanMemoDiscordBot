@@ -103,7 +103,6 @@ async def pageRBHandler(
         logs_per_page_counter = 1
         field_list_temp = []
         for turn, turn_logs in enumerate(logs):
-
             # attacks
             if toggle_log_list["attack"]:
                 temp_value = ""
@@ -184,10 +183,8 @@ async def pageRBHandler(
 
     while True:
         try:
-            component_ctx: interactions.ComponentContext = (
-                await client.wait_for_component(
-                    components=buttons, messages=msg, timeout=TIMEOUT # type: ignore [arg-type]
-                )
+            component_ctx: interactions.ComponentContext = await client.wait_for_component(
+                components=buttons, messages=msg, timeout=TIMEOUT  # type: ignore [arg-type]
             )
 
             if component_ctx.custom_id == "previous_page":

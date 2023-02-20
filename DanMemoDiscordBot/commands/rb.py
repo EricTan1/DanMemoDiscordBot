@@ -8,7 +8,7 @@ USER_ID = 141222596610883584
 
 
 async def run(client: WaitForClient, ctx: CommandContext, character: str):
-    akuno = await client._http.get_user(USER_ID) # type: ignore [union-attr]
+    akuno = await client._http.get_user(USER_ID)  # type: ignore [union-attr]
     avatar_url = f"https://cdn.discordapp.com/avatars/{USER_ID}/{akuno['avatar']}.png"
     temp_embed = interactions.Embed()
     temp_embed.color = Status.OK.value

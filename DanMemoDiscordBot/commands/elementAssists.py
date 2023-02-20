@@ -222,7 +222,6 @@ def getElementAssistDict(
 ) -> Dict[str, Dict[str, Dict[int, List[str]]]]:
     assistImages: Dict[str, Dict[str, Dict[int, List[str]]]] = dict()
     for elem in elements:
-
         assistImages[elem] = dict()
         assistImages[elem][effectTypes[0][1]] = dict()
         assistImages[elem][effectTypes[1][1]] = dict()

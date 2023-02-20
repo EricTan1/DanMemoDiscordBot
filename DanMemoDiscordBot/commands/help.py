@@ -37,5 +37,5 @@ async def run(ctx: interactions.CommandContext, args: str):
     if args == "server":
         await ctx.send(embeds=temp_embed)
     else:
-        await ctx.author.send(embeds=temp_embed) # type: ignore [union-attr]
+        await ctx.author.send(embeds=temp_embed)  # type: ignore [union-attr]
         await ctx.send("Sent info to your DM!")

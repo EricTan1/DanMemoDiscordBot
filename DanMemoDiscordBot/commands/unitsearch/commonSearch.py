@@ -137,7 +137,7 @@ async def pageUnitsHandler(
     while True:
         try:
             component_ctx: ComponentContext = await client.wait_for_component(
-                components=components, # type: ignore [arg-type] # should not pass components but list of buttons
+                components=components,  # type: ignore [arg-type] # should not pass components but list of buttons
                 messages=msg,
                 timeout=TIMEOUT,
             )
@@ -183,7 +183,7 @@ async def pageUnitsHandler(
             elif component_ctx.custom_id == "unit_select":
                 await msg.delete()
                 return await characterSearch.singleUnit(
-                    client, ctx, db, component_ctx.data.values[0] # type: ignore [index]
+                    client, ctx, db, component_ctx.data.values[0]  # type: ignore [index]
                 )
 
             components = build_components(

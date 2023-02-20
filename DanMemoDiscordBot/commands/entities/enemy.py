@@ -39,7 +39,6 @@ class Enemy:
             "dexterity": 0,
         },
     ):
-
         self.elementResistDownBase = elementResistDownBase
         self.typeResistDownBase = typeResistDownBase
         self.stats = stats

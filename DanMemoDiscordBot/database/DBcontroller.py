@@ -2,7 +2,7 @@ import inspect
 import json
 import os
 from enum import Enum
-from typing import Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple
 from urllib.parse import urlparse
 
 import mysql.connector
@@ -261,14 +261,13 @@ class DBcontroller:
             # if its not whole sentences try single words
             replace_list = []
             for words in searchwords_list[index].split(" "):
-
                 print(searchwords_list[index])
                 print(words)
                 temp = self.human_input_dict.get(words)
                 if temp is not None:
                     # (old,new)
                     replace_list.append((words, temp.strip()))
-            for (old, new) in replace_list:
+            for old, new in replace_list:
                 searchwords_list[index] = searchwords_list[index].replace(old, new)
 
             # searchwords_list[index] = searchwords_list[index].replace(" ","_")
@@ -454,6 +453,7 @@ class DBcontroller:
         dictlist = [
             skilleffect for skilleffect in dictlist if (skilleffect[0])[1] in ret_list
         ]
+
         # sort list
         # take second element for sort
         def takeSecond(elem):
@@ -669,7 +669,6 @@ class DBcontroller:
         return (skillname, ret, skilltype)
 
     def assembleAdventurerSkill(self, skillid):
-
         ret = ""
         skillname = ""
         skill_sql = "SELECT skilltype, skillname FROM danmemo.adventurerskill where adventurerskillid={}".replace(

@@ -6,7 +6,6 @@ from typing import Any, Dict
 import interactions
 from interactions.ext.files import CommandContext
 from interactions.ext.wait_for import WaitForClient
-from io import BytesIO
 
 from database.DBcontroller import EDITORS, DatabaseEnvironment, DBConfig, DBcontroller
 from database.entities.Adventurer import (

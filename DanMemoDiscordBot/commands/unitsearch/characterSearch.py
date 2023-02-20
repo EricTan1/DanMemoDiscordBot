@@ -207,7 +207,7 @@ async def pageHandler(
         refresh_files(file_list)
         try:
             component_ctx: ComponentContext = await client.wait_for_component(
-                components=buttons, # type: ignore [arg-type]
+                components=buttons,  # type: ignore [arg-type]
                 messages=msg,
                 timeout=TIMEOUT,
             )

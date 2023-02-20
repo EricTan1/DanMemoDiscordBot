@@ -1190,7 +1190,6 @@ def counter(
     # take the avg
     # loop through and take the avg
     for adv in adv_list:
-
         temp_adv_counter = adv.adventurerCounter
         temp_extra_boost = 1.0
         if adv.adventurerCounter.extraBoost is not None:
@@ -1228,7 +1227,6 @@ def counters(
     counterRng: float,
     logs: Dict[str, List[str]],
 ) -> int:
-
     ret = interpretInstantEffects(
         assist_list, adv_list, enemy, memboost, counterRng, logs
     )

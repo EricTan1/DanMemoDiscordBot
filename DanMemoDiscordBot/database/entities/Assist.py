@@ -29,7 +29,13 @@ class Assist(Base):
 
 
 class AssistSkill(Base):
-    def __init__(self, assistskillid: Optional[int], assistid: int, skillname: str, skilltype: str):
+    def __init__(
+        self,
+        assistskillid: Optional[int],
+        assistid: int,
+        skillname: str,
+        skilltype: str,
+    ):
         self.assistskillid = assistskillid
         self.assistid = assistid
         self.skillname = skillname
@@ -70,7 +76,9 @@ class AssistSkillEffects(Base):
 
 
 class AssistStats(Base):
-    def __init__(self, assiststatsid: Optional[int], assistid: int, attributeid: int, value: str):
+    def __init__(
+        self, assiststatsid: Optional[int], assistid: int, attributeid: int, value: str
+    ):
         self.assiststatsid = assiststatsid
         self.assistid = assistid
         self.attributeid = attributeid

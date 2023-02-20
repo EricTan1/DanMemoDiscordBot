@@ -2,20 +2,20 @@ import datetime
 import io
 from collections import Counter
 from os.path import isdir
+from random import choice, choices
 from threading import Lock
 from typing import List, Type
 
 import interactions
 from interactions.ext.files import CommandContext
-from random import choice, choices
 from PIL import Image
 
 from commands.cache import Cache
 from commands.utils import (
     GachaModes,
     GachaRates,
-    GachaRatesRegular,
     GachaRatesEleventh,
+    GachaRatesRegular,
     Status,
 )
 from database.DBcontroller import DBConfig
@@ -48,7 +48,7 @@ async def try_again_later(ctx: CommandContext):
 
 async def engine(dbConfig: DBConfig, ctx: CommandContext):
     author = str(ctx.author)
-    authorUniqueId = str(ctx.author.id) # type: ignore [union-attr]
+    authorUniqueId = str(ctx.author.id)  # type: ignore [union-attr]
 
     user = User.get_user(dbConfig, author, authorUniqueId)
 
@@ -75,7 +75,7 @@ async def engine(dbConfig: DBConfig, ctx: CommandContext):
 async def no_gacha(ctx: CommandContext):
     title = "Hold on! Who goes there?"
 
-    description = "What do you think you are doing, " + ctx.author.mention + "?" # type: ignore [union-attr]
+    description = "What do you think you are doing, " + ctx.author.mention + "?"  # type: ignore [union-attr]
     description += " Come back when you have something for me!"
 
     footer = "There are 0 crepes left in your bento box!"
@@ -138,7 +138,7 @@ async def pull_messages(
 
     description = (
         "The crepe was really good, "
-        + ctx.author.mention # type: ignore [union-attr]
+        + ctx.author.mention  # type: ignore [union-attr]
         + "! Please take this:"
         + "\n"
     )
