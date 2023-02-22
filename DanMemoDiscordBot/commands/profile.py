@@ -37,7 +37,7 @@ async def run(
     if crepes is None:
         crepes = 0
 
-    currency_line = f"{crepes} x {crepe_emoji}\n"
+    currency_line = f"{crepes} x {crepe_emoji.format}\n"
 
     units = []
     if user.units is not None:
@@ -81,7 +81,7 @@ async def run(
     embed = interactions.Embed()
     embed.color = Status.OK.value
     embed.set_thumbnail(url=ctx.author.user.avatar_url)  # type: ignore [union-attr]
-    embed.title = f"{ctx.author}'s summary profile"
+    embed.title = f"{ctx.author.nick}'s summary profile"
     embed.description = description
     embed.set_footer(text=footer)
 
@@ -128,14 +128,15 @@ def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
     previous_category = ""
     previous_number = 0
     for unit in units:
-        category = star_emoji * unit["stars"]
+        category = star_emoji * unit["stars"] + " "
         if unit["unit_type"] == "adventurer":
-            category += f" {adventurer_emoji}"
+            category += adventurer_emoji.format
         elif unit["unit_type"] == "assist":
-            category += f" {assist_emoji}"
+            category += assist_emoji.format
+
         if unit["number"] > 1:
             number = min(unit["number"] - 2, 4)
-            category += f" {limitbreak_emojis[number]}"
+            category += " " + limitbreak_emojis[number].format
 
         if category == previous_category:
             previous_number += 1
@@ -156,11 +157,11 @@ def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
 def get_detailed_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
     units_lines = []
     for unit in units:
-        units_line = star_emoji * unit["stars"]
+        units_line = star_emoji * unit["stars"] + " "
         if unit["unit_type"] == "adventurer":
-            units_line += f" {adventurer_emoji}"
+            units_line += adventurer_emoji.format
         elif unit["unit_type"] == "assist":
-            units_line += f" {assist_emoji}"
+            units_line += assist_emoji.format
         units_line += (
             f" [{unit['unit_label']}] {unit['character_name']}: {unit['number']}\n"
         )
