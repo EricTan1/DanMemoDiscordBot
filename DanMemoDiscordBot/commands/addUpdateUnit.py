@@ -1,5 +1,7 @@
 import json
 import os
+from io import BytesIO
+from typing import Any, Dict
 
 import interactions
 from interactions.ext.files import CommandContext
@@ -74,6 +76,20 @@ class AssistC:
         self.skills = skills
 
 
+STATLIST = {
+    "hp",
+    "mp",
+    "physical_attack",
+    "magic_attack",
+    "defense",
+    "strength",
+    "endurance",
+    "dexterity",
+    "agility",
+    "magic",
+}
+
+
 class InsertCharacter:
     def __init__(self, database: DBcontroller):
         self._db = database
@@ -88,19 +104,6 @@ class InsertCharacter:
             adventureComplete._stars,
             adventureComplete._title,
         )
-        # stats
-        stat_list = {
-            "hp",
-            "mp",
-            "physical_attack",
-            "magic_attack",
-            "defense",
-            "strength",
-            "endurance",
-            "dexterity",
-            "agility",
-            "magic",
-        }
         temp_list = set()
         for attributeKeys in adventureComplete.stats:
             temp_list.add(attributeKeys.lower())
@@ -113,7 +116,7 @@ class InsertCharacter:
                     str(adventureComplete.stats.get(attributeKeys)),
                 )
             )
-        if stat_list != temp_list:
+        if STATLIST != temp_list:
             print(
                 "HEY STAT NAMED WRONG >:( FOR : "
                 + adventureComplete._title
@@ -285,19 +288,6 @@ class InsertCharacter:
             assistComplete._stars,
             assistComplete._title,
         )
-        # stats
-        stat_list = {
-            "hp",
-            "mp",
-            "physical_attack",
-            "magic_attack",
-            "defense",
-            "strength",
-            "endurance",
-            "dexterity",
-            "agility",
-            "magic",
-        }
         temp_list = set()
         for attributeKeys in assistComplete.stats:
             temp_list.add(attributeKeys.lower())
@@ -310,7 +300,7 @@ class InsertCharacter:
                     str(assistComplete.stats.get(attributeKeys)),
                 )
             )
-        if stat_list != temp_list:
+        if STATLIST != temp_list:
             print(
                 "HEY STAT NAMED WRONG >:( FOR : "
                 + assistComplete._title
@@ -472,19 +462,25 @@ async def run(
     dbConfig: DBConfig,
     client: WaitForClient,
     ctx: CommandContext,
-    sub_command: str,
     unit_file: interactions.Attachment,
 ):
     # permission checking
     if ctx.author.id in EDITORS:
-        db = DBcontroller(dbConfig)
-        ic = InsertCharacter(db)
+        ic = InsertCharacter(DBcontroller(dbConfig))
 
         try:
             async with client._http._req._session.get(unit_file.url) as request:
                 read_json = await request.content.read()
             my_json = read_json.decode("utf8")
-            as_dict = json.loads(my_json)
+            as_dict: Dict[str, Any] = json.loads(my_json)
+
+            if "type" in as_dict.keys():
+                sub_command = "adventurer"
+            else:
+                sub_command = "assist"
+
+            validateStructure(as_dict, sub_command)
+
             if as_dict.get("limited") == None:
                 as_dict["limited"] = 0
             if sub_command == "assist":
@@ -514,10 +510,30 @@ async def run(
             title = f"{as_dict['title']} - {as_dict['name']}.json"
             await ctx.send(
                 "Character has been added",
-                files=interactions.File(title, read_json),
+                files=interactions.File(filename=title, fp=BytesIO(read_json)),
             )
         except:
             await ctx.send("Error in reading json")
+
+
+# Basic validation for the unit json's structure.
+# TODO: use TypedDict, or better Pydantic, for full validation
+def validateStructure(unitDict: Dict[str, Any], unitType: str):
+    assert (
+        set(["title", "name", "stars", "limited", "stats", "skills"]) <= unitDict.keys()
+    )
+    assert set(STATLIST) == unitDict["stats"].keys()
+
+    if unitType == "adventurer":
+        assert "type" in unitDict.keys()
+        assert (
+            set(["special", "combat", "additionals", "development"])
+            == unitDict["skills"].keys()
+        )
+    elif unitType == "assist":
+        assert set(["regular", "instant_effect"]) == unitDict["skills"].keys()
+    else:
+        raise
 
 
 """ async def testAd(dbConfig, client, ctx):
