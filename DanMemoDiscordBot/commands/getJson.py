@@ -240,7 +240,15 @@ def set_skill_effects(effects: list, is_assist: bool) -> List[dict]:
 
         curr_effects_list.append(curr_effects_dict)
 
-    return curr_effects_list
+    # Custom comparator, makes sure that damaging effects and their associated effects come first
+    def comparator(effects):
+        if effects.get("type") in ["physical_attack", "magic_attack"]:
+            return 0
+        if effects.get("target") == "skill":
+            return 1
+        return 2
+
+    return sorted(curr_effects_list, key=comparator)
 
 
 def zipdir(path: str, ziph: zipfile.ZipFile):
