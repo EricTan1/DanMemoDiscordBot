@@ -308,14 +308,6 @@ async def dispatch(ctx: CommandContext, keywords: str):
     await command_dispatch.run(dbConfig, ctx, keywords)
 
 
-unit_attachment = interactions.Option(
-    name="unit_file",
-    description="File containing the unit data in JSON format",
-    type=interactions.OptionType.ATTACHMENT,
-    required=True,
-)
-
-
 @client.command(
     name="add-update-unit",
     description="Adds a unit or overwrites an existing one",
@@ -323,25 +315,17 @@ unit_attachment = interactions.Option(
     default_scope=False,
     options=[
         interactions.Option(
-            name="adventurer",
-            description="Add an adventurer unit",
-            type=interactions.OptionType.SUB_COMMAND,
-            options=[unit_attachment],
-        ),
-        interactions.Option(
-            name="assist",
-            description="Add an assist unit",
-            type=interactions.OptionType.SUB_COMMAND,
-            options=[unit_attachment],
-        ),
+            name="unit_file",
+            description="File containing the unit data in JSON format",
+            type=interactions.OptionType.ATTACHMENT,
+            required=True,
+        )
     ],
 )
-async def addUpdateUnit(
-    ctx: CommandContext, sub_command: str, unit_file: interactions.Attachment
-):
+async def addUpdateUnit(ctx: CommandContext, unit_file: interactions.Attachment):
     # to tell Discord this command may take longer than the default 3s timeout
     await ctx.defer()
-    await command_addUpdateUnit.run(dbConfig, client, ctx, sub_command, unit_file)
+    await command_addUpdateUnit.run(dbConfig, client, ctx, unit_file)
     # refresh the cache
     cache = Cache(dbConfig)
     cache.refreshcache(dbConfig)
