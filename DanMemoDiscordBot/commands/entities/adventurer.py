@@ -275,25 +275,25 @@ class Adventurer:
         with open("database/terms/human_readable.json", "r") as f:
             human_readable_dict = json.load(f)
         for buffsdebuffs in self.boostCheckAlliesAdv:
-            if buffsdebuffs["attribute"] in [
+            if buffsdebuffs.attribute in [
                 "all_damage_resist",
                 "single_damage_resist",
             ]:
-                modifier = -buffsdebuffs["modifier"] * 100
+                modifier = -buffsdebuffs.modifier * 100
             else:
-                modifier = buffsdebuffs["modifier"] * 100
+                modifier = buffsdebuffs.modifier * 100
             modifierStr = f"{modifier:.0f}" if modifier < 0 else f"+{modifier:.0f}"
 
-            if human_readable_dict.get(buffsdebuffs["attribute"]) != None:
-                attribute = human_readable_dict.get(buffsdebuffs["attribute"])
+            if human_readable_dict.get(buffsdebuffs.attribute) != None:
+                attribute = human_readable_dict.get(buffsdebuffs.attribute)
             else:
-                attribute = buffsdebuffs["attribute"]
+                attribute = buffsdebuffs.attribute
 
             ret.append(
                 "{}% {} for {} turn(s)".format(
                     modifierStr,
                     attribute,
-                    buffsdebuffs.get("duration"),
+                    buffsdebuffs.duration,
                 )
             )
         return ret
