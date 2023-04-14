@@ -1,20 +1,14 @@
-import json
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
+from commands.entities.combatant import Combatant
 from commands.entities.skills import AdventurerCounter
-from commands.utils import (
-    AssistEffect,
-    Effect,
-    checkBuffExistsReplace,
-    getDamageBuffs,
-    getElements,
-)
+from commands.utils import AssistEffect, Effect, getDamageBuffs, getElements
 
 
-class Adventurer:
+class Adventurer(Combatant):
     def __init__(
         self,
-        stats: Dict[str, Union[int, float]] = {
+        stats: Dict[str, float] = {
             "hp": 0,
             "mp": 0,
             "strength": 0,
@@ -49,7 +43,8 @@ class Adventurer:
         isCounter=True,
         counterEffects=[],
     ):
-        self.stats = stats
+        super().__init__(stats)
+
         self.counterBoost = counterBoost
         self.critPenBoost = critPenBoost
         self.current_skills = current_skills
@@ -102,11 +97,6 @@ class Adventurer:
         self.current_damage = 0
         self.isCounter = isCounter
         self.counterEffects = counterEffects
-        # buffs and debuffs
-        # append buffs to dict and remove once wiped
-        # list of Effects
-        self.boostCheckAlliesAdv: List[Effect] = []
-        self.boostCheckAlliesAst: List[AssistEffect] = []
         self.name = name
 
     def get_combatSkill_agi(self, index: int) -> str:
@@ -149,39 +139,6 @@ class Adventurer:
         if element.lower() in getElements():
             self.elementDamageBoostAst[element.lower()] = modifier
 
-    def set_boostCheckAlliesAdv(
-        self, isbuff: bool, attribute: str, modifier: float, duration: int
-    ):
-        """(bool, str, int or float, int, bool, int) -> None
-        target: self, allies, foes, foe
-        attribute: strength, magic, st, aoe
-        modifier: -10 ,+50
-        duration: 1,2,3,4
-        is_assist: is this an assist buff or not
-        position : the active unit position in the party
-        """
-        assert isinstance(isbuff, bool)  # TODO: remove
-        assert isinstance(attribute, str)
-        assert isinstance(modifier, float)
-        assert isinstance(duration, int)
-        effect = Effect(isbuff, attribute, modifier, duration)
-        checkBuffExistsReplace(self.boostCheckAlliesAdv, effect)
-
-    def set_boostCheckAlliesAst(self, isbuff: bool, attribute: str, modifier: float):
-        """(bool, str, int or float, int, bool, int) -> None
-        target: self, allies, foes, foe
-        attribute: strength, magic, st, aoe
-        modifier: -10 ,+50
-        duration: 1,2,3,4
-        is_assist: is this an assist buff or not
-        position : the active unit position in the party
-        """
-        assert isinstance(isbuff, bool)  # TODO: remove
-        assert isinstance(attribute, str)
-        assert isinstance(modifier, float)
-        effect = AssistEffect(isbuff, attribute, modifier)
-        checkBuffExistsReplace(self.boostCheckAlliesAst, effect)
-
     def set_additionals(self, additional_count: int, origin_name: str):
         # only change/refresh if
         # - the current additional action is already empty, or
@@ -196,25 +153,13 @@ class Adventurer:
             self.additionalName = origin_name
         # else: SA additional is active and the newly activated is non-SA, which must not override so nothing happens
 
-    def clearBuffs(self):
-        # take the list but all the buffs with True is removed (keep all  the isbuff==False)
-        self.boostCheckAlliesAdv = [
-            item for item in self.boostCheckAlliesAdv if item.isbuff == False
-        ]
-
-    def clearDebuffs(self):
-        # take the list but all the buffs with True is removed (keep all  the isbuff==False)
-        self.boostCheckAlliesAdv = [
-            item for item in self.boostCheckAlliesAdv if item.isbuff == True
-        ]
-
     def ExtendShortenSingleEffect(self, attribute: str, turns: int, is_buff: bool):
-        buffsDebuffs = self.get_boostCheckAlliesAdv(is_buff, attribute)
+        buffsDebuffs = self.get_boostCheckAdv(is_buff, attribute)
         if buffsDebuffs is None:
             return
         buffsDebuffs.duration += turns
         if buffsDebuffs.duration <= 0:
-            self.boostCheckAlliesAdv.remove(buffsDebuffs)
+            self.boostCheckAdv.remove(buffsDebuffs)
             if is_buff and attribute in getDamageBuffs():
                 element = attribute.replace("_attack", "")
                 if element in getElements():
@@ -223,13 +168,11 @@ class Adventurer:
                     self.statsBoostAdv[attribute] = 0
 
     def ExtendReduceBuffs(self, turns: int):
-        for buffsDebuffs in self.boostCheckAlliesAdv:
+        for buffsDebuffs in self.boostCheckAdv:
             if buffsDebuffs.isbuff == True:
                 buffsDebuffs.duration += turns
-        temp_expiry = [item for item in self.boostCheckAlliesAdv if item.duration <= 0]
-        self.boostCheckAlliesAdv = [
-            item for item in self.boostCheckAlliesAdv if item.duration > 0
-        ]
+        temp_expiry = [item for item in self.boostCheckAdv if item.duration <= 0]
+        self.boostCheckAdv = [item for item in self.boostCheckAdv if item.duration > 0]
 
         for buffsDebuffs in temp_expiry:
             curr_attribute = buffsDebuffs.attribute
@@ -241,21 +184,12 @@ class Adventurer:
                     self.statsBoostAdv[curr_attribute] = 0
 
     def ExtendReduceDebuffs(self, turns: int):
-        for buffsDebuffs in self.boostCheckAlliesAdv:
+        for buffsDebuffs in self.boostCheckAdv:
             if buffsDebuffs.isbuff == False:
                 buffsDebuffs.duration += turns
-        self.boostCheckAlliesAdv = [
-            item for item in self.boostCheckAlliesAdv if item.duration > 0
-        ]
+        self.boostCheckAdv = [item for item in self.boostCheckAdv if item.duration > 0]
 
-    def get_boostCheckAlliesAdv(self, isbuff: bool, attribute: str) -> Optional[Effect]:
-        "returns the item in the buff/debuff list if it exists, returns NONE otherwise"
-        for item in self.boostCheckAlliesAdv:
-            if item.isbuff == isbuff and item.attribute == attribute:
-                return item
-        return None
-
-    def pop_boostCheckAlliesAdv(self, isbuff: bool, attribute: str):
+    def pop_boostCheckAdv(self, isbuff: bool, attribute: str):
         """(bool, str, int or float, int, bool, int) -> None
         target: self, allies, foes, foe
         attribute: strength, magic, st, aoe
@@ -264,36 +198,32 @@ class Adventurer:
         is_assist: is this an assist buff or not
         position : the active unit position in the party
         """
-        self.boostCheckAlliesAdv = [
+        self.boostCheckAdv = [
             item
-            for item in self.boostCheckAlliesAdv
+            for item in self.boostCheckAdv
             if not (item.isbuff == isbuff and item.attribute == attribute)
         ]
 
     def get_log_effect_list(self) -> List[str]:
-        ret = [f"**{self.name}**"]
-        with open("database/terms/human_readable.json", "r") as f:
-            human_readable_dict = json.load(f)
-        for buffsdebuffs in self.boostCheckAlliesAdv:
-            if buffsdebuffs.attribute in [
-                "all_damage_resist",
-                "single_damage_resist",
-            ]:
-                modifier = -buffsdebuffs.modifier * 100
-            else:
-                modifier = buffsdebuffs.modifier * 100
-            modifierStr = f"{modifier:.0f}" if modifier < 0 else f"+{modifier:.0f}"
+        return [f"**{self.name}**"] + super().get_log_effect_list()
 
-            if human_readable_dict.get(buffsdebuffs.attribute) != None:
-                attribute = human_readable_dict.get(buffsdebuffs.attribute)
-            else:
-                attribute = buffsdebuffs.attribute
-
-            ret.append(
-                "{}% {} for {} turn(s)".format(
-                    modifierStr,
-                    attribute,
-                    buffsdebuffs.duration,
-                )
-            )
-        return ret
+    def clearBuffs(self):
+        self.elementDamageBoostAdv = {
+            "fire": 0,
+            "water": 0,
+            "thunder": 0,
+            "earth": 0,
+            "wind": 0,
+            "light": 0,
+            "dark": 0,
+        }
+        self.statsBoostAdv = {
+            "hp": 0,
+            "mp": 0,
+            "strength": 0,
+            "magic": 0,
+            "agility": 0,
+            "endurance": 0,
+            "dexterity": 0,
+        }
+        super().clearBuffs()

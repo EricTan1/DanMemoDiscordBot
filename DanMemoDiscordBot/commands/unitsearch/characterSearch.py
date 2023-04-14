@@ -159,7 +159,10 @@ async def pageHandler(
     """
 
     def updateStats():
-        temp_embed.description = limitbreak_add_emoji.format * current_limitbreak + limitbreak_sub_emoji.format * (MAXLB - current_limitbreak)
+        temp_embed.description = (
+            limitbreak_add_emoji.format * current_limitbreak
+            + limitbreak_sub_emoji.format * (MAXLB - current_limitbreak)
+        )
         if ascended:
             temp_embed.description = (
                 temp_embed.description
