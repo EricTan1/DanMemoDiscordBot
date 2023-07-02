@@ -664,6 +664,23 @@ def Counters(notIn=[0,0,0,0]):
  """
 
 
+def interpretExtraBoostWrapper(
+    skillEffect, adventurer: "Adventurer", enemy: "Enemy"
+) -> float:
+    # This wrapper is used to make "per each regen" type skills be interpreted
+    # as both a "per each hp regen" and "per each mp regen" effect
+
+    temp_list = skillEffect.attribute.split("_")
+    if "regen" in temp_list and not "hp" in temp_list and not "mp" in temp_list:
+        skillEffect.attribute = skillEffect.attribute.replace("regen", "hp_regen")
+        extra_boosts_multiplier = interpretExtraBoost(skillEffect, adventurer, enemy)
+        skillEffect.attribute = skillEffect.attribute.replace("hp_regen", "mp_regen")
+        extra_boosts_multiplier += interpretExtraBoost(skillEffect, adventurer, enemy)
+    else:
+        extra_boosts_multiplier = interpretExtraBoost(skillEffect, adventurer, enemy)
+    return extra_boosts_multiplier
+
+
 def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -> float:
     """(adventurerSkillEffect) -> float
     takes in a skill effect with attribute exists of "per_each" then parse it and return the extra boosts multiplier
@@ -775,7 +792,9 @@ def interpretSkillAdventurerAttack(
         # for example str/mag debuff
         if len(extra_boosts_effects) > 0:
             for extra_boosts in extra_boosts_effects:
-                temp_extra_boosts = interpretExtraBoost(extra_boosts, adventurer, enemy)
+                temp_extra_boosts = interpretExtraBoostWrapper(
+                    extra_boosts, adventurer, enemy
+                )
                 extra_boosts_value = extra_boosts_value + temp_extra_boosts
         # SELECT ase.AdventurerSkillEffectsid, ase.AdventurerSkillid, ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name
         ret = AdventurerSkill(
@@ -1295,7 +1314,7 @@ def counter(
         temp_adv_counter = adv.adventurerCounter
         temp_extra_boost = 1.0
         if adv.adventurerCounter.extraBoost != None:
-            temp_extra_boost_value = interpretExtraBoost(
+            temp_extra_boost_value = interpretExtraBoostWrapper(
                 adv.adventurerCounter.extraBoost, adv, enemy
             )
             temp_extra_boost += temp_extra_boost_value
@@ -1342,7 +1361,7 @@ def counters(
         temp_adv_counter = adv.adventurerCounter
         temp_extra_boost = 1.0
         if adv.adventurerCounter.extraBoost != None:
-            temp_extra_boost_value = interpretExtraBoost(
+            temp_extra_boost_value = interpretExtraBoostWrapper(
                 adv.adventurerCounter.extraBoost, adv, enemy
             )
             temp_extra_boost += temp_extra_boost_value
