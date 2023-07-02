@@ -215,7 +215,7 @@ class Adventurer:
     def clearBuffs(self):
         # take the list but all the buffs with True is removed (keep all  the isbuff==False)
         self.boostCheckAlliesAdv = [
-            item for item in self.boostCheckAlliesAdv if item.get("isbuff") == False
+            item for item in self.boostCheckAlliesAdv if (item.get("isbuff") == False or "regen" in item.get("attribute"))
         ]
 
     def clearDebuffs(self):
@@ -238,12 +238,14 @@ class Adventurer:
                 else:
                     self.statsBoostAdv[attribute] = 0
 
-    def ExtendReduceBuffs(self, turns):
+    def ExtendReduceBuffs(self, turns, turnCountdown=False):
         for buffsDebuffs in self.boostCheckAlliesAdv:
             if buffsDebuffs.get("isbuff") == True and isinstance(
                 buffsDebuffs.get("duration"), int
             ):
-                buffsDebuffs["duration"] += turns
+                # Don't change duration of regen effects, unless it's the end-of-turn countdown
+                if "regen" not in buffsDebuffs.get("attribute") or turnCountdown:
+                    buffsDebuffs["duration"] += turns
         temp_expiry = [
             item
             for item in self.boostCheckAlliesAdv

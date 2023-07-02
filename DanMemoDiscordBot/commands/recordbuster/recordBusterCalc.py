@@ -810,7 +810,7 @@ async def run(
                 # allies tick down status buffs
                 for active_adv in active_advs:
                     active_adv.ExtendReduceDebuffs(-1)
-                    active_adv.ExtendReduceBuffs(-1)
+                    active_adv.ExtendReduceBuffs(-1, turnCountdown=True)
                 # enemy statuses tick down
                 enemy.ExtendReduceDebuffs(-1)
                 enemy.ExtendReduceBuffs(-1)
