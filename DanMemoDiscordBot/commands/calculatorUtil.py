@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, cast
 
-from commands.entities.skills import AdventurerCounter, AdventurerSkill
+from commands.entities.skills import AdventurerSkill
 from commands.utils import getAilment, getElements
 
 if TYPE_CHECKING:
@@ -553,9 +553,9 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
         pass
 
     if temp_list[0] == "self":
-        effect_lists = [adventurer.boostCheckAlliesAdv, adventurer.boostCheckAlliesAst]
+        effect_lists = [adventurer.boostCheckAdv, adventurer.boostCheckAst]
     else:
-        effect_lists = [enemy.boostCheckEnemyAdv, enemy.boostCheckEnemyAst]
+        effect_lists = [enemy.boostCheckAdv, enemy.boostCheckAst]
     temp_list = temp_list[1:]
     attribute = "_".join(temp_list[: len(temp_list) - 1])
     attribute_type = temp_list[-1]

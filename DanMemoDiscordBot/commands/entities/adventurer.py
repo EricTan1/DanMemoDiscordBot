@@ -167,10 +167,12 @@ class Adventurer(Combatant):
                 else:
                     self.statsBoostAdv[attribute] = 0
 
-    def ExtendReduceBuffs(self, turns: int):
+    def ExtendReduceBuffs(self, turns: int, turnCountdown=False):
         for buffsDebuffs in self.boostCheckAdv:
             if buffsDebuffs.isbuff == True:
-                buffsDebuffs.duration += turns
+                # Don't change duration of regen effects, unless it's the end-of-turn countdown
+                if "regen" not in buffsDebuffs.attribute or turnCountdown:
+                    buffsDebuffs.duration += turns
         temp_expiry = [item for item in self.boostCheckAdv if item.duration <= 0]
         self.boostCheckAdv = [item for item in self.boostCheckAdv if item.duration > 0]
 

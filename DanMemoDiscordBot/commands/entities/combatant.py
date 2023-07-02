@@ -44,7 +44,9 @@ class Combatant:
     def clearBuffs(self):
         # take the list but all the buffs with True is removed (keep all  the isbuff==False)
         self.boostCheckAdv = [
-            item for item in self.boostCheckAdv if item.isbuff == False
+            item
+            for item in self.boostCheckAdv
+            if item.isbuff == False or "regen" in item.attribute
         ]
 
     def clearDebuffs(self):
