@@ -534,45 +534,23 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
         temp_list.remove("skill")
     except:
         pass
-    target = temp_list[0]
+
+    if temp_list[0] == "self":
+        effect_lists = [adventurer.boostCheckAlliesAdv, adventurer.boostCheckAlliesAst]
+    else:
+        effect_lists = [enemy.boostCheckEnemyAdv, enemy.boostCheckEnemyAst]
     temp_list = temp_list[1:]
     attribute = "_".join(temp_list[: len(temp_list) - 1])
     attribute_type = temp_list[-1]
 
-    if target == "self":
-        # boostCheckAdv
-        for selfBuffsAdv in adventurer.boostCheckAdv:
-            if selfBuffsAdv.isbuff == (attribute_type == "buff"):
-                if selfBuffsAdv.attribute == attribute:
-                    extra_boosts_modifier_value = (
-                        extra_boosts_modifier_value
-                        + int(skillEffect.modifier.strip()) / 100
+    for effect_list in effect_lists:
+        for selfBuffs in effect_list:
+            if selfBuffs.isbuff == (attribute_type == "buff"):
+                if selfBuffs.attribute == attribute:
+                    extra_boosts_modifier_value += (
+                        int(skillEffect.modifier.strip()) / 100
                     )
-        # boostCheckAst
-        for selfBuffsAst in adventurer.boostCheckAst:
-            if selfBuffsAst.isbuff == (attribute_type == "buff"):
-                if selfBuffsAst.attribute == attribute:
-                    extra_boosts_modifier_value = (
-                        extra_boosts_modifier_value
-                        + int(skillEffect.modifier.strip()) / 100
-                    )
-    # target aka foes/foe
-    else:
-        for selfBuffsAdv in enemy.boostCheckAdv:
-            if selfBuffsAdv.isbuff == (attribute_type == "buff"):
-                if selfBuffsAdv.attribute == attribute:
-                    extra_boosts_modifier_value = (
-                        extra_boosts_modifier_value
-                        + int(skillEffect.modifier.strip()) / 100
-                    )
-        # boostCheckAst
-        for selfBuffsAst in enemy.boostCheckAst:
-            if selfBuffsAst.isbuff == (attribute_type == "buff"):
-                if selfBuffsAst.attribute == attribute:
-                    extra_boosts_modifier_value = (
-                        extra_boosts_modifier_value
-                        + int(skillEffect.modifier.strip()) / 100
-                    )
+
     print(extra_boosts_modifier_value)
     return extra_boosts_modifier_value
 
