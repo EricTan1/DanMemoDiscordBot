@@ -275,7 +275,9 @@
 	"per_each_target_taunt_debuff": "only when a target is inflicted with Taunt",
 	"per_each_target_poison_debuff": "only when a target is inflicted with Poison",
 	"per_each_target_charm_debuff": "only when a target is inflicted with Charm",
-	"per_each_self_hp_regen_buff": "per each [Self] HP Regen Skill",
+	"per_each_self_hp_regen_buff": "per each [Self] HP Regen Effect",
+	"per_each_self_mp_regen_buff": "per each [Self] MP Regen Effect",
+	"per_each_self_regen_buff": "per each [Self] Regen Effect",
 	"per_each_target_hp_regen_buff": "per each Target's HP Regen Skill",
 	"per_each_self_sa_gauge_charge_buff": "per each [Self] S.A Gauge Charge Buff effect", 
 
