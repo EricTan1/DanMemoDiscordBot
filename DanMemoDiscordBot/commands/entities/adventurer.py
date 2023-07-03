@@ -141,17 +141,16 @@ class Adventurer(Combatant):
 
     def set_additionals(self, additional_count: int, origin_name: str):
         # only change/refresh if
-        # - the current additional action is already empty, or
-        # - the same additional is added, meaning it'll just be refreshed
-        # - the new addtional comes from the SA, overriding any non-SA additionals
+        # - the new additional has more actions than are left, refreshing+overriding the current one
+        # - or the new addtional comes from the SA, overriding any non-SA additionals
         if (
-            self.additionalCount == 0
-            or origin_name == self.additionalName
+            additional_count > self.additionalCount
             or origin_name == (self.get_specialSkill())[0]
         ):
             self.additionalCount = additional_count
             self.additionalName = origin_name
-        # else: SA additional is active and the newly activated is non-SA, which must not override so nothing happens
+        # else: SA additional is active and the newly activated is non-SA with at most
+        # as many actions as remain on the SA, which must not override so nothing happens
 
     def ExtendShortenSingleEffect(self, attribute: str, turns: int, is_buff: bool):
         buffsDebuffs = self.get_boostCheckAdv(is_buff, attribute)
@@ -207,7 +206,12 @@ class Adventurer(Combatant):
         ]
 
     def get_log_effect_list(self) -> List[str]:
-        return [f"**{self.name}**"] + super().get_log_effect_list()
+        result = [f"**{self.name}**"] + super().get_log_effect_list()
+        if self.additionalCount > 0:
+            result.append(
+                f"Additional Actions: {self.additionalName}, {self.additionalCount} left"
+            )
+        return result
 
     def clearBuffs(self):
         self.elementDamageBoostAdv = {
@@ -228,4 +232,3 @@ class Adventurer(Combatant):
             "endurance": 0,
             "dexterity": 0,
         }
-        super().clearBuffs()
