@@ -971,7 +971,7 @@ def interpretSkillAdventurerEffects(
         elif "removal_no_assist" in curr_attribute:
             is_buff = not ("debuff" in curr_attribute)
 
-            temp_list = curr_attribute.replace("removal_no_assist", "").split("_")
+            temp_list = curr_attribute.replace("_removal_no_assist", "").split("_")
             try:
                 temp_list.remove("buff")
             except:
@@ -980,7 +980,7 @@ def interpretSkillAdventurerEffects(
                 temp_list.remove("debuff")
             except:
                 pass
-            temp_attribute = " ".join(temp_list).strip()
+            temp_attribute = "_".join(temp_list).strip()
             if current_target in ["self", "allies"]:
                 for curr_adv in target_list:
                     curr_adv.pop_boostCheckAlliesAdv(is_buff, temp_attribute)
@@ -1310,7 +1310,6 @@ def counter(
     # take the avg
     # loop through and take the avg
     for adv in adv_list:
-
         temp_adv_counter = adv.adventurerCounter
         temp_extra_boost = 1.0
         if adv.adventurerCounter.extraBoost != None:
@@ -1348,7 +1347,6 @@ def counters(
     counterRate: float,
     logs: Dict[str, List[str]],
 ) -> int:
-
     ret = interpretInstantEffects(
         assist_list, adv_list, enemy, memboost, counterRate, logs
     )
