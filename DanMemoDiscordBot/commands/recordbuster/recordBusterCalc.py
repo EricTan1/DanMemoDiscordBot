@@ -696,6 +696,7 @@ async def run(
                 is_enemy_attacked = False
                 for _ in range(0, len(sorted_skills_priority_list)):
                     removed_sorted_skill = sorted_skills_priority_list.pop(0)
+                    adventurer = removed_sorted_skill[3]
                     if removed_sorted_skill[1] != "fast":
                         is_fast = False
                     # not fast skill then rb can go
@@ -724,7 +725,7 @@ async def run(
                         )
                         temp_damage = DamageFunction(
                             cast_skill,
-                            removed_sorted_skill[3],
+                            adventurer,
                             enemy,
                             memboost,
                             skillRatio,
@@ -733,60 +734,57 @@ async def run(
                         # no extra boosts for auto attacks
                         temp_damage = CounterDamageFunction(
                             removed_sorted_skill[2],
-                            removed_sorted_skill[3],
+                            adventurer,
                             enemy,
                             memboost,
                             counterRate,
                             1,
                         )
                     turn_logs["combat_skills"].append(
-                        f"{removed_sorted_skill[3].name} skill {removed_sorted_skill[3].turnOrder[turn]} damage for {int(temp_damage):,}"
+                        f"{adventurer.name} skill {adventurer.turnOrder[turn]} damage for {int(temp_damage):,}"
                     )
 
                     # check if additional count == 0 so you dont attack this turn
-                    perform_additional = False
-                    if removed_sorted_skill[3].additionalCount > 0:
-                        perform_additional = True
-                        removed_sorted_skill[3].additionalCount -= 1
+                    additional_action = None
+                    if adventurer.additionalCount > 0:
+                        adventurer.additionalCount -= 1
+                        additional_action = adventurer.get_current_additional()
                     interpretSkillAdventurerEffects(
                         removed_sorted_skill[4],
-                        removed_sorted_skill[3],
+                        adventurer,
                         enemy,
                         active_advs,
                     )
                     total_damage += temp_damage
-                    removed_sorted_skill[3].add_damage(temp_damage)
+                    adventurer.add_damage(temp_damage)
 
                     # additionals here
-                    if perform_additional:
-                        temp_adv_effects_list = removed_sorted_skill[
-                            3
-                        ].get_current_additional()
+                    if additional_action:
                         temp_adv_skill = interpretSkillAdventurerAttack(
-                            temp_adv_effects_list, removed_sorted_skill[3], enemy
+                            additional_action, adventurer, enemy
                         )
                         # damage
                         temp_damage = DamageFunction(
                             temp_adv_skill,
-                            removed_sorted_skill[3],
+                            adventurer,
                             enemy,
                             memboost,
                             skillRatio,
                         )
                         # effects
                         interpretSkillAdventurerEffects(
-                            temp_adv_effects_list,
-                            removed_sorted_skill[3],
+                            additional_action,
+                            adventurer,
                             enemy,
                             active_advs,
                         )
                         # logging and adding damage
                         turn_logs["combat_skills"].append(
-                            f"{removed_sorted_skill[3].name} additional damage for {temp_damage:,}"
+                            f"{adventurer.name} additional ({additional_action[0]}) damage for {temp_damage:,}"
                         )
                         # damage adding
                         total_damage += temp_damage
-                        removed_sorted_skill[3].add_damage(temp_damage)
+                        adventurer.add_damage(temp_damage)
 
                 # end of turn skills
                 enemy.turnOrder(turn, active_advs, 2)
