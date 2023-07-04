@@ -664,6 +664,23 @@ def Counters(notIn=[0,0,0,0]):
  """
 
 
+def interpretExtraBoostWrapper(
+    skillEffect, adventurer: "Adventurer", enemy: "Enemy"
+) -> float:
+    # This wrapper is used to make "per each regen" type skills be interpreted
+    # as both a "per each hp regen" and "per each mp regen" effect
+
+    temp_list = skillEffect.attribute.split("_")
+    if "regen" in temp_list and not "hp" in temp_list and not "mp" in temp_list:
+        skillEffect.attribute = skillEffect.attribute.replace("regen", "hp_regen")
+        extra_boosts_multiplier = interpretExtraBoost(skillEffect, adventurer, enemy)
+        skillEffect.attribute = skillEffect.attribute.replace("hp_regen", "mp_regen")
+        extra_boosts_multiplier += interpretExtraBoost(skillEffect, adventurer, enemy)
+    else:
+        extra_boosts_multiplier = interpretExtraBoost(skillEffect, adventurer, enemy)
+    return extra_boosts_multiplier
+
+
 def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -> float:
     """(adventurerSkillEffect) -> float
     takes in a skill effect with attribute exists of "per_each" then parse it and return the extra boosts multiplier
@@ -692,45 +709,26 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
         temp_list.remove("skill")
     except:
         pass
-    target = temp_list[0]
+
+    if temp_list[0] == "self":
+        effect_lists = [adventurer.boostCheckAlliesAdv, adventurer.boostCheckAlliesAst]
+    else:
+        effect_lists = [enemy.boostCheckEnemyAdv, enemy.boostCheckEnemyAst]
     temp_list = temp_list[1:]
     attribute = "_".join(temp_list[: len(temp_list) - 1])
     attribute_type = temp_list[-1]
 
-    if target == "self":
-        # boostCheckAlliesAdv
-        for selfBuffsAdv in adventurer.boostCheckAlliesAdv:
-            if selfBuffsAdv.get("isbuff") == (attribute_type == "buff"):
-                if selfBuffsAdv.get("attribute") == attribute:
-                    extra_boosts_modifier_value = (
-                        extra_boosts_modifier_value
-                        + int(skillEffect.modifier.strip()) / 100
-                    )
-        # boostCheckAlliesAst
-        for selfBuffsAst in adventurer.boostCheckAlliesAst:
-            if selfBuffsAst.get("isbuff") == (attribute_type == "buff"):
-                if selfBuffsAst.get("attribute") == attribute:
-                    extra_boosts_modifier_value = (
-                        extra_boosts_modifier_value
-                        + int(skillEffect.modifier.strip()) / 100
-                    )
-    # target aka foes/foe
-    else:
-        for selfBuffsAdv in enemy.boostCheckEnemyAdv:
-            if selfBuffsAdv.get("isbuff") == (attribute_type == "buff"):
-                if selfBuffsAdv.get("attribute") == attribute:
-                    extra_boosts_modifier_value = (
-                        extra_boosts_modifier_value
-                        + int(skillEffect.modifier.strip()) / 100
-                    )
-        # boostCheckAlliesAst
-        for selfBuffsAst in enemy.boostCheckEnemyAst:
-            if selfBuffsAst.get("isbuff") == (attribute_type == "buff"):
-                if selfBuffsAst.get("attribute") == attribute:
-                    extra_boosts_modifier_value = (
-                        extra_boosts_modifier_value
-                        + int(skillEffect.modifier.strip()) / 100
-                    )
+    # adventurer effects
+    for selfBuffsAdv in effect_lists[0]:
+        if selfBuffsAdv.get("isbuff") == (attribute_type == "buff"):
+            if selfBuffsAdv.get("attribute") == attribute:
+                extra_boosts_modifier_value += int(skillEffect.modifier.strip()) / 100
+    # assist effects
+    for selfBuffsAst in effect_lists[1]:
+        if selfBuffsAst.get("isbuff") == (attribute_type == "buff"):
+            if selfBuffsAst.get("attribute") == attribute:
+                extra_boosts_modifier_value += int(skillEffect.modifier.strip()) / 100
+
     print(extra_boosts_modifier_value)
     return extra_boosts_modifier_value
 
@@ -794,7 +792,9 @@ def interpretSkillAdventurerAttack(
         # for example str/mag debuff
         if len(extra_boosts_effects) > 0:
             for extra_boosts in extra_boosts_effects:
-                temp_extra_boosts = interpretExtraBoost(extra_boosts, adventurer, enemy)
+                temp_extra_boosts = interpretExtraBoostWrapper(
+                    extra_boosts, adventurer, enemy
+                )
                 extra_boosts_value = extra_boosts_value + temp_extra_boosts
         # SELECT ase.AdventurerSkillEffectsid, ase.AdventurerSkillid, ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name
         ret = AdventurerSkill(
@@ -971,7 +971,7 @@ def interpretSkillAdventurerEffects(
         elif "removal_no_assist" in curr_attribute:
             is_buff = not ("debuff" in curr_attribute)
 
-            temp_list = curr_attribute.replace("removal_no_assist", "").split("_")
+            temp_list = curr_attribute.replace("_removal_no_assist", "").split("_")
             try:
                 temp_list.remove("buff")
             except:
@@ -980,7 +980,7 @@ def interpretSkillAdventurerEffects(
                 temp_list.remove("debuff")
             except:
                 pass
-            temp_attribute = " ".join(temp_list).strip()
+            temp_attribute = "_".join(temp_list).strip()
             if current_target in ["self", "allies"]:
                 for curr_adv in target_list:
                     curr_adv.pop_boostCheckAlliesAdv(is_buff, temp_attribute)
@@ -1310,11 +1310,10 @@ def counter(
     # take the avg
     # loop through and take the avg
     for adv in adv_list:
-
         temp_adv_counter = adv.adventurerCounter
         temp_extra_boost = 1.0
         if adv.adventurerCounter.extraBoost != None:
-            temp_extra_boost_value = interpretExtraBoost(
+            temp_extra_boost_value = interpretExtraBoostWrapper(
                 adv.adventurerCounter.extraBoost, adv, enemy
             )
             temp_extra_boost += temp_extra_boost_value
@@ -1348,7 +1347,6 @@ def counters(
     counterRate: float,
     logs: Dict[str, List[str]],
 ) -> int:
-
     ret = interpretInstantEffects(
         assist_list, adv_list, enemy, memboost, counterRate, logs
     )
@@ -1361,7 +1359,7 @@ def counters(
         temp_adv_counter = adv.adventurerCounter
         temp_extra_boost = 1.0
         if adv.adventurerCounter.extraBoost != None:
-            temp_extra_boost_value = interpretExtraBoost(
+            temp_extra_boost_value = interpretExtraBoostWrapper(
                 adv.adventurerCounter.extraBoost, adv, enemy
             )
             temp_extra_boost += temp_extra_boost_value
