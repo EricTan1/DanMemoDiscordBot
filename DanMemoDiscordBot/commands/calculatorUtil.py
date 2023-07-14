@@ -729,7 +729,6 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
             if selfBuffsAst.get("attribute") == attribute:
                 extra_boosts_modifier_value += int(skillEffect.modifier.strip()) / 100
 
-    print(extra_boosts_modifier_value)
     return extra_boosts_modifier_value
 
 
