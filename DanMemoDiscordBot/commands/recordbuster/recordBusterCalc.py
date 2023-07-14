@@ -19,7 +19,7 @@ from commands.calculatorUtil import (
 from commands.entities.adventurer import Adventurer
 from commands.entities.assist import Assist
 from commands.entities.enemy import Enemy, Finn, Gareth, Ottarl, Revis, Riveria
-from commands.entities.skills import AdventurerCounter, AdventurerSkill
+from commands.entities.skills import AdventurerCounter, AdventurerSkill, EnemyAttack
 from commands.recordbuster.recordBusterCalcHandler import pageRBHandler
 from commands.utils import getDifficultyMultiplier, getElements
 
@@ -616,7 +616,9 @@ async def run(
                     Tuple[
                         float,
                         str,
-                        Union[Optional[AdventurerSkill], AdventurerCounter],
+                        Union[
+                            Optional[AdventurerSkill], AdventurerCounter, EnemyAttack
+                        ],
                         Adventurer,
                         Tuple[str, list],
                     ]
@@ -692,17 +694,21 @@ async def run(
                 sorted_skills_priority_list = sorted(
                     skills_priority_list, key=lambda x: x[0], reverse=True
                 )
-                is_fast = True
-                is_enemy_attacked = False
-                for _ in range(0, len(sorted_skills_priority_list)):
-                    removed_sorted_skill = sorted_skills_priority_list.pop(0)
-                    adventurer = removed_sorted_skill[3]
-                    if removed_sorted_skill[1] != "fast":
-                        is_fast = False
-                    # not fast skill then rb can go
-                    if (
-                        not is_fast or len(sorted_skills_priority_list) == 0
-                    ) and not is_enemy_attacked:
+
+                first_non_fast_skill = 0
+                for skill in sorted_skills_priority_list:
+                    if skill[1] == "fast":
+                        first_non_fast_skill += 1
+                    else:
+                        break
+                # We schedule "normal" speed enemy actions to go
+                # right after the last "fast" adventurer skill
+                sorted_skills_priority_list.insert(
+                    first_non_fast_skill, (0, "", EnemyAttack(), Adventurer(), ("", []))
+                )
+
+                for removed_sorted_skill in sorted_skills_priority_list:
+                    if isinstance(removed_sorted_skill[2], EnemyAttack):
                         enemy.turnOrder(turn, active_advs, 1)
                         total_damage += enemy.turnOrderCounters(
                             turn,
@@ -714,7 +720,9 @@ async def run(
                             1,
                             turn_logs,
                         )
-                        is_enemy_attacked = True
+                        continue
+
+                    adventurer = removed_sorted_skill[3]
 
                     if (
                         isinstance(removed_sorted_skill[2], AdventurerSkill)

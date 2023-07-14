@@ -568,7 +568,6 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
                         int(skillEffect.modifier.strip()) / 100
                     )
 
-    print(extra_boosts_modifier_value)
     return extra_boosts_modifier_value
 
 

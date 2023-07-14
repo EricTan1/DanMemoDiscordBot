@@ -46,3 +46,8 @@ class AdventurerCounter:
         self.element = element
         # str per_each_attribute_buff/debuff
         self.extraBoost = extraBoost
+
+
+# "Dummy" class used so we can schedule Enemy Attacks among adventurer actions in rbcalc
+class EnemyAttack:
+    pass
