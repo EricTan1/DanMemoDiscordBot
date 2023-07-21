@@ -18,6 +18,7 @@ mysql-connector-python = "==8.0.19"
 discord-py-interactions = "4.3.4"
 interactions-files = "*"
 interactions-wait-for = "*"
+apscheduler = "*"
 
 [dev-packages]
 pylint = ">=2.7.1"
