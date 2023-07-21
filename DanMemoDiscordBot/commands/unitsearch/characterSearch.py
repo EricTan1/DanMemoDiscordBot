@@ -27,10 +27,10 @@ from commands.utils import (
 )
 from database.DBcontroller import DBcontroller
 
-limitbreak_sub_emoji = get_emoji("square_off")
-limitbreak_add_emoji = get_emoji("square_on")
-hero_ascend_sub_emoji = get_emoji("star_off")
-hero_ascend_add_emoji = get_emoji("star_on")
+limitbreak_sub_emoji = get_emoji("square_off").format
+limitbreak_add_emoji = get_emoji("square_on").format
+hero_ascend_sub_emoji = get_emoji("star_off").format
+hero_ascend_add_emoji = get_emoji("star_on").format
 
 
 # --- interface functions used by commonSearch ---
@@ -160,8 +160,8 @@ async def pageHandler(
 
     def updateStats():
         temp_embed.description = (
-            limitbreak_add_emoji.format * current_limitbreak
-            + limitbreak_sub_emoji.format * (MAXLB - current_limitbreak)
+            limitbreak_add_emoji * current_limitbreak
+            + limitbreak_sub_emoji * (MAXLB - current_limitbreak)
         )
         if ascended:
             temp_embed.description = (

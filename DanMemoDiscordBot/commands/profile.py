@@ -15,10 +15,10 @@ from database.entities.User import User
 arrow_left = "\u2b05"
 arrow_right = "\u27a1"
 star_emoji = "\u2b50"
-crepe_emoji = get_emoji("crepe")
-adventurer_emoji = get_emoji("ad_filter")
-assist_emoji = get_emoji("as_filter")
-limitbreak_emojis = [get_emoji(f"limitbreak_{number}") for number in range(1, 6)]
+crepe_emoji = get_emoji("crepe").format
+adventurer_emoji = get_emoji("ad_filter").format
+assist_emoji = get_emoji("as_filter").format
+limitbreak_emojis = [get_emoji(f"limitbreak_{number}").format for number in range(1, 6)]
 
 
 async def run(
