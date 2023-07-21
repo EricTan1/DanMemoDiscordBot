@@ -7,7 +7,7 @@ from commands.utils import Status, get_emoji, mention_author
 from database.DBcontroller import DBConfig
 from database.entities.User import User
 
-crepe_emoji = get_emoji("crepe")
+crepe_emoji = get_emoji("crepe").format
 
 
 async def run(db_config: DBConfig, ctx: CommandContext):
@@ -48,7 +48,7 @@ async def run(db_config: DBConfig, ctx: CommandContext):
 
     title = "Wait! Are you going to the dungeon today? Please take this with you! >///<"
 
-    description = mention_author(ctx) + " has received a " + str(crepe_emoji) + "!"
+    description = mention_author(ctx) + " has received a " + crepe_emoji + "!"
 
     if user.crepes == 1:
         footer = "There is " + str(user.crepes) + " crepe left in their bento box!"
