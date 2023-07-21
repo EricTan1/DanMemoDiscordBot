@@ -732,7 +732,6 @@ async def run(
                     elif isinstance(removed_sorted_skill[2], AdventurerCounter):
                         # no extra boosts for auto attacks
                         temp_damage = CounterDamageFunction(
-                            removed_sorted_skill[2],
                             removed_sorted_skill[3],
                             enemy,
                             memboost,
