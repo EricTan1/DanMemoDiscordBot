@@ -128,6 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# IDEs
+.vscode
+
 # gitignore for danmemo
 gspread.json
 DanMemoDiscordBot/infographic/killer.png
@@ -138,3 +141,4 @@ DanMemoDiscordBot/images/gacha.*
 AdventurerJson.zip
 AssistJson.zip
 myrun.sh
+heartbeat-file.txt

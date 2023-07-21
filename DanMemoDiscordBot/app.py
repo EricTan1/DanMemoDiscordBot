@@ -1,6 +1,8 @@
 import os
 import traceback
 from typing import Optional, cast
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from datetime import datetime
 
 import interactions
 from interactions.ext.files import CommandContext
@@ -30,8 +32,10 @@ from commands.utils import createGSpreadJSON
 from database.DBcontroller import DatabaseEnvironment, DBConfig
 
 GUILD_ID = 698143969166622720  # ID of Sword Oratoria server
+STATUS_CHANNEL_ID = 1131919933660475433  # ID of Sword Oratoria's bot-status channel
 TOKEN = os.environ["DISCORD_TOKEN_DANMEMO"]
 ENV = os.environ.get("ENV")
+HEARTRATE = 300  # Heartbeat interval in seconds
 
 if ENV == "dev":
     dbConfig = DBConfig(DatabaseEnvironment.LOCAL)
@@ -50,6 +54,17 @@ client: WaitForClient = setup(
 
 cache = Cache(dbConfig)
 
+status_message = interactions.Message()
+
+
+# Updates heartbeat file and bot status message on Discord
+async def status_update():
+    boot_text = status_message.content.split("\n")[0]
+    timestamp = int(datetime.now().timestamp())
+    await status_message.edit(boot_text + f"\nLast heartbeat: <t:{timestamp}:R>")
+    with open("heartbeat-file.txt", "w") as f:
+        f.write(str(timestamp))
+
 
 @client.event
 async def on_start():
@@ -59,6 +74,19 @@ async def on_start():
     print("test")
     createGSpreadJSON()
     print("Bot is ready!")
+
+    # Create initial status message in bot-status channel
+    channel_dict = await client._http.get_channel(STATUS_CHANNEL_ID)
+    channel = interactions.Channel(**channel_dict, _client=client._http)
+    global status_message
+    timestamp = int(datetime.now().timestamp())
+    status_message = await channel.send(
+        f"Bot going online at <t:{timestamp}:F>\nLast heartbeat: <t:{timestamp}:R>"
+    )
+    # Setup & start heartbeat scheduler
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(status_update, "interval", seconds=HEARTRATE)
+    scheduler.start()
 
 
 @client.command(
