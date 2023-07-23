@@ -1,3 +1,3 @@
 #!/bin/bash
 cd DanMemoDiscordBot/
-python app.py
+python3 -u app.py
