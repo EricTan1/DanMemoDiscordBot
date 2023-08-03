@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, cast
 
 from commands.entities.skills import AdventurerSkill
 from commands.utils import getAilment, getElements
@@ -14,10 +14,10 @@ def commonDamageFunction():
 
 
 def DamageFunction(
-    skill: Optional[AdventurerSkill],
+    skill: AdventurerSkill | None,
     adventurer: "Adventurer",
     enemy: "Enemy",
-    memboost: Dict[str, Union[int, float]],
+    memboost: dict[str, int | float],
     skillRng: float,
 ) -> int:
     if skill is None:
@@ -166,7 +166,7 @@ def DamageFunction(
 def CounterDamageFunction(
     adventurer: "Adventurer",
     enemy: "Enemy",
-    memboost: Dict[str, Union[int, float]],
+    memboost: dict[str, int | float],
     counterRng: float,
     extraBoost: float,
 ) -> int:
@@ -274,10 +274,10 @@ def CounterDamageFunction(
 
 
 def SADamageFunction(
-    skill: Optional[AdventurerSkill],
+    skill: AdventurerSkill | None,
     adventurer: "Adventurer",
     enemy: "Enemy",
-    memboost: Dict[str, Union[int, float]],
+    memboost: dict[str, int | float],
     combo: int,
     saRng: float,
 ) -> int:
@@ -342,7 +342,7 @@ def SADamageFunction(
 
     # get strength/magic debuff
     powerDebuff = adventurer.get_boostCheckAdv(False, stat_key)
-    tempPowerBoostDebuff = 0
+    tempPowerBoostDebuff = 0.0
     if powerDebuff is not None:
         tempPowerBoostDebuff = abs(powerDebuff.modifier)
     else:
@@ -448,7 +448,7 @@ def SADamageFunction(
 
 
 def CombineSA(
-    adventurerList: List["Adventurer"], enemy: "Enemy", character_list: list
+    adventurerList: list["Adventurer"], enemy: "Enemy", character_list: list
 ) -> int:
     """(list of Adventurer, Enemy, list of boolean) -> int
     characterlist : [Char1,Char2,Char3,Char4]
@@ -553,7 +553,7 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
         pass
 
     if temp_list[0] == "self":
-        effect_lists = [adventurer.boostCheckAdv, adventurer.boostCheckAst]
+        effect_lists: list[list] = [adventurer.boostCheckAdv, adventurer.boostCheckAst]
     else:
         effect_lists = [enemy.boostCheckAdv, enemy.boostCheckAst]
     temp_list = temp_list[1:]
@@ -572,8 +572,8 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
 
 
 def interpretSkillAdventurerAttack(
-    skillEffectsWithName: Tuple[str, list], adventurer: "Adventurer", enemy: "Enemy"
-) -> Optional[AdventurerSkill]:
+    skillEffectsWithName: tuple[str, list], adventurer: "Adventurer", enemy: "Enemy"
+) -> AdventurerSkill | None:
     """(list of skillEffects, Adventurer, Enemy) -> AdventurerSkill or None
     None if there are no damage related effects
     AdventurerSkill if there is a damage related effect
@@ -651,10 +651,10 @@ def interpretSkillAdventurerAttack(
 
 
 def interpretSkillAdventurerEffects(
-    skillEffectsWithName: Tuple[str, list],
+    skillEffectsWithName: tuple[str, list],
     adventurer: "Adventurer",
     enemy: "Enemy",
-    adv_list: List["Adventurer"],
+    adv_list: list["Adventurer"],
 ):
     # test if skill effects empty
     if skillEffectsWithName:
@@ -1106,8 +1106,8 @@ def interpretSkillAssistEffects(
 
 
 def counter(
-    assist_list: List["Assist"],
-    adv_list: List["Adventurer"],
+    assist_list: list["Assist"],
+    adv_list: list["Adventurer"],
     enemy: "Enemy",
     memboost: dict,
     counterRng: float,
@@ -1149,12 +1149,12 @@ def counter(
 
 
 def counters(
-    assist_list: List["Assist"],
-    adv_list: List["Adventurer"],
+    assist_list: list["Assist"],
+    adv_list: list["Adventurer"],
     enemy: "Enemy",
-    memboost: Dict[str, Union[int, float]],
+    memboost: dict[str, int | float],
     counterRng: float,
-    logs: Dict[str, List[str]],
+    logs: dict[str, list[str]],
 ) -> int:
     ret = interpretInstantEffects(
         assist_list, adv_list, enemy, memboost, counterRng, logs
@@ -1187,12 +1187,12 @@ def counters(
 
 
 def interpretInstantEffects(
-    assist_list: List["Assist"],
-    adventurer_list: List["Adventurer"],
+    assist_list: list["Assist"],
+    adventurer_list: list["Adventurer"],
     enemy: "Enemy",
-    memoria_boost: Dict[str, Union[int, float]],
+    memoria_boost: dict[str, int | float],
     counter_rate: float,
-    logs: Dict[str, List[str]],
+    logs: dict[str, list[str]],
 ) -> int:
     ret = 0
     for unit_num, assist in enumerate(assist_list):

@@ -1,5 +1,4 @@
 from types import SimpleNamespace
-from typing import List, Optional
 
 import interactions
 from interactions.ext.files import CommandContext
@@ -13,7 +12,7 @@ from commands.utils import Status
 async def run(
     client: WaitForClient,
     ctx: CommandContext,
-    config_file: Optional[interactions.Attachment],
+    config_file: interactions.Attachment | None,
 ):
     # check if there is attachment if not send them a template attachment
     if not config_file:
@@ -27,7 +26,7 @@ async def run(
         async with client._http._req._session.get(config_file.url) as request:  # type: ignore [union-attr]
             contents = await request.content.read()
         contents_decode = contents.decode("utf-8").split("\n")
-        positions: List[List[int]] = [[], [], [], []]
+        positions: list[list[int]] = [[], [], [], []]
         errors = ""
         turns = 0
         for line in contents_decode:
@@ -92,7 +91,7 @@ async def run(
             await ctx.send(embeds=temp_embed)
 
 
-def verifyAndCast(my_list: List[str]) -> List[int]:
+def verifyAndCast(my_list: list[str]) -> list[int]:
     ret = []
     print(my_list)
     for items in my_list:
@@ -104,9 +103,9 @@ def verifyAndCast(my_list: List[str]) -> List[int]:
 async def calculate(
     ctx: CommandContext,
     is_revis: bool,
-    adventurer_turns: List[str],
-    assist_turns: List[str],
-    positions: List[List[int]],
+    adventurer_turns: list[str],
+    assist_turns: list[str],
+    positions: list[list[int]],
     turns: int,
 ):
     curr_message = ""
@@ -114,8 +113,8 @@ async def calculate(
     # 1,2 = sacs in order aka index 0 and 1
     current_turn = 0
     mlb_assists = [False, False, False, False, False, False]
-    assist_order: List[List[SimpleNamespace]] = []
-    adventurer_order: List[List[SimpleNamespace]] = []
+    assist_order: list[list[SimpleNamespace]] = []
+    adventurer_order: list[list[SimpleNamespace]] = []
 
     for x in range(len(assist_turns)):
         temp_order = assist_turns[x].lower()
@@ -250,10 +249,10 @@ async def calculate(
 
 
 def calculate_assist_sa_gauge(
-    assists_order: List[List[SimpleNamespace]],
-    mlb_assists: List[bool],
-    charge_buffs: List[float],
-    positions: List[int],
+    assists_order: list[list[SimpleNamespace]],
+    mlb_assists: list[bool],
+    charge_buffs: list[float],
+    positions: list[int],
     self_pos: int,
 ):
     if assists_order[self_pos]:

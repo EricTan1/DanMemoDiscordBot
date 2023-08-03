@@ -1,7 +1,7 @@
 import json
 import os
 from io import BytesIO
-from typing import Any, Dict
+from typing import Any
 
 import interactions
 from interactions.ext.files import CommandContext
@@ -471,7 +471,7 @@ async def run(
             async with client._http._req._session.get(unit_file.url) as request:  # type: ignore [union-attr]
                 read_json = await request.content.read()
             my_json = read_json.decode("utf8")
-            as_dict: Dict[str, Any] = json.loads(my_json)
+            as_dict: dict[str, Any] = json.loads(my_json)
 
             if "type" in as_dict.keys():
                 sub_command = "adventurer"
@@ -517,7 +517,7 @@ async def run(
 
 # Basic validation for the unit json's structure.
 # TODO: use TypedDict, or better Pydantic, for full validation
-def validateStructure(unitDict: Dict[str, Any], unitType: str):
+def validateStructure(unitDict: dict[str, Any], unitType: str):
     assert (
         set(["title", "name", "stars", "limited", "stats", "skills"]) <= unitDict.keys()
     )

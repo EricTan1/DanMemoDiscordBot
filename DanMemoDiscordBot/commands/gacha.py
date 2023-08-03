@@ -4,7 +4,6 @@ from collections import Counter
 from os.path import isdir
 from random import choice, choices
 from threading import Lock
-from typing import List, Type
 
 import interactions
 from interactions.ext.files import CommandContext
@@ -89,7 +88,7 @@ async def no_gacha(ctx: CommandContext):
     await ctx.send(embeds=embed, files=interactions.File("./images/gacha/nope.png"))
 
 
-def get_pulls(number: int, gacha_rates: Type[GachaRates]) -> list:
+def get_pulls(number: int, gacha_rates: type[GachaRates]) -> list:
     pulls_category = random_pulls(number, gacha_rates)
     pulls = []
     for category in pulls_category:
@@ -97,7 +96,7 @@ def get_pulls(number: int, gacha_rates: Type[GachaRates]) -> list:
     return pulls
 
 
-def random_pulls(number: int, gacha_rates: Type[GachaRates]) -> List[str]:
+def random_pulls(number: int, gacha_rates: type[GachaRates]) -> list[str]:
     possibilities = [e.name for e in gacha_rates]
     probabilities = [e.value for e in gacha_rates]
     return choices(possibilities, weights=probabilities, k=number)
@@ -209,7 +208,7 @@ def create_gif(gif_path: str, pulls: list):
     save_gif(gif_images, gif_path)
 
 
-def save_gif(images: List[Image.Image], path: str):
+def save_gif(images: list[Image.Image], path: str):
     images[0].save(
         path,
         save_all=True,
@@ -219,7 +218,7 @@ def save_gif(images: List[Image.Image], path: str):
     )  # , transparency=0) #loop=1
 
 
-def concatenate_images_eleven_pulls(images: List[Image.Image]) -> io.BytesIO:
+def concatenate_images_eleven_pulls(images: list[Image.Image]) -> io.BytesIO:
     first_line = concatenate_images_horizontally(images[:6])
     second_line = concatenate_images_horizontally(images[6:])
 

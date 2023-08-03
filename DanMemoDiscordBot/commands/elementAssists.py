@@ -1,5 +1,3 @@
-from typing import Dict, List, Tuple
-
 import interactions
 from interactions.ext.files import CommandContext
 from PIL import Image, ImageDraw, ImageFont
@@ -35,7 +33,7 @@ elementFiles = {
     "Wind": "element_03.png",
 }
 
-effectTypes: List[Tuple[str, str]] = [("Foes", "Resist"), ("Allies", "Attack")]
+effectTypes: list[tuple[str, str]] = [("Foes", "Resist"), ("Allies", "Attack")]
 
 # Font Definition
 fontPath = "./infographic/NotoSans-Regular.ttf"
@@ -176,7 +174,7 @@ def drawModifier(
 # Computes the position for insertion of an assist image
 def getHexPos(
     rowOffset: int, side: int, centerX: int, innerRowNum: int, unitNum: int
-) -> Tuple[int, int]:
+) -> tuple[int, int]:
     inRowWidths = unitNum * hexScaledLength
     totalBetweenPaddings = (unitNum - 1) * betweenPaddingX
     inRowX = inRowWidths + totalBetweenPaddings + framePaddingX
@@ -188,7 +186,7 @@ def getHexPos(
 
 
 # returns the number of assists in the largest subdict
-def getWidthFactor(assistDict: Dict[str, Dict[str, Dict[int, List[str]]]]) -> int:
+def getWidthFactor(assistDict: dict[str, dict[str, dict[int, list[str]]]]) -> int:
     max = -1
     for el in elements:
         for ef in effectTypes:
@@ -199,7 +197,7 @@ def getWidthFactor(assistDict: Dict[str, Dict[str, Dict[int, List[str]]]]) -> in
 
 
 # Sums up the amount of different modifiers per element
-def getRowHeights(assistDict: Dict[str, Dict[str, Dict[int, List[str]]]]) -> List[int]:
+def getRowHeights(assistDict: dict[str, dict[str, dict[int, list[str]]]]) -> list[int]:
     heightFactors = []
     for el in elements:
         inRowHeights = []
@@ -219,8 +217,8 @@ def getRowHeights(assistDict: Dict[str, Dict[str, Dict[int, List[str]]]]) -> Lis
 #   who have that effect type for that element and that modifier
 def getElementAssistDict(
     db: DBcontroller,
-) -> Dict[str, Dict[str, Dict[int, List[str]]]]:
-    assistImages: Dict[str, Dict[str, Dict[int, List[str]]]] = dict()
+) -> dict[str, dict[str, dict[int, list[str]]]]:
+    assistImages: dict[str, dict[str, dict[int, list[str]]]] = dict()
     for elem in elements:
         assistImages[elem] = dict()
         assistImages[elem][effectTypes[0][1]] = dict()
@@ -281,7 +279,7 @@ def getEffectTarget(effect: str, startPos: int) -> str:
 
 
 # Returns starting positions of all effects in a skill description that match query
-def findAll(query: str, effect: str) -> List[int]:
+def findAll(query: str, effect: str) -> list[int]:
     indexes = []
     max = -1
     while True:

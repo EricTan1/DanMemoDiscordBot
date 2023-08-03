@@ -1,6 +1,6 @@
 import os
 import traceback
-from typing import Optional, cast
+from typing import cast
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from datetime import datetime
 
@@ -41,7 +41,7 @@ if ENV == "dev":
     dbConfig = DBConfig(DatabaseEnvironment.LOCAL)
     # Scopes bot commands to the Dev server for testing
     # since unscoped (global) commands may take a couple hours to update
-    SCOPE: Optional[int] = GUILD_ID
+    SCOPE: int | None = GUILD_ID
 else:
     dbConfig = DBConfig(DatabaseEnvironment.HEROKU)
     SCOPE = None
@@ -101,7 +101,7 @@ async def on_start():
         )
     ],
 )
-async def sacalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
+async def sacalc(ctx: CommandContext, config: interactions.Attachment | None = None):
     # to tell Discord this command may take longer than the default 3s timeout
     # Used because autodefer() doesn't work: https://github.com/interactions-py/interactions.py/issues/1021
     await ctx.defer()
@@ -120,7 +120,7 @@ async def sacalc(ctx: CommandContext, config: Optional[interactions.Attachment] 
         )
     ],
 )
-async def rbcalc(ctx: CommandContext, config: Optional[interactions.Attachment] = None):
+async def rbcalc(ctx: CommandContext, config: interactions.Attachment | None = None):
     try:
         # to tell Discord this command may take longer than the default 3s timeout
         await ctx.defer()

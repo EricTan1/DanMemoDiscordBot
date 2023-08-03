@@ -1,17 +1,15 @@
-from typing import Optional
-
 from database.entities.BaseConstants import Base
 
 
 class Assist(Base):
     def __init__(
         self,
-        assistid: Optional[int],
+        assistid: int | None,
         characterid: int,
         title: str,
         limited: int,
         stars: int,
-        alias: Optional[str],
+        alias: str | None,
     ):
         """
         stars : the base stars of a unit (1/2/3/4)
@@ -31,7 +29,7 @@ class Assist(Base):
 class AssistSkill(Base):
     def __init__(
         self,
-        assistskillid: Optional[int],
+        assistskillid: int | None,
         assistid: int,
         skillname: str,
         skilltype: str,
@@ -48,7 +46,7 @@ class AssistSkill(Base):
 class AssistSkillEffects(Base):
     def __init__(
         self,
-        assistskilleffectsid: Optional[int],
+        assistskilleffectsid: int | None,
         assistskillid: int,
         targetid: int,
         attributeid: int,
@@ -77,7 +75,7 @@ class AssistSkillEffects(Base):
 
 class AssistStats(Base):
     def __init__(
-        self, assiststatsid: Optional[int], assistid: int, attributeid: int, value: str
+        self, assiststatsid: int | None, assistid: int, attributeid: int, value: str
     ):
         self.assiststatsid = assiststatsid
         self.assistid = assistid

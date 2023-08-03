@@ -1,6 +1,5 @@
 import asyncio
 import math
-from typing import List
 
 import interactions
 from interactions.ext.files import CommandContext, ComponentContext
@@ -105,7 +104,7 @@ async def run(
             return await ctx.edit(embeds=embed, components=[], files=ifile)
 
 
-def build_description(lines: List[str], current_page: int, per_page=10):
+def build_description(lines: list[str], current_page: int, per_page=10):
     description = ""
     for i in range(len(lines)):
         if per_page * current_page <= i and i < per_page * (current_page + 1):

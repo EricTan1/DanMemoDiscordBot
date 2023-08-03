@@ -1,10 +1,7 @@
-from typing import Dict, List, Tuple
-
 import interactions
 from interactions.ext.files import CommandContext
 from PIL import Image, ImageDraw
 
-from commands.utils import Status
 from database.DBcontroller import DBConfig, DBcontroller
 
 # Spacings and sizes in pixels
@@ -104,7 +101,7 @@ def generateInfographic(dbConfig: DBConfig):
 
 
 # Returns a dict of the form { Killertype: [image filepaths] }
-def getKillerDict(db: DBcontroller) -> Dict[str, List[str]]:
+def getKillerDict(db: DBcontroller) -> dict[str, list[str]]:
     killerImages = dict()
     for enemyType in killers:
         skills = db.skillSearch(enemyType)
@@ -128,7 +125,7 @@ def getKillerDict(db: DBcontroller) -> Dict[str, List[str]]:
 
 
 # Returns the number of units that have the killer type that has the most units
-def getMostKillers(killerDict: Dict[str, List[str]]) -> int:
+def getMostKillers(killerDict: dict[str, list[str]]) -> int:
     mostKillers = 0
     for key in killerDict:
         if len(killerDict[key]) > mostKillers:
@@ -137,7 +134,7 @@ def getMostKillers(killerDict: Dict[str, List[str]]) -> int:
 
 
 # Computes the position for insertion of an adventurer image
-def getHexPos(rowNum: int, unitNum: int, fullWidth: int) -> Tuple[int, int]:
+def getHexPos(rowNum: int, unitNum: int, fullWidth: int) -> tuple[int, int]:
     inRowWidths = (unitNum // 2) * hexScaledLength
     totalBetweenPaddings = ((unitNum // 2) - 1) * betweenPaddingX
     inRowX = inRowWidths + totalBetweenPaddings + framePaddingX

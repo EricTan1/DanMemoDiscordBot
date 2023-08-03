@@ -1,7 +1,7 @@
 import asyncio
 import math
 import operator
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 import interactions
 from interactions.ext.files import CommandContext, ComponentContext
@@ -123,8 +123,8 @@ async def run(
             return await ctx.edit(embeds=embed, components=[])
 
 
-def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
-    sorted_categories: List[Tuple[str, int]] = []
+def get_summarized_unit_lines(units: list[dict[str, Any]]) -> list[str]:
+    sorted_categories: list[tuple[str, int]] = []
     previous_category = ""
     previous_number = 0
     for unit in units:
@@ -154,7 +154,7 @@ def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
     return units_lines
 
 
-def get_detailed_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
+def get_detailed_unit_lines(units: list[dict[str, Any]]) -> list[str]:
     units_lines = []
     for unit in units:
         units_line = star_emoji * unit["stars"] + " "
@@ -171,7 +171,7 @@ def get_detailed_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
 
 
 def build_detailed_description(
-    currency_line: str, units_lines: List[str], current_page: int, per_page=20
+    currency_line: str, units_lines: list[str], current_page: int, per_page=20
 ):
     description = currency_line
     for i in range(len(units_lines)):

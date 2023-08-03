@@ -2,7 +2,6 @@ import inspect
 import json
 import os
 from enum import Enum
-from typing import Dict, Optional, Tuple
 from urllib.parse import urlparse
 
 import mysql.connector
@@ -34,9 +33,9 @@ EDITORS = [
 class DBConfig:
     def __init__(self, environment):
         if environment == DatabaseEnvironment.LOCAL:
-            self.hostname: Optional[str] = "localhost"
-            self.username: Optional[str] = "root"
-            self.password: Optional[str] = "danmemo"
+            self.hostname: str | None = "localhost"
+            self.username: str | None = "root"
+            self.password: str | None = "danmemo"
             self.port = "3306"
             self.database = "aisbot"
         elif environment == DatabaseEnvironment.HEROKU:
@@ -192,7 +191,7 @@ class DBcontroller:
 
     def characterSearch(self, search):
         print("searching")
-        ret_dict: Dict[str, list] = dict()
+        ret_dict: dict[str, list] = dict()
         for words in self.human_input_character_dict:
             if " " + words + " " in search:
                 search = search.replace(
@@ -249,8 +248,8 @@ class DBcontroller:
 
         # separate by commas
         searchwords_list = search.split(",")
-        ret_dict: Dict[str, int] = dict()
-        ret_dict_effect: Dict[Tuple[int, str], int] = dict()
+        ret_dict: dict[str, int] = dict()
+        ret_dict_effect: dict[tuple[int, str], int] = dict()
         # get rid of spaces
         for index in range(0, len(searchwords_list)):
             searchwords_list[index] = searchwords_list[index].strip()
@@ -588,7 +587,7 @@ class DBcontroller:
 
         return (title_name, title, skill, stats_dict)
 
-    def assembleAssistSkill(self, skillid) -> Tuple[str, str, str]:
+    def assembleAssistSkill(self, skillid) -> tuple[str, str, str]:
         ret = ""
         skillname = ""
         skilltype = ""
@@ -756,7 +755,7 @@ class DBcontroller:
 
     def assembleAdventurerDevelopment(
         self, adventurerDevelopmentid
-    ) -> Tuple[str, str, str, str, int]:
+    ) -> tuple[str, str, str, str, int]:
         self._mycursor.execute(
             "SELECT ad.name,adv.title,c.name,adv.adventurerid FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.adventurer as adv on adv.adventurerid = ad.adventurerid LEFT JOIN danmemo.character as c on adv.characterid= c.characterid WHERE ad.adventurerdevelopmentid = {}".replace(
                 "danmemo", self.database
@@ -1105,7 +1104,7 @@ class DBcontroller:
 
     def dispatchSearch(self, search_query: str):
         search = search_query.split(" ")
-        ret_dict: Dict[int, list] = dict()
+        ret_dict: dict[int, list] = dict()
         for words in search:
             words = "%{}%".format(words)
             sql = "SELECT dispatchid,typename,stage,name,char1id,char2id,char3id,char4id FROM danmemo.dispatch where typename like %s or stage like %s or name like %s;".replace(

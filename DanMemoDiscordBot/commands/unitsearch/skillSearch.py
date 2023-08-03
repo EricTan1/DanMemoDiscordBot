@@ -1,16 +1,14 @@
-from typing import Dict, List, Tuple
-
 import interactions
 
 from database.DBcontroller import DBcontroller
 
 
-def get_page_list(my_list: list, db: DBcontroller) -> Tuple[list, int]:
+def get_page_list(my_list: list, db: DBcontroller) -> tuple[list, int]:
     rotating_list = []
     count = 0
-    temp_list: List[Tuple[Tuple[str, str, str], List[Tuple[str, str]]]] = []
-    dup_dict_ad: Dict[int, Tuple[int, int]] = dict()
-    dup_dict_as: Dict[int, Tuple[int, int]] = dict()
+    temp_list: list[tuple[tuple[str, str, str], list[tuple[str, str]]]] = []
+    dup_dict_ad: dict[int, tuple[int, int]] = dict()
+    dup_dict_as: dict[int, tuple[int, int]] = dict()
     rotating_list.append(temp_list)
     total_results = len(my_list)
     for skillid in my_list:
@@ -83,20 +81,20 @@ def get_page_list(my_list: list, db: DBcontroller) -> Tuple[list, int]:
     return rotating_list, total_results
 
 
-def get_unit_image_path(unit: Tuple[tuple, list]) -> str:
+def get_unit_image_path(unit: tuple[tuple, list]) -> str:
     return "./images/units/" + unit[0][1] + " [" + unit[0][0] + "]/"
 
 
 def filterAddRemove(
-    page_list: List[list], current_filter: str, name: str, total_results: int
-) -> Tuple[List[list], str, int]:
+    page_list: list[list], current_filter: str, name: str, total_results: int
+) -> tuple[list[list], str, int]:
     if name == current_filter:
         current_filter = "none"
         return page_list, current_filter, total_results
     # else
     current_filter = name
     current_page_list = []
-    temp_page: List[list] = []
+    temp_page: list[list] = []
     current_page_list.append(temp_page)
     count = 0
     for pages in page_list:
@@ -117,7 +115,7 @@ def filterAddRemove(
 
 
 def clearSetField(
-    temp_embed: interactions.Embed, data: List[list]
+    temp_embed: interactions.Embed, data: list[list]
 ) -> interactions.Embed:
     temp_embed.clear_fields()
     for skills in data:

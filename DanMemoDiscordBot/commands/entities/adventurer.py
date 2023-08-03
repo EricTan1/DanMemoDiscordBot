@@ -1,14 +1,12 @@
-from typing import Dict, List, Optional, Tuple
-
 from commands.entities.combatant import Combatant
 from commands.entities.skills import AdventurerCounter
-from commands.utils import AssistEffect, Effect, getDamageBuffs, getElements
+from commands.utils import getDamageBuffs, getElements
 
 
 class Adventurer(Combatant):
     def __init__(
         self,
-        stats: Dict[str, float] = {
+        stats: dict[str, int | float] = {
             "hp": 0,
             "mp": 0,
             "strength": 0,
@@ -27,7 +25,7 @@ class Adventurer(Combatant):
         counterBoost=0,
         critPenBoost=0,
         current_skills={"combat": [], "special": [], "additionals": []},
-        current_skills_agi_mod: Dict[str, List[str]] = {
+        current_skills_agi_mod: dict[str, list[str]] = {
             "combat": [],
             "special": [],
             "additionals": [],
@@ -107,14 +105,14 @@ class Adventurer(Combatant):
         self.current_damage += damage
 
     # main loop need to check skill [1,4]
-    def get_combatSkill(self, index: int) -> Tuple[str, list]:
+    def get_combatSkill(self, index: int) -> tuple[str, list]:
         """index = 1-3"""
         return self.current_skills["combat"][index - 1]
 
-    def get_specialSkill(self) -> Tuple[str, list]:
+    def get_specialSkill(self) -> tuple[str, list]:
         return self.current_skills["special"][0]
 
-    def get_additionals(self) -> Tuple[str, list]:
+    def get_additionals(self) -> tuple[str, list]:
         return self.current_skills["additionals"]
 
     def get_current_additional(self):
@@ -205,7 +203,7 @@ class Adventurer(Combatant):
             if not (item.isbuff == isbuff and item.attribute == attribute)
         ]
 
-    def get_log_effect_list(self) -> List[str]:
+    def get_log_effect_list(self) -> list[str]:
         result = [f"**{self.name}**"] + super().get_log_effect_list()
         if self.additionalCount > 0:
             result.append(

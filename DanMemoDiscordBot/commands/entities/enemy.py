@@ -1,8 +1,8 @@
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING
 
 from commands.calculatorUtil import counter, counters
 from commands.entities.combatant import Combatant
-from commands.utils import AssistEffect, Effect, getDamageDebuffs, getElements
+from commands.utils import getDamageDebuffs, getElements
 
 if TYPE_CHECKING:
     from commands.entities.adventurer import Adventurer
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class Enemy(Combatant):
     def __init__(
         self,
-        elementResistDownBase: Dict[str, float] = {
+        elementResistDownBase: dict[str, float] = {
             "fire": 0.0,
             "water": 0.0,
             "thunder": 0.0,
@@ -22,8 +22,8 @@ class Enemy(Combatant):
             "dark": 0.0,
             "none": 0.0,
         },
-        typeResistDownBase: Dict[str, float] = {"physical": 0.0, "magic": 0.0},
-        stats: Dict[str, float] = {
+        typeResistDownBase: dict[str, float] = {"physical": 0.0, "magic": 0.0},
+        stats: dict[str, int] = {
             "hp": 0,
             "mp": 0,
             "strength": 0,
@@ -95,13 +95,13 @@ class Enemy(Combatant):
     def turnOrderCounters(
         self,
         turnOrder: int,
-        adv_list: List["Adventurer"],
-        assist_list: List["Assist"],
-        memboost: Dict[str, float],
-        counterRng: float,
+        adv_list: list["Adventurer"],
+        assist_list: list["Assist"],
+        memboost: dict[str, int | float],
+        counterRate: float,
         react_on_st: bool,
         speed: int,
-        logs: Dict[str, List[str]],
+        logs: dict[str, list[str]],
     ):
         """speed : 0 - fast, 1- normal, 2- slow"""
         pass
@@ -202,8 +202,8 @@ class Finn(Enemy):
             adv.clearBuffs()
             adv.clearDebuffs()
 
-    # clear finn's debuffs from boostCheckAdv and your adv's buffs boostCheckAdv
-    def FinnStrMagBuff(self, adv_list: List["Adventurer"], turns: int):
+    # clear Finn's debuffs from boostCheckAdv and your adv's buffs boostCheckAdv
+    def FinnStrMagBuff(self, adv_list: list["Adventurer"], turns: int):
         # take the max of str/mag buffs
         for adv in adv_list:
             adv.set_statsBoostAdv("strength", max(adv.statsBoostAdv["strength"], 1.5))
@@ -236,14 +236,14 @@ class Finn(Enemy):
     def turnOrderCounters(
         self,
         turnOrder: int,
-        adv_list: List["Adventurer"],
-        assist_list: List["Assist"],
-        memboost: Dict[str, float],
+        adv_list: list["Adventurer"],
+        assist_list: list["Assist"],
+        memboost: dict[str, int | float],
         counterRng: float,
         react_on_st: bool,
         speed: int,
-        logs: Dict[str, List[str]],
-    ) -> int:
+        logs: dict[str, list[str]],
+    ):
         """speed : 0 - fast, 1- normal, 2- slow"""
         ret = 0
         if turnOrder + 1 in [1, 2, 3, 4, 5, 6, 8, 11, 12, 13, 14] and speed == 1:
@@ -287,14 +287,14 @@ class Riveria(Enemy):
     def turnOrderCounters(
         self,
         turnOrder: int,
-        adv_list: List["Adventurer"],
-        assist_list: List["Assist"],
-        memboost: Dict[str, float],
+        adv_list: list["Adventurer"],
+        assist_list: list["Assist"],
+        memboost: dict[str, int | float],
         counterRng: float,
         react_on_st: bool,
         speed: int,
-        logs: Dict[str, List[str]],
-    ) -> int:
+        logs: dict[str, list[str]],
+    ):
         """speed : 0 - fast, 1- normal, 2- slow"""
         ret = 0
         if turnOrder + 1 in [1, 5, 6, 10] and speed == 1:
@@ -375,14 +375,14 @@ class Gareth(Enemy):
     def turnOrderCounters(
         self,
         turnOrder: int,
-        adv_list: List["Adventurer"],
-        assist_list: List["Assist"],
-        memboost: Dict[str, float],
+        adv_list: list["Adventurer"],
+        assist_list: list["Assist"],
+        memboost: dict[str, int | float],
         counterRng: float,
         react_on_st: bool,
         speed: int,
-        logs: Dict[str, List[str]],
-    ) -> int:
+        logs: dict[str, list[str]],
+    ):
         """speed : 0 - fast, 1- normal, 2- slow"""
         ret = 0
         if turnOrder + 1 in [1, 15] and speed == 1:
@@ -420,7 +420,7 @@ class Gareth(Enemy):
 
 
 class Ottarl(Enemy):
-    def OttarlClear(self, adv_list: List["Adventurer"]):
+    def OttarlClear(self, adv_list: list["Adventurer"]):
         # remove all buffs!
         for adv in adv_list:
             adv.clearBuffs()
@@ -440,14 +440,14 @@ class Ottarl(Enemy):
     def turnOrderCounters(
         self,
         turnOrder: int,
-        adv_list: List["Adventurer"],
-        assist_list: List["Assist"],
-        memboost: Dict[str, float],
+        adv_list: list["Adventurer"],
+        assist_list: list["Assist"],
+        memboost: dict[str, int | float],
         counterRng: float,
         react_on_st: bool,
         speed: int,
-        logs: Dict[str, List[str]],
-    ) -> int:
+        logs: dict[str, list[str]],
+    ):
         """speed : 0 - fast, 1- normal, 2- slow"""
         ret = 0
         if turnOrder + 1 in [1, 3, 4, 5, 7, 8, 9, 11, 12, 15] and speed == 1:
@@ -529,14 +529,14 @@ class Revis(Enemy):
     def turnOrderCounters(
         self,
         turnOrder: int,
-        adv_list: List["Adventurer"],
-        assist_list: List["Assist"],
-        memboost: Dict[str, float],
+        adv_list: list["Adventurer"],
+        assist_list: list["Assist"],
+        memboost: dict[str, int | float],
         counterRng: float,
         react_on_st: bool,
         speed: int,
-        logs: Dict[str, List[str]],
-    ) -> int:
+        logs: dict[str, list[str]],
+    ):
         """speed : 0 - fast, 1- normal, 2- slow"""
         ret = 0
         # double aoe

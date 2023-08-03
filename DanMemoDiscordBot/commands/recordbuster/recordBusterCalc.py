@@ -1,6 +1,6 @@
 import ast
 import configparser
-from typing import Dict, List, Optional, Tuple, Union, cast
+from typing import cast
 
 import interactions
 from interactions.ext.files import CommandContext
@@ -27,7 +27,7 @@ from commands.utils import getDifficultyMultiplier, getElements
 async def run(
     client: WaitForClient,
     ctx: CommandContext,
-    config_file: Optional[interactions.Attachment],
+    config_file: interactions.Attachment | None,
 ):
     if not config_file:
         await ctx.send(
@@ -46,11 +46,11 @@ async def run(
             # test2 =ast.literal_eval(test)
             # general settings
             # counterRate=config.getfloat("DEFAULT", "counterRate")
-            original_memboost: Dict[str, Union[int, float]] = ast.literal_eval(
+            original_memboost: dict[str, int | float] = ast.literal_eval(
                 config.get("DEFAULT", "memoria_boost")
             )
             try:
-                memoria_turns: Dict[str, Tuple[int, int]] = ast.literal_eval(
+                memoria_turns: dict[str, tuple[int, int]] = ast.literal_eval(
                     config.get("DEFAULT", "memoria_turns")
                 )
             except configparser.NoOptionError:
@@ -260,13 +260,13 @@ async def run(
                     ]
                     if len(adv_matches) > 0:
                         curr_unit = adv_matches[0]
-                        current_skills: Dict[str, List[Tuple[str, list]]] = {
+                        current_skills: dict[str, list[tuple[str, list]]] = {
                             "combat": [],
                             "special": [],
                             "additionals": [],
                         }
 
-                        current_skills_agi_mod: Dict[str, List[str]] = {
+                        current_skills_agi_mod: dict[str, list[str]] = {
                             "combat": [],
                             "special": [],
                             "additionals": [],
@@ -344,7 +344,7 @@ async def run(
 
                         # tempCounter
                         tempCounter_extraBoost = None
-                        tempCounter_skillEffects: Optional[Tuple[str, list]] = None
+                        tempCounter_skillEffects: tuple[str, list] | None = None
                         tempCounter_element = ""
                         # tempAttack
                         tempAttack_element = ""
@@ -502,8 +502,8 @@ async def run(
             ########################
             # unit_list 0-5 aka 6 advs in order
             # always length 4 current active adv
-            active_advs: List[Adventurer] = unit_list[0:4]
-            active_assists: List[Assist] = assist_list[0:4]
+            active_advs: list[Adventurer] = unit_list[0:4]
+            active_assists: list[Assist] = assist_list[0:4]
             sac_counter = 0
             total_damage = 0
             logs = []
@@ -516,7 +516,7 @@ async def run(
             for turn in range(0, 15):
                 # logging init
                 # enemy, unit{0-3}, turn
-                turn_logs: Dict[str, List[str]] = {
+                turn_logs: dict[str, list[str]] = {
                     "sa": [],
                     "combat_skills": [],
                     "instant_actions": [],
@@ -612,15 +612,13 @@ async def run(
                 # combat skills
                 # agi calculation
                 # list of (temp_agi,current_speed,temp_adv_skill,active_adv)
-                skills_priority_list: List[
-                    Tuple[
+                skills_priority_list: list[
+                    tuple[
                         float,
                         str,
-                        Union[
-                            Optional[AdventurerSkill], AdventurerCounter, EnemyAttack
-                        ],
+                        AdventurerSkill | AdventurerCounter | EnemyAttack | None,
                         Adventurer,
-                        Tuple[str, list],
+                        tuple[str, list],
                     ]
                 ] = []
                 for active_adv in active_advs:
@@ -729,7 +727,7 @@ async def run(
                         or removed_sorted_skill[2] is None
                     ):
                         cast_skill = cast(
-                            Optional[AdventurerSkill], removed_sorted_skill[2]
+                            AdventurerSkill | None, removed_sorted_skill[2]
                         )
                         temp_damage = DamageFunction(
                             cast_skill,

@@ -1,7 +1,6 @@
 import json
 import os
 import zipfile
-from typing import List
 
 import interactions
 from interactions.ext.files import CommandContext
@@ -204,7 +203,7 @@ async def run(ctx: CommandContext):
         )
 
 
-def set_skill_effects(effects: list, is_assist: bool) -> List[dict]:
+def set_skill_effects(effects: list, is_assist: bool) -> list[dict]:
     curr_effects_list = []
 
     for curr_effects in effects:

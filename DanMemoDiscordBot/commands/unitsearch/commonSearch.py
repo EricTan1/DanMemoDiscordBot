@@ -2,7 +2,7 @@ import asyncio
 import io
 import os
 from types import ModuleType
-from typing import Callable, List
+from typing import Callable
 
 import interactions
 from interactions.ext.files import CommandContext, ComponentContext
@@ -84,10 +84,10 @@ async def run(
 async def pageUnitsHandler(
     client: WaitForClient,
     ctx: CommandContext,
-    page_list: List[list],
+    page_list: list[list],
     db: DBcontroller,
     total_results: int,
-    search: List[str],
+    search: list[str],
     is_character_search: bool,
 ):
     """This handles the message scrolling of the character search and all the other
@@ -224,8 +224,8 @@ async def pageUnitsHandler(
 
 
 def build_components(
-    page_list: List[list], current_page: int, is_character_search: bool
-) -> List[interactions.ActionRow]:
+    page_list: list[list], current_page: int, is_character_search: bool
+) -> list[interactions.ActionRow]:
     components = []
 
     if is_character_search:
@@ -265,7 +265,7 @@ def make_ifile(image: Image.Image) -> interactions.File:
 
 
 def get_units_image(
-    page_list: List[list], path_getter: Callable[[tuple], str]
+    page_list: list[list], path_getter: Callable[[tuple], str]
 ) -> Image.Image:
     if len(page_list) == 0:
         return
@@ -285,7 +285,7 @@ def get_units_image(
     return Image.open(full_image)
 
 
-def concatenate_images(images: List[str]) -> io.BytesIO:
+def concatenate_images(images: list[str]) -> io.BytesIO:
     per_line = 5
     chunks = [images[x : x + per_line] for x in range(0, len(images), per_line)]
 

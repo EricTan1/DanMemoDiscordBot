@@ -1,6 +1,6 @@
 import asyncio
 import io
-from typing import List, Optional, Tuple, Type, cast
+from typing import Type, cast
 
 import interactions
 from interactions.ext.files import CommandContext, ComponentContext
@@ -38,9 +38,9 @@ def get_unit_image_path(unit: tuple) -> str:
     return "./images/units/" + unit[2] + " [" + unit[1] + "]/"
 
 
-def get_page_list(my_list: list) -> List[list]:
+def get_page_list(my_list: list) -> list[list]:
     page_list = []
-    temp_page: List[list] = []
+    temp_page: list[list] = []
     page_list.append(temp_page)
     for Adventurersid in my_list:
         temp_page.append(Adventurersid)
@@ -52,7 +52,7 @@ def get_page_list(my_list: list) -> List[list]:
 
 
 def clearSetField(
-    temp_embed: interactions.Embed, data: List[list]
+    temp_embed: interactions.Embed, data: list[list]
 ) -> interactions.Embed:
     temp_embed.description = (
         "Select a unit via the dropdown menu or switch pages with the buttons"
@@ -141,9 +141,9 @@ async def pageHandler(
     file_list: list,
     stats_dict: dict,
     temp_embed: interactions.Embed,
-    dev_embed: Optional[interactions.Embed] = None,
+    dev_embed: interactions.Embed | None = None,
     unit_type: str = "",
-    ascended: Optional[bool] = None,
+    ascended: bool | None = None,
 ):
     """This handles the logic of the page handling for the single result unit
 
@@ -244,14 +244,14 @@ async def pageHandler(
             )
 
 
-def refresh_files(file_list: List[interactions.File]):
+def refresh_files(file_list: list[interactions.File]):
     for file in file_list:
         file._fp = open(cast(io.BufferedReader, file._fp).name, "rb")
 
 
 def assembleStats(
     stats_dict: dict, limitbreak: int, unit_type: str, heroascend: int
-) -> Tuple[str, str]:
+) -> tuple[str, str]:
     """Calculates Abilities based on limit break and hero ascension (if avaliable)
 
     Arguments:

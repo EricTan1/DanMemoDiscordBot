@@ -1,5 +1,3 @@
-from typing import Optional
-
 from database.entities.BaseConstants import Base
 
 
@@ -13,7 +11,7 @@ class Adventurer(Base):
         limited: int,
         ascended: bool,
         stars: int,
-        alias: Optional[str],
+        alias: str | None,
     ):
         """(Adventurer, int, int, int, bool, bool, int, str or None, str or
         None) -> Adventurer

@@ -1,5 +1,4 @@
 import asyncio
-from typing import List
 
 import interactions
 from interactions.ext.files import CommandContext
@@ -45,11 +44,11 @@ row2 = interactions.ActionRow(components=buttons[4:])
 async def pageRBHandler(
     client: WaitForClient,
     ctx: CommandContext,
-    logs: List[dict],
+    logs: list[dict],
     total_damage: int,
     total_score: float,
-    unit_list: List[Adventurer],
-    assist_list: List[Assist],
+    unit_list: list[Adventurer],
+    assist_list: list[Assist],
 ):
     """This handles the logic of the page handling for the single result adventurer
 

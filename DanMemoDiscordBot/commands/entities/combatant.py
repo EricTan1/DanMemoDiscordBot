@@ -1,17 +1,16 @@
 import json
-from typing import Dict, List, Optional
-
+from typing import Mapping
 from commands.utils import AssistEffect, Effect, checkBuffExistsReplace
 
 
 class Combatant:
-    def __init__(self, stats: Dict[str, float]):
+    def __init__(self, stats: Mapping[str, int | float]):
         self.stats = stats
 
         # buffs and debuffs
         # append buffs to list and remove once wiped
-        self.boostCheckAdv: List[Effect] = []
-        self.boostCheckAst: List[AssistEffect] = []
+        self.boostCheckAdv: list[Effect] = []
+        self.boostCheckAst: list[AssistEffect] = []
 
     def set_boostCheckAdv(
         self, isbuff: bool, attribute: str, modifier: float, duration: int
@@ -55,14 +54,14 @@ class Combatant:
             item for item in self.boostCheckAdv if item.isbuff == True
         ]
 
-    def get_boostCheckAdv(self, isbuff: bool, attribute: str) -> Optional[Effect]:
+    def get_boostCheckAdv(self, isbuff: bool, attribute: str) -> Effect | None:
         "returns the item in the buff/debuff list if it exists, returns NONE otherwise"
         for item in self.boostCheckAdv:
             if item.isbuff == isbuff and item.attribute == attribute:
                 return item
         return None
 
-    def get_log_effect_list(self) -> List[str]:
+    def get_log_effect_list(self) -> list[str]:
         ret = []
         with open("database/terms/human_readable.json", "r") as f:
             human_readable_dict = json.load(f)

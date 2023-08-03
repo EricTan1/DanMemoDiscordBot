@@ -3,7 +3,7 @@ import json
 import os
 from enum import Enum
 from types import SimpleNamespace
-from typing import List, TypeVar, cast
+from typing import TypeVar, cast
 
 import interactions
 from PIL import Image
@@ -74,16 +74,16 @@ class TopCategories(Enum):
 
 
 class HeroAscensionStats:
-    STR: List[int] = []
-    END: List[int] = []
-    DEX: List[int] = []
-    AGI: List[int] = []
-    MAG: List[int] = []
-    HP: List[int] = []
-    MP: List[int] = []
-    PAT: List[int] = []
-    MAT: List[int] = []
-    DEF: List[int] = []
+    STR: list[int] = []
+    END: list[int] = []
+    DEX: list[int] = []
+    AGI: list[int] = []
+    MAG: list[int] = []
+    HP: list[int] = []
+    MP: list[int] = []
+    PAT: list[int] = []
+    MAT: list[int] = []
+    DEF: list[int] = []
 
 
 class HeroAscensionStatsP(HeroAscensionStats):
@@ -280,7 +280,7 @@ def imageToBytes(image: Image.Image) -> io.BytesIO:
     return byteImage
 
 
-def imageHorizontalConcat(paths: List[str]) -> io.BytesIO:
+def imageHorizontalConcat(paths: list[str]) -> io.BytesIO:
     images = [Image.open(x) for x in paths]
     widths, heights = zip(*(i.size for i in images))
 
@@ -297,7 +297,7 @@ def imageHorizontalConcat(paths: List[str]) -> io.BytesIO:
     return imageToBytes(new_im)
 
 
-def imageVerticalConcat(img_list: List[io.BytesIO]) -> io.BytesIO:
+def imageVerticalConcat(img_list: list[io.BytesIO]) -> io.BytesIO:
     images = [Image.open(x) for x in img_list]
     widths, heights = zip(*(i.size for i in images))
 
@@ -345,7 +345,7 @@ class Effect(AssistEffect):
 T_A = TypeVar("T_A", bound=AssistEffect)
 
 
-def checkBuffExistsReplace(buffDebuffList: List[T_A], buffDebuff: T_A) -> None:
+def checkBuffExistsReplace(buffDebuffList: list[T_A], buffDebuff: T_A) -> None:
     """
     Check the buffs/debuffs in the list and replace if attribute and target is the same and
     if the modifier is equal or greater than the one in the list
@@ -379,7 +379,7 @@ def checkBuffExistsReplace(buffDebuffList: List[T_A], buffDebuff: T_A) -> None:
         ):
             # Type checking isn't great for this usecase yet...
             assert isinstance(curr_effect, Effect)
-            effectList = cast(List[Effect], buffDebuffList)
+            effectList = cast(list[Effect], buffDebuffList)
             if curr_effect.duration < buffDebuff.duration:
                 effectList.pop(pop_value)
                 effectList.append(buffDebuff)
