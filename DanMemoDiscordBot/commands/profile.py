@@ -101,14 +101,15 @@ async def run(
                 timeout=TIMEOUT,
             )
 
-            if component_ctx.custom_id == "previous_page":
-                current_page = (current_page - 1) % number_pages
-            elif component_ctx.custom_id == "next_page":
-                current_page = (current_page + 1) % number_pages
-            elif component_ctx.custom_id == "to_start":
-                current_page = 0
-            elif component_ctx.custom_id == "to_end":
-                current_page = number_pages - 1
+            match component_ctx.custom_id:
+                case "previous_page":
+                    current_page = (current_page - 1) % number_pages
+                case "next_page":
+                    current_page = (current_page + 1) % number_pages
+                case "to_start":
+                    current_page = 0
+                case "to_end":
+                    current_page = number_pages - 1
 
             embed.description = build_detailed_description(
                 currency_line, units_lines, current_page

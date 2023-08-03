@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 from database.DBcontroller import DBcontroller
 
 
@@ -18,7 +20,7 @@ class Cache(object):
         self.data = {}
         self.refreshcache(dbConfig)
 
-    def get_all_adventurers(self):
+    def get_all_adventurers(self) -> list[SimpleNamespace]:
         return self.data["adventurers"]
 
     def get_all_adventurers_developments(self):
@@ -33,7 +35,7 @@ class Cache(object):
     def get_all_adventurers_skills_effects(self):
         return self.data["adventurers_skills_effects"]
 
-    def get_all_assists(self):
+    def get_all_assists(self) -> list[SimpleNamespace]:
         return self.data["assists"]
 
     def get_all_assists_skills(self):

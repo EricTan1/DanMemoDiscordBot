@@ -2,7 +2,6 @@
 This stores all of the sharable game data between all the adventurers/assists
 such as element, type etc.
 """
-from typing import Optional
 
 
 class Base:
@@ -12,7 +11,7 @@ class Base:
 
 
 class Element(Base):
-    def __init__(self, elementid, name: Optional[str]):
+    def __init__(self, elementid, name: str | None):
         """(Element, int, str) -> Element
         element : represents the elemental types in danmemo (ex: light,fire)
         """
@@ -24,7 +23,7 @@ class Element(Base):
 
 
 class Type(Base):
-    def __init__(self, typeid, name: Optional[str]):
+    def __init__(self, typeid, name: str | None):
         """(Type, int, str) -> Type
         atktype : represents the type of attack (ex: physical, magical, mixed)
         """
@@ -36,7 +35,7 @@ class Type(Base):
 
 
 class Attribute(Base):
-    def __init__(self, attributeid, name: Optional[str]):
+    def __init__(self, attributeid, name: str | None):
         """(Attribute, int, str) -> Attribute
         name : attributes/stat time (ex: str/strength, agi/agility)
         """
@@ -48,7 +47,7 @@ class Attribute(Base):
 
 
 class Target(Base):
-    def __init__(self, targetid, name: Optional[str]):
+    def __init__(self, targetid, name: str | None):
         """(Target, int, str) -> Target
         name : what it targets (ex: self, enemy, allies)
         """

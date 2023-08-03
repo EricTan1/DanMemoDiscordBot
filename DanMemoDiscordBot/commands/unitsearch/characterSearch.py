@@ -213,22 +213,23 @@ async def pageHandler(
                 timeout=TIMEOUT,
             )
 
-            if component_ctx.custom_id == "previous_page":
-                current_page = (current_page - 1) % len(page_list)
-            elif component_ctx.custom_id == "next_page":
-                current_page = (current_page + 1) % len(page_list)
-            elif component_ctx.custom_id == "limitbreak_sub":
-                current_limitbreak = (current_limitbreak - 1) % (MAXLB + 1)
-                updateStats()
-            elif component_ctx.custom_id == "limitbreak_add":
-                current_limitbreak = (current_limitbreak + 1) % (MAXLB + 1)
-                updateStats()
-            elif component_ctx.custom_id == "hero_ascend_sub":
-                current_ha = (current_ha - 1) % (MAXHA + 1)
-                updateStats()
-            elif component_ctx.custom_id == "hero_ascend_add":
-                current_ha = (current_ha + 1) % (MAXHA + 1)
-                updateStats()
+            match component_ctx.custom_id:
+                case "previous_page":
+                    current_page = (current_page - 1) % len(page_list)
+                case "next_page":
+                    current_page = (current_page + 1) % len(page_list)
+                case "limitbreak_sub":
+                    current_limitbreak = (current_limitbreak - 1) % (MAXLB + 1)
+                    updateStats()
+                case "limitbreak_add":
+                    current_limitbreak = (current_limitbreak + 1) % (MAXLB + 1)
+                    updateStats()
+                case "hero_ascend_sub":
+                    current_ha = (current_ha - 1) % (MAXHA + 1)
+                    updateStats()
+                case "hero_ascend_add":
+                    current_ha = (current_ha + 1) % (MAXHA + 1)
+                    updateStats()
 
             page_list[current_page].set_footer(
                 text=f"Page {current_page+1} of {len(page_list)}"
@@ -264,16 +265,17 @@ def assembleStats(
         str -- the stats string
     """
 
-    if unit_type.lower() == "physical_type":
-        ascension_stats: Type[HeroAscensionStats] = HeroAscensionStatsP
-    elif unit_type.lower() == "magic_type":
-        ascension_stats = HeroAscensionStatsM
-    elif unit_type.lower() == "healer_type":
-        ascension_stats = HeroAscensionStatsH
-    elif unit_type.lower() == "defense_type":
-        ascension_stats = HeroAscensionStatsD
-    else:
-        ascension_stats = HeroAscensionStatsB
+    match unit_type.lower():
+        case "physical_type":
+            ascension_stats: Type[HeroAscensionStats] = HeroAscensionStatsP
+        case "magic_type":
+            ascension_stats = HeroAscensionStatsM
+        case "healer_type":
+            ascension_stats = HeroAscensionStatsH
+        case "defense_type":
+            ascension_stats = HeroAscensionStatsD
+        case _:
+            ascension_stats = HeroAscensionStatsB
 
     temp_hp = int(stats_dict["hp"][limitbreak]) + ascension_stats.HP[heroascend]
     temp_mp = int(stats_dict["mp"][limitbreak]) + ascension_stats.MP[heroascend]

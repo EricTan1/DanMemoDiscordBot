@@ -8,6 +8,7 @@ from threading import Lock
 import interactions
 from interactions.ext.files import CommandContext
 from PIL import Image
+from types import SimpleNamespace
 
 from commands.cache import Cache
 from commands.utils import (
@@ -104,26 +105,27 @@ def random_pulls(number: int, gacha_rates: type[GachaRates]) -> list[str]:
 
 def get_random_unit(gacha_category: str):
     cache = Cache()
-    if gacha_category == GachaRatesRegular.ADVENTURER_2_STARS.name:
-        stars = 2
-        units = cache.get_all_adventurers()
-    elif gacha_category == GachaRatesRegular.ADVENTURER_3_STARS.name:
-        stars = 3
-        units = cache.get_all_adventurers()
-    elif gacha_category == GachaRatesRegular.ADVENTURER_4_STARS.name:
-        stars = 4
-        units = cache.get_all_adventurers()
-    elif gacha_category == GachaRatesRegular.ASSIST_2_STARS.name:
-        stars = 2
-        units = cache.get_all_assists()
-    elif gacha_category == GachaRatesRegular.ASSIST_3_STARS.name:
-        stars = 3
-        units = cache.get_all_assists()
-    elif gacha_category == GachaRatesRegular.ASSIST_4_STARS.name:
-        stars = 4
-        units = cache.get_all_assists()
-    else:
-        raise Exception("Unknown gacha category:", gacha_category)
+    match gacha_category:
+        case GachaRates.ADVENTURER_2_STARS.name:
+            stars: int = 2
+            units: list[SimpleNamespace] = cache.get_all_adventurers()
+        case GachaRates.ADVENTURER_3_STARS.name:
+            stars = 3
+            units = cache.get_all_adventurers()
+        case GachaRates.ADVENTURER_4_STARS.name:
+            stars = 4
+            units = cache.get_all_adventurers()
+        case GachaRates.ASSIST_2_STARS.name:
+            stars = 2
+            units = cache.get_all_assists()
+        case GachaRates.ASSIST_3_STARS.name:
+            stars = 3
+            units = cache.get_all_assists()
+        case GachaRates.ASSIST_4_STARS.name:
+            stars = 4
+            units = cache.get_all_assists()
+        case _:
+            raise Exception("Unknown gacha category:", gacha_category)
 
     units = [unit for unit in units if unit.stars == stars]
     unit = choice(units)

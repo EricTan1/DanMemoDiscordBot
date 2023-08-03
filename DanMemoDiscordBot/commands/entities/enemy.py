@@ -519,7 +519,7 @@ class Revis(Enemy):
         # 6 and 10
         elif (turnOrder == 5 or turnOrder == 9) and speed == 0:
             self.RevisClear()
-        # 3,7,11 both str buff and physical debuff
+        # 4,8,12 both str buff and physical debuff
         elif (turnOrder == 3 or turnOrder == 7 or turnOrder == 11) and speed == 0:
             self.RevisAdd(self.debuff_type, self.debuff_mod)
         # end of turn 11 rebuff

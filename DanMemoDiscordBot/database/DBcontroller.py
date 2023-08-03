@@ -3,6 +3,7 @@ import json
 import os
 from enum import Enum
 from urllib.parse import urlparse
+from types import SimpleNamespace
 
 import mysql.connector
 from mysql.connector import MySQLConnection
@@ -116,12 +117,6 @@ class DBcontroller:
         self._connection.commit()
         print(self._mycursor.rowcount, "record inserted.")
         return self._mycursor.lastrowid
-
-    def updateData(self, entity):
-        """(DBcontroller, Entity, str, ?) -> bool
-        returns whether or not it is a successful update
-        """
-        pass
 
     def getAdventurerName(self, adventurerid):
         print(adventurerid)
@@ -542,7 +537,7 @@ class DBcontroller:
                 title += "[Time-Limited] "
             elif row[2] == 2:
                 title += "[Hero Festa] "
-            for x in range(0, row[3]):
+            for _ in range(0, row[3]):
                 title = title + ":star:"
         # stats (based on LB? idk somehow dynamically change stats here maybe send?)
         stats_dict = self.assembleAssistStats(assistid)
@@ -1336,7 +1331,7 @@ class DBcontroller:
         print(self._mycursor.rowcount, "record inserted.")
         return self._mycursor.lastrowid
 
-    def get_all_adventurers(self):
+    def get_all_adventurers(self) -> list[SimpleNamespace]:
         sql = "SELECT a.adventurerid, a.characterid, a.typeid, a.alias, a.title, a.stars, a.limited, a.ascended, \
               c.name, c.iscollab,\
               t.name\
@@ -1382,7 +1377,7 @@ class DBcontroller:
             res.append(row_as_dict)
         return res
 
-    def get_all_assists(self):
+    def get_all_assists(self) -> list[SimpleNamespace]:
         sql = "SELECT a.assistid, a.characterid, a.alias, a.title, a.stars, a.limited, c.name, c.iscollab\
               FROM {}.assist AS a, {}.character AS c\
               WHERE c.characterid = a.characterid".format(

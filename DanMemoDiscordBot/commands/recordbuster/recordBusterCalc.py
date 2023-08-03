@@ -112,45 +112,45 @@ async def run(
             ##############################
             # Init boss
             ##############################
-            if boss.lower() == "revis":
-                enemy: Enemy = Revis(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                    debuff_type=revis_type_debuff,
-                    debuff_mod=revis_type_mod,
-                )
-            elif boss.lower() == "finn":
-                enemy = Finn(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                )
-            elif boss.lower() == "ottarl":
-                enemy = Ottarl(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                )
-            elif boss.lower() == "riveria":
-                enemy = Riveria(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                )
-            elif boss.lower() == "gareth":
-                enemy = Gareth(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                )
-            else:
-                # error here?
-                enemy = Enemy(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                )
+            match boss.lower():
+                case "revis":
+                    enemy: Enemy = Revis(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                        debuff_type=revis_type_debuff,
+                        debuff_mod=revis_type_mod,
+                    )
+                case "finn":
+                    enemy = Finn(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                    )
+                case "ottarl":
+                    enemy = Ottarl(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                    )
+                case "riveria":
+                    enemy = Riveria(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                    )
+                case "gareth":
+                    enemy = Gareth(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                    )
+                case _:  # error here?
+                    enemy = Enemy(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                    )
 
             ##############################
             # Init Assists

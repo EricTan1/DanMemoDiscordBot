@@ -39,14 +39,15 @@ def DamageFunction(
         else:
             tempBoost = 1.6
 
-        if powerCoefficientName in ["low", "lo"]:
-            powerCoefficient = 1.5
-        elif powerCoefficientName in ["mid", "medium"]:
-            powerCoefficient = 1.7
-        elif powerCoefficientName == "high":
-            powerCoefficient = 1.9
-        elif powerCoefficientName == "super":
-            powerCoefficient = 2.1
+        match powerCoefficientName:
+            case "low" | "lo":
+                powerCoefficient = 1.5
+            case "mid" | "medium":
+                powerCoefficient = 1.7
+            case "high":
+                powerCoefficient = 1.9
+            case "super":
+                powerCoefficient = 2.1
     else:
         if tempBoostName == "none":
             tempBoost = 1.0
@@ -55,14 +56,15 @@ def DamageFunction(
         else:
             tempBoost = 1.7
 
-        if powerCoefficientName in ["low", "lo"]:
-            powerCoefficient = 1.1
-        elif powerCoefficientName in ["mid", "medium"]:
-            powerCoefficient = 1.15
-        elif powerCoefficientName == "high":
-            powerCoefficient = 1.2
-        elif powerCoefficientName == "super":
-            powerCoefficient = 1.4
+        match powerCoefficientName:
+            case "low" | "lo":
+                powerCoefficient = 1.1
+            case "mid" | "medium":
+                powerCoefficient = 1.15
+            case "high":
+                powerCoefficient = 1.2
+            case "super":
+                powerCoefficient = 1.4
 
     if "physical" in skill.type:
         stat_key = "strength"
@@ -299,28 +301,31 @@ def SADamageFunction(
         tempBoost = 1.4
     else:
         tempBoost = 1.7
+
     if skill.target == "foe":
-        if powerCoefficientName in ["low", "lo"]:
-            powerCoefficient = 1.5
-        elif powerCoefficientName in ["mid", "medium"]:
-            powerCoefficient = 1.7
-        elif powerCoefficientName == "high":
-            powerCoefficient = 1.9
-        elif powerCoefficientName == "super":
-            powerCoefficient = 2.1
-        elif powerCoefficientName == "ultra":
-            powerCoefficient = 4.0
+        match powerCoefficientName:
+            case "low" | "lo":
+                powerCoefficient = 1.5
+            case "mid" | "medium":
+                powerCoefficient = 1.7
+            case "high":
+                powerCoefficient = 1.9
+            case "super":
+                powerCoefficient = 2.1
+            case "ultra":
+                powerCoefficient = 4.0
     else:
-        if powerCoefficientName in ["low", "lo"]:
-            powerCoefficient = 1.1
-        elif powerCoefficientName in ["mid", "medium"]:
-            powerCoefficient = 1.15
-        elif powerCoefficientName == "high":
-            powerCoefficient = 1.2
-        elif powerCoefficientName == "super":
-            powerCoefficient = 1.4
-        elif powerCoefficientName == "ultra":
-            powerCoefficient = 3.6
+        match powerCoefficientName:
+            case "low" | "lo":
+                powerCoefficient = 1.1
+            case "mid" | "medium":
+                powerCoefficient = 1.15
+            case "high":
+                powerCoefficient = 1.2
+            case "super":
+                powerCoefficient = 1.4
+            case "ultra":
+                powerCoefficient = 3.6
 
     if "physical" in skill.type:
         stat_key = "strength"

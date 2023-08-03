@@ -186,23 +186,24 @@ async def pageRBHandler(
                 components=buttons, messages=msg, timeout=TIMEOUT  # type: ignore [arg-type]
             )
 
-            if component_ctx.custom_id == "previous_page":
-                current_page = (current_page - 1) % len(page_list)
-            elif component_ctx.custom_id == "next_page":
-                current_page = (current_page + 1) % len(page_list)
-            elif component_ctx.custom_id == "to_start":
-                current_page = 0
-            elif component_ctx.custom_id == "to_end":
-                current_page = len(page_list) - 1
-            elif component_ctx.custom_id == "toggle_combat":
-                toggle_log_list["attack"] = not toggle_log_list["attack"]
-                page_list = updateStats(page_list)
-            elif component_ctx.custom_id == "toggle_counters":
-                toggle_log_list["counters"] = not toggle_log_list["counters"]
-                page_list = updateStats(page_list)
-            elif component_ctx.custom_id == "toggle_effects":
-                toggle_log_list["info"] = not toggle_log_list["info"]
-                page_list = updateStats(page_list)
+            match component_ctx.custom_id:
+                case "previous_page":
+                    current_page = (current_page - 1) % len(page_list)
+                case "next_page":
+                    current_page = (current_page + 1) % len(page_list)
+                case "to_start":
+                    current_page = 0
+                case "to_end":
+                    current_page = len(page_list) - 1
+                case "toggle_combat":
+                    toggle_log_list["attack"] = not toggle_log_list.get("attack")
+                    page_list = updateStats(page_list)
+                case "toggle_counters":
+                    toggle_log_list["counters"] = not toggle_log_list.get("counters")
+                    page_list = updateStats(page_list)
+                case "toggle_effects":
+                    toggle_log_list["info"] = not toggle_log_list.get("info")
+                    page_list = updateStats(page_list)
 
             page_list[current_page].set_footer(
                 text=f"Page {current_page+1} of {len(page_list)}"

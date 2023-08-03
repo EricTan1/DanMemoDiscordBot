@@ -142,49 +142,50 @@ async def pageUnitsHandler(
                 timeout=TIMEOUT,
             )
 
-            if component_ctx.custom_id == "previous_page":
-                current_page = (current_page - 1) % len(current_page_list)
-            elif component_ctx.custom_id == "next_page":
-                current_page = (current_page + 1) % len(current_page_list)
-            elif component_ctx.custom_id == "to_start":
-                current_page = 0
-            elif component_ctx.custom_id == "to_end":
-                current_page = len(current_page_list) - 1
-            elif component_ctx.custom_id == "filter_adventurer":
-                (
-                    current_page_list,
-                    filter,
-                    current_results,
-                ) = skillSearch.filterAddRemove(
-                    page_list, filter, "adventurer", total_results
-                )
-                current_page = 0
-                temp_embed.title = f"{current_results} results for {search}"
-                temp_embed.description = "Select a unit via the dropdown menu, switch pages with the buttons or filter by unit type\n"
-                temp_embed.description += f"**Current filter:** {filter}"
-                iconsIm = get_units_image(
-                    current_page_list, search_module.get_unit_image_path
-                )
-            elif component_ctx.custom_id == "filter_assist":
-                (
-                    current_page_list,
-                    filter,
-                    current_results,
-                ) = skillSearch.filterAddRemove(
-                    page_list, filter, "assist", total_results
-                )
-                current_page = 0
-                temp_embed.title = f"{current_results} results for {search}"
-                temp_embed.description = "Select a unit via the dropdown menu, switch pages with the buttons or filter by unit type\n"
-                temp_embed.description += f"**Current filter:** {filter}"
-                iconsIm = get_units_image(
-                    current_page_list, search_module.get_unit_image_path
-                )
-            elif component_ctx.custom_id == "unit_select":
-                await msg.delete()
-                return await characterSearch.singleUnit(
-                    client, ctx, db, component_ctx.data.values[0]  # type: ignore [index]
-                )
+            match component_ctx.custom_id:
+                case "previous_page":
+                    current_page = (current_page - 1) % len(current_page_list)
+                case "next_page":
+                    current_page = (current_page + 1) % len(current_page_list)
+                case "to_start":
+                    current_page = 0
+                case "to_end":
+                    current_page = len(current_page_list) - 1
+                case "filter_adventurer":
+                    (
+                        current_page_list,
+                        filter,
+                        current_results,
+                    ) = skillSearch.filterAddRemove(
+                        page_list, filter, "adventurer", total_results
+                    )
+                    current_page = 0
+                    temp_embed.title = f"{current_results} results for {search}"
+                    temp_embed.description = "Select a unit via the dropdown menu, switch pages with the buttons or filter by unit type\n"
+                    temp_embed.description += f"**Current filter:** {filter}"
+                    iconsIm = get_units_image(
+                        current_page_list, search_module.get_unit_image_path
+                    )
+                case "filter_assist":
+                    (
+                        current_page_list,
+                        filter,
+                        current_results,
+                    ) = skillSearch.filterAddRemove(
+                        page_list, filter, "assist", total_results
+                    )
+                    current_page = 0
+                    temp_embed.title = f"{current_results} results for {search}"
+                    temp_embed.description = "Select a unit via the dropdown menu, switch pages with the buttons or filter by unit type\n"
+                    temp_embed.description += f"**Current filter:** {filter}"
+                    iconsIm = get_units_image(
+                        current_page_list, search_module.get_unit_image_path
+                    )
+                case "unit_select":
+                    await msg.delete()
+                    return await characterSearch.singleUnit(
+                        client, ctx, db, component_ctx.data.values[0]
+                    )
 
             components = build_components(
                 current_page_list, current_page, is_character_search
