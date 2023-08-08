@@ -1,10 +1,16 @@
-import asyncio
-import io
-from typing import Type, cast
+import os
+from asyncio import TimeoutError
+from typing import Type
 
-import interactions
-from interactions.ext.files import CommandContext, ComponentContext
-from interactions.ext.wait_for import WaitForClient
+from interactions import (
+    ActionRow,
+    Client,
+    ComponentContext,
+    Embed,
+    EmbedField,
+    File,
+    SlashContext,
+)
 
 from commands.buttons import (
     hero_ascend_add_button,
@@ -13,6 +19,12 @@ from commands.buttons import (
     limitbreak_sub_button,
     next_page,
     previous_page,
+)
+from commands.emojis import (
+    hero_ascend_add_emoji,
+    hero_ascend_sub_emoji,
+    limitbreak_add_emoji,
+    limitbreak_sub_emoji,
 )
 from commands.utils import (
     TIMEOUT,
@@ -23,14 +35,8 @@ from commands.utils import (
     HeroAscensionStatsM,
     HeroAscensionStatsP,
     Status,
-    get_emoji,
 )
 from database.DBcontroller import DBcontroller
-
-limitbreak_sub_emoji = get_emoji("square_off").format
-limitbreak_add_emoji = get_emoji("square_on").format
-hero_ascend_sub_emoji = get_emoji("star_off").format
-hero_ascend_add_emoji = get_emoji("star_on").format
 
 
 # --- interface functions used by commonSearch ---
@@ -51,13 +57,11 @@ def get_page_list(my_list: list) -> list[list]:
     return page_list
 
 
-def clearSetField(
-    temp_embed: interactions.Embed, data: list[list]
-) -> interactions.Embed:
+def clearSetField(temp_embed: Embed, data: list[list]) -> Embed:
     temp_embed.description = (
         "Select a unit via the dropdown menu or switch pages with the buttons"
     )
-    temp_embed.clear_fields()
+    temp_embed.fields = []
     value = ""
     for i, unit in enumerate(data):
         value += f"{i+1}. [{unit[1]}] {unit[2]}\n"
@@ -67,8 +71,8 @@ def clearSetField(
 
 # --- Single unit page ---
 async def singleUnit(
-    client: WaitForClient,
-    ctx: CommandContext,
+    client: Client,
+    ctx: SlashContext,
     db: DBcontroller,
     assistadventurerid: str,
 ):
@@ -76,22 +80,20 @@ async def singleUnit(
     for a single result search
 
     Arguments:
-        client {interactions.ext.wait_for.WaitForClient} -- the discord bot object
-        ctx {interactions.ext.files.CommandContext} -- command message context
-        db {DBController.DBController} -- Database connector object
-        assistadventurerid {str} -- the assist/adventurer id of the wanted search
+        client -- the discord bot object
+        ctx -- command message context
+        db -- Database connector object
+        assistadventurerid -- the assist/adventurer id of the wanted search
     """
 
-    temp_embed = interactions.Embed()
-    dev_embed = interactions.Embed()
+    temp_embed = Embed()
+    dev_embed = Embed()
     temp_embed.color = Status.OK.value
     dev_embed.color = Status.OK.value
     if "Ad" in assistadventurerid:
         info = db.assembleAdventurer(assistadventurerid[2:])
         for adventurerdev in info[4]:
-            dev_embed.add_field(
-                name=adventurerdev[0], value=adventurerdev[1], inline=False
-            )
+            dev_embed.add_field(name=adventurerdev[0], value=adventurerdev[1])
         is_adv = True
     else:
         info = db.assembleAssist(assistadventurerid[2:])
@@ -103,29 +105,23 @@ async def singleUnit(
     dev_embed.title = info[1]
     for skills in info[2]:
         if skills[1] == "":
-            temp_embed.add_field(name=skills[0], value="placeholder", inline=False)
+            temp_embed.add_field(name=skills[0], value="placeholder")
         else:
-            temp_embed.add_field(name=skills[0], value=skills[1], inline=False)
+            temp_embed.add_field(name=skills[0], value=skills[1])
 
     file_list = []
-    try:
-        # images
-        character_name = info[1].split("]")[1][1:].split("\n")[0]
-        character_title = info[1].split("[")[1].split("]")[0]
-        folder_name = character_name + " [" + character_title + "]"
-        print("./images/units/" + folder_name + "/hex.png")
-        file_list.append(
-            interactions.File("./images/units/" + folder_name + "/hex.png")
-        )
-        file_list.append(
-            interactions.File("./images/units/" + folder_name + "/all_rectangle.png")
-        )
+    # images
+    character_name = info[1].split("]")[1][1:].split("\n")[0]
+    character_title = info[1].split("[")[1].split("]")[0]
+    folder_name = character_name + " [" + character_title + "]"
+    path = "./images/units/" + folder_name
+    if os.path.isdir(path):
+        file_list.append(File(path + "/hex.png"))
+        file_list.append(File(path + "/all_rectangle.png"))
         temp_embed.set_thumbnail(url="attachment://hex.png")
         dev_embed.set_thumbnail(url="attachment://hex.png")
         temp_embed.set_image(url="attachment://all_rectangle.png")
         dev_embed.set_image(url="attachment://all_rectangle.png")
-    except:
-        pass
 
     if is_adv:
         await pageHandler(
@@ -136,47 +132,48 @@ async def singleUnit(
 
 
 async def pageHandler(
-    client: WaitForClient,
-    ctx: CommandContext,
+    client: Client,
+    ctx: SlashContext,
     file_list: list,
     stats_dict: dict,
-    temp_embed: interactions.Embed,
-    dev_embed: interactions.Embed | None = None,
+    temp_embed: Embed,
+    dev_embed: Embed | None = None,
     unit_type: str = "",
     ascended: bool | None = None,
 ):
     """This handles the logic of the page handling for the single result unit
 
     Arguments:
-        client {interactions.ext.wait_for.WaitForClient} -- the discord bot object
-        ctx {interactions.ext.files.CommandContext} -- command message context
-        file_list {list of pictures} -- images to be displayed for pages
-        stats_dict {dict} -- the stats of the current unit
-        temp_embed {interactions.embed} -- adventurer stats/skills page
-        dev_embed {interactions.embed} -- the adventurer development page
-        unit_type {string} -- balance,physical,magical for stats calculation
-        ascended {bool} -- adventurer has hero ascension or not
+        client -- the discord bot object
+        ctx -- command message context
+        file_list -- images to be displayed for pages
+        stats_dict -- the stats of the current unit
+        temp_embed -- adventurer stats/skills page
+        dev_embed -- the adventurer development page
+        unit_type -- balance,physical,magical for stats calculation
+        ascended -- adventurer has hero ascension or not
     """
 
     def updateStats():
-        temp_embed.description = (
-            limitbreak_add_emoji * current_limitbreak
-            + limitbreak_sub_emoji * (MAXLB - current_limitbreak)
-        )
+        temp_embed.description = str(limitbreak_add_emoji) * current_limitbreak + str(
+            limitbreak_sub_emoji
+        ) * (MAXLB - current_limitbreak)
         if ascended:
             temp_embed.description = (
                 temp_embed.description
                 + "    "
-                + hero_ascend_add_emoji.format * current_ha
-                + hero_ascend_sub_emoji.format * (MAXHA - current_ha)
+                + str(hero_ascend_add_emoji) * current_ha
+                + str(hero_ascend_sub_emoji) * (MAXHA - current_ha)
             )
 
         stats, abilities = assembleStats(
             stats_dict, current_limitbreak, unit_type, current_ha
         )
 
-        temp_embed.set_field_at(0, name="Stats", value=stats, inline=True)
-        temp_embed.set_field_at(1, name="Abilities", value=abilities, inline=True)
+        temp_embed.fields[0] = EmbedField(name="Stats", value=stats, inline=True)
+        temp_embed.fields[1] = EmbedField(
+            name="Abilities", value=abilities, inline=True
+        )
 
     MAXLB = 5
     MAXHA = 6
@@ -192,11 +189,9 @@ async def pageHandler(
     stats_buttons = [limitbreak_sub_button, limitbreak_add_button]
     if ascended:
         stats_buttons += [hero_ascend_sub_button, hero_ascend_add_button]
-    stats_button_row = interactions.ActionRow(components=stats_buttons)
-    components = [stats_button_row]
+    components = [ActionRow(*stats_buttons)]
     if len(page_list) > 1:
-        arrow_row = interactions.ActionRow(components=[previous_page, next_page])
-        components = [arrow_row] + components
+        components = [ActionRow(previous_page, next_page)] + components
     msg = await ctx.send(
         files=file_list, embeds=page_list[current_page], components=components
     )
@@ -204,14 +199,14 @@ async def pageHandler(
     buttons = [previous_page, next_page, limitbreak_sub_button, limitbreak_add_button]
 
     while True:
-        # files seem to be automatically closed, have to reopen them on every loop execution
-        refresh_files(file_list)
         try:
-            component_ctx: ComponentContext = await client.wait_for_component(
-                components=buttons,  # type: ignore [arg-type]
-                messages=msg,
-                timeout=TIMEOUT,
-            )
+            component_ctx: ComponentContext = (
+                await client.wait_for_component(
+                    components=buttons,
+                    messages=msg,
+                    timeout=TIMEOUT,
+                )
+            ).ctx
 
             match component_ctx.custom_id:
                 case "previous_page":
@@ -234,20 +229,13 @@ async def pageHandler(
             page_list[current_page].set_footer(
                 text=f"Page {current_page+1} of {len(page_list)}"
             )
-            # it shouldn't be necessary to pass the files again on edit
-            # but for some reason it doesn't work otherwise
-            await component_ctx.edit(files=file_list, embeds=page_list[current_page])
+            await component_ctx.edit_origin(embeds=page_list[current_page])
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             page_list[current_page].color = Status.KO.value
             return await msg.edit(
                 files=file_list, embeds=page_list[current_page], components=None
             )
-
-
-def refresh_files(file_list: list[interactions.File]):
-    for file in file_list:
-        file._fp = open(cast(io.BufferedReader, file._fp).name, "rb")
 
 
 def assembleStats(
@@ -256,13 +244,13 @@ def assembleStats(
     """Calculates Abilities based on limit break and hero ascension (if avaliable)
 
     Arguments:
-        stats_dict {dict} -- the stats dictionary
-        limitbreak {int} -- the limit break of a unit, 0 = no LB, 5 = MLB
-        unit_type {str} -- balance, physical, magical
-        heroascend {int} -- the hero ascension #, 0 = no HA and 6 = MHA
+        stats_dict -- the stats dictionary
+        limitbreak -- the limit break of a unit, 0 = no LB, 5 = MLB
+        unit_type -- balance, physical, magical
+        heroascend -- the hero ascension #, 0 = no HA and 6 = MHA
 
     Returns:
-        str -- the stats string
+        the stats string
     """
 
     match unit_type.lower():

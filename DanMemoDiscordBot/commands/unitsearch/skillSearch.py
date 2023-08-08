@@ -1,4 +1,4 @@
-import interactions
+from interactions import Embed
 
 from database.DBcontroller import DBcontroller
 
@@ -114,14 +114,12 @@ def filterAddRemove(
     return (current_page_list, current_filter, count)
 
 
-def clearSetField(
-    temp_embed: interactions.Embed, data: list[list]
-) -> interactions.Embed:
-    temp_embed.clear_fields()
+def clearSetField(temp_embed: Embed, data: list[list]) -> Embed:
+    temp_embed.fields = []
     for skills in data:
         title = f"__[{skills[0][0]}] {skills[0][1]}__\n"
         for skill in skills[1]:
             title = title + skill[0]
-            temp_embed.add_field(value=skill[1], name=title, inline=False)
+            temp_embed.add_field(value=skill[1], name=title)
             title = ""
     return temp_embed

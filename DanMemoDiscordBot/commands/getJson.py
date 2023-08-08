@@ -2,15 +2,14 @@ import json
 import os
 import zipfile
 
-import interactions
-from interactions.ext.files import CommandContext
+from interactions import File, SlashContext
 
 from commands.cache import Cache
 from database.DBcontroller import EDITORS
 
 
-async def run(ctx: CommandContext):
-    if int(ctx.author.id) in EDITORS:  # type: ignore [union-attr]
+async def run(ctx: SlashContext):
+    if ctx.author.id in EDITORS:
         cache = Cache()
         # SELECT a.adventurerid, a.characterid, a.typeid, a.alias, a.title, a.stars, a.limited, a.ascended,c.name, c.iscollab, t.name
         # unit_id, character_id, type_id, alias, unit_label, stars, is_limited, is_ascended, character_name, is_collab, type_name
@@ -197,8 +196,8 @@ async def run(ctx: CommandContext):
         await ctx.send(
             "Here's the current database in JSON format",
             files=[
-                interactions.File("./AdventurerJson.zip"),
-                interactions.File("./AssistJson.zip"),
+                File("./AdventurerJson.zip"),
+                File("./AssistJson.zip"),
             ],
         )
 

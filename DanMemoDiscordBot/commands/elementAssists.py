@@ -1,5 +1,4 @@
-import interactions
-from interactions.ext.files import CommandContext
+from interactions import File, SlashContext
 from PIL import Image, ImageDraw, ImageFont
 
 from database.DBcontroller import DBConfig, DBcontroller
@@ -58,11 +57,11 @@ lineWidth = 5
 textLineHeightFactor = 0.21 / 2  # /2 because the modifier text has 2 lines
 
 
-async def run(ctx: CommandContext, dbConfig: DBConfig):
+async def run(ctx: SlashContext, dbConfig: DBConfig):
     generateInfographic(dbConfig)
 
     file = open("./infographic/elementAssists.png", "rb")
-    ifile = interactions.File("ea.png", fp=file)
+    ifile = File(file, file_name="ea.png")
     await ctx.send(files=ifile)
 
 

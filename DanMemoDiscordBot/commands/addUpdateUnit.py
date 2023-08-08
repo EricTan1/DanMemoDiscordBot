@@ -3,9 +3,8 @@ import os
 from io import BytesIO
 from typing import Any
 
-import interactions
-from interactions.ext.files import CommandContext
-from interactions.ext.wait_for import WaitForClient
+from aiohttp import ClientSession
+from interactions import Attachment, File, SlashContext
 
 from database.DBcontroller import EDITORS, DatabaseEnvironment, DBConfig, DBcontroller
 from database.entities.Adventurer import (
@@ -459,18 +458,17 @@ if __name__ == "__main__":
 
 async def run(
     dbConfig: DBConfig,
-    client: WaitForClient,
-    ctx: CommandContext,
-    unit_file: interactions.Attachment,
+    ctx: SlashContext,
+    unit_file: Attachment,
 ):
     # permission checking
     if int(ctx.author.id) in EDITORS:  # type: ignore [union-attr]
         ic = InsertCharacter(DBcontroller(dbConfig))
 
         try:
-            async with client._http._req._session.get(unit_file.url) as request:  # type: ignore [union-attr]
-                read_json = await request.content.read()
-            my_json = read_json.decode("utf8")
+            async with ClientSession() as session:
+                async with session.get(unit_file.url) as resp:
+                    my_json = await resp.text()
             as_dict: dict[str, Any] = json.loads(my_json)
 
             if "type" in as_dict.keys():
@@ -505,14 +503,15 @@ async def run(
                 )
                 ic.insertAdventurer(temp_ad)
             else:
-                return ctx.send("Error reading command")
-            title = f"{as_dict['title']} - {as_dict['name']}.json"
-            await ctx.send(
-                "Character has been added",
-                files=interactions.File(filename=title, fp=BytesIO(read_json)),
-            )
+                return await ctx.send("Error reading command")
         except:
-            await ctx.send("Error in reading json")
+            return await ctx.send("Error in reading json")
+
+        title = f"{as_dict['title']} - {as_dict['name']}.json"
+        await ctx.send(
+            "Character has been added",
+            files=File(BytesIO(my_json.encode()), file_name=title),
+        )
 
 
 # Basic validation for the unit json's structure.

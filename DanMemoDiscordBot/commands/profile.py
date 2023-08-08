@@ -1,29 +1,24 @@
-import asyncio
 import math
 import operator
+from asyncio import TimeoutError
 from typing import Any
 
-import interactions
-from interactions.ext.files import CommandContext, ComponentContext
-from interactions.ext.wait_for import WaitForClient
+from interactions import Client, ComponentContext, Embed, SlashContext
 
 from commands.buttons import next_page, previous_page, to_end, to_start
-from commands.utils import TIMEOUT, Status, get_emoji
+from commands.emojis import (
+    adventurer_emoji,
+    assist_emoji,
+    crepe_emoji,
+    limitbreak_emojis,
+    star_emoji,
+)
+from commands.utils import TIMEOUT, Status
 from database.DBcontroller import DBConfig
 from database.entities.User import User
 
-arrow_left = "\u2b05"
-arrow_right = "\u27a1"
-star_emoji = "\u2b50"
-crepe_emoji = get_emoji("crepe").format
-adventurer_emoji = get_emoji("ad_filter").format
-assist_emoji = get_emoji("as_filter").format
-limitbreak_emojis = [get_emoji(f"limitbreak_{number}").format for number in range(1, 6)]
 
-
-async def run(
-    dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, sub_command: str
-):
+async def run(dbConfig: DBConfig, client: Client, ctx: SlashContext, sub_command: str):
     author = str(ctx.author)
     authorUniqueId = str(ctx.author.id)  # type: ignore [union-attr]
     user = User.get_user(dbConfig, author, authorUniqueId)
@@ -78,10 +73,10 @@ async def run(
     else:
         footer = upper_footer
 
-    embed = interactions.Embed()
+    embed = Embed()
     embed.color = Status.OK.value
-    embed.set_thumbnail(url=ctx.author.user.avatar_url)  # type: ignore [union-attr]
-    embed.title = f"{ctx.author.nick}'s summary profile"
+    embed.set_thumbnail(url=ctx.author.display_avatar.url)
+    embed.title = f"{ctx.author.display_name}'s summary profile"
     embed.description = description
     embed.set_footer(text=footer)
 
@@ -95,11 +90,13 @@ async def run(
 
     while True:
         try:
-            component_ctx: ComponentContext = await client.wait_for_component(
-                components=components,  # type: ignore [arg-type]
-                messages=msg,
-                timeout=TIMEOUT,
-            )
+            component_ctx: ComponentContext = (
+                await client.wait_for_component(
+                    components=components,
+                    messages=msg,
+                    timeout=TIMEOUT,
+                )
+            ).ctx
 
             match component_ctx.custom_id:
                 case "previous_page":
@@ -117,11 +114,11 @@ async def run(
             footer = upper_footer + f"\n\nPage {current_page+1} of {number_pages}"
             embed.set_footer(text=footer)
 
-            await component_ctx.edit(embeds=embed)
+            await component_ctx.edit_origin(embeds=embed)
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             embed.color = Status.KO.value
-            return await ctx.edit(embeds=embed, components=[])
+            return await msg.edit(embeds=embed, components=[])
 
 
 def get_summarized_unit_lines(units: list[dict[str, Any]]) -> list[str]:

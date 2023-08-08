@@ -22,10 +22,6 @@ class Combatant:
         duration: 1,2,3,4
         is_assist: is this an assist buff or not
         """
-        assert isinstance(isbuff, bool)  # TODO: remove
-        assert isinstance(attribute, str)
-        assert isinstance(modifier, float)
-        assert isinstance(duration, int)
         effect = Effect(isbuff, attribute, modifier, duration)
         checkBuffExistsReplace(self.boostCheckAdv, effect)
 
@@ -34,9 +30,6 @@ class Combatant:
         attribute: strength, magic, st, aoe
         modifier: -10 ,+50
         """
-        assert isinstance(isbuff, bool)  # TODO: remove
-        assert isinstance(attribute, str)
-        assert isinstance(modifier, float)
         effect = AssistEffect(isbuff, attribute, modifier)
         checkBuffExistsReplace(self.boostCheckAst, effect)
 

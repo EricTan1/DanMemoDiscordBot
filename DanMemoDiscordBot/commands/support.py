@@ -1,10 +1,10 @@
-import interactions
+from interactions import Embed, SlashContext
 
 from commands.utils import Status
 
 
-async def run(ctx: interactions.CommandContext):
-    embed = interactions.Embed()
+async def run(ctx: SlashContext):
+    embed = Embed()
     embed.color = Status.KO.value
     embed.title = (
         "Use this link to join our support server!\nAlso check out our patreon!"

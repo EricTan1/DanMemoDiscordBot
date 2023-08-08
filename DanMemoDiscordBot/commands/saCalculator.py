@@ -1,8 +1,7 @@
 from types import SimpleNamespace
 
-import interactions
-from interactions.ext.files import CommandContext
-from interactions.ext.wait_for import WaitForClient
+from aiohttp import ClientSession
+from interactions import Attachment, Embed, File, SlashContext
 
 # WANT TO CONNECT THIS TO DB SO CAN BE ANY SA_GAUGE
 from commands.cache import Cache
@@ -10,26 +9,26 @@ from commands.utils import Status
 
 
 async def run(
-    client: WaitForClient,
-    ctx: CommandContext,
-    config_file: interactions.Attachment | None,
+    ctx: SlashContext,
+    config_file: Attachment | None,
 ):
     # check if there is attachment if not send them a template attachment
     if not config_file:
         await ctx.send(
             "For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the description /sa-calculator",
-            files=interactions.File("sacalc.txt"),
+            files=File("sacalc.txt"),
         )
     else:
         # if template attached start to verify it
         # attachment object only contains the URL, so have to download it first
-        async with client._http._req._session.get(config_file.url) as request:  # type: ignore [union-attr]
-            contents = await request.content.read()
-        contents_decode = contents.decode("utf-8").split("\n")
+        async with ClientSession() as session:
+            async with session.get(config_file.url) as resp:
+                contents = await resp.text()
+        contentLines = contents.split("\n")
         positions: list[list[int]] = [[], [], [], []]
         errors = ""
         turns = 0
-        for line in contents_decode:
+        for line in contentLines:
             print(line)
             # buff wipe verify
             stripped_line = line.strip()
@@ -84,7 +83,7 @@ async def run(
                 ctx, is_revis, adventurer_order, assists_order, positions, turns
             )
         else:
-            temp_embed = interactions.Embed()
+            temp_embed = Embed()
             temp_embed.color = Status.KO.value
             temp_embed.title = "ERROR"
             temp_embed.description = errors
@@ -101,7 +100,7 @@ def verifyAndCast(my_list: list[str]) -> list[int]:
 
 # Speed Tier needs to be added and calcs need to happen at buff phase
 async def calculate(
-    ctx: CommandContext,
+    ctx: SlashContext,
     is_revis: bool,
     adventurer_turns: list[str],
     assist_turns: list[str],
@@ -241,7 +240,7 @@ async def calculate(
         )
         current_turn = current_turn + 1
     # SA CALC
-    temp_embed = interactions.Embed()
+    temp_embed = Embed()
     temp_embed.color = Status.OK.value
     temp_embed.title = "SA Calculator"
     temp_embed.description = curr_message

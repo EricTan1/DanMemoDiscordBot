@@ -5,7 +5,6 @@ from enum import Enum
 from types import SimpleNamespace
 from typing import TypeVar, cast
 
-import interactions
 from PIL import Image
 
 # timeout before an interactable goes inactive
@@ -18,13 +17,10 @@ def getDifficultyMultiplier(difficulty: int) -> float:
 
 
 class Status(Enum):
-    """the color codes for interactions.embeds for showing message activity
-    OK = green
-    KO = red
-    """
+    """the color codes for interactions embeds for showing message activity"""
 
-    OK = 3066993
-    KO = 16203840
+    OK = 3066993  # green
+    KO = 16203840  # red
 
 
 class GachaRates(Enum):
@@ -230,46 +226,39 @@ def getDefaultEmoji(emojiName):
 
 
 class CustomEmoji:
-    def __init__(self, id_inner, name, plural, id_discord):
+    def __init__(self, id_inner, name, id_discord):
         self.id_inner = id_inner
         self.name = name
-        self.plural = plural
         self.id_discord = id_discord
 
 
 emojis = {
-    CustomEmoji("potato1", "small potato", "small potatoes", 698248273387061439),
-    CustomEmoji("potato2", "medium potato", "medium potatoes", 698248273500307503),
-    CustomEmoji("potato3", "big potato", "big potatoes", 698248273613291590),
-    CustomEmoji("crepe", "crepe", "crepes", 698247637899411521),
-    CustomEmoji("hexdummy", "hexdummy", "hexdummy", 698471235927146526),
-    CustomEmoji("hex", "hex", "hex", 698357886492999753),
-    CustomEmoji("limitbreak_0", "limitbreak_0", "limitbreak_0", 700362619038597140),
-    CustomEmoji("limitbreak_1", "limitbreak_1", "limitbreak_1", 700362619038597140),
-    CustomEmoji("limitbreak_2", "limitbreak_2", "limitbreak_2", 700362619055505458),
-    CustomEmoji("limitbreak_3", "limitbreak_3", "limitbreak_3", 700362619340587048),
-    CustomEmoji("limitbreak_4", "limitbreak_4", "limitbreak_4", 700362619202043994),
-    CustomEmoji("limitbreak_5", "limitbreak_5", "limitbreak_5", 700362619223015585),
-    CustomEmoji("rank_6", "rank_6", "rank_6", 700362778774339625),
-    CustomEmoji("rank_7", "rank_7", "rank_7", 700362690077655232),
-    CustomEmoji("rank_8", "rank_8", "rank_8", 700362677880356894),
-    CustomEmoji("rank_9", "rank_9", "rank_9", 700362704732291234),
-    CustomEmoji("rank_10", "rank_10", "rank_10", 700362719051907103),
-    CustomEmoji("rank_11", "rank_11", "rank_11", 700362727897432076),
-    CustomEmoji("rank_12", "rank_12", "rank_12", 700362736378577030),
-    CustomEmoji("star_on", "star_on", "star_on", 700406541232242729),
-    CustomEmoji("star_off", "star_off", "star_off", 700406550044606470),
-    CustomEmoji("square_off", "square_off", "square_off", 700406581908602970),
-    CustomEmoji("square_on", "square_on", "square_on", 700406590817435759),
-    CustomEmoji("as_filter", "as_filter", "as_filter", 707301404137750618),
-    CustomEmoji("ad_filter", "ad_filter", "ad_filter", 707300588458737746),
+    CustomEmoji("crepe", "crepe", 698247637899411521),
+    CustomEmoji("limitbreak_1", "limitbreak_1", 700362619038597140),
+    CustomEmoji("limitbreak_2", "limitbreak_2", 700362619055505458),
+    CustomEmoji("limitbreak_3", "limitbreak_3", 700362619340587048),
+    CustomEmoji("limitbreak_4", "limitbreak_4", 700362619202043994),
+    CustomEmoji("limitbreak_5", "limitbreak_5", 700362619223015585),
+    CustomEmoji("rank_6", "rank_6", 700362778774339625),
+    CustomEmoji("rank_7", "rank_7", 700362690077655232),
+    CustomEmoji("rank_8", "rank_8", 700362677880356894),
+    CustomEmoji("rank_9", "rank_9", 700362704732291234),
+    CustomEmoji("rank_10", "rank_10", 700362719051907103),
+    CustomEmoji("rank_11", "rank_11", 700362727897432076),
+    CustomEmoji("rank_12", "rank_12", 700362736378577030),
+    CustomEmoji("star_on", "star_on", 700406541232242729),
+    CustomEmoji("star_off", "star_off", 700406550044606470),
+    CustomEmoji("square_off", "square_off", 700406581908602970),
+    CustomEmoji("square_on", "square_on", 700406590817435759),
+    CustomEmoji("AsRoboto", "as_filter", 707301404137750618),
+    CustomEmoji("AdRoboto", "ad_filter", 707300588458737746),
 }
 
 
-def get_emoji(name: str) -> interactions.Emoji:
+def getCustomEmoji(name: str) -> str:
     for emoji in emojis:
         if emoji.name == name:
-            return interactions.Emoji(name=emoji.name, id=emoji.id_discord)
+            return f"<:{emoji.id_inner}:{emoji.id_discord}>"
     raise Exception("Unknown emoji id:", name)
 
 

@@ -1,5 +1,4 @@
-import interactions
-from interactions.ext.files import CommandContext
+from interactions import File, SlashContext
 from PIL import Image, ImageDraw
 
 from database.DBcontroller import DBConfig, DBcontroller
@@ -33,7 +32,7 @@ killers = [
 ]
 
 
-async def run(ctx: CommandContext, dbConfig: DBConfig, sub_command: str):
+async def run(ctx: SlashContext, dbConfig: DBConfig, sub_command: str):
     generateInfographic(dbConfig)
 
     if sub_command != "all":
@@ -60,7 +59,7 @@ async def run(ctx: CommandContext, dbConfig: DBConfig, sub_command: str):
             )
             croppedGraphic.save("./infographic/killer.png", quality=95)
 
-    await ctx.send(files=interactions.File("./infographic/killer.png"))
+    await ctx.send(files=File("./infographic/killer.png"))
 
 
 def generateInfographic(dbConfig: DBConfig):

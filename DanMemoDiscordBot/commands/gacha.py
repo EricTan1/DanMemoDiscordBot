@@ -4,18 +4,17 @@ from collections import Counter
 from os.path import isdir
 from random import choice, choices
 from threading import Lock
-
-import interactions
-from interactions.ext.files import CommandContext
-from PIL import Image
 from types import SimpleNamespace
+
+from interactions import Embed, File, SlashContext
+from PIL import Image
 
 from commands.cache import Cache
 from commands.utils import (
     GachaModes,
     GachaRates,
-    GachaRatesEleventh,
     GachaRatesRegular,
+    GachaRatesEleventh,
     Status,
 )
 from database.DBcontroller import DBConfig
@@ -28,7 +27,7 @@ star_emoji = "\u2b50"
 lock = Lock()
 
 
-async def run(dbConfig: DBConfig, ctx: CommandContext):
+async def run(dbConfig: DBConfig, ctx: SlashContext):
     acquired = lock.acquire(blocking=False)
     if not acquired:
         return await try_again_later(ctx)
@@ -39,14 +38,14 @@ async def run(dbConfig: DBConfig, ctx: CommandContext):
             lock.release()
 
 
-async def try_again_later(ctx: CommandContext):
-    embed = interactions.Embed()
+async def try_again_later(ctx: SlashContext):
+    embed = Embed()
     embed.title = "Sorry, please try again later"
     embed.color = Status.KO.value
     await ctx.send(embeds=embed)
 
 
-async def engine(dbConfig: DBConfig, ctx: CommandContext):
+async def engine(dbConfig: DBConfig, ctx: SlashContext):
     author = str(ctx.author)
     authorUniqueId = str(ctx.author.id)  # type: ignore [union-attr]
 
@@ -72,21 +71,21 @@ async def engine(dbConfig: DBConfig, ctx: CommandContext):
     await pull_messages(ctx, user.crepes, pulls, user.gacha_mode)
 
 
-async def no_gacha(ctx: CommandContext):
+async def no_gacha(ctx: SlashContext):
     title = "Hold on! Who goes there?"
 
-    description = "What do you think you are doing, " + ctx.author.mention + "?"  # type: ignore [union-attr]
+    description = "What do you think you are doing, " + ctx.author.mention + "?"
     description += " Come back when you have something for me!"
 
     footer = "There are 0 crepes left in your bento box!"
 
-    embed = interactions.Embed()
+    embed = Embed()
     embed.color = Status.KO.value
     embed.title = title
     embed.description = description
     embed.set_footer(text=footer)
     embed.set_image(url="attachment://nope.png")
-    await ctx.send(embeds=embed, files=interactions.File("./images/gacha/nope.png"))
+    await ctx.send(embeds=embed, files=File("./images/gacha/nope.png"))
 
 
 def get_pulls(number: int, gacha_rates: type[GachaRates]) -> list:
@@ -106,22 +105,22 @@ def random_pulls(number: int, gacha_rates: type[GachaRates]) -> list[str]:
 def get_random_unit(gacha_category: str):
     cache = Cache()
     match gacha_category:
-        case GachaRates.ADVENTURER_2_STARS.name:
+        case GachaRatesRegular.ADVENTURER_2_STARS.name:
             stars: int = 2
             units: list[SimpleNamespace] = cache.get_all_adventurers()
-        case GachaRates.ADVENTURER_3_STARS.name:
+        case GachaRatesRegular.ADVENTURER_3_STARS.name:
             stars = 3
             units = cache.get_all_adventurers()
-        case GachaRates.ADVENTURER_4_STARS.name:
+        case GachaRatesRegular.ADVENTURER_4_STARS.name:
             stars = 4
             units = cache.get_all_adventurers()
-        case GachaRates.ASSIST_2_STARS.name:
+        case GachaRatesRegular.ASSIST_2_STARS.name:
             stars = 2
             units = cache.get_all_assists()
-        case GachaRates.ASSIST_3_STARS.name:
+        case GachaRatesRegular.ASSIST_3_STARS.name:
             stars = 3
             units = cache.get_all_assists()
-        case GachaRates.ASSIST_4_STARS.name:
+        case GachaRatesRegular.ASSIST_4_STARS.name:
             stars = 4
             units = cache.get_all_assists()
         case _:
@@ -133,13 +132,13 @@ def get_random_unit(gacha_category: str):
 
 
 async def pull_messages(
-    ctx: CommandContext, currency_number: int, pulls: list, gacha_mode: int
+    ctx: SlashContext, currency_number: int, pulls: list, gacha_mode: int
 ):
     title = "Nom nom... Fuwa fuwa! ♡"
 
     description = (
         "The crepe was really good, "
-        + ctx.author.mention  # type: ignore [union-attr]
+        + ctx.author.mention
         + "! Please take this:"
         + "\n"
     )
@@ -160,19 +159,19 @@ async def pull_messages(
     if gacha_mode == GachaModes.IMG.value:
         img_path = "./images/gacha.png"
         create_image(img_path, pulls)
-        await ctx.send(files=interactions.File(img_path))
+        await ctx.send(files=File(img_path))
     else:
         gif_path = "./images/gacha.gif"
         create_gif(gif_path, pulls)
-        await ctx.send(files=interactions.File(gif_path))
+        await ctx.send(files=File(gif_path))
 
-    embed = interactions.Embed()
+    embed = Embed()
     embed.color = Status.OK.value
     embed.title = title
     embed.description = description
     embed.set_footer(text=footer)
     embed.set_image(url="attachment://yes.png")
-    await ctx.send(embeds=embed, files=interactions.File("./images/gacha/yes.png"))
+    await ctx.send(embeds=embed, files=File("./images/gacha/yes.png"))
 
 
 def create_image(img_path: str, pulls: list):

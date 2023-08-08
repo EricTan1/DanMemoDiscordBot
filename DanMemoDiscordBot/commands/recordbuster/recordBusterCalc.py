@@ -2,9 +2,8 @@ import ast
 import configparser
 from typing import cast
 
-import interactions
-from interactions.ext.files import CommandContext
-from interactions.ext.wait_for import WaitForClient
+from aiohttp import ClientSession
+from interactions import Attachment, Client, File, SlashContext
 
 from commands.cache import Cache
 from commands.calculatorUtil import (
@@ -25,24 +24,24 @@ from commands.utils import getDifficultyMultiplier, getElements
 
 
 async def run(
-    client: WaitForClient,
-    ctx: CommandContext,
-    config_file: interactions.Attachment | None,
+    client: Client,
+    ctx: SlashContext,
+    config_file: Attachment | None,
 ):
     if not config_file:
         await ctx.send(
             "For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it via the /recordbuster-calculator command",
-            files=interactions.File("RBConfig.txt"),
+            files=File("RBConfig.txt"),
         )
     else:
         try:
             # if template attached start to verify it
             # attachment object only contains the URL, so have to download it first
-            async with client._http._req._session.get(config_file.url) as request:  # type: ignore [union-attr]
-                contents = await request.content.read()
-            contents_decode = contents.decode("utf-8")
+            async with ClientSession() as session:
+                async with session.get(config_file.url) as resp:
+                    contents = await resp.text()
             config = configparser.ConfigParser()
-            config.read_string(contents_decode)
+            config.read_string(contents)
             # test2 =ast.literal_eval(test)
             # general settings
             # counterRate=config.getfloat("DEFAULT", "counterRate")

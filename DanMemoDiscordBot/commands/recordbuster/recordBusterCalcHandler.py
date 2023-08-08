@@ -1,8 +1,6 @@
-import asyncio
+from asyncio import TimeoutError
 
-import interactions
-from interactions.ext.files import CommandContext
-from interactions.ext.wait_for import WaitForClient
+from interactions import ActionRow, Client, ComponentContext, Embed, SlashContext
 
 from commands.buttons import (
     next_page,
@@ -37,32 +35,26 @@ buttons = [
 ]
 
 # button rows
-row1 = interactions.ActionRow(components=buttons[:4])
-row2 = interactions.ActionRow(components=buttons[4:])
+row1 = ActionRow(*(buttons[:4]))
+row2 = ActionRow(*(buttons[4:]))
 
 
 async def pageRBHandler(
-    client: WaitForClient,
-    ctx: CommandContext,
+    client: Client,
+    ctx: SlashContext,
     logs: list[dict],
     total_damage: int,
     total_score: float,
     unit_list: list[Adventurer],
     assist_list: list[Assist],
 ):
-    """This handles the logic of the page handling for the single result adventurer
-
-    Arguments:
-        client {interactions.client} -- the discord interactions bot object
-        ctx {interactions.CommandContext} -- command message context
-        pages {list of interactions.embeds} -- adventurer stats/skills pages
-    """
+    """This handles the logic of the page handling for the single result adventurer"""
 
     page_list = []
     current_page = 0
 
     # first page
-    first_page = interactions.Embed()
+    first_page = Embed()
     page_list.append(first_page)
     first_page.color = Status.OK.value
     first_page.title = "Summary of Record Buster"
@@ -70,13 +62,11 @@ async def pageRBHandler(
     first_page.add_field(
         name="Adventurers",
         value=f"{unit_list[0].name}, {unit_list[1].name}, {unit_list[2].name}, {unit_list[3].name}, {unit_list[4].name}, {unit_list[5].name}",
-        inline=False,
     )
     # all the assists being used
     first_page.add_field(
         name="Assists",
         value=f"{assist_list[0].name}, {assist_list[1].name}, {assist_list[2].name}, {assist_list[3].name}, {assist_list[4].name}, {assist_list[5].name}",
-        inline=False,
     )
     # damage per adv
     # current_damage
@@ -84,14 +74,11 @@ async def pageRBHandler(
         first_page.add_field(
             name=f"{adv.name} total damage",
             value=f"{adv.current_damage:,}",
-            inline=False,
         )
     # total damage
-    first_page.add_field(name="Total Damage", value=f"{total_damage:,}", inline=False)
+    first_page.add_field(name="Total Damage", value=f"{total_damage:,}")
     # total score
-    first_page.add_field(
-        name="Total Score", value=f"{int(total_score):,}", inline=False
-    )
+    first_page.add_field(name="Total Score", value=f"{int(total_score):,}")
 
     toggle_log_list = {"attack": True, "counters": False, "info": False}
 
@@ -156,13 +143,13 @@ async def pageRBHandler(
                 field_list_temp.append(("**Sacs**", temp_value))
 
             if logs_per_page_counter == logs_per_page or turn == len(logs) - 1:
-                temp_embed = interactions.Embed()
+                temp_embed = Embed()
                 temp_embed.color = Status.OK.value
                 page_list.append(temp_embed)
                 temp_embed.title = f"Damage for Turn {turn+1}"
                 temp_embed.description = "Press buttons to switch pages"
                 for fields in field_list_temp:
-                    temp_embed.add_field(name=fields[0], value=fields[1], inline=False)
+                    temp_embed.add_field(name=fields[0], value=fields[1])
                 logs_per_page_counter = 1
                 field_list_temp = []
             else:
@@ -182,9 +169,11 @@ async def pageRBHandler(
 
     while True:
         try:
-            component_ctx: interactions.ComponentContext = await client.wait_for_component(
-                components=buttons, messages=msg, timeout=TIMEOUT  # type: ignore [arg-type]
-            )
+            component_ctx: ComponentContext = (
+                await client.wait_for_component(
+                    components=buttons, messages=msg, timeout=TIMEOUT
+                )
+            ).ctx
 
             match component_ctx.custom_id:
                 case "previous_page":
@@ -213,8 +202,8 @@ async def pageRBHandler(
                 text=f"Page {current_page+1} of {len(page_list)}"
             )
 
-            await component_ctx.edit(embeds=page_list[current_page])
+            await component_ctx.edit_origin(embeds=page_list[current_page])
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             page_list[current_page].color = Status.KO.value
-            return await ctx.edit(embeds=page_list[current_page], components=[])
+            return await msg.edit(embeds=page_list[current_page], components=[])

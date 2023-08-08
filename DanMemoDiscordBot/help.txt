@@ -117,13 +117,13 @@ Example:
 
 F
 **TOP**
-Command name: /top-users
-Usage: /top-users <gourmets/whales>
+Command name: /top-<gourmets/whales>
+Usage: /top-<gourmets/whales>
 Shows the biggest Whales/Gourmets, all servers combined
 F
 Example:
-/top-users gourmets
-/top-users whales
+/top-gourmets
+/top-whales
 
 F
 **POPULARITY**
@@ -146,10 +146,9 @@ Sends a link to our support server. Please contact Eric#5731 or Yon#7436
 F
 **HELP**
 Command name: /help
-Usage: /help <user/server>
-Sends the commands summary to user or server
+Usage: /help
+Sends the commands summary to user via PM
 F
 Example:
 /help
-/help server
 E
