@@ -13,8 +13,8 @@ from commands.cache import Cache
 from commands.utils import (
     GachaModes,
     GachaRates,
-    GachaRatesRegular,
     GachaRatesEleventh,
+    GachaRatesRegular,
     Status,
 )
 from database.DBcontroller import DBConfig
