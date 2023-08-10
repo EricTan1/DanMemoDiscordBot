@@ -4,21 +4,18 @@ verify_ssl = true
 name = "pypi"
 
 [requires]
-python_version = "3.8"
+python_version = "3.11"
 
 [scripts]
 start = "python -u app.py"
 pylint = "pylint"
 
 [packages]
-numpy = "==1.22.0"
 gspread = "==3.7.0"
 Pillow = "==9.3.0"
 mysql-connector-python = "==8.0.19"
-discord-py-interactions = "==4.4.0"
-interactions-files = "*"
-interactions-wait-for = "*"
-apscheduler = "*"
+discord-py-interactions = "==5.9.2"
+aiohttp = "*"
 
 [dev-packages]
 pylint = ">=2.7.1"

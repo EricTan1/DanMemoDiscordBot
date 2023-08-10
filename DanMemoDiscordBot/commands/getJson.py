@@ -1,16 +1,14 @@
 import json
 import os
 import zipfile
-from typing import List
 
-import interactions
-from interactions.ext.files import CommandContext
+from interactions import File, SlashContext
 
 from commands.cache import Cache
 from database.DBcontroller import EDITORS
 
 
-async def run(ctx: CommandContext):
+async def run(ctx: SlashContext):
     if ctx.author.id in EDITORS:
         cache = Cache()
         # SELECT a.adventurerid, a.characterid, a.typeid, a.alias, a.title, a.stars, a.limited, a.ascended,c.name, c.iscollab, t.name
@@ -27,7 +25,6 @@ async def run(ctx: CommandContext):
         # SELECT adventurerstatsid, adventurerid, advstats.attributeid, attri.name, value
         adv_stats = cache.get_all_adventurers_stats()
 
-        # ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects if temp_word in skilleffect.type.lower()]
         # loop through all adventurers
         for current_adv in ad_list:
             current_adv_json = dict()
@@ -119,7 +116,6 @@ async def run(ctx: CommandContext):
             ) as fp:
                 json.dump(current_adv_json, fp, indent=4)
 
-        # loop through all assists
         # unit_id, character_id, alias, unit_label, stars, is_limited, character_name, is_collab = row
         as_list = cache.get_all_assists()
         # assistsskillid, assistsid, skillname= row
@@ -198,13 +194,13 @@ async def run(ctx: CommandContext):
         await ctx.send(
             "Here's the current database in JSON format",
             files=[
-                interactions.File("./AdventurerJson.zip"),
-                interactions.File("./AssistJson.zip"),
+                File("./AdventurerJson.zip"),
+                File("./AssistJson.zip"),
             ],
         )
 
 
-def set_skill_effects(effects: list, is_assist: bool) -> List[dict]:
+def set_skill_effects(effects: list, is_assist: bool) -> list[dict]:
     curr_effects_list = []
 
     for curr_effects in effects:

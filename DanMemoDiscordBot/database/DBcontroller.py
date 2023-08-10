@@ -2,7 +2,7 @@ import inspect
 import json
 import os
 from enum import Enum
-from typing import Dict, Tuple
+from types import SimpleNamespace
 from urllib.parse import urlparse
 
 import mysql.connector
@@ -10,7 +10,7 @@ from mysql.connector import MySQLConnection
 from mysql.connector.connection import MySQLCursor, MySQLCursorPrepared
 
 import database.entities.User
-from commands.utils import GachaRates, TopCategories, format_row_as_sns
+from commands.utils import TopCategories, format_row_as_sns
 from database.entities.LogsCommand import LogsCommand
 
 
@@ -34,13 +34,13 @@ EDITORS = [
 class DBConfig:
     def __init__(self, environment):
         if environment == DatabaseEnvironment.LOCAL:
-            self.hostname = "localhost"
-            self.username = "root"
-            self.password = "danmemo"
+            self.hostname: str | None = "localhost"
+            self.username: str | None = "root"
+            self.password: str | None = "danmemo"
             self.port = "3306"
             self.database = "aisbot"
         elif environment == DatabaseEnvironment.HEROKU:
-            result = urlparse(os.environ.get("AWS_DATABASE_URL"))
+            result = urlparse(os.environ["AWS_DATABASE_URL"])
             self.hostname = result.hostname
             self.username = result.username
             self.password = result.password
@@ -62,7 +62,6 @@ class DBcontroller:
             port=config.port,
             database=config.database,
         )
-        # print(self.connection)
         self._mycursor: MySQLCursor = self._connection.cursor()
         self._mycursorprepared: MySQLCursorPrepared = self._connection.cursor(
             prepared=True
@@ -101,14 +100,14 @@ class DBcontroller:
             valueprep_list.append("%s")
             value_list.append(attributevalue)
 
-        attribute_list = str(tuple(attribute_list)).replace("'", "")
-        valueprep_list = str(tuple(valueprep_list)).replace("'", "")
+        attribute = str(tuple(attribute_list)).replace("'", "")
+        valueprep = str(tuple(valueprep_list)).replace("'", "")
 
         sql = "INSERT INTO {}.{} {} VALUES {}".format(
             self.database,
             str(type(entity).__name__).lower(),
-            attribute_list.lower(),
-            valueprep_list.lower(),
+            attribute.lower(),
+            valueprep.lower(),
         )
         values = tuple(value_list)
         print(sql + "\n")
@@ -118,14 +117,7 @@ class DBcontroller:
         print(self._mycursor.rowcount, "record inserted.")
         return self._mycursor.lastrowid
 
-    def updateData(self, entity):
-        """(DBcontroller, Entity, str, ?) -> bool
-        returns whether or not it is a successful update
-        """
-        pass
-
     def getAdventurerName(self, adventurerid):
-        print(adventurerid)
         sql = "SELECT a.title, c.name FROM danmemo.character as c, danmemo.adventurer as a WHERE a.adventurerid={} and c.characterid = a.characterid".replace(
             "danmemo", self.database
         ).format(
@@ -134,7 +126,6 @@ class DBcontroller:
         self._mycursor.execute(sql)
         for row in self._mycursor:
             ret = "[{}] {}".format(row[0], row[1])
-            print(row)
         return ret
 
     def getAssistName(self, assistid):
@@ -146,7 +137,6 @@ class DBcontroller:
         self._mycursor.execute(sql)
         for row in self._mycursor:
             ret = "[{}] {}".format(row[0], row[1])
-            print(row)
         return ret
 
     def deleteById(self, entityname, column, value):
@@ -192,12 +182,12 @@ class DBcontroller:
 
     def characterSearch(self, search):
         print("searching")
-        ret_dict = dict()
+        ret_dict: dict[str, list] = dict()
         for words in self.human_input_character_dict:
             if " " + words + " " in search:
                 search = search.replace(
                     " " + words + " ",
-                    " " + self.human_input_character_dict.get(words) + " ",
+                    " " + self.human_input_character_dict[words] + " ",
                 )
         search = search.strip()
         # Search by title first
@@ -212,9 +202,9 @@ class DBcontroller:
             self._mycursorprepared.execute(characterAdTitleSql, (words, words, words))
             for row in self._mycursorprepared:
                 ad_id = "Ad" + str(row[0])
-                if ret_dict.get(ad_id) == None:
+                if ret_dict.get(ad_id) is None:
                     ret_dict[ad_id] = [0, row[1], row[2]]
-                ret_dict[ad_id] = [ret_dict.get(ad_id)[0] + 1, row[1], row[2]]
+                ret_dict[ad_id] = [ret_dict[ad_id][0] + 1, row[1], row[2]]
             # ASSIST
             characterAsTitleSql = "SELECT assistid, a.title, c.name from danmemo.assist as a, danmemo.character as c where (c.name like %s or a.title like %s or a.alias like %s) and c.characterid = a.characterid".replace(
                 "danmemo", self.database
@@ -223,56 +213,49 @@ class DBcontroller:
             self._mycursorprepared.execute(characterAsTitleSql, (words, words, words))
             for row in self._mycursorprepared:
                 as_id = "As" + str(row[0])
-                if ret_dict.get(as_id) == None:
+                if ret_dict.get(as_id) is None:
                     ret_dict[as_id] = [0, row[1], row[2]]
-                ret_dict[as_id] = [ret_dict.get(as_id)[0] + 1, row[1], row[2]]
+                ret_dict[as_id] = [ret_dict[as_id][0] + 1, row[1], row[2]]
 
         ret_list = []
         highest = None
         for keys in ret_dict:
-            if highest == None:
-                highest = ret_dict.get(keys)[0]
-                ret_list.append(ret_dict.get(keys) + [keys])
-            elif highest < ret_dict.get(keys)[0]:
-                highest = ret_dict.get(keys)[0]
-                ret_list = [ret_dict.get(keys) + [keys]]
-            elif highest == ret_dict.get(keys)[0]:
-                ret_list.append(ret_dict.get(keys) + [keys])
+            if highest is None:
+                highest = ret_dict[keys][0]
+                ret_list.append(ret_dict[keys] + [keys])
+            elif highest < ret_dict[keys][0]:
+                highest = ret_dict[keys][0]
+                ret_list = [ret_dict[keys] + [keys]]
+            elif highest == ret_dict[keys][0]:
+                ret_list.append(ret_dict[keys] + [keys])
         return ret_list
 
     def skillSearch(self, search):
         from commands.cache import Cache
 
         cache = Cache()
-        # units = cache.get_all_assists()
-        # units = [unit for unit in units if unit.stars == stars]
 
         # separate by commas
         searchwords_list = search.split(",")
-        ret_dict = dict()
-        ret_dict_effect = dict()
+        ret_dict: dict[str, int] = dict()
+        ret_dict_effect: dict[tuple[int, str], int] = dict()
         # get rid of spaces
         for index in range(0, len(searchwords_list)):
             searchwords_list[index] = searchwords_list[index].strip()
             # check if they are in the dict readable
             temp = self.human_input_dict.get(searchwords_list[index])
-            if temp != None:
+            if temp is not None:
                 searchwords_list[index] = temp.strip()
             # if its not whole sentences try single words
             replace_list = []
             for words in searchwords_list[index].split(" "):
-
-                print(searchwords_list[index])
-                print(words)
                 temp = self.human_input_dict.get(words)
-                if temp != None:
+                if temp is not None:
                     # (old,new)
                     replace_list.append((words, temp.strip()))
-            for (old, new) in replace_list:
+            for old, new in replace_list:
                 searchwords_list[index] = searchwords_list[index].replace(old, new)
 
-            # searchwords_list[index] = searchwords_list[index].replace(" ","_")
-        print(searchwords_list)
         ele_set = {"light", "wind", "fire", "dark", "ice", "water", "earth", "thunder"}
         ad_skill_effects = cache.get_all_adventurers_skills_effects()
         as_skill_effects = cache.get_all_assists_skills_effects()
@@ -280,15 +263,6 @@ class DBcontroller:
         ad_dev_skill_effects = cache.get_all_adventurers_developments_skills_effects()
         for words in searchwords_list:
             new_words = words.lower()
-            # Target, Attribute(), Modifier(Super, 10%), Type (phys/mag), Element(Wind/Light)
-            # row_as_dict = format_row_as_sns(adventurerskilleffectsid = adventurerskilleffectsid, adventurerskillid=adventurerskillid, unit_type=unit_type, duration=duration, element=element, modifier=modifier, type=type, target=target, attribute=attribute, speed=speed, stars=stars, title=title, alias=alias, limited=limited, character=character)
-            # row_as_dict = format_row_as_sns(assistskilleffectsid=assistskilleffectsid, assistskillid=assistskillid,unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
-
-            # skillAdeffect_sql= "SELECT DISTINCT ase.AdventurerSkillid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid INNER JOIN danmemo.modifier as m on m.modifierid = ase.modifierid INNER JOIN danmemo.type as ty on ty.typeid = ase.typeid INNER JOIN danmemo.target as ta on ta.targetid = ase.Targetid INNER JOIN danmemo.attribute as a on a.attributeid = ase.attributeid LEFT JOIN danmemo.speed as s on ase.speedid = s.speedid WHERE m.value LIKE %s or e.name LIKE %s or ta.name=%s or ty.name LIKE %s or a.name LIKE %s or s.name LIKE %s".replace('danmemo',self.database)
-            # skillAdElement_sql = "SELECT DISTINCT ase.AdventurerSkillid FROM danmemo.adventurerskilleffects as ase INNER JOIN danmemo.element as e on e.elementid= ase.eleid WHERE e.name = %s".replace('danmemo',self.database)
-
-            # .format
-            print(words)
             if words.lower() in ele_set:
                 ad_skill_effects_ret = [
                     skilleffect
@@ -302,9 +276,7 @@ class DBcontroller:
                     or new_words in skilleffect.attribute.lower()
                     or new_words in skilleffect.modifier.lower()
                 ]
-                # self._mycursorprepared.execute(skillAdElement_sql, (words,))
             else:
-                # self._mycursorprepared.execute(skillAdeffect_sql, (new_words,new_words,words,new_words,new_words,new_words))
                 # we want to iterate through every word
                 if " " in new_words:
                     temp_list = new_words.split(" ")
@@ -369,41 +341,39 @@ class DBcontroller:
             my_set = set()
             # distinct adventurer
             for skilleffect in ad_skill_effects_ret:
-                skillid = (
+                skillidtuple = (
                     skilleffect.adventurerskilleffectsid,
                     "Ad" + str(skilleffect.adventurerskillid),
                 )
-                if ret_dict_effect.get(skillid) == None:
-                    ret_dict_effect[skillid] = 0
-                ret_dict_effect[skillid] = ret_dict_effect.get(skillid) + 1
+                if ret_dict_effect.get(skillidtuple) is None:
+                    ret_dict_effect[skillidtuple] = 0
+                ret_dict_effect[skillidtuple] = ret_dict_effect[skillidtuple] + 1
                 my_set.add(skilleffect.adventurerskillid)
 
             for ids in my_set:
                 skillid = "Ad" + str(ids)
-                if ret_dict.get(skillid) == None:
+                if ret_dict.get(skillid) is None:
                     ret_dict[skillid] = 0
-                ret_dict[skillid] = ret_dict.get(skillid) + 1
+                ret_dict[skillid] = ret_dict[skillid] + 1
             # assist
             my_set = set()
             # distinct
             for skilleffect in as_skill_effects_ret:
-                skillid = (
+                skillidtuple = (
                     skilleffect.assistskilleffectsid,
                     "As" + str(skilleffect.assistskillid),
                 )
-                if ret_dict_effect.get(skillid) == None:
-                    ret_dict_effect[skillid] = 0
-                ret_dict_effect[skillid] = ret_dict_effect.get(skillid) + 1
+                if ret_dict_effect.get(skillidtuple) is None:
+                    ret_dict_effect[skillidtuple] = 0
+                ret_dict_effect[skillidtuple] = ret_dict_effect[skillidtuple] + 1
                 my_set.add(skilleffect.assistskillid)
 
             for ids in my_set:
                 skillid = "As" + str(ids)
-                if ret_dict.get(skillid) == None:
+                if ret_dict.get(skillid) is None:
                     ret_dict[skillid] = 0
-                ret_dict[skillid] = ret_dict.get(skillid) + 1
+                ret_dict[skillid] = ret_dict[skillid] + 1
 
-            # skillAveffect_sql='SELECT ad.adventurerdevelopmentid FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.attribute as a on ad.attributeid = a.attributeid WHERE a.name like %s or ad.name like %s'.replace("danmemo",self.database)
-            # self._mycursorprepared.execute(skillAveffect_sql,(new_words,new_words))
             av_skill_effects_ret = [
                 skilleffect
                 for skilleffect in ad_dev_effects
@@ -415,54 +385,53 @@ class DBcontroller:
                 for skilleffect in ad_dev_skill_effects
                 if new_words in skilleffect.attribute.lower()
             ]
-            print(av_skill_effects_ret)
             my_set = set()
             # distinct
-            #  adventurerdevelopmentid=adventurerdevelopmentid,unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
 
             for skilleffect in av_skill_effects_ret:
-                skillid = (
+                skillidtuple = (
                     skilleffect.adventurerdevelopmentid,
                     "Av" + str(skilleffect.adventurerdevelopmentid),
                 )
-                if ret_dict_effect.get(skillid) == None:
-                    ret_dict_effect[skillid] = 0
-                ret_dict_effect[skillid] = ret_dict_effect.get(skillid) + 1
+                if ret_dict_effect.get(skillidtuple) is None:
+                    ret_dict_effect[skillidtuple] = 0
+                ret_dict_effect[skillidtuple] = ret_dict_effect[skillidtuple] + 1
                 my_set.add(skilleffect.adventurerdevelopmentid)
 
             for skilleffect in av_skill_effects_ret_2:
-                skillid = (
+                skillidtuple = (
                     skilleffect.adventurerdevelopmentid,
                     "Av" + str(skilleffect.adventurerdevelopmentid),
                 )
-                if ret_dict_effect.get(skillid) == None:
-                    ret_dict_effect[skillid] = 0
-                ret_dict_effect[skillid] = ret_dict_effect.get(skillid) + 1
+                if ret_dict_effect.get(skillidtuple) is None:
+                    ret_dict_effect[skillidtuple] = 0
+                ret_dict_effect[skillidtuple] = ret_dict_effect[skillidtuple] + 1
                 my_set.add(skilleffect.adventurerdevelopmentid)
 
             for ids in my_set:
                 skillid = "Av" + str(ids)
-                if ret_dict.get(skillid) == None:
+                if ret_dict.get(skillid) is None:
                     ret_dict[skillid] = 0
-                ret_dict[skillid] = ret_dict.get(skillid) + 1
+                ret_dict[skillid] = ret_dict[skillid] + 1
 
         # get all the skills with the highest freq
         ret_list = []
         highest = None
         for keys in ret_dict:
-            if highest == None:
-                highest = ret_dict.get(keys)
+            if highest is None:
+                highest = ret_dict[keys]
                 ret_list.append(keys)
-            elif highest < ret_dict.get(keys):
-                highest = ret_dict.get(keys)
+            elif highest < ret_dict[keys]:
+                highest = ret_dict[keys]
                 ret_list = [keys]
-            elif highest == ret_dict.get(keys):
+            elif highest == ret_dict[keys]:
                 ret_list.append(keys)
         # now sort by skilleffect id freq
         dictlist = [(k, v) for k, v in ret_dict_effect.items()]
         dictlist = [
             skilleffect for skilleffect in dictlist if (skilleffect[0])[1] in ret_list
         ]
+
         # sort list
         # take second element for sort
         def takeSecond(elem):
@@ -552,7 +521,7 @@ class DBcontroller:
                 title += "[Time-Limited] "
             elif row[2] == 2:
                 title += "[Hero Festa] "
-            for x in range(0, row[3]):
+            for _ in range(0, row[3]):
                 title = title + ":star:"
         # stats (based on LB? idk somehow dynamically change stats here maybe send?)
         stats_dict = self.assembleAssistStats(assistid)
@@ -597,7 +566,7 @@ class DBcontroller:
 
         return (title_name, title, skill, stats_dict)
 
-    def assembleAssistSkill(self, skillid) -> Tuple[str, str, str]:
+    def assembleAssistSkill(self, skillid) -> tuple[str, str, str]:
         ret = ""
         skillname = ""
         skilltype = ""
@@ -645,9 +614,9 @@ class DBcontroller:
             ):
                 temp_modifier += "%"
 
-            if temp_type == None or temp_type.strip() == "None":
+            if temp_type is None or temp_type.strip() == "None":
                 temp_type = ""
-            if temp_element == None or temp_element.strip() == "None":
+            if temp_element is None or temp_element.strip() == "None":
                 temp_element = ""
             else:
                 temp_element = temp_element.capitalize()
@@ -656,29 +625,28 @@ class DBcontroller:
                 temp_attribute = ""
 
             # [TARGET] Modifier Attribute /duration
-            if self.human_readable_dict.get(temp_target) != None:
-                temp_target = self.human_readable_dict.get(temp_target)
-            if self.human_readable_dict.get(temp_modifier) != None:
-                temp_modifier = self.human_readable_dict.get(temp_modifier)
-            if self.human_readable_dict.get(temp_attribute) != None:
-                temp_attribute = self.human_readable_dict.get(temp_attribute)
-            if self.human_readable_dict.get(temp_type) != None:
-                temp_type = self.human_readable_dict.get(temp_type)
-            if self.human_readable_dict.get(temp_element) != None:
-                temp_element = self.human_readable_dict.get(temp_element)
+            if self.human_readable_dict.get(temp_target) is not None:
+                temp_target = self.human_readable_dict[temp_target]
+            if self.human_readable_dict.get(temp_modifier) is not None:
+                temp_modifier = self.human_readable_dict[temp_modifier]
+            if self.human_readable_dict.get(temp_attribute) is not None:
+                temp_attribute = self.human_readable_dict[temp_attribute]
+            if self.human_readable_dict.get(temp_type) is not None:
+                temp_type = self.human_readable_dict[temp_type]
+            if self.human_readable_dict.get(temp_element) is not None:
+                temp_element = self.human_readable_dict[temp_element]
             # element
 
             ret += f"[{temp_target}] {temp_modifier} {temp_element} {temp_type} {temp_attribute} "
 
-            if temp_duration != None and temp_duration.strip() != "None":
+            if temp_duration is not None and temp_duration.strip() != "None":
                 ret += f"/{temp_duration} turn(s) "
             ret += "\n "
-            if temp_max_activations != "None" and temp_max_activations != None:
+            if temp_max_activations != "None" and temp_max_activations is not None:
                 ret += f"**{temp_max_activations} per turn**"
         return (skillname, ret, skilltype)
 
     def assembleAdventurerSkill(self, skillid):
-
         ret = ""
         skillname = ""
         skill_sql = "SELECT skilltype, skillname FROM danmemo.adventurerskill where adventurerskillid={}".replace(
@@ -691,7 +659,6 @@ class DBcontroller:
         ).format(
             skillid
         )
-        print(effects_sql)
         self._mycursor.execute(skill_sql)
         for row in self._mycursor:
             # skilltype : skillname
@@ -705,15 +672,15 @@ class DBcontroller:
             temp_type = row[4]
             temp_element = row[5]
             temp_speed = row[6]
-            if temp_type == None or temp_type.strip() == "None":
+            if temp_type is None or temp_type.strip() == "None":
                 temp_type = ""
-            if temp_element == None or temp_element.strip() == "None":
+            if temp_element is None or temp_element.strip() == "None":
                 temp_element = ""
             else:
                 temp_element = temp_element.capitalize()
-            if temp_speed == None or temp_speed.strip() == "None":
+            if temp_speed is None or temp_speed.strip() == "None":
                 temp_speed = ""
-            if temp_attribute == None or temp_attribute.strip() == "None":
+            if temp_attribute is None or temp_attribute.strip() == "None":
                 temp_attribute = ""
 
             if (
@@ -726,23 +693,23 @@ class DBcontroller:
                 else:
                     temp_modifier = str(temp_modifier)
             # [TARGET] Modifier Attribute /duration
-            if self.human_readable_dict.get(temp_target) != None:
-                temp_target = self.human_readable_dict.get(temp_target)
-            if self.human_readable_dict.get(temp_modifier) != None:
-                temp_modifier = self.human_readable_dict.get(temp_modifier)
-            if self.human_readable_dict.get(temp_attribute) != None:
-                temp_attribute = self.human_readable_dict.get(temp_attribute)
+            if self.human_readable_dict.get(temp_target) is not None:
+                temp_target = self.human_readable_dict[temp_target]
+            if self.human_readable_dict.get(temp_modifier) is not None:
+                temp_modifier = self.human_readable_dict[temp_modifier]
+            if self.human_readable_dict.get(temp_attribute) is not None:
+                temp_attribute = self.human_readable_dict[temp_attribute]
 
-            if self.human_readable_dict.get(temp_type) != None:
-                temp_type = self.human_readable_dict.get(temp_type)
-            if self.human_readable_dict.get(temp_element) != None:
-                temp_element = self.human_readable_dict.get(temp_element)
-            if self.human_readable_dict.get(temp_speed) != None:
-                temp_speed = self.human_readable_dict.get(temp_speed)
+            if self.human_readable_dict.get(temp_type) is not None:
+                temp_type = self.human_readable_dict[temp_type]
+            if self.human_readable_dict.get(temp_element) is not None:
+                temp_element = self.human_readable_dict[temp_element]
+            if self.human_readable_dict.get(temp_speed) is not None:
+                temp_speed = self.human_readable_dict[temp_speed]
             if temp_modifier[1:].isnumeric() and temp_modifier[0] != "x":
                 temp_modifier = temp_modifier + "%"
 
-            if temp_duration != None and temp_duration.strip() != "None":
+            if temp_duration is not None and temp_duration.strip() != "None":
                 ret = ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(
                     temp_target,
                     temp_speed,
@@ -753,7 +720,6 @@ class DBcontroller:
                     row[3],
                 )
             else:
-                print(temp_type)
                 ret = ret + "[{}] {} {} {} {} {} \n".format(
                     temp_target,
                     temp_speed,
@@ -766,7 +732,7 @@ class DBcontroller:
 
     def assembleAdventurerDevelopment(
         self, adventurerDevelopmentid
-    ) -> Tuple[str, str, str, str, int]:
+    ) -> tuple[str, str, str, str, int]:
         self._mycursor.execute(
             "SELECT ad.name,adv.title,c.name,adv.adventurerid FROM danmemo.adventurerdevelopment as ad LEFT JOIN danmemo.adventurer as adv on adv.adventurerid = ad.adventurerid LEFT JOIN danmemo.character as c on adv.characterid= c.characterid WHERE ad.adventurerdevelopmentid = {}".replace(
                 "danmemo", self.database
@@ -803,15 +769,15 @@ class DBcontroller:
             temp_type = row[4]
             temp_element = row[5]
             temp_speed = row[6]
-            if temp_type == None or temp_type.strip() == "None":
+            if temp_type is None or temp_type.strip() == "None":
                 temp_type = ""
-            if temp_element == None or temp_element.strip() == "None":
+            if temp_element is None or temp_element.strip() == "None":
                 temp_element = ""
             else:
                 temp_element = temp_element.capitalize()
-            if temp_speed == None or temp_speed.strip() == "None":
+            if temp_speed is None or temp_speed.strip() == "None":
                 temp_speed = ""
-            if temp_attribute == None or temp_attribute.strip() == "None":
+            if temp_attribute is None or temp_attribute.strip() == "None":
                 temp_attribute = ""
 
             if (
@@ -824,23 +790,23 @@ class DBcontroller:
                 else:
                     temp_modifier = str(temp_modifier)
             # [TARGET] Modifier Attribute /duration
-            if self.human_readable_dict.get(temp_target) != None:
-                temp_target = self.human_readable_dict.get(temp_target)
-            if self.human_readable_dict.get(temp_modifier) != None:
-                temp_modifier = self.human_readable_dict.get(temp_modifier)
-            if self.human_readable_dict.get(temp_attribute) != None:
-                temp_attribute = self.human_readable_dict.get(temp_attribute)
+            if self.human_readable_dict.get(temp_target) is not None:
+                temp_target = self.human_readable_dict[temp_target]
+            if self.human_readable_dict.get(temp_modifier) is not None:
+                temp_modifier = self.human_readable_dict[temp_modifier]
+            if self.human_readable_dict.get(temp_attribute) is not None:
+                temp_attribute = self.human_readable_dict[temp_attribute]
 
-            if self.human_readable_dict.get(temp_type) != None:
-                temp_type = self.human_readable_dict.get(temp_type)
-            if self.human_readable_dict.get(temp_element) != None:
-                temp_element = self.human_readable_dict.get(temp_element)
-            if self.human_readable_dict.get(temp_speed) != None:
-                temp_speed = self.human_readable_dict.get(temp_speed)
+            if self.human_readable_dict.get(temp_type) is not None:
+                temp_type = self.human_readable_dict[temp_type]
+            if self.human_readable_dict.get(temp_element) is not None:
+                temp_element = self.human_readable_dict[temp_element]
+            if self.human_readable_dict.get(temp_speed) is not None:
+                temp_speed = self.human_readable_dict[temp_speed]
             if temp_modifier[1:].isnumeric() and temp_modifier[0] != "x":
                 temp_modifier = temp_modifier + "%"
-            if temp_duration != None and temp_duration.strip() != "None":
-                if temp_target != None and temp_target.strip() != "None":
+            if temp_duration is not None and temp_duration.strip() != "None":
+                if temp_target is not None and temp_target.strip() != "None":
                     ret = ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(
                         temp_target,
                         temp_speed,
@@ -860,7 +826,7 @@ class DBcontroller:
                         row[3],
                     )
             else:
-                if temp_target != None and temp_target.strip() != "None":
+                if temp_target is not None and temp_target.strip() != "None":
                     ret = ret + "[{}] {} {} {} {} {} \n".format(
                         temp_target,
                         temp_speed,
@@ -921,15 +887,15 @@ class DBcontroller:
                 temp_type = row[4]
                 temp_element = row[5]
                 temp_speed = row[6]
-                if temp_type == None or temp_type.strip() == "None":
+                if temp_type is None or temp_type.strip() == "None":
                     temp_type = ""
-                if temp_element == None or temp_element.strip() == "None":
+                if temp_element is None or temp_element.strip() == "None":
                     temp_element = ""
                 else:
                     temp_element = temp_element.capitalize()
-                if temp_speed == None or temp_speed.strip() == "None":
+                if temp_speed is None or temp_speed.strip() == "None":
                     temp_speed = ""
-                if temp_attribute == None or temp_attribute.strip() == "None":
+                if temp_attribute is None or temp_attribute.strip() == "None":
                     temp_attribute = ""
 
                 if (
@@ -942,24 +908,24 @@ class DBcontroller:
                     else:
                         temp_modifier = str(temp_modifier)
                 # [TARGET] Modifier Attribute /duration
-                if self.human_readable_dict.get(temp_target) != None:
-                    temp_target = self.human_readable_dict.get(temp_target)
-                if self.human_readable_dict.get(temp_modifier) != None:
-                    temp_modifier = self.human_readable_dict.get(temp_modifier)
-                if self.human_readable_dict.get(temp_attribute) != None:
-                    temp_attribute = self.human_readable_dict.get(temp_attribute)
+                if self.human_readable_dict.get(temp_target) is not None:
+                    temp_target = self.human_readable_dict[temp_target]
+                if self.human_readable_dict.get(temp_modifier) is not None:
+                    temp_modifier = self.human_readable_dict[temp_modifier]
+                if self.human_readable_dict.get(temp_attribute) is not None:
+                    temp_attribute = self.human_readable_dict[temp_attribute]
 
-                if self.human_readable_dict.get(temp_type) != None:
-                    temp_type = self.human_readable_dict.get(temp_type)
-                if self.human_readable_dict.get(temp_element) != None:
-                    temp_element = self.human_readable_dict.get(temp_element)
-                if self.human_readable_dict.get(temp_speed) != None:
-                    temp_speed = self.human_readable_dict.get(temp_speed)
+                if self.human_readable_dict.get(temp_type) is not None:
+                    temp_type = self.human_readable_dict[temp_type]
+                if self.human_readable_dict.get(temp_element) is not None:
+                    temp_element = self.human_readable_dict[temp_element]
+                if self.human_readable_dict.get(temp_speed) is not None:
+                    temp_speed = self.human_readable_dict[temp_speed]
                 if temp_modifier[1:].isnumeric() and temp_modifier[0] != "x":
                     temp_modifier = temp_modifier + "%"
 
-                if temp_duration != None and temp_duration.strip() != "None":
-                    if temp_target != None and temp_target.strip() != "None":
+                if temp_duration is not None and temp_duration.strip() != "None":
+                    if temp_target is not None and temp_target.strip() != "None":
                         ret = ret + "[{}] {} {} {} {} {} /{} turn(s) \n".format(
                             temp_target,
                             temp_speed,
@@ -979,7 +945,7 @@ class DBcontroller:
                             row[3],
                         )
                 else:
-                    if temp_target != None and temp_target.strip() != "None":
+                    if temp_target is not None and temp_target.strip() != "None":
                         ret = ret + "[{}] {} {} {} {} {} \n".format(
                             temp_target,
                             temp_speed,
@@ -1115,7 +1081,7 @@ class DBcontroller:
 
     def dispatchSearch(self, search_query: str):
         search = search_query.split(" ")
-        ret_dict: Dict[int, list] = dict()
+        ret_dict: dict[int, list] = dict()
         for words in search:
             words = "%{}%".format(words)
             sql = "SELECT dispatchid,typename,stage,name,char1id,char2id,char3id,char4id FROM danmemo.dispatch where typename like %s or stage like %s or name like %s;".replace(
@@ -1124,7 +1090,7 @@ class DBcontroller:
             self._mycursorprepared.execute(sql, (words, words, words))
             for row in self._mycursorprepared:
                 d_id = row[0]
-                if ret_dict.get(d_id) == None:
+                if ret_dict.get(d_id) is None:
                     ret_dict[d_id] = [
                         0,
                         row[1],
@@ -1149,7 +1115,7 @@ class DBcontroller:
         ret_list = []
         highest = None
         for keys in ret_dict:
-            if highest == None:
+            if highest is None:
                 highest = (ret_dict[keys])[0]
                 ret_list.append(ret_dict[keys])
             elif highest < (ret_dict[keys])[0]:
@@ -1157,7 +1123,6 @@ class DBcontroller:
                 ret_list = [ret_dict[keys]]
             elif highest == (ret_dict[keys])[0]:
                 ret_list.append(ret_dict[keys])
-        print(ret_list)
         return ret_list
 
     def assembleAssistCharacterData(self, assistid):
@@ -1166,11 +1131,6 @@ class DBcontroller:
             "danmemo", self.database
         ).format(
             assistid
-        )
-        skill_id_sql = (
-            "SELECT assistskillid FROM danmemo.assistskill where assistid = {}".replace(
-                "danmemo", self.database
-            ).format(assistid)
         )
         # base assist assemble
         self._mycursor.execute(assist_base_sql)
@@ -1183,60 +1143,15 @@ class DBcontroller:
                 ret += " [Time-Limited] "
             elif row[2] == 2:
                 ret += " [Hero Festa] "
-            for x in range(0, row[3]):
+            for _ in range(0, row[3]):
                 ret = ret + ":star:"
             ret = ret + "\n"
         return ret
-
-    def getRandomUnit(self, gacha_category):
-        if gacha_category == GachaRates.ADVENTURER_2_STARS.name:
-            stars = 2
-            table = "adventurer"
-        elif gacha_category == GachaRates.ADVENTURER_3_STARS.name:
-            stars = 3
-            table = "adventurer"
-        elif gacha_category == GachaRates.ADVENTURER_4_STARS.name:
-            stars = 4
-            table = "adventurer"
-        elif gacha_category == GachaRates.ASSIST_2_STARS.name:
-            stars = 2
-            table = "assist"
-        elif gacha_category == GachaRates.ASSIST_3_STARS.name:
-            stars = 3
-            table = "assist"
-        elif gacha_category == GachaRates.ASSIST_4_STARS.name:
-            stars = 4
-            table = "assist"
-        else:
-            raise Exception("Unknown gacha category:", gacha_category)
-
-        unit_id = table + "id"
-
-        sql = "SELECT {} FROM {}.{} WHERE stars = {} ORDER BY RAND() LIMIT 1".format(
-            unit_id, self.database, table, stars
-        )
-        sql = "SELECT {}, stars, title, name FROM {}.{} as a \
-                INNER JOIN {}.character as c ON c.characterid = a.characterid \
-                WHERE {} IN (SELECT {} FROM ({}) t);".format(
-            unit_id, self.database, table, self.database, unit_id, unit_id, sql
-        )
-        self._mycursor.execute(sql)
-        first_row = self._mycursor.fetchone()
-        unit_type, stars, unit_id, title, name = (
-            table,
-            first_row[1],
-            first_row[0],
-            first_row[2],
-            first_row[3],
-        )
-        print(unit_type, stars, unit_id, title, name)
-        return unit_type, stars, unit_id, title, name
 
     def get_user(self, discord_id, discord_unique_id):
         sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, units_summary, gacha_mode, discord_unique_id, units_distinct_number, units_score FROM {}.user user WHERE user.discord_id = %s or user.discord_unique_id = %s".format(
             self.database
         )
-        print(sql)
         parameters = (discord_id, discord_unique_id)
 
         self._mycursor.execute(sql, parameters)
@@ -1286,7 +1201,6 @@ class DBcontroller:
         sql = "SELECT user_id, discord_id, crepes, last_bento_date, units, units_summary, gacha_mode, discord_unique_id, units_distinct_number, units_score FROM {}.user user WHERE user.{} > 0 ORDER BY user.{} DESC".format(
             self.database, column, column
         )
-        print(sql)
 
         self._mycursor.execute(sql)
         users = []
@@ -1338,7 +1252,7 @@ class DBcontroller:
             sql = "INSERT INTO {}.user (discord_id, crepes, last_bento_date, units_summary, gacha_mode, discord_unique_id, units_distinct_number, units_score) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)".format(
                 self.database
             )
-            parameters = (
+            parameters = [
                 user.discord_id,
                 user.crepes,
                 user.last_bento_date,
@@ -1347,13 +1261,13 @@ class DBcontroller:
                 user.discord_unique_id,
                 user.units_distinct_number,
                 user.units_score,
-            )
+            ]
         else:
             sql = (
                 "UPDATE {}.user SET discord_id = %s, crepes = %s, last_bento_date = %s, units_summary = %s, gacha_mode = %s, discord_unique_id = %s, units_distinct_number = %s, units_score = %s"
                 " WHERE user_id = %s".format(self.database)
             )
-            parameters = (
+            parameters = [
                 user.discord_id,
                 user.crepes,
                 user.last_bento_date,
@@ -1363,7 +1277,7 @@ class DBcontroller:
                 user.units_distinct_number,
                 user.units_score,
                 user.user_id,
-            )
+            ]
 
         log = LogsCommand(user.discord_id, date, command, sql, parameters)
         print(log)
@@ -1396,7 +1310,7 @@ class DBcontroller:
         print(self._mycursor.rowcount, "record inserted.")
         return self._mycursor.lastrowid
 
-    def get_all_adventurers(self):
+    def get_all_adventurers(self) -> list[SimpleNamespace]:
         sql = "SELECT a.adventurerid, a.characterid, a.typeid, a.alias, a.title, a.stars, a.limited, a.ascended, \
               c.name, c.iscollab,\
               t.name\
@@ -1442,7 +1356,7 @@ class DBcontroller:
             res.append(row_as_dict)
         return res
 
-    def get_all_assists(self):
+    def get_all_assists(self) -> list[SimpleNamespace]:
         sql = "SELECT a.assistid, a.characterid, a.alias, a.title, a.stars, a.limited, c.name, c.iscollab\
               FROM {}.assist AS a, {}.character AS c\
               WHERE c.characterid = a.characterid".format(
@@ -1477,115 +1391,6 @@ class DBcontroller:
             )
             res.append(row_as_dict)
         return res
-
-    # def get_all_adventurers_skills(self):
-    #     sql = "SELECT ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, c.name\
-    #     FROM {}.adventurerskilleffects AS ase\
-    #     INNER JOIN {}.element AS e on e.elementid = ase.eleid\
-    #     INNER JOIN {}.modifier AS m on m.modifierid = ase.modifierid\
-    #     INNER JOIN {}.type AS ty on ty.typeid = ase.typeid\
-    #     INNER JOIN {}.target AS ta on ta.targetid = ase.Targetid\
-    #     INNER JOIN {}.attribute AS a on a.attributeid = ase.attributeid\
-    #     LEFT JOIN {}.speed AS s on ase.speedid = s.speedid\
-    #     INNER JOIN {}.adventurerskill AS ads on ads.adventurerskillid = ase.adventurerskillid\
-    #     INNER JOIN {}.adventurer AS ad on ad.adventurerid = ads.adventurerid\
-    #     INNER JOIN {}.character AS c on c.characterid = ad.characterid"\
-    #     .format(*((self.database.lower(),)*10))
-
-    #     print(sql)
-
-    #     self._mycursor.execute(sql)
-
-    #     res = []
-    #     unit_type = "adventurer"
-    #     for row in self._mycursor:
-    #         unit_id, character_id, alias, unit_label, stars, is_limited, character_name, is_collab = row
-    #         row_as_dict = format_row_as_sns(unit_type=unit_type, unit_id=unit_id, character_id=character_id, alias=alias, unit_label=unit_label, stars=stars, is_limited=is_limited, character_name=character_name, is_collab=is_collab)
-    #         res.append(row_as_dict)
-    #     return res
-
-    # def get_all_adventurers_developments(self):
-    #     sql = "SELECT addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name\
-    #     FROM {}.adventurerdevelopment as addev\
-    #     INNER JOIN {}.modifier as m on m.modifierid = addev.modifierid\
-    #     INNER JOIN {}.attribute as a on a.attributeid = addev.attributeid\
-    #     INNER JOIN {}.adventurer as ad on ad.adventurerid = addev.adventurerid\
-    #     INNER JOIN {}.character as c on c.characterid = ad.characterid"\
-    #     .format(*((self.database.lower(),)*5))
-
-    #     self._mycursor.execute(sql)
-
-    #     res = []
-    #     unit_type = "adventurer"
-    #     for row in self._mycursor:
-    #         development, modifier, attribute, stars, title, alias, limited, character = row
-    #         row_as_dict = format_row_as_sns(unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
-    #         res.append(row_as_dict)
-    #     return res
-
-    # def get_all_adventurers_skills(self):
-    #     sql = "SELECT ase.duration, e.name AS element, m.value AS modifier, ty.name AS type, ta.name AS target, a.name AS attribute, s.name AS speed, ad.stars, ad.title, ad.alias, ad.limited, c.name\
-    #     FROM {}.adventurerskilleffects AS ase\
-    #     INNER JOIN {}.element AS e on e.elementid = ase.eleid\
-    #     INNER JOIN {}.modifier AS m on m.modifierid = ase.modifierid\
-    #     INNER JOIN {}.type AS ty on ty.typeid = ase.typeid\
-    #     INNER JOIN {}.target AS ta on ta.targetid = ase.Targetid\
-    #     INNER JOIN {}.attribute AS a on a.attributeid = ase.attributeid\
-    #     LEFT JOIN {}.speed AS s on ase.speedid = s.speedid\
-    #     INNER JOIN {}.adventurerskill AS ads on ads.adventurerskillid = ase.adventurerskillid\
-    #     INNER JOIN {}.adventurer AS ad on ad.adventurerid = ads.adventurerid\
-    #     INNER JOIN {}.character AS c on c.characterid = ad.characterid"\
-    #     .format(*((self.database.lower(),)*10))
-
-    #     self._mycursor.execute(sql)
-
-    #     res = []
-    #     unit_type = "adventurer"
-    #     for row in self._mycursor:
-    #         duration, element, modifier, type, target, attribute, speed, stars, title, alias, limited, character = row
-    #         row_as_dict = format_row_as_sns(unit_type=unit_type, duration=duration, element=element, modifier=modifier, type=type, target=target, attribute=attribute, speed=speed, stars=stars, title=title, alias=alias, limited=limited, character=character)
-    #         res.append(row_as_dict)
-    #     return res
-
-    # def get_all_assists_skills(self):
-    #     sql = "SELECT ase.duration, m.value as modifier, ta.name as target, a.name as attribute, assist.stars, assist.title, assist.alias, assist.limited, c.name\
-    #     FROM {}.assistskilleffects as ase\
-    #     INNER JOIN {}.modifier as m on m.modifierid = ase.modifierid\
-    #     INNER JOIN {}.target as ta on ta.targetid = ase.Targetid\
-    #     INNER JOIN {}.attribute as a on a.attributeid = ase.attributeid\
-    #     INNER JOIN {}.assistskill as ass on ass.assistskillid = ase.assistskillid\
-    #     INNER JOIN {}.assist as assist on assist.assistid = ass.assistid\
-    #     INNER JOIN {}.character as c on c.characterid = assist.characterid"\
-    #     .format(*((self.database.lower(),)*7))
-
-    #     self._mycursor.execute(sql)
-
-    #     res = []
-    #     unit_type = "assist"
-    #     for row in self._mycursor:
-    #         duration, modifier, target, attribute, stars, title, alias, limited, character = row
-    #         row_as_dict = format_row_as_sns(unit_type=unit_type, duration=duration, modifier=modifier, target=target, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
-    #         res.append(row_as_dict)
-    #     return res
-
-    # def get_all_adventurers_developments(self):
-    #     sql = "SELECT addev.name as development, m.value as modifier, a.name as attribute, ad.stars, ad.title, ad.alias, ad.limited, c.name\
-    #     FROM {}.adventurerdevelopment as addev\
-    #     INNER JOIN {}.modifier as m on m.modifierid = addev.modifierid\
-    #     INNER JOIN {}.attribute as a on a.attributeid = addev.attributeid\
-    #     INNER JOIN {}.adventurer as ad on ad.adventurerid = addev.adventurerid\
-    #     INNER JOIN {}.character as c on c.characterid = ad.characterid"\
-    #     .format(*((self.database.lower(),)*5))
-
-    #     self._mycursor.execute(sql)
-
-    #     res = []
-    #     unit_type = "adventurer"
-    #     for row in self._mycursor:
-    #         development, modifier, attribute, stars, title, alias, limited, character = row
-    #         row_as_dict = format_row_as_sns(unit_type=unit_type, development=development, modifier=modifier, attribute=attribute, stars=stars, title=title, alias=alias, limited=limited, character=character)
-    #         res.append(row_as_dict)
-    #     return res
 
     def get_all_adventurers_developments_skills(self):
         sql = "SELECT addev.adventurerdevelopmentid,addev.name as development, ad.stars, ad.title, ad.alias, ad.limited, c.name, addev.adventurerid\

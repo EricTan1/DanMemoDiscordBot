@@ -1,20 +1,17 @@
-from typing import Optional
-
 from database.entities.BaseConstants import Base
 
 
 class Assist(Base):
     def __init__(
         self,
-        assistid,
+        assistid: int | None,
         characterid: int,
         title: str,
         limited: int,
         stars: int,
-        alias: Optional[str],
+        alias: str | None,
     ):
-        """(Assist, int, int, int, bool, int, str or None, str or
-        None) -> Assist
+        """
         stars : the base stars of a unit (1/2/3/4)
         limited : is the unit regular/Time-limited/Hero Festa -> 0/1/2
         """
@@ -30,10 +27,13 @@ class Assist(Base):
 
 
 class AssistSkill(Base):
-    def __init__(self, assistskillid, assistid: int, skillname: str, skilltype: str):
-        """(AssistSkill, int, int, int, int, str) -> AssistSkill
-        skillname: the name of the skill of the assist
-        """
+    def __init__(
+        self,
+        assistskillid: int | None,
+        assistid: int,
+        skillname: str,
+        skilltype: str,
+    ):
         self.assistskillid = assistskillid
         self.assistid = assistid
         self.skillname = skillname
@@ -46,7 +46,7 @@ class AssistSkill(Base):
 class AssistSkillEffects(Base):
     def __init__(
         self,
-        assistskilleffectsid,
+        assistskilleffectsid: int | None,
         assistskillid: int,
         targetid: int,
         attributeid: int,
@@ -56,8 +56,7 @@ class AssistSkillEffects(Base):
         elementid: int,
         typeid: int,
     ):
-        """(AssistSkillEffects, int, int, int, int, int, int,
-        int) -> AssistSkillEffects
+        """
         duration : some buffs/debuffs have durations
         """
         self.assistskilleffectsid = assistskilleffectsid
@@ -75,23 +74,10 @@ class AssistSkillEffects(Base):
 
 
 class AssistStats(Base):
-    """This class is an object that represents the
-    stats table in the DB
-    """
-
-    def __init__(self, assiststatsid, assistid: int, attributeid: int, value):
-        """(Stats, int, int, int, str) -> Stats
-        value : python list but in str format of an attribute
-        ex:
-        attribute: Strength
-        [1,2,3,4,5,6]
-        [LB0,LB1,LB2,LB3,LB4,LB5]
-        corresponds with limit break 0-5
-        """
+    def __init__(
+        self, assiststatsid: int | None, assistid: int, attributeid: int, value: str
+    ):
         self.assiststatsid = assiststatsid
         self.assistid = assistid
         self.attributeid = attributeid
         self.value = value
-
-    def __str__(self):
-        return self.name

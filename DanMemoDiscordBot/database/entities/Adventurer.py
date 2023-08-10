@@ -1,5 +1,3 @@
-from typing import Optional
-
 from database.entities.BaseConstants import Base
 
 
@@ -13,7 +11,7 @@ class Adventurer(Base):
         limited: int,
         ascended: bool,
         stars: int,
-        alias: Optional[str],
+        alias: str | None,
     ):
         """(Adventurer, int, int, int, bool, bool, int, str or None, str or
         None) -> Adventurer
@@ -90,8 +88,6 @@ class AdventurerDevelopment(Base):
         self.adventurerdevelopmentid = adventurerdevelopmentid
         self.adventurerid = adventurerid
         self.name = name
-        # self.attributeid = int(attributeid)
-        # self.modifierid = int(modifierid)
 
 
 class AdventurerDevelopmentSkillEffects(Base):
@@ -109,7 +105,6 @@ class AdventurerDevelopmentSkillEffects(Base):
     ):
         """(AdventurerDevelopment, int, int, str, int,
         int) -> AdventurerDevelopment
-        name : name of the development skill
         """
         self.adventurerdevelopmentskilleffectsid = adventurerdevelopmentskilleffectsid
         self.adventurerdevelopmentid = adventurerdevelopmentid
@@ -120,10 +115,6 @@ class AdventurerDevelopmentSkillEffects(Base):
         self.typeid = typeid
         self.eleid = eleid
         self.speedid = speedid
-
-    def __str__(self):
-        """Placeholder for now we will add modifier and attribute after?"""
-        return self.name
 
 
 class AdventurerStats(Base):
@@ -146,6 +137,3 @@ class AdventurerStats(Base):
         self.adventurerid = adventurerid
         self.attributeid = attributeid
         self.value = value
-
-    def __str__(self):
-        return self.name

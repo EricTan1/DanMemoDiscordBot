@@ -1,11 +1,10 @@
 import json
 import os
 from io import BytesIO
-from typing import Any, Dict
+from typing import Any
 
-import interactions
-from interactions.ext.files import CommandContext
-from interactions.ext.wait_for import WaitForClient
+from aiohttp import ClientSession
+from interactions import Attachment, File, SlashContext
 
 from database.DBcontroller import EDITORS, DatabaseEnvironment, DBConfig, DBcontroller
 from database.entities.Adventurer import (
@@ -134,7 +133,7 @@ class InsertCharacter:
                     )
                 )
                 self.insertAdventurerSkillEffects(
-                    adventurerskillid, skillsList.get("effects")
+                    adventurerskillid, skillsList["effects"]
                 )
             elif skillsKeys == "combat":
                 for skills in skillsList:
@@ -144,7 +143,7 @@ class InsertCharacter:
                         )
                     )
                     self.insertAdventurerSkillEffects(
-                        adventurerskillid, skills.get("effects")
+                        adventurerskillid, skills["effects"]
                     )
             elif skillsKeys == "additionals":
                 for skills in skillsList:
@@ -154,7 +153,7 @@ class InsertCharacter:
                         )
                     )
                     self.insertAdventurerSkillEffects(
-                        adventurerskillid, skills.get("effects")
+                        adventurerskillid, skills["effects"]
                     )
             # development
             else:
@@ -163,7 +162,7 @@ class InsertCharacter:
                         AdventurerDevelopment(None, adventurerid, skills.get("name"))
                     )
                     self.insertAdventurerDevelopmentSkillEffects(
-                        adventurerdevelopmentid, skills.get("effects")
+                        adventurerdevelopmentid, skills["effects"]
                     )
 
                     # self._db.insertData(AdventurerDevelopmentSkillEffects(None, adventurerdevelopmentid, skills.get("name"), attributeid, modifierid))
@@ -174,24 +173,16 @@ class InsertCharacter:
         for effects in skilleffectList:
             # Type+Element
             temp_type = effects.get("type")
-            if temp_type == None:
+            if temp_type is None:
                 temp_type = ""
             temp_element = effects.get("element")
-            if temp_element == None:
+            if temp_element is None:
                 temp_element = ""
             if temp_type.split("_")[0] in ele_list:
                 temp_split = temp_type.split("_")
                 temp_element = temp_split[0]
-                print(temp_type)
-                if temp_type != None and len(temp_split) == 3:
+                if temp_type is not None and len(temp_split) == 3:
                     temp_type = temp_split[1] + "_" + temp_split[2]
-                # temp_index = temp_value.find("_")
-                # temp_element = temp_value[0:temp_index]
-                # temp_ad_ele = temp_element
-                # temp_type = temp_value[temp_index+1:]
-            # else:
-            # temp_type = ""
-            # temp_element=""
             # Element
             eleid = self.getBaseConstants(Element(None, temp_element), False)
             # Type for skills
@@ -200,7 +191,7 @@ class InsertCharacter:
             temp_attribute = effects.get("attribute")
             temp_speed = effects.get("speed")
             temp_modifier = effects.get("modifier")
-            if temp_modifier == None:
+            if temp_modifier is None:
                 temp_modifier = ""
             if len(temp_modifier) > 0 and temp_modifier[len(temp_modifier) - 1] == "%":
                 temp_modifier = temp_modifier[: len(temp_modifier) - 1]
@@ -231,24 +222,16 @@ class InsertCharacter:
         for effects in skilleffectList:
             # Type+Element
             temp_type = effects.get("type")
-            if temp_type == None:
+            if temp_type is None:
                 temp_type = ""
             temp_element = effects.get("element")
-            if temp_element == None:
+            if temp_element is None:
                 temp_element = ""
             if temp_type.split("_")[0] in ele_list:
                 temp_split = temp_type.split("_")
                 temp_element = temp_split[0]
-                print(temp_type)
-                if temp_type != None and len(temp_split) == 3:
+                if temp_type is not None and len(temp_split) == 3:
                     temp_type = temp_split[1] + "_" + temp_split[2]
-                # temp_index = temp_value.find("_")
-                # temp_element = temp_value[0:temp_index]
-                # temp_ad_ele = temp_element
-                # temp_type = temp_value[temp_index+1:]
-            # else:
-            # temp_type = ""
-            # temp_element=""
             # Element
             eleid = self.getBaseConstants(Element(None, temp_element), False)
             # Type for skills
@@ -257,7 +240,7 @@ class InsertCharacter:
             temp_attribute = effects.get("attribute")
             temp_speed = effects.get("speed")
             temp_modifier = effects.get("modifier")
-            if temp_modifier == None:
+            if temp_modifier is None:
                 temp_modifier = ""
             if len(temp_modifier) > 0 and temp_modifier[len(temp_modifier) - 1] == "%":
                 temp_modifier = temp_modifier[: len(temp_modifier) - 1]
@@ -314,7 +297,7 @@ class InsertCharacter:
                 assistskillid = self._db.insertData(
                     AssistSkill(None, assistid, skills_list.get("name"), skills_keys)
                 )
-                self.insertAssistSkillEffects(assistskillid, skills_list.get("effects"))
+                self.insertAssistSkillEffects(assistskillid, skills_list["effects"])
 
     def insertAssistSkillEffects(self, assistskillid, skilleffectList: list):
         # assistskilleffects SET UP
@@ -324,16 +307,16 @@ class InsertCharacter:
             temp_modifier = effects.get("modifier")
             temp_element = effects.get("element")
             temp_type = effects.get("type")
-            if temp_modifier == None:
+            if temp_modifier is None:
                 temp_modifier = ""
             if len(temp_modifier) > 0 and temp_modifier[len(temp_modifier) - 1] == "%":
                 temp_modifier = temp_modifier[: len(temp_modifier) - 1]
             targetid = self.getBaseConstants(Target(None, temp_target), False)
             attributeid = self.getBaseConstants(Attribute(None, temp_attribute), False)
             modifierid = self.getBaseConstants(Modifier(None, temp_modifier), True)
-            if temp_element == None:
+            if temp_element is None:
                 temp_element = ""
-            if temp_type == None:
+            if temp_type is None:
                 temp_type = ""
 
             eleid = self.getBaseConstants(Element(None, temp_element), False)
@@ -433,18 +416,14 @@ if __name__ == "__main__":
     path = "../../DB/missingad"
     db = DBcontroller(DBConfig(DatabaseEnvironment.LOCAL))
     ic = InsertCharacter(db)
-    my_set = set()
     for filename in os.listdir(path):
         with open(path + "/" + filename, "r", encoding="utf8") as f:
             if filename != "desktop.ini":
                 print(filename)
                 as_dict = json.load(f)
-                if as_dict.get("limited") == None:
+                if as_dict.get("limited") is None:
                     as_dict["limited"] = False
-                # temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
-                # ic.insertAssist(temp_as)
 
-                # (self, title, name, types, stars, limited, ascended, stats, skills)
                 temp_ad = AdventureC(
                     as_dict.get("title"),
                     as_dict.get("name"),
@@ -460,19 +439,18 @@ if __name__ == "__main__":
 
 async def run(
     dbConfig: DBConfig,
-    client: WaitForClient,
-    ctx: CommandContext,
-    unit_file: interactions.Attachment,
+    ctx: SlashContext,
+    unit_file: Attachment,
 ):
     # permission checking
-    if ctx.author.id in EDITORS:
+    if int(ctx.author.id) in EDITORS:
         ic = InsertCharacter(DBcontroller(dbConfig))
 
         try:
-            async with client._http._req._session.get(unit_file.url) as request:
-                read_json = await request.content.read()
-            my_json = read_json.decode("utf8")
-            as_dict: Dict[str, Any] = json.loads(my_json)
+            async with ClientSession() as session:
+                async with session.get(unit_file.url) as resp:
+                    my_json = await resp.text()
+            as_dict: dict[str, Any] = json.loads(my_json)
 
             if "type" in as_dict.keys():
                 sub_command = "adventurer"
@@ -481,7 +459,7 @@ async def run(
 
             validateStructure(as_dict, sub_command)
 
-            if as_dict.get("limited") == None:
+            if as_dict.get("limited") is None:
                 as_dict["limited"] = 0
             if sub_command == "assist":
                 temp_as = AssistC(
@@ -506,19 +484,20 @@ async def run(
                 )
                 ic.insertAdventurer(temp_ad)
             else:
-                return ctx.send("Error reading command")
-            title = f"{as_dict['title']} - {as_dict['name']}.json"
-            await ctx.send(
-                "Character has been added",
-                files=interactions.File(filename=title, fp=BytesIO(read_json)),
-            )
+                return await ctx.send("Error reading command")
         except:
-            await ctx.send("Error in reading json")
+            return await ctx.send("Error in reading json")
+
+        title = f"{as_dict['title']} - {as_dict['name']}.json"
+        await ctx.send(
+            "Character has been added",
+            files=File(BytesIO(my_json.encode()), file_name=title),
+        )
 
 
 # Basic validation for the unit json's structure.
 # TODO: use TypedDict, or better Pydantic, for full validation
-def validateStructure(unitDict: Dict[str, Any], unitType: str):
+def validateStructure(unitDict: dict[str, Any], unitType: str):
     assert (
         set(["title", "name", "stars", "limited", "stats", "skills"]) <= unitDict.keys()
     )
@@ -534,31 +513,3 @@ def validateStructure(unitDict: Dict[str, Any], unitType: str):
         assert set(["regular", "instant_effect"]) == unitDict["skills"].keys()
     else:
         raise
-
-
-""" async def testAd(dbConfig, client, ctx):
-    db = DBcontroller(dbConfig)
-    ic = InsertCharacter(db)
-    for filename in os.listdir("./testJsonAdv/"):
-        if filename.endswith(".json"): 
-            # print(os.path.join(directory, filename))
-            with open('./testJsonAdv/{}'.format(filename)) as f:
-                as_dict = json.load(f)
-                if(as_dict.get("limited")== None):
-                    as_dict["limited"]=False
-                temp_ad = AdventureC(as_dict.get("title"), as_dict.get("name"), as_dict.get("type"),as_dict.get("stars"), as_dict.get("limited"),  True, as_dict.get("stats"), as_dict.get("skills"))
-                ic.insertAdventurer(temp_ad)
-    await ctx.send("character(s) has been added")
-async def testAs(dbConfig, client, ctx):
-    db = DBcontroller(dbConfig)
-    ic = InsertCharacter(db)
-    for filename in os.listdir("./testJsonAs/"):
-        if filename.endswith(".json"): 
-            # print(os.path.join(directory, filename))
-            with open('./testJsonAs/{}'.format(filename)) as f:
-                as_dict = json.load(f)
-                if(as_dict.get("limited")== None):
-                    as_dict["limited"]=False
-                temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
-                ic.insertAssist(temp_as)
-    await ctx.send("character(s) has been added") """

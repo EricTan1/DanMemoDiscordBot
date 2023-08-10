@@ -1,10 +1,10 @@
-import interactions
+from interactions import Embed, SlashContext
 
 from commands.utils import Status
 
 
-async def run(ctx: interactions.CommandContext):
-    embed = interactions.Embed()
+async def run(ctx: SlashContext):
+    embed = Embed()
     embed.color = Status.KO.value
     embed.title = "Use this link to invite me!"
     embed.description = "https://discord.com/api/oauth2/authorize?client_id=671857934476509195&permissions=378944&scope=bot%20applications.commands"

@@ -1,16 +1,14 @@
 import datetime
 
-import interactions
-from interactions.ext.files import CommandContext
+from interactions import Embed, File, SlashContext
 
-from commands.utils import Status, get_emoji, mention_author
+from commands.emojis import crepe_emoji
+from commands.utils import Status
 from database.DBcontroller import DBConfig
 from database.entities.User import User
 
-crepe_emoji = get_emoji("crepe").format
 
-
-async def run(db_config: DBConfig, ctx: CommandContext):
+async def run(db_config: DBConfig, ctx: SlashContext):
     author = str(ctx.author)
     authorUniqueId = str(ctx.author.id)
 
@@ -26,14 +24,9 @@ async def run(db_config: DBConfig, ctx: CommandContext):
         else:
             next_bracket += datetime.timedelta(hours=2)
 
-        print("previous_bento:", previous_bento)
-        print("next_bracket:", next_bracket)
         next_bracket = next_bracket.replace(tzinfo=datetime.timezone.utc)
-        print("next_bracket aware:", next_bracket)
 
         difference = (next_bracket - now).total_seconds()
-        print("now:", now)
-        print("difference:", difference)
         if difference > 0:
             await no_bento(user, ctx, difference)
             return
@@ -48,7 +41,7 @@ async def run(db_config: DBConfig, ctx: CommandContext):
 
     title = "Wait! Are you going to the dungeon today? Please take this with you! >///<"
 
-    description = mention_author(ctx) + " has received a " + crepe_emoji + "!"
+    description = ctx.author.mention + " has received a " + crepe_emoji + "!"
 
     if user.crepes == 1:
         footer = "There is " + str(user.crepes) + " crepe left in their bento box!"
@@ -58,7 +51,7 @@ async def run(db_config: DBConfig, ctx: CommandContext):
     await make_message(ctx, title, description, footer, True)
 
 
-async def no_bento(user: User, ctx: CommandContext, difference: float):
+async def no_bento(user: User, ctx: SlashContext, difference: float):
     currency_number = user.crepes
     if currency_number is None:
         currency_number = 0
@@ -68,7 +61,7 @@ async def no_bento(user: User, ctx: CommandContext, difference: float):
     minutes_left = int(difference / 60)
 
     description = (
-        "Sorry, I don't have anything ready for you, " + mention_author(ctx) + "..."
+        "Sorry, I don't have anything ready for you, " + ctx.author.mention + "..."
     )
     description += " Please come back again in **" + str(minutes_left) + "** min!"
 
@@ -81,9 +74,9 @@ async def no_bento(user: User, ctx: CommandContext, difference: float):
 
 
 async def make_message(
-    ctx: CommandContext, title: str, description: str, footer: str, yes: bool
+    ctx: SlashContext, title: str, description: str, footer: str, yes: bool
 ):
-    embed = interactions.Embed()
+    embed = Embed()
     embed.title = title
     embed.description = description
     embed.set_footer(text=footer)
@@ -94,6 +87,4 @@ async def make_message(
         embed.color = Status.KO.value
         filename = "nope"
     embed.set_image(url=f"attachment://{filename}.png")
-    await ctx.send(
-        embeds=embed, files=interactions.File(f"./images/bento/{filename}.png")
-    )
+    await ctx.send(embeds=embed, files=File(f"./images/bento/{filename}.png"))

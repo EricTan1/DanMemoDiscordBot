@@ -3,10 +3,8 @@ import json
 import os
 from enum import Enum
 from types import SimpleNamespace
-from typing import List
+from typing import TypeVar, cast
 
-import interactions
-from interactions.ext.files import CommandContext
 from PIL import Image
 
 # timeout before an interactable goes inactive
@@ -19,16 +17,18 @@ def getDifficultyMultiplier(difficulty: int) -> float:
 
 
 class Status(Enum):
-    """the color codes for interactions.embeds for showing message activity
-    OK = green
-    KO = red
-    """
+    """the color codes for interactions embeds for showing message activity"""
 
-    OK = 3066993
-    KO = 16203840
+    OK = 3066993  # green
+    KO = 16203840  # red
 
 
 class GachaRates(Enum):
+    # Abstract base class
+    pass
+
+
+class GachaRatesRegular(GachaRates):
     """gacha rates for danmemo summoning"""
 
     ADVENTURER_2_STARS = 0.54
@@ -39,7 +39,7 @@ class GachaRates(Enum):
     ASSIST_4_STARS = 0.01
 
 
-class GachaRatesEleventh(Enum):
+class GachaRatesEleventh(GachaRates):
     """gacha rates for eleventh draw"""
 
     ADVENTURER_3_STARS = 0.64
@@ -70,16 +70,16 @@ class TopCategories(Enum):
 
 
 class HeroAscensionStats:
-    STR: List[int] = []
-    END: List[int] = []
-    DEX: List[int] = []
-    AGI: List[int] = []
-    MAG: List[int] = []
-    HP: List[int] = []
-    MP: List[int] = []
-    PAT: List[int] = []
-    MAT: List[int] = []
-    DEF: List[int] = []
+    STR: list[int] = []
+    END: list[int] = []
+    DEX: list[int] = []
+    AGI: list[int] = []
+    MAG: list[int] = []
+    HP: list[int] = []
+    MP: list[int] = []
+    PAT: list[int] = []
+    MAT: list[int] = []
+    DEF: list[int] = []
 
 
 class HeroAscensionStatsP(HeroAscensionStats):
@@ -202,83 +202,51 @@ def format_row_as_sns(**kwargs):
     return ns
 
 
-def dict_to_sns(d):
-    return SimpleNamespace(**d)
-
-
-def getDefaultEmoji(emojiName):
-    """given a list of emoji names or just an emoji name return the
-    unicode for that emoji
-
-    Arguments:
-        emojiName {string} -- the name of the default emojis in discord
-
-    Returns:
-        List of String or String -- unicode for the emoji name
-        None -- if emojis for that name don't exist
+def getDefaultEmoji(emojiName: str) -> str | None:
+    """given an emoji name return the unicode for that emoji
+    or None if it doesn't exist
     """
 
     with open("emoji_map.json", "r", encoding="utf8") as f:
-        emoji_json_dict = json.load(f)
-        if isinstance(emojiName, list):
-            ret_list = []
-            for emoji in emojiName:
-                ret_list.append(emoji_json_dict.get(emoji))
-            return ret_list
-        else:
-            return emoji_json_dict.get(emojiName)
-
-
-def remove_values_from_list(the_list, val):
-    return [value for value in the_list if value != val]
+        emoji_json_dict: dict[str, str] = json.load(f)
+        return emoji_json_dict.get(emojiName)
 
 
 class CustomEmoji:
-    def __init__(self, id_inner, name, plural, id_discord):
+    def __init__(self, id_inner, name, id_discord):
         self.id_inner = id_inner
         self.name = name
-        self.plural = plural
         self.id_discord = id_discord
 
 
 emojis = {
-    CustomEmoji("potato1", "small potato", "small potatoes", 698248273387061439),
-    CustomEmoji("potato2", "medium potato", "medium potatoes", 698248273500307503),
-    CustomEmoji("potato3", "big potato", "big potatoes", 698248273613291590),
-    CustomEmoji("crepe", "crepe", "crepes", 698247637899411521),
-    CustomEmoji("hexdummy", "hexdummy", "hexdummy", 698471235927146526),
-    CustomEmoji("hex", "hex", "hex", 698357886492999753),
-    CustomEmoji("limitbreak_0", "limitbreak_0", "limitbreak_0", 700362619038597140),
-    CustomEmoji("limitbreak_1", "limitbreak_1", "limitbreak_1", 700362619038597140),
-    CustomEmoji("limitbreak_2", "limitbreak_2", "limitbreak_2", 700362619055505458),
-    CustomEmoji("limitbreak_3", "limitbreak_3", "limitbreak_3", 700362619340587048),
-    CustomEmoji("limitbreak_4", "limitbreak_4", "limitbreak_4", 700362619202043994),
-    CustomEmoji("limitbreak_5", "limitbreak_5", "limitbreak_5", 700362619223015585),
-    CustomEmoji("rank_6", "rank_6", "rank_6", 700362778774339625),
-    CustomEmoji("rank_7", "rank_7", "rank_7", 700362690077655232),
-    CustomEmoji("rank_8", "rank_8", "rank_8", 700362677880356894),
-    CustomEmoji("rank_9", "rank_9", "rank_9", 700362704732291234),
-    CustomEmoji("rank_10", "rank_10", "rank_10", 700362719051907103),
-    CustomEmoji("rank_11", "rank_11", "rank_11", 700362727897432076),
-    CustomEmoji("rank_12", "rank_12", "rank_12", 700362736378577030),
-    CustomEmoji("star_on", "star_on", "star_on", 700406541232242729),
-    CustomEmoji("star_off", "star_off", "star_off", 700406550044606470),
-    CustomEmoji("square_off", "square_off", "square_off", 700406581908602970),
-    CustomEmoji("square_on", "square_on", "square_on", 700406590817435759),
-    CustomEmoji("as_filter", "as_filter", "as_filter", 707301404137750618),
-    CustomEmoji("ad_filter", "ad_filter", "ad_filter", 707300588458737746),
+    CustomEmoji("crepe", "crepe", 698247637899411521),
+    CustomEmoji("limitbreak_1", "limitbreak_1", 700362619038597140),
+    CustomEmoji("limitbreak_2", "limitbreak_2", 700362619055505458),
+    CustomEmoji("limitbreak_3", "limitbreak_3", 700362619340587048),
+    CustomEmoji("limitbreak_4", "limitbreak_4", 700362619202043994),
+    CustomEmoji("limitbreak_5", "limitbreak_5", 700362619223015585),
+    CustomEmoji("rank_6", "rank_6", 700362778774339625),
+    CustomEmoji("rank_7", "rank_7", 700362690077655232),
+    CustomEmoji("rank_8", "rank_8", 700362677880356894),
+    CustomEmoji("rank_9", "rank_9", 700362704732291234),
+    CustomEmoji("rank_10", "rank_10", 700362719051907103),
+    CustomEmoji("rank_11", "rank_11", 700362727897432076),
+    CustomEmoji("rank_12", "rank_12", 700362736378577030),
+    CustomEmoji("star_on", "star_on", 700406541232242729),
+    CustomEmoji("star_off", "star_off", 700406550044606470),
+    CustomEmoji("square_off", "square_off", 700406581908602970),
+    CustomEmoji("square_on", "square_on", 700406590817435759),
+    CustomEmoji("AsRoboto", "as_filter", 707301404137750618),
+    CustomEmoji("AdRoboto", "ad_filter", 707300588458737746),
 }
 
 
-def get_emoji(name: str) -> interactions.Emoji:
+def getCustomEmoji(name: str) -> str:
     for emoji in emojis:
         if emoji.name == name:
-            return interactions.Emoji(name=emoji.name, id=emoji.id_discord)
+            return f"<:{emoji.id_inner}:{emoji.id_discord}>"
     raise Exception("Unknown emoji id:", name)
-
-
-def mention_author(ctx: CommandContext) -> str:
-    return ctx.author.mention
 
 
 def imageToBytes(image: Image.Image) -> io.BytesIO:
@@ -288,7 +256,7 @@ def imageToBytes(image: Image.Image) -> io.BytesIO:
     return byteImage
 
 
-def imageHorizontalConcat(paths: List[str]) -> io.BytesIO:
+def imageHorizontalConcat(paths: list[str]) -> io.BytesIO:
     images = [Image.open(x) for x in paths]
     widths, heights = zip(*(i.size for i in images))
 
@@ -305,7 +273,7 @@ def imageHorizontalConcat(paths: List[str]) -> io.BytesIO:
     return imageToBytes(new_im)
 
 
-def imageVerticalConcat(img_list: List[io.BytesIO]) -> io.BytesIO:
+def imageVerticalConcat(img_list: list[io.BytesIO]) -> io.BytesIO:
     images = [Image.open(x) for x in img_list]
     widths, heights = zip(*(i.size for i in images))
 
@@ -327,7 +295,7 @@ def createGSpreadJSON():
     try:
         my_json = os.environ.get("GSPREAD_IMANITY_JSON")
         current_json = json.loads(str(my_json))
-        current_json["private_key"] = os.environ.get("GSPREAD_IMANITY_KEY").replace(
+        current_json["private_key"] = os.environ["GSPREAD_IMANITY_KEY"].replace(
             "\\n", "\n"
         )
         # write the outfile
@@ -337,64 +305,57 @@ def createGSpreadJSON():
         pass
 
 
-def checkperms(ctx, guild_id, perm_list):
-    current_user = ctx.message.author
-    if current_user.guild.id == guild_id:
-        has_access = False
-        for temp_roles in current_user.roles:
-            if temp_roles.id in perm_list:
-                has_access = True
-    return has_access
+class AssistEffect:
+    def __init__(self, isbuff: bool, attribute: str, modifier: float):
+        self.isbuff = isbuff
+        self.attribute = attribute
+        self.modifier = modifier
 
 
-async def hasAccess(currentuser, guildid: list, roleid: list):
-    ret = False
-    if currentuser.guild.id in guildid:
-        for roles in currentuser.roles:
-            if roles.id in roleid:
-                ret = True
-    return ret
+class Effect(AssistEffect):
+    def __init__(self, isbuff: bool, attribute: str, modifier: float, duration: int):
+        super().__init__(isbuff, attribute, modifier)
+        self.duration = duration
 
 
-def checkBuffExistsReplace(buffDebuffList: list, buffDebuff: dict):
-    """(list, dict) -> None
+T_A = TypeVar("T_A", bound=AssistEffect)
+
+
+def checkBuffExistsReplace(buffDebuffList: list[T_A], buffDebuff: T_A) -> None:
+    """
     Check the buffs/debuffs in the list and replace if attribute and target is the same and
     if the modifier is equal or greater than the one in the list
-
-    buffDebuffList: list of buffs or debuffs
-    buffDebuff: dictionary of format
-                {isbuff,attribute,modifier,duration}
-                Example:{"isbuff":True","attribute":"strength","modifier":-45,"duration":1}
     """
     pop_value = -1
     # loop through the list to find the buff
     for i in range(0, len(buffDebuffList)):
-        curr_dict = buffDebuffList[i]
+        curr_effect = buffDebuffList[i]
         # if the buff exists then check modifier
-        if curr_dict.get("attribute") == buffDebuff.get("attribute") and curr_dict.get(
-            "isbuff"
-        ) == buffDebuff.get("isbuff"):
+        if (
+            curr_effect.attribute == buffDebuff.attribute
+            and curr_effect.isbuff == buffDebuff.isbuff
+        ):
             pop_value = i
 
     if pop_value == -1:
         buffDebuffList.append(buffDebuff)
     else:
-        curr_dict = buffDebuffList[pop_value]
+        curr_effect = buffDebuffList[pop_value]
         # if the modifier of the buffdebuff is equal to greater to the one on the list then pop the list and replace it
-        if curr_dict.get("isbuff"):
-            if curr_dict.get("modifier") < buffDebuff.get("modifier"):
+        if curr_effect.isbuff:
+            if curr_effect.modifier < buffDebuff.modifier:
                 buffDebuffList.pop(pop_value)
                 buffDebuffList.append(buffDebuff)
-        else:
-            if curr_dict.get("modifier") > buffDebuff.get("modifier"):
-                buffDebuffList.pop(pop_value)
-                buffDebuffList.append(buffDebuff)
-        # if its equal check duration and replace it with the longer one
-        if (
-            curr_dict.get("modifier") == buffDebuff.get("modifier")
-            and curr_dict.get("duration") != None
-            and buffDebuff.get("duration") != None
+        elif curr_effect.modifier > buffDebuff.modifier:
+            buffDebuffList.pop(pop_value)
+            buffDebuffList.append(buffDebuff)
+        # if it's equal, check duration and replace it with the longer one
+        if curr_effect.modifier == buffDebuff.modifier and isinstance(
+            buffDebuff, Effect
         ):
-            if curr_dict.get("duration") < buffDebuff.get("duration"):
-                buffDebuffList.pop(pop_value)
-                buffDebuffList.append(buffDebuff)
+            # Type checking isn't great for this usecase yet...
+            assert isinstance(curr_effect, Effect)
+            effectList = cast(list[Effect], buffDebuffList)
+            if curr_effect.duration < buffDebuff.duration:
+                effectList.pop(pop_value)
+                effectList.append(buffDebuff)

@@ -1,11 +1,9 @@
 import ast
 import configparser
-from typing import Dict, List, Optional, Tuple, Union, cast
+from typing import cast
 
-import interactions
-import numpy as np
-from interactions.ext.files import CommandContext
-from interactions.ext.wait_for import WaitForClient
+from aiohttp import ClientSession
+from interactions import Attachment, Client, File, SlashContext
 
 from commands.cache import Cache
 from commands.calculatorUtil import (
@@ -26,32 +24,30 @@ from commands.utils import getDifficultyMultiplier, getElements
 
 
 async def run(
-    client: WaitForClient,
-    ctx: CommandContext,
-    config_file: Optional[interactions.Attachment],
+    client: Client,
+    ctx: SlashContext,
+    config_file: Attachment | None,
 ):
     if not config_file:
         await ctx.send(
             "For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it via the /recordbuster-calculator command",
-            files=interactions.File("RBConfig.txt"),
+            files=File("RBConfig.txt"),
         )
     else:
         try:
             # if template attached start to verify it
             # attachment object only contains the URL, so have to download it first
-            async with client._http._req._session.get(config_file.url) as request:
-                contents = await request.content.read()
-            contents_decode = contents.decode("utf-8")
+            async with ClientSession() as session:
+                async with session.get(config_file.url) as resp:
+                    contents = await resp.text()
             config = configparser.ConfigParser()
-            config.read_string(contents_decode)
-            # test2 =ast.literal_eval(test)
+            config.read_string(contents)
             # general settings
-            # counterRate=config.getfloat("DEFAULT", "counterRate")
-            original_memboost: Dict[str, Union[int, float]] = ast.literal_eval(
+            original_memboost: dict[str, int | float] = ast.literal_eval(
                 config.get("DEFAULT", "memoria_boost")
             )
             try:
-                memoria_turns: Dict[str, Tuple[int, int]] = ast.literal_eval(
+                memoria_turns: dict[str, tuple[int, int]] = ast.literal_eval(
                     config.get("DEFAULT", "memoria_turns")
                 )
             except configparser.NoOptionError:
@@ -59,12 +55,12 @@ async def run(
                     "Please make sure you specify the duration of your memoria in the memoria_turns variable. If you don't know what this should look like, re-download the config file for an example."
                 )
 
-            ultRatio = config.getfloat("DEFAULT", "sa_rng")
+            saRng = config.getfloat("DEFAULT", "sa_rng")
             difficulty = config.getint("DEFAULT", "difficulty")
             # counter_RNG
-            counterRate = config.getfloat("DEFAULT", "counter_rng")
+            counterRng = config.getfloat("DEFAULT", "counter_rng")
             # skill_RNG
-            skillRatio = config.getfloat("DEFAULT", "skill_rng")
+            skillRng = config.getfloat("DEFAULT", "skill_rng")
             try:
                 react_on_st = config.getboolean("DEFAULT", "react_on_st")
             except configparser.NoOptionError:
@@ -99,11 +95,12 @@ async def run(
             boss_stats = ast.literal_eval(config.get("enemy", "stats"))
 
             # skillflow
-            sf_list = []
+            skillflows = []
 
             for x in range(0, 6):
-                sf_list.append(ast.literal_eval(config.get("skillFlow", f"unit{x+1}")))
-            skillflow = np.array(sf_list)
+                skillflows.append(
+                    ast.literal_eval(config.get("skillFlow", f"unit{x+1}"))
+                )
 
             # revis config
             revis_type_debuff = config.get("revis", "debuff")
@@ -112,45 +109,45 @@ async def run(
             ##############################
             # Init boss
             ##############################
-            if boss.lower() == "revis":
-                enemy: Enemy = Revis(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                    debuff_type=revis_type_debuff,
-                    debuff_mod=revis_type_mod,
-                )
-            elif boss.lower() == "finn":
-                enemy = Finn(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                )
-            elif boss.lower() == "ottarl":
-                enemy = Ottarl(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                )
-            elif boss.lower() == "riveria":
-                enemy = Riveria(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                )
-            elif boss.lower() == "gareth":
-                enemy = Gareth(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                )
-            else:
-                # error here?
-                enemy = Enemy(
-                    elementResistDownBase=boss_elementResistDownBase,
-                    typeResistDownBase=boss_type_resist,
-                    stats=boss_stats,
-                )
+            match boss.lower():
+                case "revis":
+                    enemy: Enemy = Revis(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                        debuff_type=revis_type_debuff,
+                        debuff_mod=revis_type_mod,
+                    )
+                case "finn":
+                    enemy = Finn(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                    )
+                case "ottarl":
+                    enemy = Ottarl(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                    )
+                case "riveria":
+                    enemy = Riveria(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                    )
+                case "gareth":
+                    enemy = Gareth(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                    )
+                case _:  # error here?
+                    enemy = Enemy(
+                        elementResistDownBase=boss_elementResistDownBase,
+                        typeResistDownBase=boss_type_resist,
+                        stats=boss_stats,
+                    )
 
             ##############################
             # Init Assists
@@ -169,7 +166,6 @@ async def run(
                 temp_ast_title_list = assist_title.split(" ")
                 is_mlb = False
                 if len(temp_ast_title_list) > 0:
-                    # its an mlb unit
                     if temp_ast_title_list[0].lower() == "mlb":
                         is_mlb = True
                         temp_ast_title_list.pop(0)
@@ -188,7 +184,6 @@ async def run(
                             for x in ast_skill
                             if x.assistsid == current_assist.unit_id
                         ]
-                        # non mlb skill and mlb skill
                         skill_effects = []
                         instant_effects = []
                         for ast_skills in ast_skill_matches:
@@ -224,11 +219,9 @@ async def run(
                         raise CalculatorException(
                             f"Cannot find assist: {temp_ast_title}"
                         )
-                        # assist_list.append(Assist([],""))
                 # no assist
                 else:
                     raise CalculatorException("No assist found at all")
-                    # assist_list.append(Assist([],""))
 
             ##############################
             # Init Units
@@ -246,12 +239,10 @@ async def run(
                 cache.get_all_adventurers_developments_skills_effects()
             )
 
-            # all the units
             unit_list = []
 
             # organize skills into an actual list from order 1-4 (s1,s2,s3,sa)
             for unitsCounter in range(0, len(unit_titles)):
-                # current_adv_json["title"]=current_adv.unit_label
                 if unit_titles[unitsCounter].strip() != "":
                     adv_matches = [
                         x
@@ -260,13 +251,13 @@ async def run(
                     ]
                     if len(adv_matches) > 0:
                         curr_unit = adv_matches[0]
-                        current_skills: Dict[str, List[Tuple[str, list]]] = {
+                        current_skills: dict[str, list[tuple[str, list]]] = {
                             "combat": [],
                             "special": [],
                             "additionals": [],
                         }
 
-                        current_skills_agi_mod: Dict[str, List[str]] = {
+                        current_skills_agi_mod: dict[str, list[str]] = {
                             "combat": [],
                             "special": [],
                             "additionals": [],
@@ -330,9 +321,7 @@ async def run(
                                 (adv_skills.skillname, adv_skill_effects_matches)
                             )
                             current_skills[adv_skills.skilltype] = temp_list
-                        # unit_skills.append(current_skills)
                         # development skills that boosts crit/pen dmg and counter damage
-                        # counter damage
                         adv_dev_matches = [
                             x
                             for x in ad_dev_effects
@@ -342,11 +331,10 @@ async def run(
                         tempCounterBoost = 0.0
                         tempCritPenBoost = 0.0
 
-                        # tempCounter
                         tempCounter_extraBoost = None
-                        tempCounter_skillEffects: Optional[Tuple[str, list]] = None
+                        tempCounter_skillEffects: tuple[str, list] | None = None
                         tempCounter_element = ""
-                        # tempAttack
+
                         tempAttack_element = ""
                         is_physical = (
                             unit_stats_list[unitsCounter]["strength"]
@@ -356,7 +344,6 @@ async def run(
                             tempCounterAttack_type = "physical"
                         else:
                             tempCounterAttack_type = "magic"
-                        # counter attack type unit_stats_list[unitsCounter]
 
                         for curr_adv_dev_skill in adv_dev_matches:
                             adv_dev_effects_matches = [
@@ -409,11 +396,9 @@ async def run(
                                         ):
                                             tempCounter_element = element
                                             tempAttack_element = element
-                                # if("attacking" in dev_attribute_name.lower()):
 
                                 # if("will of" in curr_adv_dev_skill.development.lower()):
                                 # tempElementAttackCounter = curr_adv_dev_skill.development.lower().split(" ")[2]
-                                # disable counter if healing
 
                                 # pressure skills decrease attacks
                                 # ray counter extends
@@ -452,16 +437,13 @@ async def run(
                                 ):
                                     tempCritPenBoost += dev_modifier_percent
                                 # counter extra boosts calc >:(
-                        # tempCounter_noType = 0, tempAttack_noType = 0
+                        tempCounter_noType = 0
                         if tempCounter_element == "":
                             tempCounter_noType = 1
-                        else:
-                            tempCounter_noType = 0
 
+                        tempAttack_noType = 0
                         if tempAttack_element == "":
                             tempAttack_noType = 1
-                        else:
-                            tempAttack_noType = 0
 
                         tempCounter = AdventurerCounter(
                             target="foe",
@@ -485,7 +467,7 @@ async def run(
                                 critPenBoost=tempCritPenBoost,
                                 current_skills=current_skills,
                                 current_skills_agi_mod=current_skills_agi_mod,
-                                turnOrder=skillflow[unitsCounter],
+                                turnOrder=skillflows[unitsCounter],
                                 adventurerCounter=tempCounter,
                                 adventurerAttack=tempAttack,
                                 name=f"[{unit_titles[unitsCounter]}] {curr_unit.character_name}",
@@ -502,8 +484,8 @@ async def run(
             ########################
             # unit_list 0-5 aka 6 advs in order
             # always length 4 current active adv
-            active_advs: List[Adventurer] = unit_list[0:4]
-            active_assists: List[Assist] = assist_list[0:4]
+            active_advs: list[Adventurer] = unit_list[0:4]
+            active_assists: list[Assist] = assist_list[0:4]
             sac_counter = 0
             total_damage = 0
             logs = []
@@ -516,7 +498,7 @@ async def run(
             for turn in range(0, 15):
                 # logging init
                 # enemy, unit{0-3}, turn
-                turn_logs: Dict[str, List[str]] = {
+                turn_logs: dict[str, list[str]] = {
                     "sa": [],
                     "combat_skills": [],
                     "instant_actions": [],
@@ -578,10 +560,9 @@ async def run(
                             enemy,
                             memboost,
                             sa_counter,
-                            ultRatio,
+                            saRng,
                         )
 
-                        # print("{} SA damage for {}".format(active_advs[active_adv].name,int(temp_damage)))
                         turn_logs["sa"].append(
                             f"{active_adv.name} SA damage for {temp_damage:,}"
                         )
@@ -603,7 +584,7 @@ async def run(
                     active_advs,
                     active_assists,
                     memboost,
-                    counterRate,
+                    counterRng,
                     react_on_st,
                     0,
                     turn_logs,
@@ -612,15 +593,13 @@ async def run(
                 # combat skills
                 # agi calculation
                 # list of (temp_agi,current_speed,temp_adv_skill,active_adv)
-                skills_priority_list: List[
-                    Tuple[
+                skills_priority_list: list[
+                    tuple[
                         float,
                         str,
-                        Union[
-                            Optional[AdventurerSkill], AdventurerCounter, EnemyAttack
-                        ],
+                        AdventurerSkill | AdventurerCounter | EnemyAttack | None,
                         Adventurer,
-                        Tuple[str, list],
+                        tuple[str, list],
                     ]
                 ] = []
                 for active_adv in active_advs:
@@ -649,7 +628,7 @@ async def run(
                                 temp_adv_effects_list, active_adv, enemy
                             )
                             # buff skills
-                            if temp_adv_skill == None:
+                            if temp_adv_skill is None:
                                 if current_speed == "fast":
                                     temp_agi *= 5.35
                                 elif current_speed == "slow":
@@ -715,7 +694,7 @@ async def run(
                             active_advs,
                             active_assists,
                             memboost,
-                            counterRate,
+                            counterRng,
                             react_on_st,
                             1,
                             turn_logs,
@@ -726,26 +705,25 @@ async def run(
 
                     if (
                         isinstance(removed_sorted_skill[2], AdventurerSkill)
-                        or removed_sorted_skill[2] == None
+                        or removed_sorted_skill[2] is None
                     ):
                         cast_skill = cast(
-                            Optional[AdventurerSkill], removed_sorted_skill[2]
+                            AdventurerSkill | None, removed_sorted_skill[2]
                         )
                         temp_damage = DamageFunction(
                             cast_skill,
                             adventurer,
                             enemy,
                             memboost,
-                            skillRatio,
+                            skillRng,
                         )
                     elif isinstance(removed_sorted_skill[2], AdventurerCounter):
                         # no extra boosts for auto attacks
                         temp_damage = CounterDamageFunction(
-                            removed_sorted_skill[2],
                             adventurer,
                             enemy,
                             memboost,
-                            counterRate,
+                            counterRng,
                             1,
                         )
                     turn_logs["combat_skills"].append(
@@ -777,7 +755,7 @@ async def run(
                             adventurer,
                             enemy,
                             memboost,
-                            skillRatio,
+                            skillRng,
                         )
                         # effects
                         interpretSkillAdventurerEffects(
@@ -787,8 +765,11 @@ async def run(
                             active_advs,
                         )
                         # logging and adding damage
+                        aa_name = ""
+                        if additional_action[0]:
+                            aa_name = f"({additional_action[0]})"
                         turn_logs["combat_skills"].append(
-                            f"{adventurer.name} additional ({additional_action[0]}) damage for {temp_damage:,}"
+                            f"{adventurer.name} additional {aa_name} damage for {temp_damage:,}"
                         )
                         # damage adding
                         total_damage += temp_damage
@@ -801,17 +782,11 @@ async def run(
                     active_advs,
                     active_assists,
                     memboost,
-                    counterRate,
+                    counterRng,
                     react_on_st,
                     2,
                     turn_logs,
                 )
-                # if(turn+1 == 13):
-                # for active_adv in active_advs:
-                # print("{} with {} adv buffs".format(active_adv.name,active_adv.boostCheckAlliesAdv))
-
-                # if(turn+1 == 2):
-                # print("{} with {} adv buffs".format("Ottarl",enemy.boostCheckEnemyAdv))
 
                 # allies tick down status buffs
                 for active_adv in active_advs:
@@ -832,7 +807,7 @@ async def run(
 
                 # sacs
                 if turn + 1 < 15 and sac_counter < 2:
-                    # twince for two sacs same turn
+                    # twice for two sacs same turn
                     for _ in range(2):
                         for i, active_adv in enumerate(active_advs):
                             # sac
@@ -853,9 +828,6 @@ async def run(
                                     active_advs,
                                 )
                                 sac_counter += 1
-            # print('Current total damage is {}'.format(total_damage))
-            # 6/8.5/10
-            # print('Current total score is {}'.format(total_damage*8.5*2))
             await pageRBHandler(
                 client,
                 ctx,

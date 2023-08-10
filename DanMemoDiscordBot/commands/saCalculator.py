@@ -1,9 +1,7 @@
 from types import SimpleNamespace
-from typing import List, Optional
 
-import interactions
-from interactions.ext.files import CommandContext
-from interactions.ext.wait_for import WaitForClient
+from aiohttp import ClientSession
+from interactions import Attachment, Embed, File, SlashContext
 
 # WANT TO CONNECT THIS TO DB SO CAN BE ANY SA_GAUGE
 from commands.cache import Cache
@@ -11,27 +9,26 @@ from commands.utils import Status
 
 
 async def run(
-    client: WaitForClient,
-    ctx: CommandContext,
-    config_file: Optional[interactions.Attachment],
+    ctx: SlashContext,
+    config_file: Attachment | None,
 ):
     # check if there is attachment if not send them a template attachment
     if not config_file:
         await ctx.send(
-            "For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the description /sa-calculator",
-            files=interactions.File("sacalc.txt"),
+            "For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the command /sa-calculator",
+            files=File("sacalc.txt"),
         )
     else:
         # if template attached start to verify it
         # attachment object only contains the URL, so have to download it first
-        async with client._http._req._session.get(config_file.url) as request:
-            contents = await request.content.read()
-        contents_decode = contents.decode("utf-8").split("\n")
-        positions: List[List[int]] = [[], [], [], []]
+        async with ClientSession() as session:
+            async with session.get(config_file.url) as resp:
+                contents = await resp.text()
+        contentLines = contents.split("\n")
+        positions: list[list[int]] = [[], [], [], []]
         errors = ""
         turns = 0
-        for line in contents_decode:
-            print(line)
+        for line in contentLines:
             # buff wipe verify
             stripped_line = line.strip()
             if stripped_line.startswith("BUFF_WIPE="):
@@ -85,16 +82,15 @@ async def run(
                 ctx, is_revis, adventurer_order, assists_order, positions, turns
             )
         else:
-            temp_embed = interactions.Embed()
+            temp_embed = Embed()
             temp_embed.color = Status.KO.value
             temp_embed.title = "ERROR"
             temp_embed.description = errors
             await ctx.send(embeds=temp_embed)
 
 
-def verifyAndCast(my_list: List[str]) -> List[int]:
+def verifyAndCast(my_list: list[str]) -> list[int]:
     ret = []
-    print(my_list)
     for items in my_list:
         ret.append(int(items))
     return ret
@@ -102,11 +98,11 @@ def verifyAndCast(my_list: List[str]) -> List[int]:
 
 # Speed Tier needs to be added and calcs need to happen at buff phase
 async def calculate(
-    ctx: CommandContext,
+    ctx: SlashContext,
     is_revis: bool,
-    adventurer_turns: List[str],
-    assist_turns: List[str],
-    positions: List[List[int]],
+    adventurer_turns: list[str],
+    assist_turns: list[str],
+    positions: list[list[int]],
     turns: int,
 ):
     curr_message = ""
@@ -114,8 +110,8 @@ async def calculate(
     # 1,2 = sacs in order aka index 0 and 1
     current_turn = 0
     mlb_assists = [False, False, False, False, False, False]
-    assist_order: List[List[SimpleNamespace]] = []
-    adventurer_order: List[List[SimpleNamespace]] = []
+    assist_order: list[list[SimpleNamespace]] = []
+    adventurer_order: list[list[SimpleNamespace]] = []
 
     for x in range(len(assist_turns)):
         temp_order = assist_turns[x].lower()
@@ -159,7 +155,6 @@ async def calculate(
         curr_message = curr_message + f"**Start of turn {current_turn+1}**\n"
         # WIPE BUFFS FOR FINN,OTTARL,RIVERIA TURN 4/8
         if (current_turn == 3 or current_turn == 7) and is_revis == False:
-            print("buffs wiped")
             sa_gauge_adv = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         # first sac
         if current_turn == 0:
@@ -242,7 +237,7 @@ async def calculate(
         )
         current_turn = current_turn + 1
     # SA CALC
-    temp_embed = interactions.Embed()
+    temp_embed = Embed()
     temp_embed.color = Status.OK.value
     temp_embed.title = "SA Calculator"
     temp_embed.description = curr_message
@@ -250,10 +245,10 @@ async def calculate(
 
 
 def calculate_assist_sa_gauge(
-    assists_order: List[List[SimpleNamespace]],
-    mlb_assists: List[bool],
-    charge_buffs: List[float],
-    positions: List[int],
+    assists_order: list[list[SimpleNamespace]],
+    mlb_assists: list[bool],
+    charge_buffs: list[float],
+    positions: list[int],
     self_pos: int,
 ):
     if assists_order[self_pos]:

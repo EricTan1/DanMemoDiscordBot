@@ -1,29 +1,24 @@
-import asyncio
 import math
 import operator
-from typing import Any, Dict, List, Tuple
+from asyncio import TimeoutError
+from typing import Any
 
-import interactions
-from interactions.ext.files import CommandContext, ComponentContext
-from interactions.ext.wait_for import WaitForClient
+from interactions import Client, ComponentContext, Embed, SlashContext
 
 from commands.buttons import next_page, previous_page, to_end, to_start
-from commands.utils import TIMEOUT, Status, get_emoji
+from commands.emojis import (
+    adventurer_emoji,
+    assist_emoji,
+    crepe_emoji,
+    limitbreak_emojis,
+    star_emoji,
+)
+from commands.utils import TIMEOUT, Status
 from database.DBcontroller import DBConfig
 from database.entities.User import User
 
-arrow_left = "\u2b05"
-arrow_right = "\u27a1"
-star_emoji = "\u2b50"
-crepe_emoji = get_emoji("crepe").format
-adventurer_emoji = get_emoji("ad_filter").format
-assist_emoji = get_emoji("as_filter").format
-limitbreak_emojis = [get_emoji(f"limitbreak_{number}").format for number in range(1, 6)]
 
-
-async def run(
-    dbConfig: DBConfig, client: WaitForClient, ctx: CommandContext, sub_command: str
-):
+async def run(dbConfig: DBConfig, client: Client, ctx: SlashContext, sub_command: str):
     author = str(ctx.author)
     authorUniqueId = str(ctx.author.id)
     user = User.get_user(dbConfig, author, authorUniqueId)
@@ -43,7 +38,6 @@ async def run(
     if user.units is not None:
         for key in user.units:
             units.append(user.units[key])
-    print(units)
 
     units = sorted(units, key=operator.itemgetter("character_name"))
     units = sorted(units, key=operator.itemgetter("unit_label"))
@@ -78,10 +72,10 @@ async def run(
     else:
         footer = upper_footer
 
-    embed = interactions.Embed()
+    embed = Embed()
     embed.color = Status.OK.value
-    embed.set_thumbnail(url=ctx.author.user.avatar_url)
-    embed.title = f"{ctx.author.name}'s summary profile"
+    embed.set_thumbnail(url=ctx.author.display_avatar.url)
+    embed.title = f"{ctx.author.display_name}'s summary profile"
     embed.description = description
     embed.set_footer(text=footer)
 
@@ -95,20 +89,23 @@ async def run(
 
     while True:
         try:
-            component_ctx: ComponentContext = await client.wait_for_component(
-                components=components,
-                messages=msg,
-                timeout=TIMEOUT,
-            )
+            component_ctx: ComponentContext = (
+                await client.wait_for_component(
+                    components=components,
+                    messages=msg,
+                    timeout=TIMEOUT,
+                )
+            ).ctx
 
-            if component_ctx.custom_id == "previous_page":
-                current_page = (current_page - 1) % number_pages
-            elif component_ctx.custom_id == "next_page":
-                current_page = (current_page + 1) % number_pages
-            elif component_ctx.custom_id == "to_start":
-                current_page = 0
-            elif component_ctx.custom_id == "to_end":
-                current_page = number_pages - 1
+            match component_ctx.custom_id:
+                case "previous_page":
+                    current_page = (current_page - 1) % number_pages
+                case "next_page":
+                    current_page = (current_page + 1) % number_pages
+                case "to_start":
+                    current_page = 0
+                case "to_end":
+                    current_page = number_pages - 1
 
             embed.description = build_detailed_description(
                 currency_line, units_lines, current_page
@@ -116,26 +113,27 @@ async def run(
             footer = upper_footer + f"\n\nPage {current_page+1} of {number_pages}"
             embed.set_footer(text=footer)
 
-            await component_ctx.edit(embeds=embed)
+            await component_ctx.edit_origin(embeds=embed)
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             embed.color = Status.KO.value
-            return await ctx.edit(embeds=embed, components=[])
+            return await msg.edit(embeds=embed, components=[])
 
 
-def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
-    sorted_categories: List[Tuple[str, int]] = []
+def get_summarized_unit_lines(units: list[dict[str, Any]]) -> list[str]:
+    sorted_categories: list[tuple[str, int]] = []
     previous_category = ""
     previous_number = 0
     for unit in units:
-        category = star_emoji * unit["stars"]
+        category = star_emoji * unit["stars"] + " "
         if unit["unit_type"] == "adventurer":
-            category += f" {adventurer_emoji}"
+            category += adventurer_emoji
         elif unit["unit_type"] == "assist":
-            category += f" {assist_emoji}"
+            category += assist_emoji
+
         if unit["number"] > 1:
             number = min(unit["number"] - 2, 4)
-            category += f" {limitbreak_emojis[number]}"
+            category += " " + limitbreak_emojis[number]
 
         if category == previous_category:
             previous_number += 1
@@ -153,14 +151,14 @@ def get_summarized_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
     return units_lines
 
 
-def get_detailed_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
+def get_detailed_unit_lines(units: list[dict[str, Any]]) -> list[str]:
     units_lines = []
     for unit in units:
-        units_line = star_emoji * unit["stars"]
+        units_line = star_emoji * unit["stars"] + " "
         if unit["unit_type"] == "adventurer":
-            units_line += f" {adventurer_emoji}"
+            units_line += adventurer_emoji
         elif unit["unit_type"] == "assist":
-            units_line += f" {assist_emoji}"
+            units_line += assist_emoji
         units_line += (
             f" [{unit['unit_label']}] {unit['character_name']}: {unit['number']}\n"
         )
@@ -170,7 +168,7 @@ def get_detailed_unit_lines(units: List[Dict[str, Any]]) -> List[str]:
 
 
 def build_detailed_description(
-    currency_line: str, units_lines: List[str], current_page: int, per_page=20
+    currency_line: str, units_lines: list[str], current_page: int, per_page=20
 ):
     description = currency_line
     for i in range(len(units_lines)):

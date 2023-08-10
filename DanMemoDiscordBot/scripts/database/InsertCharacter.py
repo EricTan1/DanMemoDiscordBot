@@ -231,7 +231,6 @@ if __name__ == "__main__":
     path = "../../DB/missingad"
     db = DBcontroller(DBConfig(DatabaseEnvironment.LOCAL))
     ic = InsertCharacter(db)
-    my_set = set()
     for filename in os.listdir(path):
         with open(path + '/' + filename, 'r', encoding="utf8") as f:
             if(filename != "desktop.ini"):

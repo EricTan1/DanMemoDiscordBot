@@ -1,13 +1,12 @@
 import datetime
 import io
 from collections import Counter
-from os.path import abspath, isdir
+from os.path import isdir
+from random import choice, choices
 from threading import Lock
-from typing import List
+from types import SimpleNamespace
 
-import interactions
-from interactions.ext.files import CommandContext
-from numpy.random import choice
+from interactions import Embed, File, SlashContext
 from PIL import Image
 
 from commands.cache import Cache
@@ -15,8 +14,8 @@ from commands.utils import (
     GachaModes,
     GachaRates,
     GachaRatesEleventh,
+    GachaRatesRegular,
     Status,
-    mention_author,
 )
 from database.DBcontroller import DBConfig
 from database.entities.User import User
@@ -28,7 +27,7 @@ star_emoji = "\u2b50"
 lock = Lock()
 
 
-async def run(dbConfig: DBConfig, ctx: CommandContext):
+async def run(dbConfig: DBConfig, ctx: SlashContext):
     acquired = lock.acquire(blocking=False)
     if not acquired:
         return await try_again_later(ctx)
@@ -39,14 +38,14 @@ async def run(dbConfig: DBConfig, ctx: CommandContext):
             lock.release()
 
 
-async def try_again_later(ctx: CommandContext):
-    embed = interactions.Embed()
+async def try_again_later(ctx: SlashContext):
+    embed = Embed()
     embed.title = "Sorry, please try again later"
     embed.color = Status.KO.value
     await ctx.send(embeds=embed)
 
 
-async def engine(dbConfig: DBConfig, ctx: CommandContext):
+async def engine(dbConfig: DBConfig, ctx: SlashContext):
     author = str(ctx.author)
     authorUniqueId = str(ctx.author.id)
 
@@ -61,7 +60,7 @@ async def engine(dbConfig: DBConfig, ctx: CommandContext):
 
     user.crepes -= 1
 
-    pulls = get_pulls(10, GachaRates)
+    pulls = get_pulls(10, GachaRatesRegular)
     pulls.extend(get_pulls(1, GachaRatesEleventh))
 
     user.add_units(pulls)
@@ -72,24 +71,24 @@ async def engine(dbConfig: DBConfig, ctx: CommandContext):
     await pull_messages(ctx, user.crepes, pulls, user.gacha_mode)
 
 
-async def no_gacha(ctx: CommandContext):
+async def no_gacha(ctx: SlashContext):
     title = "Hold on! Who goes there?"
 
-    description = "What do you think you are doing, " + mention_author(ctx) + "?"
+    description = "What do you think you are doing, " + ctx.author.mention + "?"
     description += " Come back when you have something for me!"
 
     footer = "There are 0 crepes left in your bento box!"
 
-    embed = interactions.Embed()
+    embed = Embed()
     embed.color = Status.KO.value
     embed.title = title
     embed.description = description
     embed.set_footer(text=footer)
     embed.set_image(url="attachment://nope.png")
-    await ctx.send(embeds=embed, files=interactions.File("./images/gacha/nope.png"))
+    await ctx.send(embeds=embed, files=File("./images/gacha/nope.png"))
 
 
-def get_pulls(number: int, gacha_rates) -> list:
+def get_pulls(number: int, gacha_rates: type[GachaRates]) -> list:
     pulls_category = random_pulls(number, gacha_rates)
     pulls = []
     for category in pulls_category:
@@ -97,37 +96,35 @@ def get_pulls(number: int, gacha_rates) -> list:
     return pulls
 
 
-def random_pulls(number: int, gacha_rates) -> list:
+def random_pulls(number: int, gacha_rates: type[GachaRates]) -> list[str]:
     possibilities = [e.name for e in gacha_rates]
     probabilities = [e.value for e in gacha_rates]
-    pulls = []
-    for _ in range(number):
-        pulls.append(choice(possibilities, p=probabilities))
-    return pulls
+    return choices(possibilities, weights=probabilities, k=number)
 
 
-def get_random_unit(gacha_category: GachaRates):
+def get_random_unit(gacha_category: str):
     cache = Cache()
-    if gacha_category == GachaRates.ADVENTURER_2_STARS.name:
-        stars = 2
-        units = cache.get_all_adventurers()
-    elif gacha_category == GachaRates.ADVENTURER_3_STARS.name:
-        stars = 3
-        units = cache.get_all_adventurers()
-    elif gacha_category == GachaRates.ADVENTURER_4_STARS.name:
-        stars = 4
-        units = cache.get_all_adventurers()
-    elif gacha_category == GachaRates.ASSIST_2_STARS.name:
-        stars = 2
-        units = cache.get_all_assists()
-    elif gacha_category == GachaRates.ASSIST_3_STARS.name:
-        stars = 3
-        units = cache.get_all_assists()
-    elif gacha_category == GachaRates.ASSIST_4_STARS.name:
-        stars = 4
-        units = cache.get_all_assists()
-    else:
-        raise Exception("Unknown gacha category:", gacha_category)
+    match gacha_category:
+        case GachaRatesRegular.ADVENTURER_2_STARS.name:
+            stars: int = 2
+            units: list[SimpleNamespace] = cache.get_all_adventurers()
+        case GachaRatesRegular.ADVENTURER_3_STARS.name:
+            stars = 3
+            units = cache.get_all_adventurers()
+        case GachaRatesRegular.ADVENTURER_4_STARS.name:
+            stars = 4
+            units = cache.get_all_adventurers()
+        case GachaRatesRegular.ASSIST_2_STARS.name:
+            stars = 2
+            units = cache.get_all_assists()
+        case GachaRatesRegular.ASSIST_3_STARS.name:
+            stars = 3
+            units = cache.get_all_assists()
+        case GachaRatesRegular.ASSIST_4_STARS.name:
+            stars = 4
+            units = cache.get_all_assists()
+        case _:
+            raise Exception("Unknown gacha category:", gacha_category)
 
     units = [unit for unit in units if unit.stars == stars]
     unit = choice(units)
@@ -135,13 +132,13 @@ def get_random_unit(gacha_category: GachaRates):
 
 
 async def pull_messages(
-    ctx: CommandContext, currency_number: int, pulls: list, gacha_mode: int
+    ctx: SlashContext, currency_number: int, pulls: list, gacha_mode: int
 ):
     title = "Nom nom... Fuwa fuwa! ♡"
 
     description = (
         "The crepe was really good, "
-        + mention_author(ctx)
+        + ctx.author.mention
         + "! Please take this:"
         + "\n"
     )
@@ -162,19 +159,19 @@ async def pull_messages(
     if gacha_mode == GachaModes.IMG.value:
         img_path = "./images/gacha.png"
         create_image(img_path, pulls)
-        await ctx.send(files=interactions.File(img_path))
+        await ctx.send(files=File(img_path))
     else:
         gif_path = "./images/gacha.gif"
         create_gif(gif_path, pulls)
-        await ctx.send(files=interactions.File(gif_path))
+        await ctx.send(files=File(gif_path))
 
-    embed = interactions.Embed()
+    embed = Embed()
     embed.color = Status.OK.value
     embed.title = title
     embed.description = description
     embed.set_footer(text=footer)
     embed.set_image(url="attachment://yes.png")
-    await ctx.send(embeds=embed, files=interactions.File("./images/gacha/yes.png"))
+    await ctx.send(embeds=embed, files=File("./images/gacha/yes.png"))
 
 
 def create_image(img_path: str, pulls: list):
@@ -212,8 +209,7 @@ def create_gif(gif_path: str, pulls: list):
     save_gif(gif_images, gif_path)
 
 
-def save_gif(images: List[Image.Image], path: str):
-    print("Absolute path:", abspath(path))
+def save_gif(images: list[Image.Image], path: str):
     images[0].save(
         path,
         save_all=True,
@@ -223,7 +219,7 @@ def save_gif(images: List[Image.Image], path: str):
     )  # , transparency=0) #loop=1
 
 
-def concatenate_images_eleven_pulls(images: List[Image.Image]) -> io.BytesIO:
+def concatenate_images_eleven_pulls(images: list[Image.Image]) -> io.BytesIO:
     first_line = concatenate_images_horizontally(images[:6])
     second_line = concatenate_images_horizontally(images[6:])
 
@@ -331,23 +327,3 @@ def test_gacha_rates():
     print("Aggregating results")
     counter = Counter(pulls)
     print(counter)
-
-
-"""
-Result:
-Counter({
-'ADVENTURER_2_STARS': 54125, 
-'ASSIST_2_STARS': 28052, 
-'ADVENTURER_3_STARS': 9909, 
-'ASSIST_3_STARS': 4936, 
-'ADVENTURER_4_STARS': 1961, 
-'ASSIST_4_STARS': 1017})
-
-Expected:
-ADVENTURER_2_STARS = 0.54
-ASSIST_2_STARS = 0.28
-ADVENTURER_3_STARS = 0.10
-ASSIST_3_STARS = 0.05
-ADVENTURER_4_STARS = 0.02
-ASSIST_4_STARS = 0.01
-"""
