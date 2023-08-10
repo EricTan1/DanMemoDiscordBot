@@ -202,27 +202,14 @@ def format_row_as_sns(**kwargs):
     return ns
 
 
-def getDefaultEmoji(emojiName):
-    """given a list of emoji names or just an emoji name return the
-    unicode for that emoji
-
-    Arguments:
-        emojiName {string} -- the name of the default emojis in discord
-
-    Returns:
-        List of String or String -- unicode for the emoji name
-        None -- if emojis for that name don't exist
+def getDefaultEmoji(emojiName: str) -> str | None:
+    """given an emoji name return the unicode for that emoji
+    or None if it doesn't exist
     """
 
     with open("emoji_map.json", "r", encoding="utf8") as f:
-        emoji_json_dict = json.load(f)
-        if isinstance(emojiName, list):
-            ret_list = []
-            for emoji in emojiName:
-                ret_list.append(emoji_json_dict.get(emoji))
-            return ret_list
-        else:
-            return emoji_json_dict.get(emojiName)
+        emoji_json_dict: dict[str, str] = json.load(f)
+        return emoji_json_dict.get(emojiName)
 
 
 class CustomEmoji:

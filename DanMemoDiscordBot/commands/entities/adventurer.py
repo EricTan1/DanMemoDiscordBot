@@ -188,21 +188,6 @@ class Adventurer(Combatant):
                 buffsDebuffs.duration += turns
         self.boostCheckAdv = [item for item in self.boostCheckAdv if item.duration > 0]
 
-    def pop_boostCheckAdv(self, isbuff: bool, attribute: str):
-        """(bool, str, int or float, int, bool, int) -> None
-        target: self, allies, foes, foe
-        attribute: strength, magic, st, aoe
-        modifier: -10 ,+50
-        duration: 1,2,3,4
-        is_assist: is this an assist buff or not
-        position : the active unit position in the party
-        """
-        self.boostCheckAdv = [
-            item
-            for item in self.boostCheckAdv
-            if not (item.isbuff == isbuff and item.attribute == attribute)
-        ]
-
     def get_log_effect_list(self) -> list[str]:
         result = [f"**{self.name}**"] + super().get_log_effect_list()
         if self.additionalCount > 0:
@@ -212,6 +197,7 @@ class Adventurer(Combatant):
         return result
 
     def clearBuffs(self):
+        super().clearBuffs()
         self.elementDamageBoostAdv = {
             "fire": 0,
             "water": 0,

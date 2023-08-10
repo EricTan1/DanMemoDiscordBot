@@ -5,7 +5,7 @@ async def run(ctx: SlashContext):
     clan_list_name = []
     clan_list_id = []
     # loop for everyone in the list imanity discord server member list and check for role: 803388556180455424
-    for member in ctx.guild.members:  # type: ignore [union-attr]
+    for member in ctx.guild.members:
         # record their names and player id
         for roles in member.roles:
             if roles.id == 708008774140690473:

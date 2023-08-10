@@ -47,7 +47,7 @@ async def try_again_later(ctx: SlashContext):
 
 async def engine(dbConfig: DBConfig, ctx: SlashContext):
     author = str(ctx.author)
-    authorUniqueId = str(ctx.author.id)  # type: ignore [union-attr]
+    authorUniqueId = str(ctx.author.id)
 
     user = User.get_user(dbConfig, author, authorUniqueId)
 

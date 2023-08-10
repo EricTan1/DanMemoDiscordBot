@@ -25,7 +25,6 @@ async def run(ctx: SlashContext):
         # SELECT adventurerstatsid, adventurerid, advstats.attributeid, attri.name, value
         adv_stats = cache.get_all_adventurers_stats()
 
-        # ad_skill_effects_ret = [skilleffect for skilleffect in ad_skill_effects if temp_word in skilleffect.type.lower()]
         # loop through all adventurers
         for current_adv in ad_list:
             current_adv_json = dict()
@@ -117,7 +116,6 @@ async def run(ctx: SlashContext):
             ) as fp:
                 json.dump(current_adv_json, fp, indent=4)
 
-        # loop through all assists
         # unit_id, character_id, alias, unit_label, stars, is_limited, character_name, is_collab = row
         as_list = cache.get_all_assists()
         # assistsskillid, assistsid, skillname= row

@@ -20,7 +20,7 @@ from database.entities.User import User
 
 async def run(dbConfig: DBConfig, client: Client, ctx: SlashContext, sub_command: str):
     author = str(ctx.author)
-    authorUniqueId = str(ctx.author.id)  # type: ignore [union-attr]
+    authorUniqueId = str(ctx.author.id)
     user = User.get_user(dbConfig, author, authorUniqueId)
 
     if sub_command == "summary":
@@ -32,13 +32,12 @@ async def run(dbConfig: DBConfig, client: Client, ctx: SlashContext, sub_command
     if crepes is None:
         crepes = 0
 
-    currency_line = f"{crepes} x {crepe_emoji.format}\n"
+    currency_line = f"{crepes} x {crepe_emoji}\n"
 
     units = []
     if user.units is not None:
         for key in user.units:
             units.append(user.units[key])
-    print(units)
 
     units = sorted(units, key=operator.itemgetter("character_name"))
     units = sorted(units, key=operator.itemgetter("unit_label"))
@@ -128,13 +127,13 @@ def get_summarized_unit_lines(units: list[dict[str, Any]]) -> list[str]:
     for unit in units:
         category = star_emoji * unit["stars"] + " "
         if unit["unit_type"] == "adventurer":
-            category += adventurer_emoji.format
+            category += adventurer_emoji
         elif unit["unit_type"] == "assist":
-            category += assist_emoji.format
+            category += assist_emoji
 
         if unit["number"] > 1:
             number = min(unit["number"] - 2, 4)
-            category += " " + limitbreak_emojis[number].format
+            category += " " + limitbreak_emojis[number]
 
         if category == previous_category:
             previous_number += 1
@@ -157,9 +156,9 @@ def get_detailed_unit_lines(units: list[dict[str, Any]]) -> list[str]:
     for unit in units:
         units_line = star_emoji * unit["stars"] + " "
         if unit["unit_type"] == "adventurer":
-            units_line += adventurer_emoji.format
+            units_line += adventurer_emoji
         elif unit["unit_type"] == "assist":
-            units_line += assist_emoji.format
+            units_line += assist_emoji
         units_line += (
             f" [{unit['unit_label']}] {unit['character_name']}: {unit['number']}\n"
         )

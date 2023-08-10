@@ -9,7 +9,7 @@ from database.entities.User import User
 
 async def run(dbConfig: DBConfig, ctx: SlashContext, mode: str):
     author = str(ctx.author)
-    authorUniqueId = str(ctx.author.id)  # type: ignore [union-attr]
+    authorUniqueId = str(ctx.author.id)
 
     user = User.get_user(dbConfig, author, authorUniqueId)
 

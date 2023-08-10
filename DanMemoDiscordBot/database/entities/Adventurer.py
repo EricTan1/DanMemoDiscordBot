@@ -88,8 +88,6 @@ class AdventurerDevelopment(Base):
         self.adventurerdevelopmentid = adventurerdevelopmentid
         self.adventurerid = adventurerid
         self.name = name
-        # self.attributeid = int(attributeid)
-        # self.modifierid = int(modifierid)
 
 
 class AdventurerDevelopmentSkillEffects(Base):

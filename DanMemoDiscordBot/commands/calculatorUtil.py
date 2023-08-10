@@ -9,10 +9,6 @@ if TYPE_CHECKING:
     from commands.entities.enemy import Enemy
 
 
-def commonDamageFunction():
-    pass
-
-
 def DamageFunction(
     skill: AdventurerSkill | None,
     adventurer: "Adventurer",
@@ -393,9 +389,6 @@ def SADamageFunction(
         tempElementDamageBoostAdv = 0.0
         tempElementDamageBoostAst = 0.0
 
-    # critPenBoost[location] # dev skillstempPowerBoostDebuff
-    # targetResistDownAdv[targetTemp]
-    # targetResistDownAst[targetTemp]
     if target == "foe":
         temptargetResistDownAdv = enemy.targetResistDownAdv["st"]
         temptargetResistDownAst = enemy.targetResistDownAst["st"]
@@ -447,15 +440,13 @@ def SADamageFunction(
         * (0.8 + combo * 0.2)
         * saRng
     )
-    # totalDamage = totalDamage + tempDamage
-    # accumulateDamage[location] = accumulateDamage[location] + tempDamage
     return int(tempDamage)
 
 
 def CombineSA(
-    adventurerList: list["Adventurer"], enemy: "Enemy", character_list: list
+    adventurerList: list["Adventurer"], enemy: "Enemy", character_list: list[int]
 ) -> int:
-    """(list of Adventurer, Enemy, list of boolean) -> int
+    """
     characterlist : [Char1,Char2,Char3,Char4]
       char1,char2,char3,char4 : 0 or 1
     """
@@ -509,7 +500,6 @@ def CombineSA(
         * 3.7
         * 1.5
     )
-    print(f"Combine SA damage is {int(tempDamage)}")
     return int(tempDamage)
 
 
@@ -535,18 +525,6 @@ def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -
     takes in a skill effect with attribute exists of "per_each" then parse it and return the extra boosts multiplier
 
     return: extra boosts multiplier
-        for extraBoost
-        {
-            "modifier": "+40",
-            "target": "skill",
-            "attribute": "per_each_self_fire_attack_buff",
-
-            # per_each = extraboost
-            # target = self/target
-            # attribute = inbtw
-            # buff/debuff
-            "speed": "None"
-        },
     """
     extra_boosts_modifier_value = 0.0
     temp_list: list = skillEffect.attribute.split("_")
@@ -612,13 +590,13 @@ def interpretSkillAdventurerAttack(
             # "attribute" index_to
             index_to_modifier.add(index_to_effect.modifier)
         """
-    For temp boosts
-    {
-        "modifier": "normal2_str",
-        "target": "skill",
-        "attribute": "temp_boost",
-    }
-    """
+        For temp boosts
+        {
+            "modifier": "normal2_str",
+            "target": "skill",
+            "attribute": "temp_boost",
+        }
+        """
         temp_boost_effects = [
             x for x in skillEffects if x.attribute.lower().strip() == "temp_boost"
         ]
@@ -829,7 +807,6 @@ def interpretSkillAdventurerEffects(
                 enemy.pop_boostCheckAdv(is_buff, temp_attribute)
         else:
             NumberTypes = (int, float)
-            print(curr_attribute)
             if isinstance(curr_modifier, NumberTypes) and curr_attribute in [
                 "sa_gauge_charge",
                 "critical_rate",
@@ -1168,7 +1145,6 @@ def counters(
     # take the avg
     # loop through and take the avg
     for adv in adv_list:
-        # create adventurerCounter
         temp_extra_boost = 1.0
         if adv.adventurerCounter.extraBoost is not None:
             temp_extra_boost += interpretExtraBoostWrapper(

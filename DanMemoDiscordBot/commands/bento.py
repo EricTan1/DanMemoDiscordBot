@@ -10,7 +10,7 @@ from database.entities.User import User
 
 async def run(db_config: DBConfig, ctx: SlashContext):
     author = str(ctx.author)
-    authorUniqueId = str(ctx.author.id)  # type: ignore [union-attr]
+    authorUniqueId = str(ctx.author.id)
 
     user = User.get_user(db_config, author, authorUniqueId)
 
@@ -24,14 +24,9 @@ async def run(db_config: DBConfig, ctx: SlashContext):
         else:
             next_bracket += datetime.timedelta(hours=2)
 
-        print("previous_bento:", previous_bento)
-        print("next_bracket:", next_bracket)
         next_bracket = next_bracket.replace(tzinfo=datetime.timezone.utc)
-        print("next_bracket aware:", next_bracket)
 
         difference = (next_bracket - now).total_seconds()
-        print("now:", now)
-        print("difference:", difference)
         if difference > 0:
             await no_bento(user, ctx, difference)
             return

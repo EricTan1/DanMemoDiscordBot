@@ -234,7 +234,7 @@ async def pageHandler(
         except TimeoutError:
             page_list[current_page].color = Status.KO.value
             return await msg.edit(
-                files=file_list, embeds=page_list[current_page], components=None
+                files=file_list, embeds=page_list[current_page], components=[]
             )
 
 

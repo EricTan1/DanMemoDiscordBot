@@ -152,21 +152,6 @@ class Enemy(Combatant):
                     else:
                         self.targetResistDownAdv["aoe"] = 0
 
-    def pop_boostCheckAdv(self, isbuff: bool, attribute: str):
-        """(bool, str, int or float, int, bool, int) -> None
-        target: self, allies, foes, foe
-        attribute: strength, magic, st, aoe
-        modifier: -10 ,+50
-        duration: 1,2,3,4
-        is_assist: is this an assist buff or not
-        position : the active unit position in the party
-        """
-        self.boostCheckAdv = [
-            item
-            for item in self.boostCheckAdv
-            if item.isbuff != isbuff or item.attribute != attribute
-        ]
-
     def get_buff_mod(self, buffName: str):
         ret = [
             item
@@ -327,7 +312,6 @@ class Gareth(Enemy):
         self.set_boostCheckAdv(True, "physical_resist", 0.30, 4)
         self.set_boostCheckAdv(True, "magic_resist", 0.30, 4)
         self.set_boostCheckAdv(True, "counter_rate", 1.1, 4)
-        print("BUFFING")
 
         # need to set actual calcs
 

@@ -63,7 +63,6 @@ async def run(
         my_list = db.characterSearch(my_search.replace("[", "").replace("]", ""))
     else:
         my_list = db.skillSearch(my_search)
-    print(my_list)
 
     if len(my_list) == 0:
         temp_embed = Embed()

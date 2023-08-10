@@ -133,7 +133,7 @@ class InsertCharacter:
                     )
                 )
                 self.insertAdventurerSkillEffects(
-                    adventurerskillid, skillsList.get("effects")
+                    adventurerskillid, skillsList["effects"]
                 )
             elif skillsKeys == "combat":
                 for skills in skillsList:
@@ -143,7 +143,7 @@ class InsertCharacter:
                         )
                     )
                     self.insertAdventurerSkillEffects(
-                        adventurerskillid, skills.get("effects")
+                        adventurerskillid, skills["effects"]
                     )
             elif skillsKeys == "additionals":
                 for skills in skillsList:
@@ -153,7 +153,7 @@ class InsertCharacter:
                         )
                     )
                     self.insertAdventurerSkillEffects(
-                        adventurerskillid, skills.get("effects")
+                        adventurerskillid, skills["effects"]
                     )
             # development
             else:
@@ -162,7 +162,7 @@ class InsertCharacter:
                         AdventurerDevelopment(None, adventurerid, skills.get("name"))
                     )
                     self.insertAdventurerDevelopmentSkillEffects(
-                        adventurerdevelopmentid, skills.get("effects")
+                        adventurerdevelopmentid, skills["effects"]
                     )
 
                     # self._db.insertData(AdventurerDevelopmentSkillEffects(None, adventurerdevelopmentid, skills.get("name"), attributeid, modifierid))
@@ -181,16 +181,8 @@ class InsertCharacter:
             if temp_type.split("_")[0] in ele_list:
                 temp_split = temp_type.split("_")
                 temp_element = temp_split[0]
-                print(temp_type)
                 if temp_type is not None and len(temp_split) == 3:
                     temp_type = temp_split[1] + "_" + temp_split[2]
-                # temp_index = temp_value.find("_")
-                # temp_element = temp_value[0:temp_index]
-                # temp_ad_ele = temp_element
-                # temp_type = temp_value[temp_index+1:]
-            # else:
-            # temp_type = ""
-            # temp_element=""
             # Element
             eleid = self.getBaseConstants(Element(None, temp_element), False)
             # Type for skills
@@ -238,16 +230,8 @@ class InsertCharacter:
             if temp_type.split("_")[0] in ele_list:
                 temp_split = temp_type.split("_")
                 temp_element = temp_split[0]
-                print(temp_type)
                 if temp_type is not None and len(temp_split) == 3:
                     temp_type = temp_split[1] + "_" + temp_split[2]
-                # temp_index = temp_value.find("_")
-                # temp_element = temp_value[0:temp_index]
-                # temp_ad_ele = temp_element
-                # temp_type = temp_value[temp_index+1:]
-            # else:
-            # temp_type = ""
-            # temp_element=""
             # Element
             eleid = self.getBaseConstants(Element(None, temp_element), False)
             # Type for skills
@@ -313,7 +297,7 @@ class InsertCharacter:
                 assistskillid = self._db.insertData(
                     AssistSkill(None, assistid, skills_list.get("name"), skills_keys)
                 )
-                self.insertAssistSkillEffects(assistskillid, skills_list.get("effects"))
+                self.insertAssistSkillEffects(assistskillid, skills_list["effects"])
 
     def insertAssistSkillEffects(self, assistskillid, skilleffectList: list):
         # assistskilleffects SET UP
@@ -439,10 +423,7 @@ if __name__ == "__main__":
                 as_dict = json.load(f)
                 if as_dict.get("limited") is None:
                     as_dict["limited"] = False
-                # temp_as = AssistC(as_dict.get("title"), as_dict.get("name"), as_dict.get("stars"), as_dict.get("limited"), as_dict.get("stats"), as_dict.get("skills"))
-                # ic.insertAssist(temp_as)
 
-                # (self, title, name, types, stars, limited, ascended, stats, skills)
                 temp_ad = AdventureC(
                     as_dict.get("title"),
                     as_dict.get("name"),
@@ -462,7 +443,7 @@ async def run(
     unit_file: Attachment,
 ):
     # permission checking
-    if int(ctx.author.id) in EDITORS:  # type: ignore [union-attr]
+    if int(ctx.author.id) in EDITORS:
         ic = InsertCharacter(DBcontroller(dbConfig))
 
         try:

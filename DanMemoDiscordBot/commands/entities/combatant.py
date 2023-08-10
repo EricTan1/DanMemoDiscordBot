@@ -8,34 +8,29 @@ class Combatant:
     def __init__(self, stats: Mapping[str, int | float]):
         self.stats = stats
 
-        # buffs and debuffs
-        # append buffs to list and remove once wiped
+        # track active buffs and debuffs by source
         self.boostCheckAdv: list[Effect] = []
         self.boostCheckAst: list[AssistEffect] = []
 
     def set_boostCheckAdv(
         self, isbuff: bool, attribute: str, modifier: float, duration: int
     ):
-        """(bool, str, int or float, int, bool) -> None
-        target: self, allies, foes, foe
-        attribute: strength, magic, st, aoe
-        modifier: -10 ,+50
-        duration: 1,2,3,4
-        is_assist: is this an assist buff or not
-        """
         effect = Effect(isbuff, attribute, modifier, duration)
         checkBuffExistsReplace(self.boostCheckAdv, effect)
 
     def set_boostCheckAst(self, isbuff: bool, attribute: str, modifier: float):
-        """(bool, str, int or float) -> None
-        attribute: strength, magic, st, aoe
-        modifier: -10 ,+50
-        """
         effect = AssistEffect(isbuff, attribute, modifier)
         checkBuffExistsReplace(self.boostCheckAst, effect)
 
+    def pop_boostCheckAdv(self, isbuff: bool, attribute: str):
+        self.boostCheckAdv = [
+            item
+            for item in self.boostCheckAdv
+            if item.isbuff != isbuff or item.attribute != attribute
+        ]
+
     def clearBuffs(self):
-        # take the list but all the buffs with True is removed (keep all  the isbuff==False)
+        # take the list but all the buffs with True is removed (keep all the isbuff==False)
         self.boostCheckAdv = [
             item
             for item in self.boostCheckAdv
@@ -43,7 +38,7 @@ class Combatant:
         ]
 
     def clearDebuffs(self):
-        # take the list but all the buffs with True is removed (keep all  the isbuff==False)
+        # take the list but all the buffs with True is removed (keep all the isbuff==False)
         self.boostCheckAdv = [
             item for item in self.boostCheckAdv if item.isbuff == True
         ]
@@ -75,10 +70,6 @@ class Combatant:
                 attribute = buffsdebuffs.attribute
 
             ret.append(
-                "{}% {} for {} turn(s)".format(
-                    modifierStr,
-                    attribute,
-                    buffsdebuffs.duration,
-                )
+                f"{modifierStr}% {attribute} for {buffsdebuffs.duration} turn(s)"
             )
         return ret

@@ -15,7 +15,7 @@ async def run(
     # check if there is attachment if not send them a template attachment
     if not config_file:
         await ctx.send(
-            "For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the description /sa-calculator",
+            "For this to work, you need to download the file, edit it, and reupload it into the channel with ais bot in it with the command /sa-calculator",
             files=File("sacalc.txt"),
         )
     else:
@@ -29,7 +29,6 @@ async def run(
         errors = ""
         turns = 0
         for line in contentLines:
-            print(line)
             # buff wipe verify
             stripped_line = line.strip()
             if stripped_line.startswith("BUFF_WIPE="):
@@ -92,7 +91,6 @@ async def run(
 
 def verifyAndCast(my_list: list[str]) -> list[int]:
     ret = []
-    print(my_list)
     for items in my_list:
         ret.append(int(items))
     return ret
@@ -157,7 +155,6 @@ async def calculate(
         curr_message = curr_message + f"**Start of turn {current_turn+1}**\n"
         # WIPE BUFFS FOR FINN,OTTARL,RIVERIA TURN 4/8
         if (current_turn == 3 or current_turn == 7) and is_revis == False:
-            print("buffs wiped")
             sa_gauge_adv = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         # first sac
         if current_turn == 0:

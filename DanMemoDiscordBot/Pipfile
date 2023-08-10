@@ -14,7 +14,7 @@ pylint = "pylint"
 gspread = "==3.7.0"
 Pillow = "==9.3.0"
 mysql-connector-python = "==8.0.19"
-discord-py-interactions = "==5.8.0"
+discord-py-interactions = "==5.9.2"
 aiohttp = "*"
 
 [dev-packages]

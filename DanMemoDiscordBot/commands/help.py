@@ -10,10 +10,8 @@ async def run(ctx: SlashContext):
     temp_embed.title = "Commands List"
     with open("./help.txt") as fp:
         line = fp.readline()
-        # print(line.strip())
 
         while line:
-            # print(line.strip())
             if line.strip() == "F":
                 line = fp.readline()
                 name = line

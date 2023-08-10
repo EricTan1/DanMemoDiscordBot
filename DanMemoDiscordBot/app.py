@@ -82,15 +82,16 @@ async def on_start(_: Startup):
     createGSpreadJSON()
     print("Bot is ready!")
 
-    # Create initial status message in bot-status channel
-    channel = client.get_channel(STATUS_CHANNEL_ID)
-    global status_message
-    timestamp = int(datetime.now().timestamp())
-    status_message = await channel.send(
-        f"Bot going online at <t:{timestamp}:F>\nLast heartbeat: <t:{timestamp}:R>"
-    )
-    # Starts the scheduler for the status_update task
-    status_update.start()
+    if ENV != "dev":
+        # Create initial status message in bot-status channel
+        channel = client.get_channel(STATUS_CHANNEL_ID)
+        global status_message
+        timestamp = int(datetime.now().timestamp())
+        status_message = await channel.send(
+            f"Bot going online at <t:{timestamp}:F>\nLast heartbeat: <t:{timestamp}:R>"
+        )
+        # Starts the scheduler for the status_update task
+        status_update.start()
 
 
 @slash_command(
@@ -159,7 +160,7 @@ async def skillSearch(ctx: SlashContext, keywords: str):
 
 @slash_command(
     name="help",
-    description="Instructions on using the bot",
+    description="Sends instructions for using the bot to your DMs",
 )
 async def help(ctx: SlashContext):
     await command_help.run(ctx)

@@ -37,13 +37,6 @@ class User:
     def __str__(self):
         return str(self.__dict__)
 
-    """def dumpData(self):
-        return "'"+json.dumps(self.data)+"'"
-    
-    def undumpData(dataJson):
-        print(dataJson)
-        return json.loads(dataJson)"""
-
     @staticmethod
     def get_user(db_config, discord_id: str, discord_unique_id: str) -> "User":
         db = database.DBcontroller.DBcontroller(db_config)
@@ -57,8 +50,6 @@ class User:
 
         if user.units_summary is not None:
             user.load_units()
-
-        print("Retrieved user:", user)
 
         return user
 
