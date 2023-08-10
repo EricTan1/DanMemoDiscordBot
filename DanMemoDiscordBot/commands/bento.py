@@ -41,7 +41,7 @@ async def run(db_config: DBConfig, ctx: SlashContext):
 
     title = "Wait! Are you going to the dungeon today? Please take this with you! >///<"
 
-    description = ctx.author.mention + " has received a " + str(crepe_emoji) + "!"
+    description = ctx.author.mention + " has received a " + crepe_emoji + "!"
 
     if user.crepes == 1:
         footer = "There is " + str(user.crepes) + " crepe left in their bento box!"

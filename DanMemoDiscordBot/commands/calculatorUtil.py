@@ -520,6 +520,23 @@ def interpretExtraBoostWrapper(
     return extra_boosts_multiplier
 
 
+def interpretExtraBoostWrapper(
+    skillEffect, adventurer: "Adventurer", enemy: "Enemy"
+) -> float:
+    # This wrapper is used to make "per each regen" type skills be interpreted
+    # as both a "per each hp regen" and "per each mp regen" effect
+
+    temp_list = skillEffect.attribute.split("_")
+    if "regen" in temp_list and not "hp" in temp_list and not "mp" in temp_list:
+        skillEffect.attribute = skillEffect.attribute.replace("regen", "hp_regen")
+        extra_boosts_multiplier = interpretExtraBoost(skillEffect, adventurer, enemy)
+        skillEffect.attribute = skillEffect.attribute.replace("hp_regen", "mp_regen")
+        extra_boosts_multiplier += interpretExtraBoost(skillEffect, adventurer, enemy)
+    else:
+        extra_boosts_multiplier = interpretExtraBoost(skillEffect, adventurer, enemy)
+    return extra_boosts_multiplier
+
+
 def interpretExtraBoost(skillEffect, adventurer: "Adventurer", enemy: "Enemy") -> float:
     """(adventurerSkillEffect) -> float
     takes in a skill effect with attribute exists of "per_each" then parse it and return the extra boosts multiplier

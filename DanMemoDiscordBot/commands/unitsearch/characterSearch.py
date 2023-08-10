@@ -155,15 +155,16 @@ async def pageHandler(
     """
 
     def updateStats():
-        temp_embed.description = str(limitbreak_add_emoji) * current_limitbreak + str(
-            limitbreak_sub_emoji
-        ) * (MAXLB - current_limitbreak)
+        temp_embed.description = (
+            limitbreak_add_emoji * current_limitbreak
+            + limitbreak_sub_emoji * (MAXLB - current_limitbreak)
+        )
         if ascended:
             temp_embed.description = (
                 temp_embed.description
                 + "    "
-                + str(hero_ascend_add_emoji) * current_ha
-                + str(hero_ascend_sub_emoji) * (MAXHA - current_ha)
+                + hero_ascend_add_emoji * current_ha
+                + hero_ascend_sub_emoji * (MAXHA - current_ha)
             )
 
         stats, abilities = assembleStats(

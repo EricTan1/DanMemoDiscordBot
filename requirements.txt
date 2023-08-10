@@ -2,4 +2,4 @@ mysql-connector-python==8.0.19
 pillow==9.3.0
 numpy==1.22.0
 gspread==3.7.0
-discord-py-interactions==5.8.0
+discord-py-interactions==5.9.2
